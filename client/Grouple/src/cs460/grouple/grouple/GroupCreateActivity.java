@@ -28,6 +28,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -45,19 +46,14 @@ import android.widget.TextView;
 /*
  * GroupCreateActivity allows a user to create a new group.
  */
-@SuppressLint("UseSparseArrays")
+
 public class GroupCreateActivity extends ActionBarActivity
 {
 	BroadcastReceiver broadcastReceiver;
-	private Map<Integer, Boolean> isAdmin = new HashMap<Integer, Boolean>();
-	private Map<Integer, String> alreadyAdded = new HashMap<Integer, String>();
-	private Map<Integer, String> added = new HashMap<Integer, String>();
-	private Map<Integer, Boolean> role = new HashMap<Integer, Boolean>();
-	private Map<String, String> theseFriends = new HashMap<String, String>();
+	private SparseArray<String> added = new SparseArray<String>();    //holds list of name of all friend rows to be added
+	private SparseArray<Boolean> role = new SparseArray<Boolean>();   //holds list of role of all friend rows to be added
+	private Map<String, String> allFriends = new HashMap<String, String>();   //holds list of all current friends
 	User user;
-	private ArrayList<HttpResponse> response = new ArrayList<HttpResponse>();
-	int firstEntry = 0;
-	private int increment = 0;
 	private String email = null;
 	private String g_id = null;
 
@@ -74,11 +70,13 @@ public class GroupCreateActivity extends ActionBarActivity
 		actionBarTitle.setText("Groups");
 		
 		Global global = ((Global) getApplicationContext());
-		email = global.getCurrentUser().getEmail();
+		//grab the email of current users from our global class
+		email = global.currentUser.getEmail();
 		user = global.loadUser(email);
-		//friend email -> full names
-		theseFriends = user.getFriends();
+		//load our list of current friends.  key is friend email -> value is full names
+		allFriends = user.getFriends();
 		
+		//actionbar listener
 		ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
 		upButton.setOnClickListener(new OnClickListener()
 		{
@@ -91,26 +89,26 @@ public class GroupCreateActivity extends ActionBarActivity
 			}
 		});
 		
-		/* beginning building the interface */
+		// begin building the interface
 		LayoutInflater inflater = getLayoutInflater();
 		LinearLayout membersToAdd = (LinearLayout) findViewById(R.id.linearLayoutNested1);
 		
-		if(theseFriends.size() == 0)
+		if(allFriends.size() == 0)
 		{
 			View row = inflater.inflate(
 					R.layout.listitem_groupcreateadded, null);
 
 			((Button) row.findViewById(R.id.friendNameButtonNoAccess))
-					.setText("You don't have any friends yet!");
+					.setText("You don't have any friends to add yet!");
 			row.findViewById(R.id.removeFriendButtonNoAccess)
 					.setVisibility(1);
 			membersToAdd.addView(row);
 		}
 		
-		Iterator iterator = theseFriends.entrySet().iterator();
+		Iterator iterator = allFriends.entrySet().iterator();
 		
-		//for each friend
-		for(int i=0; i<theseFriends.size(); i++)
+		//setup for each friend
+		for(int i=0; i<allFriends.size(); i++)
 		{
 			
 			GridLayout rowView;
@@ -119,133 +117,76 @@ public class GroupCreateActivity extends ActionBarActivity
 			final Button makeAdminButton = (Button) rowView
 					.findViewById(R.id.removeFriendButtonNoAccess);
 
-			makeAdminButton
-					.setOnClickListener(new OnClickListener()
-					{
-						@Override
-						public void onClick(View view)
-						{
-							System.out.println("makeAdminButton onClick was clicked");
-							if (makeAdminButton.getText()
-									.toString().equals("-"))
-							{
-								makeAdminButton.setText("A");
-								isAdmin.put(view.getId(), true);
-								makeAdminButton
-										.setTextColor(getResources()
-												.getColor(
-														R.color.light_green));
-							} else
-							{
-								makeAdminButton.setText("-");
-								isAdmin.put(view.getId(), false);
-								makeAdminButton
-										.setTextColor(getResources()
-												.getColor(
-														R.color.orange));
-							}
-						}
-					});
-			makeAdminButton.setId(i);
-			
-			final Button friendNameButton = (Button) rowView.findViewById(R.id.friendNameButtonNoAccess);
+			final Button friendNameButton = (Button) rowView
+					.findViewById(R.id.friendNameButtonNoAccess);
 			final CheckBox cb = (CheckBox) rowView
 					.findViewById(R.id.addToGroupBox);
+			makeAdminButton.setId(i);
 			cb.setId(makeAdminButton.getId());
-			isAdmin.put(cb.getId(), false);
-			
-			//Note: the following onCheckedChanged's code could still be rewritten (01/21/2015)
-			
+
+			//listener when clicking makeAdmin button
+			makeAdminButton.setOnClickListener(new OnClickListener() 
+			{
+				@Override
+				public void onClick(View view) 
+				{
+					if (makeAdminButton.getText().toString().equals("-")) 
+					{
+						makeAdminButton.setText("A");
+						if (cb.isChecked()) 
+						{
+							role.put(view.getId(), true);
+						}
+
+						makeAdminButton.setTextColor(getResources().getColor(
+								R.color.light_green));
+					} 
+					else 
+					{
+						makeAdminButton.setText("-");
+						if (cb.isChecked()) 
+						{
+							role.put(view.getId(), false);
+						}
+
+						makeAdminButton.setTextColor(getResources().getColor(
+								R.color.orange));
+					}
+				}
+			});
+					
+			//listener when clicking checkbox
 			cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
 			{
 				@Override
 				public void onCheckedChanged(CompoundButton view, boolean isChecked)
 				{
-					System.out.println("checkbox was clicked!");
 					String text = friendNameButton.getLayout()
 							.getText().toString();
 				
-					if (!view.isChecked()
-							&& (alreadyAdded.keySet().size() == 1)
-							&& (firstEntry == view.getId()))
+					if(makeAdminButton.getText().toString().equals("A") && cb.isChecked())
 					{
-						System.out.println("Entering first");
-						alreadyAdded.clear();
-						added.clear();
-						role.clear();
-						firstEntry = 0;
-						Log.d("Close Attention",
-								"The mapsize is: "
-										+ alreadyAdded.keySet()
-												.size());
-					} else if (alreadyAdded.keySet().isEmpty())
+						added.put(view.getId(), text);
+						role.put(view.getId(), true);
+						
+						System.out.println("Added size: "+added.size());
+						System.out.println("Role size: "+role.size());
+					}
+					else if(makeAdminButton.getText().toString().equals("-") && cb.isChecked())
 					{
-						System.out.println("Entering second");
-						if (view.isChecked())
-						{
-							System.out.println("Entering third");
-							Log.d("here2?", " <=here we are?");
-							added.put(view.getId(), text);
-							role.put(view.getId(),
-									isAdmin.get(view.getId()));
-							alreadyAdded.put(view.getId(), text);
-							Log.d("Close Attention",
-									"The mapsize is: "
-											+ alreadyAdded
-													.keySet()
-													.size());
-							firstEntry = view.getId();
-						}
-					} else if (view.isChecked())
+						added.put(view.getId(), text);
+						role.put(view.getId(), false);
+						
+						System.out.println("Added size: "+added.size());
+						System.out.println("Role size: "+role.size());
+					}
+					else
 					{
-						System.out.println("Entering fourth");
-						boolean flag = false;
-						Log.d("here2?", " <=outtheloop?");
-						Iterator iterate = alreadyAdded
-								.entrySet().iterator();
-						while (iterate.hasNext())
-						{
-							Log.d("here2?", " <=intheloop?");
-							Map.Entry pair = (Map.Entry) iterate
-									.next();
-							if (pair.getValue().equals(text))
-							{
-								flag = true;
-								Log.d("here?", "flag <=here?");
-							}
-						}
-
-						if (!flag)
-						{
-							System.out.println("Entering fifth");
-							if (view.isChecked())
-							{
-								System.out.println("Entering sixth");
-								Log.d("herefromunselected?",
-										" <=here?");
-								added.put(view.getId(), text);
-								role.put(view.getId(), isAdmin
-										.get(view.getId()));
-								alreadyAdded.put(view.getId(),
-										text);
-								Log.d("Close Attention",
-										"The mapsize is: "
-												+ alreadyAdded
-														.keySet()
-														.size());
-							}
-						}
-					} else if (!view.isChecked())
-					{
-						System.out.println("Entering seventh");
-						Log.d("2herefromselected?", " <=here?");
 						added.remove(view.getId());
 						role.remove(view.getId());
-						alreadyAdded.remove(view.getId());
-						Log.d("Close Attention",
-								"The mapsize is: "
-										+ alreadyAdded.keySet()
-												.size());
+						
+						System.out.println("Added size: "+added.size());
+						System.out.println("Role size: "+role.size());
 					}
 				}
 			});
@@ -258,16 +199,15 @@ public class GroupCreateActivity extends ActionBarActivity
 		}
 	}
 	
-	// Create Group pops up a confirm box to make sure the user wants to create the group.
+	//onClick for Confirm create group button
 	public void createGroupButton(View view)
 	{		
-		
 		//first check to make sure a group name has been typed by the user
 		EditText groupNameEditText = (EditText) findViewById(R.id.groupName);
-		EditText groupBioEditText = (EditText) findViewById(R.id.groupBio);
 
 		String groupname = groupNameEditText.getText().toString();
-		//if empty string, display error box
+		
+		//if empty group name, display error box
 		if(groupname.compareTo("") == 0)
 		{
 			new AlertDialog.Builder(this)
@@ -275,7 +215,7 @@ public class GroupCreateActivity extends ActionBarActivity
 			.setCancelable(true)
 			.setNegativeButton("Ok", null).show();
 		}
-		//otherwise display confirmation box
+		//otherwise, display confirmation box
 		else
 		{
 			new AlertDialog.Builder(this)
@@ -286,6 +226,7 @@ public class GroupCreateActivity extends ActionBarActivity
 				@Override
 				public void onClick(DialogInterface dialog, int id)
 				{
+					//initiate creation of group
 					new CreateGroupTask().execute("http://68.59.162.183/"
 					+ "android_connect/create_group.php");
 				}
@@ -293,11 +234,7 @@ public class GroupCreateActivity extends ActionBarActivity
 		}
 	}
 	
-	public void addToGroupTable(View view)
-	{
-		
-	}
-	
+	//aSynch class to create group 
 	private class CreateGroupTask extends AsyncTask<String, Void, String>
 	{
 
@@ -308,6 +245,7 @@ public class GroupCreateActivity extends ActionBarActivity
 			EditText groupNameEditText = (EditText) findViewById(R.id.groupName);
 			EditText groupBioEditText = (EditText) findViewById(R.id.groupBio);
 
+			//grab group name and bio from textviews
 			String groupname = groupNameEditText.getText().toString();
 			String groupbio = groupBioEditText.getText().toString();	
 			
@@ -316,6 +254,7 @@ public class GroupCreateActivity extends ActionBarActivity
 			nameValuePairs.add(new BasicNameValuePair("descript", groupbio));
 			nameValuePairs.add(new BasicNameValuePair("creator", email));
 
+			//pass url and nameValuePairs off to global to do the JSON call.  Code continues at onPostExecute when JSON returns.
 			return global.readJSONFeed(urls[0], nameValuePairs);
 		}
 
@@ -329,7 +268,8 @@ public class GroupCreateActivity extends ActionBarActivity
 				// group has been successfully created
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					//now we can set the newly created g_id returned from the server
+					//now we can grab the newly created g_id returned from the server
+					//Note: g_id is the only unique identifier of a group and therefore must be used for any future calls concerning that group.
 					g_id = jsonObject.getString("g_id").toString();
 					
 					System.out.println("g_id of newly created group is: "+g_id);
@@ -338,44 +278,86 @@ public class GroupCreateActivity extends ActionBarActivity
 					new AddGroupMembersTask().execute("http://68.59.162.183/"
 							+ "android_connect/add_groupmember.php", email, email, "C", g_id);
 					
-					//now add all the additional users to the group
-					Iterator iterate = added.entrySet().iterator();
-					Iterator iterate2 = role.entrySet().iterator();
-					while (iterate.hasNext())
+					//now loop through list of added to add all the additional users to the group
+					int size = added.size();
+					System.out.println("Total count of users to process: "+size);
+					for(int i = 0; i < size; i++) 
 					{
-						String role;
-						Map.Entry tadded = (Map.Entry) iterate.next();
-						Map.Entry trole = (Map.Entry) iterate2.next();
+						System.out.println("adding friend #"+i+"/"+added.size());
 						
-						int index = (Integer) tadded.getKey();
-						Iterator iterate3 = theseFriends.entrySet().iterator();
-						for(int i=0; i<index; i++)
+						//get the user's email by matching indexes from added list with indexes from allFriendslist.
+						int key = added.keyAt(i);
+						Iterator it1 = allFriends.entrySet().iterator();
+						for(int k=0; k<key; k++)
 						{
-							iterate3.next();
+							//skip over iterations until arriving at key
+							it1.next();
 						}
-						Map.Entry temail = (Map.Entry) iterate3.next();
-						String friendsEmail = (String) temail.getKey();
+						Map.Entry pairs = (Map.Entry)it1.next();
 						
-						System.out.println(trole.toString());
-						if(trole.getValue().toString().equals("false"))
+						//grab the email of friend to add
+						String friendsEmail = (String) pairs.getKey();
+						
+						//grab the role of friend to add
+						boolean tmpRole = role.valueAt(i);
+						String friendsRole;
+						
+						if(tmpRole)
 						{
-							role = "M";
+							friendsRole = "A";
 						}
 						else
 						{
-							role = "A";
+							friendsRole = "M";
 						}
+						
+						System.out.println("adding member: "+friendsEmail+", role: "+friendsRole);
+						
+						//initiate add of user
 						new AddGroupMembersTask().execute("http://68.59.162.183/"
-								+ "android_connect/add_groupmember.php", friendsEmail, email, role, g_id);
+								+ "android_connect/add_groupmember.php", friendsEmail, email, friendsRole, g_id);
 					}
 					
-					//Now take the user to a new activity (the newly create group's profile page)					
-					//Note: until groupprofileactivity is coded, just take the user back to main groups page.
+					//display confirmation box
+					new AlertDialog.Builder(GroupCreateActivity.this)
+					.setMessage("Nice work, you've successfully created a group!")
+					.setCancelable(true)
+					.setPositiveButton("View your Group Profile", new DialogInterface.OnClickListener()
+					{
+						@Override
+						public void onClick(DialogInterface dialog, int id)
+						{
+							//add code here to take user to newly created group profile page.  (pass g_id as extra so correct group profile can be loaded)
+						}
+					}).setPositiveButton("Invite more friends", new DialogInterface.OnClickListener()
+					{
+						@Override
+						public void onClick(DialogInterface dialog, int which) 
+						{
+							//add code here to take user to groupaddmembersactivity page.  (pass g_id as extra so invites can be sent to correct group id)
+						}
+					});
+				
+					//remove this activity from back-loop by calling finish().
 					finish();
 				} 
+				//Create group failed for some reasons.
 				else if (jsonObject.getString("success").toString().equals("0"))
 				{	
-					//group failed to create. display something to user here.
+					//display error box
+					new AlertDialog.Builder(GroupCreateActivity.this)
+					.setMessage("Unable to create group! Please choose an option:")
+					.setCancelable(true)
+					.setPositiveButton("Try Again", new DialogInterface.OnClickListener()
+					{
+						@Override
+						public void onClick(DialogInterface dialog, int id)
+						{
+							//initiate creation of group AGAIN
+							new CreateGroupTask().execute("http://68.59.162.183/"
+							+ "android_connect/create_group.php");
+						}
+					}).setNegativeButton("Cancel", null).show();
 				}
 			} catch (Exception e)
 			{
@@ -384,6 +366,7 @@ public class GroupCreateActivity extends ActionBarActivity
 		}
 	}
 	
+	//aSynch task to add individual member to group.
 	private class AddGroupMembersTask extends AsyncTask<String,Void,String>
 	{
 		@Override
@@ -397,6 +380,7 @@ public class GroupCreateActivity extends ActionBarActivity
 			nameValuePairs.add(new BasicNameValuePair("role", urls[3]));
 			nameValuePairs.add(new BasicNameValuePair("g_id", urls[4]));
 
+			//pass url and nameValuePairs off to global to do the JSON call.  Code continues at onPostExecute when JSON returns.
 			return global.readJSONFeed(urls[0], nameValuePairs);
 		}
 
@@ -410,11 +394,12 @@ public class GroupCreateActivity extends ActionBarActivity
 				// member has been successfully added
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					//all working correctly, continue on.
+					//all working correctly, continue to next user or finish.
 				} 
 				else if (jsonObject.getString("success").toString().equals("0"))
 				{	
-					//something went wrong... display something to user here...
+					//a particular user was unable to be added to database for some reason...
+					//Don't tell the user!
 				}
 			} catch (Exception e)
 			{
@@ -423,6 +408,7 @@ public class GroupCreateActivity extends ActionBarActivity
 		}		
 	}
 	
+	//does something
 	public void startParentActivity(View view)
 	{
 		Bundle extras = getIntent().getExtras();
