@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    
     <string name="app_name">Grouple</string>
+    <string name="ip">68.59.162.183</string>
     <string name="currentUser"></string>
     <string name="loginTextView">Login</string>
     <string name="registerTextView">Register</string>

@@ -63,7 +63,7 @@ public class Group extends Activity
 	public int fetchMembers()
 	{
 		new getMembersTask()
-				.execute("http://68.59.162.183/android_connect/get_group_members.php?gid="
+				.execute("http://" + R.string.ip +"/android_connect/get_group_members.php?gid="
 						+ getID());
 		return 1;
 	}
@@ -116,7 +116,7 @@ public class Group extends Activity
 	public int fetchGroupInfo()
 	{
 		new getGroupInfoTask()
-				.execute("http://68.59.162.183/android_connect/get_group_info.php?gid="
+				.execute("http://" + R.string.ip +"/android_connect/get_group_info.php?gid="
 						+ getID());
 		return 1;
 	}

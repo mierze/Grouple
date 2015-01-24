@@ -65,7 +65,6 @@ public class LoginActivity extends Activity
 	public void startHomeActivity(String email)
 	{
 		Intent intent = new Intent(this, HomeActivity.class);
-		System.out.println("Email: " + email);
 		intent.putExtra("email", email);
 		startActivity(intent);
 	}
@@ -90,7 +89,7 @@ public class LoginActivity extends Activity
 		Global global = ((Global) getApplicationContext());
 
 		new getLoginTask()
-					.execute("http://68.59.162.183/android_connect/get_login.php?email="
+					.execute("http://" + R.string.ip +"/android_connect/get_login.php?email="
 							+ email + "&password=" + password);
 
 	}

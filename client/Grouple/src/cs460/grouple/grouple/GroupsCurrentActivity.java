@@ -296,7 +296,7 @@ public class GroupsCurrentActivity extends ActionBarActivity
 						System.out.println("Leave grp email / id: " + user.getEmail() + " " + clickedRemoveID);
 						new leaveGroupTask()
 								.execute(
-										"http://68.59.162.183/android_connect/leave_group.php?email=" + user.getEmail() + "&gid=" + clickedRemoveID);
+										"http://" + R.string.ip +"/android_connect/leave_group.php?email=" + user.getEmail() + "&gid=" + clickedRemoveID);
 						user.removeGroup(clickedRemoveID);
 						clickedRemoveID = -1; //reset
 					}

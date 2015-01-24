@@ -153,7 +153,7 @@ public class FriendAddActivity extends ActionBarActivity
 		// Execute the add friend php
 		//need to sync this PANDA
 		new getAddFriendTask()
-				.execute("http://68.59.162.183/android_connect/add_friend.php");
+				.execute("http://" + R.string.ip + "/android_connect/add_friend.php");
 	}
 
 	// This task sends a friend request to the given user.

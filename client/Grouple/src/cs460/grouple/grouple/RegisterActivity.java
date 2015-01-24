@@ -91,7 +91,7 @@ public class RegisterActivity extends ActionBarActivity
 		if (password.equals(rePassword))
 		{
 			new getRegisterTask()
-					.execute("http://98.213.107.172/android_connect/register_account.php");
+					.execute("http://" + R.string.ip +"/android_connect/register_account.php");
 
 		} else
 		{

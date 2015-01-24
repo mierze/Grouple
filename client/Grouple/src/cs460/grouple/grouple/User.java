@@ -315,7 +315,7 @@ public class User extends Activity
 	{
 		
        AsyncTask<String, Void, String> task = new getUserInfoTask()
-		.execute("http://68.59.162.183/android_connect/get_profile.php");
+		.execute("http://" + R.string.ip +"/android_connect/get_profile.php");
         
        task.get(10000, TimeUnit.MILLISECONDS);
 	
@@ -409,7 +409,7 @@ public class User extends Activity
 	public int fetchFriends() throws InterruptedException, ExecutionException, TimeoutException
 	{
 		AsyncTask<String, Void, String> task = new getFriendsTask()
-				.execute("http://68.59.162.183/android_connect/get_friends.php?email="
+				.execute("http://" + R.string.ip +"/android_connect/get_friends.php?email="
 						+ getEmail());
 		
 		task.get(10000, TimeUnit.MILLISECONDS);
@@ -466,7 +466,7 @@ public class User extends Activity
 	public int fetchFriendRequests() throws InterruptedException, ExecutionException, TimeoutException
 	{
 		AsyncTask<String, Void, String> task = new getFriendRequestsTask()
-		.execute("http://68.59.162.183/android_connect/get_friend_requests.php?receiver="
+		.execute("http://" + R.string.ip +"/android_connect/get_friend_requests.php?receiver="
 				+ getEmail());
 
 		task.get(10000, TimeUnit.MILLISECONDS);
@@ -524,7 +524,7 @@ public class User extends Activity
 	public int fetchGroups() throws InterruptedException, ExecutionException, TimeoutException
 	{
 		AsyncTask<String, Void, String> task = new getGroupsTask()
-		.execute("http://68.59.162.183/android_connect/get_groups.php?email="
+		.execute("http://" + R.string.ip +"/android_connect/get_groups.php?email="
 				+ getEmail());
 		task.get(20000, TimeUnit.MILLISECONDS);
 
