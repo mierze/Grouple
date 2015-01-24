@@ -44,21 +44,11 @@ import android.widget.TextView;
  */
 public class GroupProfileActivity extends ActionBarActivity
 {
-
-	private ImageView iv;
-	private Bitmap bmp;
+	private Group group; //current group
 	private final static int CAMERA_DATA = 0;
-	private Intent i;
 	private BroadcastReceiver broadcastReceiver;
-	private String gname = "";
-	private String bio = "";
-	private int gcount = 0;
-	private int index = 0;
-	private LayoutInflater inflater;
-	private LinearLayout membersToAdd;
-	Intent upIntent;
-	Intent parentIntent;
-	View groupProfile;
+
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -67,10 +57,10 @@ public class GroupProfileActivity extends ActionBarActivity
 
 		Global global = ((Global) getApplicationContext());
 		Bundle extras = getIntent().getExtras();
-		gname = extras.getString("gname");
+		//gname = extras.getString("gname");
 
-		groupProfile = findViewById(R.id.groupProfileContainer);
-		load(groupProfile);
+		//groupProfile = findViewById(R.id.groupProfileContainer);
+		load();//groupProfile);
 	}
 
 	public void initActionBar()
@@ -82,25 +72,16 @@ public class GroupProfileActivity extends ActionBarActivity
 		ab.setCustomView(R.layout.actionbar);
 		ab.setDisplayHomeAsUpEnabled(false);
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
-		actionbarTitle.setText(gname);
+		actionbarTitle.setText(group.getName());
 		ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
-		upButton.setOnClickListener(new OnClickListener()
-		{
 
-			@Override
-			public void onClick(View view)
-			{
-				startActivity(upIntent);
-			}
-		});
 	}
 
-	public void load(View view)
+	public void load()
 	{
 		Log.d("message", "00000000000000001");
 
-		inflater = getLayoutInflater();
-		membersToAdd = (LinearLayout) findViewById(R.id.linearLayoutNested2);
+		//membersToAdd = (LinearLayout) findViewById(R.id.linearLayoutNested2);
 
 		Global global = ((Global) getApplicationContext());
 		// backstack of intents
@@ -111,44 +92,51 @@ public class GroupProfileActivity extends ActionBarActivity
 		// if check that friends
 		Intent intent = getIntent();
 		Bundle extras = intent.getExtras();
+		System.out.println("(GroupProfile)Loading group gid: " + extras.getInt("gid"));
+		group = global.loadGroup(extras.getInt("gid"));
 		// do a check that it is not from a back push
 
-		if (getGroupCount() == 1)
-		{
-			System.out.println("waiting");
-		}
-		getGroupContents();
-		upIntent = new Intent(this, GroupsCurrentActivity.class);
-		upIntent.putExtra("up", "true");
-		upIntent.putExtra("mod", "true");
+		//getGroupContents();
 		// startActivity(upIntent);
-		initActionBar();
+		//initActionBar();
 		initKillswitchListener();
 
 	}
 
-	public int getGroupCount()
-	{
-		new getProfileTask().execute("http://98.213.107.172/"
-				+ "android_connect/count_group_members.php");
-		return 1;
-	}
 
 	public void getGroupContents()
 	{
-		if (index < gcount)
-		{// for(; index < gcount; index++){
-			Log.d("hello", "hellohello1 " + ";index = " + index + ";gcount = "
-					+ gcount);
-			new getProfileTask().execute("http://98.213.107.172/"
-					+ "android_connect/get_group_contents.php");
-			// index++;
+		
+		
+		
+		// <<<<<<<<<< here >>>>>>>>>>//
+		/*GridLayout rowView = (GridLayout) inflater.inflate(
+				R.layout.listitem_groupprofile, null);
+		Button removeFriendButton = (Button) rowView
+				.findViewById(R.id.removeFriendButtonNoAccess);
+		Button friendNameButton = (Button) rowView
+				.findViewById(R.id.friendNameButtonNoAccess);
+		friendNameButton.setText(member);
+		if (role.equals("C"))
+		{
+			removeFriendButton.setText("C");
+			removeFriendButton.setTextColor(getResources()
+					.getColor(R.color.black));
+		} else if (role.equals("A"))
+		{
+			removeFriendButton.setText("A");
+			removeFriendButton.setTextColor(getResources()
+					.getColor(R.color.light_green));
 		} else
 		{
-
-			TextView tv = (TextView) findViewById(R.id.bioTextView);
-			tv.setText(bio);
+			removeFriendButton.setText("-");
+			removeFriendButton.setTextColor(getResources()
+					.getColor(R.color.light_blue));
 		}
+		removeFriendButton.setId(index);
+		friendNameButton.setId(index);
+		rowView.setId(index);
+		membersToAdd.addView(rowView);*/
 	}
 
 	@Override
@@ -167,10 +155,10 @@ public class GroupProfileActivity extends ActionBarActivity
 		getMenuInflater().inflate(R.menu.navigation_actions, menu);
 
 		// Set up the image view
-		if (iv == null)
-		{
-			iv = (ImageView) findViewById(R.id.profilePhoto);
-		}
+		//if (iv == null)
+		//{
+		//	iv = (ImageView) findViewById(R.id.profilePhoto);
+		//}
 		return true;
 	}
 
@@ -186,8 +174,8 @@ public class GroupProfileActivity extends ActionBarActivity
 		{
 			Intent login = new Intent(this, LoginActivity.class);
 			startActivity(login);
-			bmp = null;
-			iv = null;
+			//bmp = null;
+			//iv = null;
 			Intent intent = new Intent("CLOSE_ALL");
 			this.sendBroadcast(intent);
 			return true;
@@ -195,7 +183,7 @@ public class GroupProfileActivity extends ActionBarActivity
 		if (id == R.id.action_home)
 		{
 			Intent intent = new Intent(this, HomeActivity.class);
-			intent.putExtra("ParentClassName", "GroupProfileActivity");
+			//intent.putExtra("ParentClassName", "GroupProfileActivity");
 			startActivity(intent);
 		}
 		return super.onOptionsItemSelected(item);
@@ -207,8 +195,8 @@ public class GroupProfileActivity extends ActionBarActivity
 		Intent intent = new Intent(this, HomeActivity.class);
 		intent.putExtra("ParentClassName", "GroupProfileActivity");
 		startActivity(intent);
-		bmp = null;
-		iv = null;
+	//	bmp = null;
+	//	iv = null;
 		finish();
 	}
 
@@ -217,209 +205,21 @@ public class GroupProfileActivity extends ActionBarActivity
 		Intent intent = new Intent(this, ProfileEditActivity.class);
 		intent.putExtra("ParentClassName", "GroupProfileActivity");
 		startActivity(intent);
-		bmp = null;
-		iv = null;
+	//	bmp = null;
+	//	iv = null;
 	}
 
-	public String readGetFriendsJSONFeed(String URL)
-	{
-
-		Log.d("message", "00000000000000002");
-		StringBuilder stringBuilder = new StringBuilder();
-		HttpClient httpClient = new DefaultHttpClient();
-		HttpPost httpPost = new HttpPost(URL);
-		try
-		{
-			if (URL.equals("http://98.213.107.172/android_connect/count_group_members.php"))
-			{
-				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(
-						1);
-				nameValuePairs.add(new BasicNameValuePair("gname", gname));
-				httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-			} else if (URL
-					.equals("http://98.213.107.172/android_connect/get_group_contents.php"))
-			{
-				Log.d("hello", "hellohello2");
-				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(
-						2);
-				nameValuePairs.add(new BasicNameValuePair("gname", gname));
-				nameValuePairs.add(new BasicNameValuePair("index", "" + index));
-				httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-				index++;
-			}
-			HttpResponse response = httpClient.execute(httpPost);
-			StatusLine statusLine = response.getStatusLine();
-			int statusCode = statusLine.getStatusCode();
-			if (statusCode == 200)
-			{
-				HttpEntity entity = response.getEntity();
-				InputStream inputStream = entity.getContent();
-				BufferedReader reader = new BufferedReader(
-						new InputStreamReader(inputStream));
-				String line;
-				while ((line = reader.readLine()) != null)
-				{
-					Log.d("whatis", "The response is: " + line);
-					stringBuilder.append(line);
-				}
-				inputStream.close();
-				reader.close();
-			} else
-			{
-				Log.d("JSON", "Failed to download file");
-			}
-
-		} catch (Exception e)
-		{
-			Log.d("readJSONFeed", e.getLocalizedMessage());
-		}
-
-		return stringBuilder.toString();
-	}
-
-	/*
-	 * Get profile executes get_profile.php.
-	 */
-	private class getProfileTask extends AsyncTask<String, Void, String>
-	{
-
-		@Override
-		protected String doInBackground(String... urls)
-		{
-			Log.d("message", "00000000000000003 " + urls[0]);
-			return readGetFriendsJSONFeed(urls[0]);
-		}
-
-		@Override
-		protected void onPostExecute(String result)
-		{
-			try
-			{
-				Log.d("message", "00000000000000004");
-				JSONObject jsonObject = new JSONObject(result);
-
-				if (jsonObject.getString("success").toString().equals("1"))
-				{
-					String gnumTemp = (jsonObject.getString("gcount"));
-					gcount = Integer.parseInt(gnumTemp);
-					Log.d("count group members", "There are " + gnumTemp
-							+ " gmembers.");
-
-				} else if (jsonObject.getString("success").toString()
-						.equals("2"))
-				{
-					String grow = (jsonObject.getString("grow"));
-					// JSONArray grow = (JSONArray)
-					// jsonObject.getJSONArray("grow");
-					String tokens = ",";
-					String[] contents = grow.split(tokens);
-					for (int i = 0; i < contents.length; i++)
-					{
-						if (contents[i].contains("\""))
-						{
-							contents[i] = contents[i].replaceAll("\"", "");
-						}
-					}
-
-					bio = contents[2];
-					String role = contents[5];
-					String member = contents[7];
-					Log.d("count group members",
-							"The contents of this row is:\n" + contents[7]
-									+ ".");
-
-					// <<<<<<<<<< here >>>>>>>>>>//
-					GridLayout rowView = (GridLayout) inflater.inflate(
-							R.layout.listitem_groupprofile, null);
-					Button removeFriendButton = (Button) rowView
-							.findViewById(R.id.removeFriendButtonNoAccess);
-					Button friendNameButton = (Button) rowView
-							.findViewById(R.id.friendNameButtonNoAccess);
-					friendNameButton.setText(member);
-					if (role.equals("C"))
-					{
-						removeFriendButton.setText("C");
-						removeFriendButton.setTextColor(getResources()
-								.getColor(R.color.black));
-					} else if (role.equals("A"))
-					{
-						removeFriendButton.setText("A");
-						removeFriendButton.setTextColor(getResources()
-								.getColor(R.color.light_green));
-					} else
-					{
-						removeFriendButton.setText("-");
-						removeFriendButton.setTextColor(getResources()
-								.getColor(R.color.light_blue));
-					}
-					removeFriendButton.setId(index);
-					friendNameButton.setId(index);
-					rowView.setId(index);
-					membersToAdd.addView(rowView);
-
-					// getGroupContents();
-				}
-				/*
-				 * // Success JSONArray jsonProfileArray = (JSONArray)
-				 * jsonObject .getJSONArray("profile");
-				 * 
-				 * //String name = jsonProfileArray.getString(0) + " " // +
-				 * jsonProfileArray.getString(1); String bio =
-				 * jsonProfileArray.getString(3); String img =
-				 * jsonProfileArray.getString(5);
-				 * 
-				 * // decode image back to android bitmap format byte[]
-				 * decodedString = Base64.decode(img, Base64.DEFAULT); if
-				 * (decodedString != null) { bmp =
-				 * BitmapFactory.decodeByteArray(decodedString, 0,
-				 * decodedString.length); } // set the image if (bmp != null) {
-				 * if (iv == null) { iv = (ImageView)
-				 * findViewById(R.id.profilePhoto);
-				 * 
-				 * } iv.setImageBitmap(bmp); img = null; decodedString = null; }
-				 * 
-				 * TextView bioTextView = (TextView)
-				 * findViewById(R.id.bioTextView); bioTextView.setText(bio);
-				 */
-				else
-				{
-					// Fail
-				}
-			} catch (Exception e)
-			{
-				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
-			}
-		}
-	}
-
-	public void toggleAdmin(View view)
-	{
-
-	}
-
+	
 	public void editGroupProfileButton(View v)
 	{
 		// TODO Auto-generated method stub
 		switch (v.getId())
 		{
 		case R.id.editGroupProfilePhotoButton:
-			i = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+			Intent i = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
 			startActivityForResult(i, CAMERA_DATA);
 			break;
 
-		}
-	}
-
-	@Override
-	protected void onActivityResult(int reqCode, int resCode, Intent d)
-	{
-		// TODO Auto-generated method stub
-		super.onActivityResult(reqCode, resCode, d);
-		if (resCode == RESULT_OK)
-		{
-			Bundle extras = d.getExtras();
-			bmp = (Bitmap) extras.get("data");
-			iv.setImageBitmap(bmp);
 		}
 	}
 

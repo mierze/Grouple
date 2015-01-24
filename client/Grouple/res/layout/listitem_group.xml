@@ -23,7 +23,7 @@
   	    android:background="@android:color/transparent"
   	    android:fontFamily="sans-serif-condensed"
   	    android:gravity="center_vertical"
-  	    android:onClick="addToGroupTable"
+  	    android:onClick="startGroupProfileActivity"
   	    android:text="lkasjdf"
   	    android:textColor="@color/text_color" 
   	    android:textStyle="bold"/>

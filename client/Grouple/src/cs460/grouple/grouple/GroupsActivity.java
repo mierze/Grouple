@@ -73,7 +73,7 @@ public class GroupsActivity extends ActionBarActivity
 		
 		setNotifications();
 		
-		String className = extras.getString("ParentClassName");
+		//String className = extras.getString("ParentClassName");
 
 
 		initActionBar();

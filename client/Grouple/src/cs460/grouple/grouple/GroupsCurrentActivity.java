@@ -40,8 +40,6 @@ import android.widget.TextView;
 public class GroupsCurrentActivity extends ActionBarActivity
 {
 
-	Intent parentIntent;
-	Intent upIntent;
 	int clickedRemoveID;
 	BroadcastReceiver broadcastReceiver;
 	User user; //user whose current groups displayed
@@ -68,16 +66,8 @@ public class GroupsCurrentActivity extends ActionBarActivity
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
 	//	actionbarTitle.setText(global.getName() + "'s Groups"); //PANDA
 		ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
-		upButton.setOnClickListener(new OnClickListener()
-		{
-			@Override
-			public void onClick(View view)
-			{
-				upIntent.putExtra("up", "true");
-				startActivity(upIntent);
-				finish();
-			}
-		});
+
+	
 
 	}
 
@@ -149,7 +139,7 @@ public class GroupsCurrentActivity extends ActionBarActivity
 	 */
 	public void populateGroupsCurrent()
 	{
-		Global global = ((Global) getApplicationContext());
+	
 		LayoutInflater li = getLayoutInflater();
 		LinearLayout groupsLayout = ((LinearLayout)findViewById(R.id.groupsCurrentLayout));
 		//grabbing the users groups
@@ -231,6 +221,16 @@ public class GroupsCurrentActivity extends ActionBarActivity
 		// End Kill switch listener
 	}
 
+	public void startGroupProfileActivity(View view)
+	{
+		Global global = ((Global) getApplicationContext());
+		Intent groupProfile = new Intent(this, GroupProfileActivity.class);
+		System.out.println("Loading group gid: " + view.getId());
+		groupProfile.putExtra("gid", view.getId());
+		global.loadGroup(view.getId());
+		startActivity(groupProfile);
+	}
+	
 	private class leaveGroupTask extends AsyncTask<String, Void, String>
 	{
 		@Override

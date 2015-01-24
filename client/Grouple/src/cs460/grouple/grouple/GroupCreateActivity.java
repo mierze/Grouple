@@ -71,7 +71,7 @@ public class GroupCreateActivity extends ActionBarActivity
 		
 		Global global = ((Global) getApplicationContext());
 		//grab the email of current users from our global class
-		email = global.currentUser.getEmail();
+		email = global.getCurrentUser().getEmail();
 		user = global.loadUser(email);
 		//load our list of current friends.  key is friend email -> value is full names
 		allFriends = user.getFriends();

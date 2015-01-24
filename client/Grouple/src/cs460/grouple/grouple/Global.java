@@ -32,7 +32,7 @@ import android.widget.Button;
 public class Global extends Application
 {
 	private User currentUser; //contains the current user, is updated on every pertinent activity call
-
+	private Group groupBuffer;
 	/*
 	 * Adds a user to the users arraylist
 	 */
@@ -44,6 +44,14 @@ public class Global extends Application
 	public User getCurrentUser()
 	{
 		return currentUser;
+	}
+	public void setGroupBuffer(Group g)
+	{
+		groupBuffer = g;
+	}
+	public Group getGroupBuffer()
+	{
+		return groupBuffer;
 	}
 	
 	//using the email of user, load them in
