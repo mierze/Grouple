@@ -1,8 +1,23 @@
 package cs460.grouple.grouple;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.StatusLine;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 
@@ -86,7 +101,7 @@ public class Group extends Activity
 				JSONObject jsonObject = new JSONObject(result);
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					String numFriends = jsonObject.getString("numFriends")
+					String numFriends = jsonObject.getString("members")
 							.toString();
 					System.out.println("Should be setting the num friends to "
 							+ numFriends);
@@ -116,8 +131,7 @@ public class Group extends Activity
 	public int fetchGroupInfo()
 	{
 		new getGroupInfoTask()
-				.execute("http://68.59.162.183/android_connect/get_group_info.php?gid="
-						+ getID());
+				.execute("http://68.59.162.183/android_connect/get_group_profile.php", Integer.toString(getID()));
 		return 1;
 	}
 
@@ -126,8 +140,10 @@ public class Group extends Activity
 		@Override
 		protected String doInBackground(String... urls)
 		{
-			Global global = ((Global) getApplicationContext());
-			return global.readJSONFeed(urls[0], null);
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+			nameValuePairs.add(new BasicNameValuePair("gid", urls[1]));
+			System.out.println("Finding group with gid = " + urls[1]);
+			return readJSONFeed(urls[0], nameValuePairs);
 		}
 
 		@Override
@@ -135,22 +151,36 @@ public class Group extends Activity
 		{
 			try
 			{
+				System.out.println(result);
 				JSONObject jsonObject = new JSONObject(result);
+				System.out.println("After declare");
 				//successful run
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
+					JSONArray jsonArray = jsonObject.getJSONArray("profile");
 					//set group name
-					String name = jsonObject.getString("groupName").toString();
-					setName(name);
+					System.out.println("In on post user success 1");
+					String name = (String) jsonArray.get(0);
+				
+					setName(name); 
 					//set group bio
-					String bio = jsonObject.getString("groupBio").toString();
+				
+					String bio = (String) jsonArray.get(1);
+					//System.out.println("Setting aboute: " + bio);
 					setBio(bio);
+					
+					//get that image niggi
+					//String image = (String) jsonArray.get(2);
+					//setImage(image);
+					
+					String creator = (String) jsonArray.get(3);
 
 				}
 				//unsuccessful
 				if (jsonObject.getString("success").toString().equals("2"))
 				{
 					//shouldnt
+					System.out.println("success 2 in on post");
 				}
 			} catch (Exception e)
 			{
@@ -166,5 +196,77 @@ public class Group extends Activity
 		//delete code here
 		
 		return 1; //successful
+	}
+	
+	public String readJSONFeed(String URL, List<NameValuePair> nameValuePairs)
+	{
+		StringBuilder stringBuilder = new StringBuilder();
+		HttpClient httpClient = new DefaultHttpClient();
+
+		if (nameValuePairs == null)
+		{
+			HttpGet httpGet = new HttpGet(URL);
+
+			try
+			{
+				HttpResponse response = httpClient.execute(httpGet);
+				StatusLine statusLine = response.getStatusLine();
+				int statusCode = statusLine.getStatusCode();
+				if (statusCode == 200)
+				{
+					HttpEntity entity = response.getEntity();
+					InputStream inputStream = entity.getContent();
+					BufferedReader reader = new BufferedReader(
+							new InputStreamReader(inputStream));
+					String line;
+					while ((line = reader.readLine()) != null)
+					{
+						System.out.println("New line: " + line);
+						stringBuilder.append(line);
+					}
+					inputStream.close();
+				} else
+				{
+					Log.d("JSON", "Failed to download file");
+				}
+			} catch (Exception e)
+			{
+				Log.d("readJSONFeed", e.getLocalizedMessage());
+			}
+
+		}
+
+		else
+		{
+			HttpPost httpPost = new HttpPost(URL);
+			try
+			{
+				httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+				HttpResponse response = httpClient.execute(httpPost);
+				StatusLine statusLine = response.getStatusLine();
+				int statusCode = statusLine.getStatusCode();
+				if (statusCode == 200)
+				{
+					HttpEntity entity = response.getEntity();
+					InputStream inputStream = entity.getContent();
+					BufferedReader reader = new BufferedReader(
+							new InputStreamReader(inputStream));
+					String line;
+					while ((line = reader.readLine()) != null)
+					{
+						stringBuilder.append(line);
+					}
+					inputStream.close();
+				} else
+				{
+					Log.d("JSON", "Failed to download file");
+				}
+			} catch (Exception e)
+			{
+				Log.d("readJSONFeed", e.getLocalizedMessage());
+			}
+		}
+		return stringBuilder.toString();
 	}
 }

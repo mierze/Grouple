@@ -33,7 +33,7 @@
 	  	    android:src="@drawable/abc_ab_bottom_solid_light_holo" />
        
        <TextView
-	  	    android:id="@+id/bioTextViewR"
+	  	    android:id="@+id/aboutTextViewGPA"
 	  	    android:layout_width="match_parent"
            	android:textColor="@color/text_color"
            	android:fontFamily="sans-serif-condensed"
@@ -63,7 +63,7 @@
         android:textColor="@color/white" />
        
 	  	<TextView
-	  	    android:id="@+id/bioTextView"
+	  	    android:id="@+id/bioTextViewGPA"
 	  	    android:layout_width="match_parent"
            	android:textColor="@color/text_color"
            	android:fontFamily="sans-serif-condensed"

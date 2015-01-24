@@ -73,6 +73,7 @@ public class GroupProfileActivity extends ActionBarActivity
 		ab.setDisplayHomeAsUpEnabled(false);
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
 		actionbarTitle.setText(group.getName());
+		System.out.println(group.getName());
 		ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
 
 	}
@@ -93,16 +94,21 @@ public class GroupProfileActivity extends ActionBarActivity
 		Intent intent = getIntent();
 		Bundle extras = intent.getExtras();
 		System.out.println("(GroupProfile)Loading group gid: " + extras.getInt("gid"));
-		//if (global.getGroupBuffer() != null)
-		//	group = global.getGroupBuffer(); // for now
-		//else
-		//	group = global.loadGroup(extras.getInt("gid"));
-
+		if (global.getGroupBuffer() != null && global.getGroupBuffer().getID() == extras.getInt("gid"))
+		{
+			group = global.getGroupBuffer(); // for now
+			System.out.println("Group Profile grabbing buffer, name: " + group.getName());
+		}
+		else
+			group = global.loadGroup(extras.getInt("gid"));
+		
+		TextView about = (TextView)findViewById(R.id.bioTextViewGPA);
+		about.setText(group.getBio());
 
 		//getGroupContents();
 		// startActivity(upIntent);
-		///initActionBar();
-		//initKillswitchListener();
+		initActionBar();
+		initKillswitchListener();
 
 	}
 

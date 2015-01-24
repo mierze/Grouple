@@ -251,7 +251,7 @@ public class GroupCreateActivity extends ActionBarActivity
 			
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("g_name", groupname));
-			nameValuePairs.add(new BasicNameValuePair("descript", groupbio));
+			nameValuePairs.add(new BasicNameValuePair("about", groupbio));
 			nameValuePairs.add(new BasicNameValuePair("creator", email));
 
 			//pass url and nameValuePairs off to global to do the JSON call.  Code continues at onPostExecute when JSON returns.

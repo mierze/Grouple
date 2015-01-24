@@ -260,7 +260,10 @@ public class Global extends Application
 		Group group; //declare group variable
 		
 		//instantiate a new group
-		group = new Group(id);
+		if (getGroupBuffer() != null && getGroupBuffer().getID() == id)
+			group = getGroupBuffer();
+		else 
+			group = new Group(id);
 		
 		
 		/**
@@ -281,7 +284,7 @@ public class Global extends Application
 		//reset success
 		success = 0;
 			//json call to populate users friendKeys / friendNames
-			success = group.fetchMembers();
+			//success = group.fetchMembers();
 		
 		//was successful in fetching user info
 		if (success == 1)

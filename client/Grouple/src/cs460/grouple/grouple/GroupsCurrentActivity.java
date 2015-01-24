@@ -221,13 +221,15 @@ public class GroupsCurrentActivity extends ActionBarActivity
 		// End Kill switch listener
 	}
 
-	public void startGroupProfileActivity(View view)
+	public void startGroupProfileActivity(View view) throws InterruptedException
 	{
 		Global global = ((Global) getApplicationContext());
 		Intent groupProfile = new Intent(this, GroupProfileActivity.class);
 		System.out.println("Loading group gid: " + view.getId());
 		groupProfile.putExtra("gid", view.getId());
-		global.setGroupBuffer(global.loadGroup(view.getId()));
+		Group g = global.loadGroup(view.getId());
+		global.setGroupBuffer(g);
+		Thread.sleep(2000);
 		startActivity(groupProfile);
 	}
 	
