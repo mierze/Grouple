@@ -263,7 +263,7 @@ public class FriendsCurrentActivity extends ActionBarActivity
 
 						new deleteFriendTask()
 								.execute(
-										"http://" + R.string.ip +"/android_connect/delete_friend.php",
+										"http://68.59.162.183/android_connect/delete_friend.php",
 										email, friendEmail);
 						user.removeFriend(friendEmail);
 						// removing all of the views

@@ -55,7 +55,7 @@ public class GroupProfileActivity extends ActionBarActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_group_profile);
 
-		Global global = ((Global) getApplicationContext());
+		//Global global = ((Global) getApplicationContext());
 		Bundle extras = getIntent().getExtras();
 		//gname = extras.getString("gname");
 
@@ -93,13 +93,16 @@ public class GroupProfileActivity extends ActionBarActivity
 		Intent intent = getIntent();
 		Bundle extras = intent.getExtras();
 		System.out.println("(GroupProfile)Loading group gid: " + extras.getInt("gid"));
-		group = global.loadGroup(extras.getInt("gid"));
-		// do a check that it is not from a back push
+		//if (global.getGroupBuffer() != null)
+		//	group = global.getGroupBuffer(); // for now
+		//else
+		//	group = global.loadGroup(extras.getInt("gid"));
+
 
 		//getGroupContents();
 		// startActivity(upIntent);
-		//initActionBar();
-		initKillswitchListener();
+		///initActionBar();
+		//initKillswitchListener();
 
 	}
 
@@ -153,15 +156,9 @@ public class GroupProfileActivity extends ActionBarActivity
 
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.navigation_actions, menu);
-
-		// Set up the image view
-		//if (iv == null)
-		//{
-		//	iv = (ImageView) findViewById(R.id.profilePhoto);
-		//}
 		return true;
 	}
-
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{

@@ -227,7 +227,7 @@ public class GroupsCurrentActivity extends ActionBarActivity
 		Intent groupProfile = new Intent(this, GroupProfileActivity.class);
 		System.out.println("Loading group gid: " + view.getId());
 		groupProfile.putExtra("gid", view.getId());
-		global.loadGroup(view.getId());
+		global.setGroupBuffer(global.loadGroup(view.getId()));
 		startActivity(groupProfile);
 	}
 	
@@ -296,7 +296,7 @@ public class GroupsCurrentActivity extends ActionBarActivity
 						System.out.println("Leave grp email / id: " + user.getEmail() + " " + clickedRemoveID);
 						new leaveGroupTask()
 								.execute(
-										"http://" + R.string.ip +"/android_connect/leave_group.php?email=" + user.getEmail() + "&gid=" + clickedRemoveID);
+										"http://68.59.162.183/android_connect/leave_group.php?email=" + user.getEmail() + "&gid=" + clickedRemoveID);
 						user.removeGroup(clickedRemoveID);
 						clickedRemoveID = -1; //reset
 					}

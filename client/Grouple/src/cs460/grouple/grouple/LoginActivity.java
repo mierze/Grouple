@@ -89,7 +89,7 @@ public class LoginActivity extends Activity
 		Global global = ((Global) getApplicationContext());
 
 		new getLoginTask()
-					.execute("http://" + R.string.ip +"/android_connect/get_login.php?email="
+					.execute("http://68.59.162.183/android_connect/get_login.php?email="
 							+ email + "&password=" + password);
 
 	}

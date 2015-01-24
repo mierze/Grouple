@@ -204,14 +204,14 @@ public class FriendRequestsActivity extends ActionBarActivity
 					.findViewById(R.id.emailTextViewFRLI);
 			declineEmail = declineEmailTextView.getText().toString(); //PANDA
 			new getDeclineFriendTask()
-					.execute("http://" + R.string.ip +"/android_connect/decline_friend_request.php");
+					.execute("http://68.59.162.183/android_connect/decline_friend_request.php");
 			break;
 		case R.id.acceptFriendRequestButtonFRLI:
 			TextView acceptEmailTextView = (TextView) parent
 					.findViewById(R.id.emailTextViewFRLI);
 			acceptEmail = acceptEmailTextView.getText().toString();
 			new getAcceptFriendTask()
-					.execute("http://" + R.string.ip +"/android_connect/accept_friend_request.php");
+					.execute("http://68.59.162.183/android_connect/accept_friend_request.php");
 			break;
 		}
 	}
