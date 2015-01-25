@@ -398,6 +398,7 @@ int id icon 0x7f05002a
 int id ifRoom 0x7f05000a
 int id image 0x7f050027
 int id lNameEditText 0x7f050090
+int id leaveGroupButton 0x7f0500aa
 int id linearLayoutNested1 0x7f050066
 int id linearLayoutTitle 0x7f050060
 int id linearLayoutTitle2 0x7f050071
@@ -435,7 +436,6 @@ int id registerButtonRA 0x7f050092
 int id registerTextView 0x7f050094
 int id removeFriendButton 0x7f0500a3
 int id removeFriendButtonNoAccess 0x7f0500b3
-int id removeGroupButton 0x7f0500aa
 int id sadGuyGridLayout 0x7f0500b6
 int id sadGuyImageView 0x7f0500b7
 int id sadGuyTextView 0x7f0500b8

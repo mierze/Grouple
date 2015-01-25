@@ -29,7 +29,7 @@
   	    android:textStyle="bold"/>
 
   	<Button
-  	    android:id="@+id/removeGroupButton"
+  	    android:id="@+id/leaveGroupButton"
   	    android:layout_width="48dp"
   	    android:layout_column="1"
   	    android:layout_gravity="right|top"

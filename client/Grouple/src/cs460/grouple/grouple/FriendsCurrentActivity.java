@@ -197,7 +197,7 @@ public class FriendsCurrentActivity extends ActionBarActivity
 				 */
 				 
 				 Bundle extras = getIntent().getExtras();
-				 if (extras.getString("mod").equals("true"))
+				 if (global.isCurrentUser(user.getEmail()))
 				 {
 					 rowView = (GridLayout) li.inflate(
 							 R.layout.listitem_friend, null);
@@ -248,10 +248,8 @@ public class FriendsCurrentActivity extends ActionBarActivity
 		// Email of friend that we are removing.
 		final String friendEmail = friendsEmailList.get(id);
 
-		// refreshing the current friends layout
 		final String email = user.getEmail();
-		// delete confirmation. If the user hits yes then execute the
-		// delete_friend php, else do nothing.
+
 		new AlertDialog.Builder(this)
 				.setMessage("Are you sure you want to remove that friend?")
 				.setCancelable(true)
@@ -324,6 +322,7 @@ public class FriendsCurrentActivity extends ActionBarActivity
 	public void startUserProfileActivity(View view)
 			throws InterruptedException
 	{
+		Global global = ((Global) getApplicationContext());
 		// need to get access to this friends email
 		// launches friendProfileActivity and loads content based on that email
 		int id = view.getId();
@@ -333,12 +332,15 @@ public class FriendsCurrentActivity extends ActionBarActivity
 		String friendEmail = friendsEmailList.get(id);
 		Intent intent = new Intent(this, UserProfileActivity.class);
 		intent.putExtra("ParentClassName", "FriendsCurrentActivity");
-
+		User u = global.loadUser(friendEmail);
+		global.setUserBuffer(u);
+		Thread.sleep(1000);
 		//global.fetchNumFriends(friendEmail); PANDA
 		//global.fetchNumGroups(friendEmail);
 		// Another sleep that way the php has time to execute. We need to start
 		// the activity when the PHP returns..
 		intent.putExtra("email", friendEmail);
+		intent.putExtra("mod", "false");
 		startActivity(intent);
 	}
 

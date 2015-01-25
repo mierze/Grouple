@@ -99,7 +99,11 @@ public class UserProfileActivity extends ActionBarActivity
 		String className = extras.getString("ParentClassName");
 
 
-		
+		if (!global.isCurrentUser(user.getEmail()))
+		{
+			Button editProfileButton = (Button)findViewById(R.id.editProfileButton);
+			editProfileButton.setVisibility(View.GONE);
+		}
 
 
 		// the textviews
@@ -235,8 +239,7 @@ public class UserProfileActivity extends ActionBarActivity
 		Intent intent = new Intent(this, GroupsCurrentActivity.class);
 		Global global = ((Global) getApplicationContext());
 		intent.putExtra("ParentClassName", "UserActivity");
-	//	intent.putExtra("email", global.getCurrentUser());
-		intent.putExtra("mod", "true");
+		intent.putExtra("email", user.getEmail());
 		//intent.putExtra("ParentEmail", global.getCurrentUser());
 		startActivity(intent);
 		bmp = null;

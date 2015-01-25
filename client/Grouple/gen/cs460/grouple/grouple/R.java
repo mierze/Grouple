@@ -1243,6 +1243,7 @@ containing a value of this type.
         public static final int ifRoom=0x7f05000a;
         public static final int image=0x7f050027;
         public static final int lNameEditText=0x7f050090;
+        public static final int leaveGroupButton=0x7f0500aa;
         public static final int linearLayoutNested1=0x7f050066;
         public static final int linearLayoutTitle=0x7f050060;
         public static final int linearLayoutTitle2=0x7f050071;
@@ -1280,7 +1281,6 @@ containing a value of this type.
         public static final int registerTextView=0x7f050094;
         public static final int removeFriendButton=0x7f0500a3;
         public static final int removeFriendButtonNoAccess=0x7f0500b3;
-        public static final int removeGroupButton=0x7f0500aa;
         public static final int sadGuyGridLayout=0x7f0500b6;
         public static final int sadGuyImageView=0x7f0500b7;
         public static final int sadGuyTextView=0x7f0500b8;

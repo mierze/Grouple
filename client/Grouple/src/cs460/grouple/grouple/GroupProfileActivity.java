@@ -94,13 +94,8 @@ public class GroupProfileActivity extends ActionBarActivity
 		Intent intent = getIntent();
 		Bundle extras = intent.getExtras();
 		System.out.println("(GroupProfile)Loading group gid: " + extras.getInt("gid"));
-		if (global.getGroupBuffer() != null && global.getGroupBuffer().getID() == extras.getInt("gid"))
-		{
-			group = global.getGroupBuffer(); // for now
-			System.out.println("Group Profile grabbing buffer, name: " + group.getName());
-		}
-		else
-			group = global.loadGroup(extras.getInt("gid"));
+
+		group = global.loadGroup(extras.getInt("gid"));
 		
 		TextView about = (TextView)findViewById(R.id.bioTextViewGPA);
 		about.setText(group.getBio());

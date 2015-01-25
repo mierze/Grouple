@@ -33,6 +33,7 @@ public class Global extends Application
 {
 	private User currentUser; //contains the current user, is updated on every pertinent activity call
 	private Group groupBuffer;
+	private User userBuffer;
 	/*
 	 * Adds a user to the users arraylist
 	 */
@@ -53,7 +54,21 @@ public class Global extends Application
 	{
 		return groupBuffer;
 	}
-	
+	public void setUserBuffer(User u)
+	{
+		userBuffer = u;
+	}
+	public User getUserBuffer()
+	{
+		return userBuffer;
+	}
+	public boolean isCurrentUser(String email)
+	{
+		if (getCurrentUser().getEmail().equals(email))
+			return true;
+		else 
+			return false;
+	}
 	//using the email of user, load them in
 	public User loadUser(String email)
 	{	
@@ -117,7 +132,11 @@ public class Global extends Application
 				Log.d("loadUser","success after fetchGroupInvites()");
 			
 		}
-		else
+		else if (getUserBuffer() != null && getUserBuffer().getEmail().equals(email))
+		{
+			user = getUserBuffer();
+		}
+		else 
 		{
 			//instantiate new user
 			user = new User(email);

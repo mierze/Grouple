@@ -80,7 +80,8 @@ public class GroupsCurrentActivity extends ActionBarActivity
 		
 		//grabbing the user with the given email in the extras
 		user = global.loadUser(extras.getString("email"));	
-
+		
+		
 		String className = extras.getString("ParentClassName");
 
 		populateGroupsCurrent();
@@ -109,7 +110,7 @@ public class GroupsCurrentActivity extends ActionBarActivity
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
-		Global global = ((Global) getApplicationContext());
+		
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
@@ -139,7 +140,7 @@ public class GroupsCurrentActivity extends ActionBarActivity
 	 */
 	public void populateGroupsCurrent()
 	{
-	
+		Global global = ((Global) getApplicationContext());
 		LayoutInflater li = getLayoutInflater();
 		LinearLayout groupsLayout = ((LinearLayout)findViewById(R.id.groupsCurrentLayout));
 		//grabbing the users groups
@@ -153,28 +154,34 @@ public class GroupsCurrentActivity extends ActionBarActivity
 				//Group group = global.loadGroup(id);
 				GridLayout rowView;
 				
+		
+					rowView = (GridLayout) li.inflate(
+							R.layout.listitem_group, null);
+	
+					
+				Button leaveGroupButton = (Button)rowView.findViewById(R.id.leaveGroupButton);
 				//if mod true this, if not someting else
-				rowView = (GridLayout) li.inflate(
-						R.layout.listitem_group, null);
-
+				if (global.isCurrentUser(user.getEmail()))
+					leaveGroupButton.setId(entry.getKey());
+					
+				else
+					leaveGroupButton.setVisibility(View.GONE);
 				
 				// Grab the buttons and set their IDs. Their IDs
 				// will fall inline with the array 'groupsNameList'.
 				Button groupNameButton = (Button) rowView
 						.findViewById(R.id.groupNameButton);
-				Button removeButton = (Button) rowView
-						.findViewById(R.id.removeGroupButton);
-				groupNameButton.setText(entry.getValue() + " " + entry.getKey());
+
+				groupNameButton.setText(entry.getValue());
 				
 				//setting ids to the id of the group for button functionality
-				removeButton.setId(entry.getKey());
 				groupNameButton.setId(entry.getKey());
 				rowView.setId(entry.getKey());
 				
 				//adding row to view
-				
 				groupsLayout.addView(rowView);
 
+				//incrementing index
 				i++;
 			}
 		}
@@ -190,8 +197,6 @@ public class GroupsCurrentActivity extends ActionBarActivity
 			((TextView) row.findViewById(R.id.sadGuyTextView))
 				.setText("You do not have any groups.");
 
-
-			
 			groupsLayout.addView(row);
 		}	
 	}
