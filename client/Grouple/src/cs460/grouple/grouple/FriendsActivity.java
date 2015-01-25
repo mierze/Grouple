@@ -23,9 +23,6 @@ import android.widget.TextView;
 public class FriendsActivity extends ActionBarActivity
 {
 	BroadcastReceiver broadcastReceiver;
-	Intent parentIntent;
-	Intent upIntent;
-	View friends; 
 	User user; //the current user
 
 	@Override
@@ -34,8 +31,7 @@ public class FriendsActivity extends ActionBarActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_friends);
 		
-		friends = findViewById(R.id.friendsContainer);
-		load(friends);
+		load();
 
 		initKillswitchListener();
 	}
@@ -49,57 +45,21 @@ public class FriendsActivity extends ActionBarActivity
 		ab.setDisplayHomeAsUpEnabled(false);
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
 		actionbarTitle.setText("Friends");
-		ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
-		upButton.setOnClickListener(new OnClickListener()
-		{
-
-			@Override
-			public void onClick(View view)
-			{
-				upIntent.putExtra("up", "true");
-				startActivity(upIntent);
-				finish();
-			}
-		});
+		//ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);	
 	}
 
-	public void load(View view)
+	public void load()
 	{
 		Global global = ((Global) getApplicationContext());
+		
 		//grabbing extras from intent
 		Intent intent = getIntent();
 		Bundle extras = intent.getExtras(); 
+		
 		//grabbing the user with the given email in the extras
 		user = global.loadUser(extras.getString("email"));
-		
-		//Test set some stuff
-		// Friends Activity
-
-			//Button friendRequestsButton = (Button) view
-				//	.findViewById(R.id.friendRequestsButtonFA);
-			//friendRequestsButton.setText("Friend Requests ("
-				//	+ user.getNumFriendRequests() + ")");
-			Button currentFriendsButton = (Button) findViewById(R.id.currentFriendsButtonFA);
-			currentFriendsButton
-					.setText("My Friends (" + user.getNumFriends() + ")"); //PANDA
-			Button friendRequestsButton = (Button) findViewById(R.id.friendRequestsButtonFA);
-			friendRequestsButton
-					.setText("Friend Requests (" + user.getNumFriendRequests() + ")"); //PANDA
-		
-		
-		// backstack of intents
-		// each class has a stack of intents lifo method used to execute them at
-		// start of activity
-		// intents need to include everything like ParentClassName, things for
-		// current page (email, ...)
-		// if check that friends
-		String email;
-
-
-		//global.fetchNumFriendRequests(global.getCurrentUser()); PANDA
-		//global.fetchNumFriends(global.getCurrentUser());
-		//global.setNotifications(friends);
-
+	
+		setNotifications();
 		initActionBar();
 		initKillswitchListener();
 	}
@@ -161,13 +121,21 @@ public class FriendsActivity extends ActionBarActivity
 		return super.onOptionsItemSelected(item);
 	}
 
+	
+	private void setNotifications()
+	{
+		//setting notifications for the current view
+		Button currentFriendsButton = (Button) findViewById(R.id.currentFriendsButtonFA);
+		currentFriendsButton.setText("My Friends (" + user.getNumFriends() + ")");
+		Button friendRequestsButton = (Button) findViewById(R.id.friendRequestsButtonFA);
+		friendRequestsButton.setText("Friend Requests (" + user.getNumFriendRequests() + ")"); 
+	}
 	/*
 	 * Start activity functions for friends sub activities, going back and
 	 * logging out
 	 */
 	public void startFriendAddActivity(View view)
 	{
-		Global global = ((Global) getApplicationContext());
 		Intent intent = new Intent(this, FriendAddActivity.class);
 		intent.putExtra("ParentClassName", "FriendsActivity");
 		intent.putExtra("email", user.getEmail());

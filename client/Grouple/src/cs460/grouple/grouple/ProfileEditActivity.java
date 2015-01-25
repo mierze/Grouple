@@ -63,38 +63,34 @@ public class ProfileEditActivity extends ActionBarActivity implements
 		// Set the activity layout to activity_edit_profile.
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_edit_profile);
+		
+		load();		
+	}
+
+	private void load()
+	{
+		// Resetting error text view
+		TextView errorTextView = (TextView) findViewById(R.id.errorTextViewEPA);
+		errorTextView.setVisibility(1);
+
+		initActionBar();
+		initKillswitchListener();
+
+		//make this utilize user object
+		new getProfileTask()
+				.execute("http://68.59.162.183/android_connect/get_profile.php");
+	}
+	
+	private void initActionBar()
+	{
 		// Set up the action bar.
 		ActionBar ab = getSupportActionBar();
 		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
 		ab.setCustomView(R.layout.actionbar);
 		ab.setDisplayHomeAsUpEnabled(false);
-		ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
-		upButton.setOnClickListener(new OnClickListener()
-		{
-
-			@Override
-			public void onClick(View view)
-			{
-
-				startParentActivity(view);
-
-			}
-		});
-
-		// Resetting error text view
-		TextView errorTextView = (TextView) findViewById(R.id.errorTextViewEPA);
-		errorTextView.setVisibility(1);
-
-		initKillswitchListener();
-
-		// execute php script, using the current users email address to populate
-		// the textviews for editing.
-		// We NEED to execute this before displaying the activity.
-		new getProfileTask()
-				.execute("http://68.59.162.183/android_connect/get_profile.php");
-
+		//ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);		
 	}
-
+	
 	@Override
 	protected void onDestroy()
 	{

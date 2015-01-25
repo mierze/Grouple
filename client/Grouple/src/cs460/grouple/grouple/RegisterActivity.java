@@ -5,6 +5,8 @@ import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
+
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -24,7 +26,7 @@ import android.widget.TextView;
 /*
  * HomeActivity allows the user to register for a new Grouple account.
  */
-public class RegisterActivity extends ActionBarActivity
+public class RegisterActivity extends Activity
 {
 	BroadcastReceiver broadcastReceiver;
 
@@ -33,22 +35,8 @@ public class RegisterActivity extends ActionBarActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_register);
-		/* Action bar */
-		ActionBar ab = getSupportActionBar();
-		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-		ab.setCustomView(R.layout.actionbar);
-		ab.setDisplayHomeAsUpEnabled(false);
-		ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
-		upButton.setOnClickListener(new OnClickListener()
-		{
-			@Override
-			public void onClick(View view)
-			{
-				startParentActivity(null);
-			}
-		});
 
-		getActionBar().hide();
+
 		initKillswitchListener();
 	}
 
@@ -58,26 +46,6 @@ public class RegisterActivity extends ActionBarActivity
 		// TODO Auto-generated method stub
 		unregisterReceiver(broadcastReceiver);
 		super.onDestroy();
-	}
-
-
-	public void startParentActivity(View view)
-	{
-		Bundle extras = getIntent().getExtras();
-
-		String className = "LoginActivity";
-		Intent newIntent = null;
-		try
-		{
-			newIntent = new Intent(this, Class.forName("cs460.grouple.grouple."
-					+ className));
-			newIntent.putExtra("up", "true");
-		} catch (ClassNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		startActivity(newIntent);
-		finish();
 	}
 
 	public void registerButton(View view)

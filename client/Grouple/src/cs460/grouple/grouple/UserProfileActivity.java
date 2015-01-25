@@ -1,12 +1,6 @@
 package cs460.grouple.grouple;
 
-import java.util.ArrayList;
-import java.util.List;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import cs460.grouple.grouple.R;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -15,12 +9,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,10 +28,7 @@ import android.widget.TextView;
 public class UserProfileActivity extends ActionBarActivity
 {
 	private ImageView iv;
-	private Bitmap bmp;
 	BroadcastReceiver broadcastReceiver;
-	Intent parentIntent;
-	Intent upIntent;
 	User user; //user who's profile this is
 	
 	@Override
@@ -71,18 +58,9 @@ public class UserProfileActivity extends ActionBarActivity
 		ab.setCustomView(R.layout.actionbar);
 		ab.setDisplayHomeAsUpEnabled(false);
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
-		ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
-		upButton.setOnClickListener(new OnClickListener()
-		{
-			@Override
-			public void onClick(View view)
-			{
-				upIntent.putExtra("up", "true");
-				startActivity(upIntent);
-				finish();
-			}
-		});
-		actionbarTitle.setText(user.getFullName() + "'s Profile"); //PANDA
+		//ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
+
+		actionbarTitle.setText(user.getFullName() + "'s Profile");
 	}
 
 	public void load()
@@ -93,12 +71,7 @@ public class UserProfileActivity extends ActionBarActivity
 
 		//grabbing the user with the given email in the extras
 		user = global.loadUser(extras.getString("email"));
-		//need to make sure this loads first
-		
-		
-		String className = extras.getString("ParentClassName");
-
-
+	
 		if (!global.isCurrentUser(user.getEmail()))
 		{
 			Button editProfileButton = (Button)findViewById(R.id.editProfileButton);
@@ -107,7 +80,7 @@ public class UserProfileActivity extends ActionBarActivity
 
 
 		// the textviews
-		initProfile();
+		populateProfile();
 
 		// initializing the action bar and killswitch listener
 		initActionBar();
@@ -163,7 +136,6 @@ public class UserProfileActivity extends ActionBarActivity
 			Global global = ((Global) getApplicationContext());
 			Intent login = new Intent(this, LoginActivity.class);
 			startActivity(login);
-			bmp = null;
 			iv = null;
 			Intent intent = new Intent("CLOSE_ALL");
 			this.sendBroadcast(intent);
@@ -186,7 +158,6 @@ public class UserProfileActivity extends ActionBarActivity
 		Intent intent = new Intent(this, ProfileEditActivity.class);
 		intent.putExtra("ParentClassName", "UserActivity");
 		startActivity(intent);
-		bmp = null;
 		iv = null;
 	}
 
@@ -194,44 +165,20 @@ public class UserProfileActivity extends ActionBarActivity
 	 * Get profile executes get_profile.php. It uses the current users email
 	 * address to retrieve the users name, age, and bio.
 	 */
-	public void initProfile()
+	public void populateProfile()
 	{
-		//grab all of the values from the user
-		String bio = user.getBio();
-		//String age = jsonProfileArray.getString(2);
-		String location = user.getLocation();
-		Bitmap img = user.getImage();//jsonProfileArray.getString(5);
-
-		// decode image back to android bitmap format
-		/*byte[] decodedString = Base64.decode(img, Base64.DEFAULT);
-		if (decodedString != null)
-		{
-			bmp = BitmapFactory.decodeByteArray(decodedString, 0,
-					decodedString.length);
-		}
-		// set the image
-		if (bmp != null)
-		*/
 		if (iv == null)
 		{
 			iv = (ImageView) findViewById(R.id.profilePhoto);
 		}
-		iv.setImageBitmap(img);
-		img = null;
-		
-		
-		 
-		// TextView nameTextView = (TextView)
-		// findViewById(R.id.nameEditTextEPA);
+		iv.setImageBitmap(user.getImage());
+
 		TextView ageTextView = (TextView) findViewById(R.id.ageTextView);
-		ageTextView.setText(user.getAge() + "yrs old");
 		TextView locationTextView = (TextView) findViewById(R.id.locationTextView);
 		TextView bioTextView = (TextView) findViewById(R.id.bioTextView);
-		// JSONObject bioJson = jsonProfileArray.getJSONObject(0);
-		// nameTextView.setText(name);
-	//	ageTextView.setText(age + " years old");
-		bioTextView.setText(bio);
-		locationTextView.setText(location);	
+		ageTextView.setText(user.getAge() + "yrs old");
+		bioTextView.setText(user.getBio());
+		locationTextView.setText(user.getLocation());	
 	}
 
 	public void startGroupsCurrentActivity(View view)
@@ -242,23 +189,16 @@ public class UserProfileActivity extends ActionBarActivity
 		intent.putExtra("email", user.getEmail());
 		//intent.putExtra("ParentEmail", global.getCurrentUser());
 		startActivity(intent);
-		bmp = null;
 		iv = null;
 	}
 
 	public void startFriendsCurrentActivity(View view)
 	{
 		Intent intent = new Intent(this, FriendsCurrentActivity.class);
-		Global global = ((Global) getApplicationContext());
-		//String email = global.getCurrentUser();
-
 		intent.putExtra("ParentClassName", "UserActivity");
-		//intent.putExtra("ParentEmail", email);
-		//intent.putExtra("Name", global.getName()); //PANDA
 		intent.putExtra("email", user.getEmail());
 		intent.putExtra("mod", "true");
 		startActivity(intent);
-		bmp = null;
 		iv = null;
 	}
 
@@ -268,7 +208,6 @@ public class UserProfileActivity extends ActionBarActivity
 		Intent intent = new Intent(this, EventsActivity.class);
 		intent.putExtra("ParentClassName", "UserActivity");
 		startActivity(intent);
-		bmp = null;
 		iv = null;
 	}
 

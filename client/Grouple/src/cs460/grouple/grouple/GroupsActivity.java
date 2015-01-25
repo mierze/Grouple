@@ -23,10 +23,7 @@ import android.widget.TextView;
 public class GroupsActivity extends ActionBarActivity
 {
 	BroadcastReceiver broadcastReceiver;
-	Intent parentIntent;
-	View groups;
 	User user;
-	Intent upIntent;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -34,8 +31,7 @@ public class GroupsActivity extends ActionBarActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_groups);
 
-		groups = findViewById(R.id.groupsContainer);
-		load(groups);
+		load();
 
 	}
 
@@ -49,36 +45,19 @@ public class GroupsActivity extends ActionBarActivity
 		actionbarTitle.setText("Groups");
 		// ImageView view = (ImdageView)findViewById(android.R.id.home);
 		// view.setPadding(15, 20, 5, 40);
-		ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
-		upButton.setOnClickListener(new OnClickListener()
-		{
+		//ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
 
-			@Override
-			public void onClick(View view)
-			{
-				upIntent.putExtra("up", "true");
-				startActivity(upIntent);
-				finish();
-			}
-		});
 	}
 
-	public void load(View view)
+	public void load()
 	{
 		Global global = ((Global) getApplicationContext());
 		user = global.loadUser(global.getCurrentUser().getEmail());
-		
-		Intent intent = getIntent();
-		Bundle extras = intent.getExtras();
-		
+				
 		setNotifications();
-		
-		//String className = extras.getString("ParentClassName");
-
 
 		initActionBar();
 		initKillswitchListener();
-
 	}
 
 	private void setNotifications()
@@ -198,5 +177,4 @@ public class GroupsActivity extends ActionBarActivity
 		registerReceiver(broadcastReceiver, intentFilter);
 		// End Kill switch listener
 	}
-
 }

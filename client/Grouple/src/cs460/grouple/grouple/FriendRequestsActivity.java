@@ -43,18 +43,12 @@ import android.widget.TextView;
 public class FriendRequestsActivity extends ActionBarActivity
 {
 	BroadcastReceiver broadcastReceiver;
-	Intent upIntent;
-	Intent parentIntent;
 	User user; //current user
 	String acceptEmail;
 	String declineEmail;
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
-		/*
-		 * 
-		 * NEED TO HARD UPDATE THE FRIENDREQUESTS ARRAY WHEN REMOVING THEM ACC/DEC
-		 */
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_friend_requests);
 
@@ -76,15 +70,7 @@ public class FriendRequestsActivity extends ActionBarActivity
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
 		actionbarTitle.setText(user.getFirstName() + "'s Friend Requests");
 		ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
-		upButton.setOnClickListener(new OnClickListener()
-		{
-			@Override
-			public void onClick(View view)
-			{
-				startActivity(upIntent);
-				finish();
-			}
-		});
+
 	}
 
 	// Gets the friends requests and displays them to the user
@@ -92,20 +78,12 @@ public class FriendRequestsActivity extends ActionBarActivity
 	{
 		Global global = ((Global) getApplicationContext());
 
-		// backstack of intents
-		// each class has a stack of intents lifo method used to execute them at
-		// start of activity
-		// intents need to include everything like ParentClassName, things for
-		// current page (email, ...)
-		// if check that friends
-		parentIntent = getIntent();
-		upIntent = new Intent(this, FriendsActivity.class);
-		upIntent.putExtra("up", "true");
-		Bundle extras = parentIntent.getExtras();
+		
+		Intent intent = getIntent();
+		Bundle extras = intent.getExtras();
 		
 		user = global.loadUser(extras.getString("email"));
-		System.out.println("USER EMAIL in FRIEND REQUESTS AFTER load: " + user.getEmail());
-		//String receiver = global.getCurrentUser(); PANDA getEmail()
+
 		// Php call that gets the users friend requests.
 		if (user != null)
 			populateFriendRequests();
@@ -254,10 +232,6 @@ public class FriendRequestsActivity extends ActionBarActivity
 				{
 					// failed
 					System.out.println("fail!");
-					// TextView addFriendMessage = (TextView)
-					// findViewById(R.id.addFriendMessageTextViewAFA);
-					// addFriendMessage.setText("User not found.");
-					// addFriendMessage.setVisibility(0);
 				}
 			} catch (Exception e)
 			{
@@ -289,23 +263,27 @@ public class FriendRequestsActivity extends ActionBarActivity
 		@Override
 		protected void onPostExecute(String result)
 		{
-			Global global = ((Global) getApplicationContext());
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
-				System.out.println(jsonObject.getString("success"));
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					// successful
 					System.out.println("success!");
+					
+					//removing friend request from memory
 					user.removeFriendRequest(acceptEmail);
 					
-					View friends = (View) findViewById(
-							R.id.friendRequestsLayout).getParent();
-					View home = (View) friends.getParent();
-					//global.setNotifications(friends); PANDA
-					//global.setNotifications(home);
 					acceptEmail = null; //reset
+						
+					//removing all friend requests for refresh
+					LinearLayout friendRequests = (LinearLayout)findViewById(R.id.friendRequestsLayout);
+					friendRequests.removeAllViews();
+					
+					//repopulate view
+					populateFriendRequests();
+					
+					//restarting friend requests activity, could also do view removal
 					startFriendRequestsActivity();
 
 				} else

@@ -56,17 +56,7 @@ public class FriendAddActivity extends ActionBarActivity
 		ab.setDisplayHomeAsUpEnabled(false);
 		ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
 		// Set up the back button listener for the action bar.
-		upButton.setOnClickListener(new OnClickListener()
-		{
 
-			@Override
-			public void onClick(View view)
-			{
-
-				startParentActivity(view);
-
-			}
-		});
 		// Set the action bar title.
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
 		actionbarTitle.setText("Add Friend");
@@ -143,15 +133,7 @@ public class FriendAddActivity extends ActionBarActivity
 	// Adds a friend.
 	public void addFriendButton(View view)
 	{
-		EditText emailEditTextAFA = (EditText) findViewById(R.id.emailEditTextAFA);
-		String email = emailEditTextAFA.getText().toString();
-		Global global = ((Global) getApplicationContext());
-		//String senderEmail = global.getCurrentUser(); PANDA
-		//will need to be 	 = user.getEmail();
-		//System.out.println("Email:" + email + "\nSender Email:" + senderEmail);
 
-		// Execute the add friend php
-		//need to sync this PANDA
 		new getAddFriendTask()
 				.execute("http://68.59.162.183/android_connect/add_friend.php");
 	}
@@ -164,12 +146,10 @@ public class FriendAddActivity extends ActionBarActivity
 		{
 			EditText emailEditText = (EditText) findViewById(R.id.emailEditTextAFA);
 			Global global = ((Global) getApplicationContext());
-			//String sender = global.getCurrentUser(); PANDA same as above user.getEmail()
 			String receiver = emailEditText.getText().toString();
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
 			nameValuePairs.add(new BasicNameValuePair("sender", user.getEmail()));
 			nameValuePairs.add(new BasicNameValuePair("receiver", receiver));
-
 			return global.readJSONFeed(urls[0], nameValuePairs);
 		}
 
@@ -188,16 +168,16 @@ public class FriendAddActivity extends ActionBarActivity
 
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					// friend added or already friends (user's goal)
 					System.out.println("success!");
 					addFriendMessage.setTextColor(getResources().getColor(
 							R.color.light_green));
-				} else if (jsonObject.getString("success").toString()
-						.equals("2"))
+				} 
+				else if (jsonObject.getString("success").toString().equals("2"))
 				{
 					addFriendMessage.setTextColor(getResources().getColor(
 							R.color.orange));
-				} else
+				} 
+				else
 				{
 					// user does not exist, self request, or sql error
 					System.out.println("fail!");
@@ -206,7 +186,8 @@ public class FriendAddActivity extends ActionBarActivity
 				}
 				addFriendMessage.setVisibility(0);
 
-			} catch (Exception e)
+			} 
+			catch (Exception e)
 			{
 				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
 			}
@@ -227,7 +208,6 @@ public class FriendAddActivity extends ActionBarActivity
 				if (intent.getAction().equals("CLOSE_ALL"))
 				{
 					Log.d("app666", "we killin the login it");
-					// System.exit(1);
 					finish();
 				}
 

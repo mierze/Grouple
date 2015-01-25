@@ -37,10 +37,7 @@ import android.widget.TextView;
  */
 public class FriendsCurrentActivity extends ActionBarActivity
 {
-	Intent parentIntent;
-	Intent upIntent;
 	BroadcastReceiver broadcastReceiver;
-	View friendsCurrent;
 	User user; //owner of the list of friends
 	// An array list that holds your friends by email address.
 	private ArrayList<String> friendsEmailList = new ArrayList<String>();
@@ -51,16 +48,9 @@ public class FriendsCurrentActivity extends ActionBarActivity
 		// Set the activity layout to activity_current_friends.
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_current_friends);
-		
-		/*
-		 * 
-		 * NEED TO HARD UPDATE THE FRIENDS ARRAY WHEN THEY GET NEW ONES / DELETE THEM
-		 */
 
-		// Grabs the current friends container and passes it to load.
-		friendsCurrent = findViewById(R.id.currentFriendsContainer);
 		// Load populates the container with all of your current friends.
-		load(friendsCurrent);
+		load();
 
 	}
 
@@ -77,38 +67,21 @@ public class FriendsCurrentActivity extends ActionBarActivity
 
 		// Grabs your name and sets it in the action bar's title.
 		actionbarTitle.setText(user.getFirstName() + "'s Friends"); //PANDA
-		ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
-		// On click listener for the action bar's back button.
-		upButton.setOnClickListener(new OnClickListener()
-		{
-			@Override
-			public void onClick(View view)
-			{
-				upIntent.putExtra("up", "true");
-				startActivity(upIntent);
-				finish();
-			}
-		});
-
+		//ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
 	}
 
 	/* loading in everything for current friends */
-	public void load(View view)
+	public void load()
 	{
 		Global global = ((Global) getApplicationContext());
-		// backstack of intents
-		// each class has a stack of intents lifo method used to execute them at
-		// start of activity
-		// intents need to include everything like ParentClassName, things for
-		// current page (email, ...)
-		// if check that friends
+		
 		Intent intent = getIntent();
 		Bundle extras = intent.getExtras();
+		
 		//grabbing the user with the given email in the extras
 		user = global.loadUser(extras.getString("email"));
-		
 
-		// Pass the current users email and execute the get friends php.
+		//populating the view with current friends list items
 		populateFriendsCurrent();
 		
 		// Start the action bar and kill switch.
@@ -162,7 +135,6 @@ public class FriendsCurrentActivity extends ActionBarActivity
 
 	public void populateFriendsCurrent()
 	{
-					//JSONArray jsonFriends = jsonObject.getJSONArray("friends");
 		LayoutInflater li = getLayoutInflater();
 		Global global = ((Global) getApplicationContext());
 		/*
@@ -182,9 +154,7 @@ public class FriendsCurrentActivity extends ActionBarActivity
 				 Map.Entry pair = (Map.Entry)it.next();
 				 String email = (String) pair.getKey();
 				 String fullName = (String) pair.getValue();
-				 String pri = "index: " + index + ": " + email;
-				 Log.d("friendscurrent set friend", pri);
-				 //global.loadUser(email);//preloading user, this will slow it down a lot, without array it is useless
+
 				 GridLayout rowView;
 				 friendsEmailList.add(index, email);
 				 /*
@@ -195,8 +165,7 @@ public class FriendsCurrentActivity extends ActionBarActivity
 				 * not these or your friends. You don't want the
 				 * option to delete a friend's friend.
 				 */
-				 
-				 Bundle extras = getIntent().getExtras();
+
 				 if (global.isCurrentUser(user.getEmail()))
 				 {
 					 rowView = (GridLayout) li.inflate(
@@ -243,12 +212,9 @@ public class FriendsCurrentActivity extends ActionBarActivity
 	// Handles removing a friend when the remove friend button is pushed.
 	public void removeFriendButton(View view)
 	{
-		// Email of user
-		final int id = view.getId();
-		// Email of friend that we are removing.
-		final String friendEmail = friendsEmailList.get(id);
-
-		final String email = user.getEmail();
+		final int index = view.getId(); //position in friendArray
+		final String friendEmail = friendsEmailList.get(index); //friend to remove
+		final String email = user.getEmail(); //user email
 
 		new AlertDialog.Builder(this)
 				.setMessage("Are you sure you want to remove that friend?")
@@ -334,11 +300,7 @@ public class FriendsCurrentActivity extends ActionBarActivity
 		intent.putExtra("ParentClassName", "FriendsCurrentActivity");
 		User u = global.loadUser(friendEmail);
 		global.setUserBuffer(u);
-		Thread.sleep(1000);
-		//global.fetchNumFriends(friendEmail); PANDA
-		//global.fetchNumGroups(friendEmail);
-		// Another sleep that way the php has time to execute. We need to start
-		// the activity when the PHP returns..
+		Thread.sleep(500);//PANDA sleep should not be used
 		intent.putExtra("email", friendEmail);
 		intent.putExtra("mod", "false");
 		startActivity(intent);

@@ -21,8 +21,10 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -62,13 +64,12 @@ public class GroupCreateActivity extends ActionBarActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_group_create);
-		ActionBar ab = getSupportActionBar();
-		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-		ab.setCustomView(R.layout.actionbar);
-		ab.setDisplayHomeAsUpEnabled(false);
-		TextView actionBarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
-		actionBarTitle.setText("Groups");
-		
+
+		load();	
+	}
+	
+	private void load()
+	{
 		Global global = ((Global) getApplicationContext());
 		//grab the email of current users from our global class
 		email = global.getCurrentUser().getEmail();
@@ -76,19 +77,13 @@ public class GroupCreateActivity extends ActionBarActivity
 		//load our list of current friends.  key is friend email -> value is full names
 		allFriends = user.getFriends();
 		
-		//actionbar listener
-		ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
-		upButton.setOnClickListener(new OnClickListener()
-		{
-
-			@Override
-			public void onClick(View view)
-			{
-				System.out.println("Image button onClick was clicked!");
-				startParentActivity(view);
-			}
-		});
-		
+		populateGroupCreate();
+		initActionBar();
+		initKillswitchListener();
+	}
+	
+	private void populateGroupCreate()
+	{
 		// begin building the interface
 		LayoutInflater inflater = getLayoutInflater();
 		LinearLayout membersToAdd = (LinearLayout) findViewById(R.id.linearLayoutNested1);
@@ -197,6 +192,16 @@ public class GroupCreateActivity extends ActionBarActivity
 			rowView.setId(i);
 			membersToAdd.addView(rowView);	
 		}
+	}
+	
+	private void initActionBar()
+	{
+		ActionBar ab = getSupportActionBar();
+		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+		ab.setCustomView(R.layout.actionbar);
+		ab.setDisplayHomeAsUpEnabled(false);
+		TextView actionBarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
+		actionBarTitle.setText("Groups");
 	}
 	
 	//onClick for Confirm create group button
@@ -467,5 +472,27 @@ public class GroupCreateActivity extends ActionBarActivity
 			startActivity(intent);
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	public void initKillswitchListener()
+	{
+		// START KILL SWITCH LISTENER
+		IntentFilter intentFilter = new IntentFilter();
+		intentFilter.addAction("CLOSE_ALL");
+		broadcastReceiver = new BroadcastReceiver()
+		{
+			@Override
+			public void onReceive(Context context, Intent intent)
+			{
+				// close activity
+				if (intent.getAction().equals("CLOSE_ALL"))
+				{
+					Log.d("app666", "we killin the login it");
+					// System.exit(1);
+					finish();
+				}
+			}
+		};
+		registerReceiver(broadcastReceiver, intentFilter);
+		// End Kill switch listener
 	}
 }

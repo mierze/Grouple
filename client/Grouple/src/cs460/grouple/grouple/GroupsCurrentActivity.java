@@ -43,7 +43,6 @@ public class GroupsCurrentActivity extends ActionBarActivity
 	int clickedRemoveID;
 	BroadcastReceiver broadcastReceiver;
 	User user; //user whose current groups displayed
-	View groupsCurrent;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -51,28 +50,23 @@ public class GroupsCurrentActivity extends ActionBarActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_groups_current);
 
-		groupsCurrent = findViewById(R.id.groupsCurrentContainer);
-		load(groupsCurrent);
+		load();
 	}
 
 	/* loading actionbar */
 	public void initActionBar()
 	{
-		Global global = ((Global) getApplicationContext());
 		ActionBar ab = getSupportActionBar();
 		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
 		ab.setCustomView(R.layout.actionbar);
 		ab.setDisplayHomeAsUpEnabled(false);
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
-	//	actionbarTitle.setText(global.getName() + "'s Groups"); //PANDA
-		ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
-
-	
-
+		actionbarTitle.setText(user.getFullName() + "'s Groups"); //PANDA
+		//ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
 	}
 
 	/* loading in everything for current friends */
-	public void load(View view)
+	public void load()
 	{
 		Global global = ((Global) getApplicationContext());
 		Intent intent = getIntent();
@@ -81,9 +75,6 @@ public class GroupsCurrentActivity extends ActionBarActivity
 		//grabbing the user with the given email in the extras
 		user = global.loadUser(extras.getString("email"));	
 		
-		
-		String className = extras.getString("ParentClassName");
-
 		populateGroupsCurrent();
 
 		initActionBar();
@@ -138,7 +129,7 @@ public class GroupsCurrentActivity extends ActionBarActivity
 	 * 		this could be changed to immediately if we can get the User class communicating with global.
 	 * 		same goes for friends, friend requests and group invites
 	 */
-	public void populateGroupsCurrent()
+	private void populateGroupsCurrent()
 	{
 		Global global = ((Global) getApplicationContext());
 		LayoutInflater li = getLayoutInflater();
@@ -200,31 +191,6 @@ public class GroupsCurrentActivity extends ActionBarActivity
 			groupsLayout.addView(row);
 		}	
 	}
-	
-
-	public void initKillswitchListener()
-	{
-		// START KILL SWITCH LISTENER
-		IntentFilter intentFilter = new IntentFilter();
-		intentFilter.addAction("CLOSE_ALL");
-		broadcastReceiver = new BroadcastReceiver()
-		{
-			@Override
-			public void onReceive(Context context, Intent intent)
-			{
-				// close activity
-				if (intent.getAction().equals("CLOSE_ALL"))
-				{
-					Log.d("app666", "we killin the login it");
-					// System.exit(1);
-					finish();
-				}
-
-			}
-		};
-		registerReceiver(broadcastReceiver, intentFilter);
-		// End Kill switch listener
-	}
 
 	public void startGroupProfileActivity(View view) throws InterruptedException
 	{
@@ -234,7 +200,7 @@ public class GroupsCurrentActivity extends ActionBarActivity
 		groupProfile.putExtra("gid", view.getId());
 		Group g = global.loadGroup(view.getId());
 		global.setGroupBuffer(g);
-		Thread.sleep(2000);
+		Thread.sleep(800);//panda
 		startActivity(groupProfile);
 	}
 	
@@ -243,9 +209,7 @@ public class GroupsCurrentActivity extends ActionBarActivity
 		@Override
 		protected String doInBackground(String... urls)
 		{
-			// urls 1, 2 are the emails
 			Global global = ((Global) getApplicationContext());
-
 			return global.readJSONFeed(urls[0], null);
 		}
 
@@ -259,22 +223,24 @@ public class GroupsCurrentActivity extends ActionBarActivity
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					// success: group has been deleted
-					//reload this activity
+
 					// removing all of the views
 					LinearLayout groupsLayout = (LinearLayout) findViewById(R.id.groupsCurrentLayout);
 					groupsLayout.removeAllViews();
+					
 					// Refresh the page to show the removal of the group.
 					populateGroupsCurrent();
+					
 					Log.d("dbmsg", jsonObject.getString("message"));
-				} else if (jsonObject.getString("success").toString()
-						.equals("2"))
+				} 
+				else if (jsonObject.getString("success").toString().equals("2"))
 				{
 					// group was not found in database. Need to throw message
-					
-					
+
 					// alerting the user.
 					Log.d("dbmsg", jsonObject.getString("message"));
-				} else
+				} 
+				else
 				{
 					// sql error
 					Log.d("dbmsg", jsonObject.getString("message"));
@@ -310,4 +276,27 @@ public class GroupsCurrentActivity extends ActionBarActivity
 				}).setNegativeButton("Cancel", null).show();
 	}
 
+	public void initKillswitchListener()
+	{
+		// START KILL SWITCH LISTENER
+		IntentFilter intentFilter = new IntentFilter();
+		intentFilter.addAction("CLOSE_ALL");
+		broadcastReceiver = new BroadcastReceiver()
+		{
+			@Override
+			public void onReceive(Context context, Intent intent)
+			{
+				// close activity
+				if (intent.getAction().equals("CLOSE_ALL"))
+				{
+					Log.d("app666", "we killin the login it");
+					// System.exit(1);
+					finish();
+				}
+
+			}
+		};
+		registerReceiver(broadcastReceiver, intentFilter);
+		// End Kill switch listener
+	}
 }

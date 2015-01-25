@@ -21,38 +21,35 @@ import android.widget.TextView;
  */
 public class HomeActivity extends ActionBarActivity
 {
-	LayoutInflater li;
 	User user; //current user
 	BroadcastReceiver broadcastReceiver;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
-		Log.d("HomeActivity", "1");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_home);
+		
+		load();
+		
+	}
+
+	private void load()
+	{
 		Global global = ((Global) getApplicationContext());
 		
-		/* Updating notifications
-		 * Not sure how I want to do this yet so they will not exist yet.
-		 * View home = findViewById(R.id.homeLayout);
-		 */
-		
-		//grabbing extras from intent
-		Bundle extras = getIntent().getExtras(); 
 		//grabbing the user with the given email in the extras
 		user = global.loadUser(global.getCurrentUser().getEmail());
 		
 		//set notifications
 		setNotifications();
 
-
 		//initializing action bar and killswitch listener
 		initActionBar();
 		initKillswitchListener();
 	}
-
-	public void initActionBar()
+	
+	private void initActionBar()
 	{
 		// Actionbar settings
 		ActionBar ab = getSupportActionBar();
