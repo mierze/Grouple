@@ -21,13 +21,16 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import android.support.v7.app.ActionBarActivity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -343,31 +346,71 @@ public class ProfileEditActivity extends ActionBarActivity implements
 	}
 
 	@Override
-	public void onClick(View v)
+	public void onClick(View v) 
 	{
 		// TODO Auto-generated method stub
-		switch (v.getId())
+		switch (v.getId()) 
 		{
 		case R.id.editProfilePhotoButton:
-			i = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-			startActivityForResult(i, CAMERA_DATA);
-			break;
+			final CharSequence[] items = { "Take Photo", "Choose from Gallery",
+					"Cancel" };
 
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Choose your profile picture:");
+			builder.setItems(items, new DialogInterface.OnClickListener() 
+			{
+				@Override
+				public void onClick(DialogInterface dialog, int item) 
+				{
+					if (items[item].equals("Take Photo")) 
+					{
+						i = new Intent(
+								android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+						startActivityForResult(i, 1);
+					}
+					else if (items[item].equals("Choose from Gallery")) 
+					{
+						Intent intent = new Intent(
+								Intent.ACTION_PICK,
+								android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+						intent.setType("image/*");
+						startActivityForResult(
+								Intent.createChooser(intent, "Select Photo"), 2);
+					} 
+					else if (items[item].equals("Cancel")) 
+					{
+						dialog.dismiss();
+					}
+				}
+			});
+			builder.show();
+			
+			break;
 		}
 	}
 
 	@Override
-	protected void onActivityResult(int reqCode, int resCode, Intent d)
+	protected void onActivityResult(int reqCode, int resCode, Intent data)
 	{
-		// TODO Auto-generated method stub
-		super.onActivityResult(reqCode, resCode, d);
-		if (resCode == RESULT_OK)
+		super.onActivityResult(reqCode, resCode, data);
+		if (resCode == RESULT_OK) 
 		{
-			Bundle extras = d.getExtras();
-			bmp = (Bitmap) extras.get("data");
-			iv.setImageBitmap(bmp);
+			if (reqCode == 1) 
+			{
+				Bundle extras = data.getExtras();
+				bmp = (Bitmap) extras.get("data");
+				iv.setImageBitmap(bmp);
+			} else if (reqCode == 2) 
+			{
+				Uri selectedImageUri = data.getData();
+
+				String tempPath = selectedImageUri.getPath();
+				bmp = BitmapFactory.decodeFile(tempPath);
+				iv.setImageBitmap(bmp);
+			}
 		}
 	}
+
 
 	public void initKillswitchListener()
 	{
