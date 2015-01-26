@@ -31,6 +31,7 @@ import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /*
  * GroupCreateActivity displays a list of all active group requests of a user.
@@ -78,7 +79,8 @@ public class GroupInvitesActivity extends ActionBarActivity
 		});
 		// upButton.setOnClickListener
 		// global.fetchNumFriends(email)
-		//actionbarTitle.setText(global.getName() + "'s Group Invites"); //PANDA
+		//Set actionbar title.
+		actionbarTitle.setText(user.getFirstName() + "'s Group Invites");
 	}
 	//Loads the page. As well as populates the user.
 	public void load(View view)
@@ -87,7 +89,7 @@ public class GroupInvitesActivity extends ActionBarActivity
 		
 		Intent intent = getIntent();
 		Bundle extras = intent.getExtras();	
-		String className = extras.getString("ParentClassName");
+		//String className = extras.getString("ParentClassName");
 		
 		//String email = extras.getString("email");
 		user = global.loadUser(global.getCurrentUser().getEmail());
@@ -180,7 +182,7 @@ public class GroupInvitesActivity extends ActionBarActivity
 			for (Map.Entry<Integer, String> entry : groupInvites.entrySet())
 			{
 				GridLayout row = (GridLayout) li.inflate(R.layout.listitem_group_request, null);
-
+				row.setId(entry.getKey());
 				((TextView) row.findViewById(R.id.emailTextViewGRLI)).setText(entry.getValue());
 				groupInvitesLayout.addView(row);
 			}
@@ -199,25 +201,16 @@ public class GroupInvitesActivity extends ActionBarActivity
 	
 	public void onClick(View view)
 	{
-		Global global = ((Global) getApplicationContext());
 		switch (view.getId())
 		{
 		case R.id.declineGroupRequestButtonGRLI:
 
 			View parent = (View) view.getParent();
-			TextView declineEmail = (TextView) parent
-					.findViewById(R.id.emailTextViewGRLI);
-		//	global.setDeclineEmail(declineEmail.getText().toString());
-			new getDeclineGroupTask()
-					.execute("http://98.213.107.172/android_connect/decline_group_request.php");
+			new getDeclineGroupTask().execute("http://68.59.162.183/android_connect/leave_group.php?email="+user.getEmail()+"&gid="+parent.getId());
 			break;
 		case R.id.acceptGroupRequestButtonGRLI:
 			View parent2 = (View) view.getParent();
-			TextView acceptEmail = (TextView) parent2
-					.findViewById(R.id.emailTextViewGRLI);
-			//global.setAcceptEmail(acceptEmail.getText().toString()); PANDA
-			new getAcceptGroupTask()
-					.execute("http://98.213.107.172/android_connect/accept_group_request.php");
+			new getAcceptGroupTask().execute("http://68.59.162.183/android_connect/accept_group_invite.php",user.getEmail(),Integer.toString(parent2.getId()));
 			break;
 		}
 	}
@@ -229,13 +222,8 @@ public class GroupInvitesActivity extends ActionBarActivity
 		protected String doInBackground(String... urls)
 		{
 			Global global = ((Global) getApplicationContext());
-			//String receiver = global.getCurrentUser(); getEmail() PANDA
-			//String groupName = global.getDeclineEmail(); PANDA
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-			nameValuePairs.add(new BasicNameValuePair("mem", receiver));
-			// pass the group name...
-		//	nameValuePairs.add(new BasicNameValuePair("gname", groupName)); PANDA NEeds to be gid anyway
-			return global.readJSONFeed(urls[0], nameValuePairs);
+		
+			return global.readJSONFeed(urls[0], null);
 		}
 
 		@Override
@@ -248,8 +236,11 @@ public class GroupInvitesActivity extends ActionBarActivity
 				System.out.println(jsonObject.getString("success"));
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
+					Context context = getApplicationContext();
+					Toast toast = Toast.makeText(context, "Group invite declined", Toast.LENGTH_LONG);
+					toast.show();
+					
 					startGroupInvitesActivity();
-					// TODO: startFriendRequestsActivity();
 
 				} else
 				{
@@ -274,11 +265,9 @@ public class GroupInvitesActivity extends ActionBarActivity
 		protected String doInBackground(String... urls)
 		{
 			Global global = ((Global) getApplicationContext());
-			//String receiver = global.getCurrentUser(); PANDA
-			//String groupName = global.getAcceptEmail(); PANDA
-
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-			nameValuePairs.add(new BasicNameValuePair("mem", receiver));
+			nameValuePairs.add(new BasicNameValuePair("email", urls[1]));
+			nameValuePairs.add(new BasicNameValuePair("gid",urls[2]));
 			//nameValuePairs.add(new BasicNameValuePair("gname", groupName)); PANDA gid 
 			return global.readJSONFeed(urls[0], nameValuePairs);
 		}
@@ -293,7 +282,9 @@ public class GroupInvitesActivity extends ActionBarActivity
 				System.out.println(jsonObject.getString("success"));
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-
+					Context context = getApplicationContext();
+					Toast toast = Toast.makeText(context, "Group invite accepted", Toast.LENGTH_LONG);
+					toast.show();
 					startGroupInvitesActivity();
 
 				} else
@@ -316,7 +307,7 @@ public class GroupInvitesActivity extends ActionBarActivity
 	{
 		Global global = ((Global) getApplicationContext());
 		Intent intent = new Intent(this, GroupInvitesActivity.class);
-		intent.putExtra("up", "true");
+		//intent.putExtra("up", "true");
 		//global.addToParentStack(groupInvites, parentIntent);
 		startActivity(intent);
 	}

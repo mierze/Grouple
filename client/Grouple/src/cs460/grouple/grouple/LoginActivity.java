@@ -26,7 +26,7 @@ public class LoginActivity extends Activity
 	Button loginButton;
 	BroadcastReceiver broadcastReceiver;
 	ProgressBar progBar;
-	//TextView loginFail;
+	TextView loginFail;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -36,17 +36,18 @@ public class LoginActivity extends Activity
 
 		// sets up an progress bar spinner that will appear when user hits
 		// login.
-		load();
-		
-	}
-	private void load()
-	{
 		progBar = (ProgressBar) findViewById(R.id.progressBarLA);
 		progBar.setVisibility(View.GONE);
 
+		// sets up error message that will appear if user enters invalid
+		// login/pass.
+		loginFail = (TextView) findViewById(R.id.loginFailTextViewLA);
+
+
 		Log.d("app666", "we created");
-		initKillswitchListener();	
+		initKillswitchListener();
 	}
+
 	@Override
 	protected void onDestroy()
 	{
@@ -64,6 +65,7 @@ public class LoginActivity extends Activity
 	public void startHomeActivity(String email)
 	{
 		Intent intent = new Intent(this, HomeActivity.class);
+		System.out.println("Email: " + email);
 		intent.putExtra("email", email);
 		startActivity(intent);
 	}
@@ -74,8 +76,6 @@ public class LoginActivity extends Activity
 		// activity.
 
 		// Removes any previous error message from previous failed login
-		TextView loginFail = (TextView) findViewById(R.id.loginFailTextViewLA);
-
 		loginFail.setVisibility(View.INVISIBLE);
 
 		// Makes progress bar visible during processing of login
@@ -85,8 +85,8 @@ public class LoginActivity extends Activity
 		EditText passwordEditText = (EditText) findViewById(R.id.passwordEditTextLA);
 		String email = emailEditText.getText().toString();
 		String password = passwordEditText.getText().toString();
-		 //String email = "test001@gmail.com";
-		//String password="password";
+		// String email = "test001@gmail.com";
+		// String password="password";
 		Global global = ((Global) getApplicationContext());
 
 		new getLoginTask()
@@ -120,7 +120,6 @@ public class LoginActivity extends Activity
 					// Login processing finished: progress bar disappear again
 					progBar.setVisibility(View.VISIBLE);
 					// display message from json (successful login message)
-					TextView loginFail = (TextView) findViewById(R.id.loginFailTextViewLA);
 					loginFail.setText(jsonObject.getString("message"));
 					loginFail.setTextColor(getResources().getColor(
 							R.color.light_green));
@@ -129,7 +128,7 @@ public class LoginActivity extends Activity
 					//get the email
 					EditText emailEditText = (EditText) findViewById(R.id.emailEditTextLA);
 					String email = emailEditText.getText().toString();
-					
+
 					//load the user into the system
 					User user = global.loadUser(email);
 					
@@ -152,7 +151,6 @@ public class LoginActivity extends Activity
 					progBar.setVisibility(View.GONE);
 					System.out.println("failed");
 					// display message from json (failed login reason)
-					TextView loginFail = (TextView) findViewById(R.id.loginFailTextViewLA);
 					loginFail.setText(jsonObject.getString("message"));
 					loginFail.setTextColor(getResources().getColor(R.color.red));
 					loginFail.setVisibility(View.VISIBLE);
