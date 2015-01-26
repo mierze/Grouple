@@ -40,10 +40,10 @@ public class GroupInvitesActivity extends ActionBarActivity
 {
 	Intent parentIntent;
 	Intent upIntent;
+	int bufferID;
 	BroadcastReceiver broadcastReceiver;
 	User user;//our current user
 	private String receiver;
-	View groupInvites;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -51,8 +51,8 @@ public class GroupInvitesActivity extends ActionBarActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_group_invites);
 
-		groupInvites = findViewById(R.id.groupInvitesContainer);
-		load(groupInvites);
+
+		load();
 	}
 
 	public void initActionBar()
@@ -67,23 +67,13 @@ public class GroupInvitesActivity extends ActionBarActivity
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
 		ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
 
-		upButton.setOnClickListener(new OnClickListener()
-		{
-			@Override
-			public void onClick(View view)
-			{
-				upIntent.putExtra("up", "true");
-				startActivity(upIntent);
-				finish();
-			}
-		});
 		// upButton.setOnClickListener
 		// global.fetchNumFriends(email)
 		//Set actionbar title.
 		actionbarTitle.setText(user.getFirstName() + "'s Group Invites");
 	}
 	//Loads the page. As well as populates the user.
-	public void load(View view)
+	public void load()
 	{
 		Global global = ((Global) getApplicationContext());
 		
@@ -172,12 +162,14 @@ public class GroupInvitesActivity extends ActionBarActivity
 		//Get Global. We use it for global stuff.
 		Global global = ((Global) getApplicationContext());
 		LayoutInflater li = getLayoutInflater();
-		int numInvite = user.getNumGroupInvites();
+		
+		Map<Integer, String> groupInvites = user.getGroupInvites();
+		
 		//array list needs to have group names, maybe the sender names and needs to have group ids	
-		if(numInvite > 0 )
+		if(groupInvites != null && groupInvites.size() > 0 )
 		{
 			//Calls user getGroups(). 
-			Map<Integer, String> groupInvites = user.getGroupInvites();
+			
 			// looping thru the map
 			for (Map.Entry<Integer, String> entry : groupInvites.entrySet())
 			{
@@ -201,16 +193,28 @@ public class GroupInvitesActivity extends ActionBarActivity
 	
 	public void onClick(View view)
 	{
+		LinearLayout groupInvites = (LinearLayout)findViewById(R.id.groupInvitesLayout);
 		switch (view.getId())
 		{
 		case R.id.declineGroupRequestButtonGRLI:
 
 			View parent = (View) view.getParent();
+			bufferID = parent.getId();
 			new getDeclineGroupTask().execute("http://68.59.162.183/android_connect/leave_group.php?email="+user.getEmail()+"&gid="+parent.getId());
+		
 			break;
 		case R.id.acceptGroupRequestButtonGRLI:
+			
 			View parent2 = (View) view.getParent();
+			bufferID = parent2.getId();
 			new getAcceptGroupTask().execute("http://68.59.162.183/android_connect/accept_group_invite.php",user.getEmail(),Integer.toString(parent2.getId()));
+
+			
+			//System.out.println("Just removed group" + parent2.getId());
+			
+		
+			
+			populateGroupInvites();
 			break;
 		}
 	}
@@ -229,6 +233,7 @@ public class GroupInvitesActivity extends ActionBarActivity
 		@Override
 		protected void onPostExecute(String result)
 		{
+			LinearLayout groupInvites = (LinearLayout) findViewById(R.id.groupInvitesLayout);
 			Global global = ((Global) getApplicationContext());
 			try
 			{
@@ -236,11 +241,13 @@ public class GroupInvitesActivity extends ActionBarActivity
 				System.out.println(jsonObject.getString("success"));
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					Context context = getApplicationContext();
-					Toast toast = Toast.makeText(context, "Group invite declined", Toast.LENGTH_LONG);
-					toast.show();
+			
+					user.removeGroupInvite(bufferID);
 					
-					startGroupInvitesActivity();
+					System.out.println("Just removed group" + bufferID);
+					groupInvites.removeAllViews();
+					
+					populateGroupInvites();
 
 				} else
 				{
@@ -261,6 +268,7 @@ public class GroupInvitesActivity extends ActionBarActivity
 	// Accept code.
 	private class getAcceptGroupTask extends AsyncTask<String, Void, String>
 	{
+		LinearLayout groupInvites = (LinearLayout) findViewById(R.id.groupInvitesLayout);
 		@Override
 		protected String doInBackground(String... urls)
 		{
@@ -275,17 +283,19 @@ public class GroupInvitesActivity extends ActionBarActivity
 		@Override
 		protected void onPostExecute(String result)
 		{
-			Global global = ((Global) getApplicationContext());
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
 				System.out.println(jsonObject.getString("success"));
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					Context context = getApplicationContext();
-					Toast toast = Toast.makeText(context, "Group invite accepted", Toast.LENGTH_LONG);
-					toast.show();
-					startGroupInvitesActivity();
+			
+					user.removeGroupInvite(bufferID);
+					
+	
+					groupInvites.removeAllViews();
+					
+					populateGroupInvites();
 
 				} else
 				{
@@ -297,19 +307,6 @@ public class GroupInvitesActivity extends ActionBarActivity
 				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
 			}
 		}
-	}
-
-	/*
-	 * Start activity functions for refreshing friend requests, going back and
-	 * logging out
-	 */
-	public void startGroupInvitesActivity()
-	{
-		Global global = ((Global) getApplicationContext());
-		Intent intent = new Intent(this, GroupInvitesActivity.class);
-		//intent.putExtra("up", "true");
-		//global.addToParentStack(groupInvites, parentIntent);
-		startActivity(intent);
 	}
 
 }

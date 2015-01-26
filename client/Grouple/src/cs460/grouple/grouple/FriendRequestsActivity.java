@@ -52,11 +52,7 @@ public class FriendRequestsActivity extends ActionBarActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_friend_requests);
 
-		// display friend requests
-		// Create helper and if successful, will bring the correct home
-		// activity.
-		View friendRequests = findViewById(R.id.friendRequestsContainer);
-		load(friendRequests);
+		load();
 
 	}
 
@@ -74,7 +70,7 @@ public class FriendRequestsActivity extends ActionBarActivity
 	}
 
 	// Gets the friends requests and displays them to the user
-	public void load(View view)
+	public void load()
 	{
 		Global global = ((Global) getApplicationContext());
 

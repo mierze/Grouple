@@ -53,8 +53,8 @@ public class ProfileEditActivity extends ActionBarActivity implements
 	private ImageView iv;
 	private final static int CAMERA_DATA = 0;
 	private Bitmap bmp;
-	byte[] decodedString;
 	private Intent i;
+	User user;
 	BroadcastReceiver broadcastReceiver;
 
 	@Override
@@ -69,16 +69,20 @@ public class ProfileEditActivity extends ActionBarActivity implements
 
 	private void load()
 	{
+		Global global = ((Global) getApplicationContext());
 		// Resetting error text view
 		TextView errorTextView = (TextView) findViewById(R.id.errorTextViewEPA);
 		errorTextView.setVisibility(1);
 
+		Bundle extras = getIntent().getExtras();
+		user = global.loadUser(extras.getString("email"));
+		//make this utilize user object
+		
+		if (user != null)
+			getProfile();
+
 		initActionBar();
 		initKillswitchListener();
-
-		//make this utilize user object
-		new getProfileTask()
-				.execute("http://68.59.162.183/android_connect/get_profile.php");
 	}
 	
 	private void initActionBar()
@@ -126,92 +130,24 @@ public class ProfileEditActivity extends ActionBarActivity implements
 	 * Get profile executes get_profile.php. It uses the current users email
 	 * address to retrieve the users name, age, and bio.
 	 */
-	private class getProfileTask extends AsyncTask<String, Void, String>
+	private void getProfile()
 	{
-		// Pass the current user's email address to the php so we can get their
-		// info from the database.
-		@Override
-		protected String doInBackground(String... urls)
+		// Find the text views.
+		TextView nameTextView = (TextView) findViewById(R.id.nameEditTextEPA);
+		TextView ageTextView = (TextView) findViewById(R.id.ageEditTextEPA);
+		TextView locationTextView = (TextView) findViewById(R.id.locationEditTextEPA);
+		TextView bioTextView = (TextView) findViewById(R.id.bioEditTextEPA);
+		if (iv == null)
 		{
-			Global global = ((Global) getApplicationContext());
-			//String email = global.getCurrentUser(); getEmail() PANDA
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
-			//nameValuePairs.add(new BasicNameValuePair("email", email)); PANDA
-			return global.readJSONFeed(urls[0], nameValuePairs);
+			Log.d("scott", "7th");
+			iv = (ImageView) findViewById(R.id.profilePhoto);
 		}
-
-		/*
-		 * If the result is success, the we grab the user's info and add it to
-		 * the editiable textview. If it fails, then something went wrong. Could
-		 * be connection error or incorrect user email address..
-		 */
-		@Override
-		protected void onPostExecute(String result)
-		{
-			try
-			{
-				JSONObject jsonObject = new JSONObject(result);
-				System.out.println(jsonObject.getString("success"));
-				if (jsonObject.getString("success").toString().equals("1"))
-				{
-					// Success
-					JSONArray jsonProfileArray = jsonObject
-							.getJSONArray("profile");
-					// Get the information so we can add it to the editable
-					// textviews.
-					String name = jsonProfileArray.getString(0) + " "
-							+ jsonProfileArray.getString(1);
-					String age = jsonProfileArray.getString(2);
-					String bio = jsonProfileArray.getString(3);
-					String location = jsonProfileArray.getString(4);
-					String img = jsonProfileArray.getString(5);
-
-					// decode image back to android bitmap format
-					decodedString = Base64.decode(img, Base64.DEFAULT);
-
-					Log.d("scott", "1st");
-
-					if (decodedString != null)
-					{
-						Log.d("scott", "2nd");
-						bmp = BitmapFactory.decodeByteArray(decodedString, 0,
-								decodedString.length);
-					}
-					Log.d("scott", "3rd");
-					// set the image
-					Log.d("scott", "4th");
-					if (bmp != null)
-					{
-						Log.d("scott", "5th");
-						img = null;
-						decodedString = null;
-					}
-					Log.d("scott", "6th");
-					// Find the text views.
-					TextView nameTextView = (TextView) findViewById(R.id.nameEditTextEPA);
-					TextView ageTextView = (TextView) findViewById(R.id.ageEditTextEPA);
-					TextView locationTextView = (TextView) findViewById(R.id.locationEditTextEPA);
-					TextView bioTextView = (TextView) findViewById(R.id.bioEditTextEPA);
-					if (iv == null)
-					{
-						Log.d("scott", "7th");
-						iv = (ImageView) findViewById(R.id.profilePhoto);
-					}
-					// Add the info to the textviews for editing.
-					nameTextView.setText(name);
-					ageTextView.setText(age);
-					bioTextView.setText(bio);
-					locationTextView.setText(location);
-					iv.setImageBitmap(bmp);
-				} else
-				{
-					// Fail
-				}
-			} catch (Exception e)
-			{
-				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
-			}
-		}
+		// Add the info to the textviews for editing.
+		nameTextView.setText(user.getFullName());
+		ageTextView.setText(user.getAge());
+		bioTextView.setText(user.getBio());
+		locationTextView.setText(user.getLocation());
+		iv.setImageBitmap(user.getImage());
 	}
 
 	@Override

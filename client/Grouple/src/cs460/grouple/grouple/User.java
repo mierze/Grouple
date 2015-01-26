@@ -86,6 +86,18 @@ public class User extends Activity
 		if (groups.containsKey(gid))
 			groups.remove(gid);
 	}
+	//testing
+	public void removeGroupInvite(int gid)
+	{
+		
+		if (groupInvites.containsKey(gid))
+		{
+			groupInvites.remove(gid);
+			System.out.println("We have removed the groupinvite");
+		}
+		else
+			System.out.println("We haNTOTOTOTemoved the groupinvite");
+	}
 	public void removeFriend(String fEmail)
 	{
 		if (friends.containsKey(fEmail))

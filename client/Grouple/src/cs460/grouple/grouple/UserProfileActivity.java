@@ -154,9 +154,8 @@ public class UserProfileActivity extends ActionBarActivity
 
 	public void startEditProfileActivity(View view)
 	{
-		Global global = ((Global) getApplicationContext());
 		Intent intent = new Intent(this, ProfileEditActivity.class);
-		intent.putExtra("ParentClassName", "UserActivity");
+		intent.putExtra("email", user.getEmail());
 		startActivity(intent);
 		iv = null;
 	}
