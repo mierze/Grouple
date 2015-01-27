@@ -69,6 +69,14 @@ public class Global extends Application
 		else 
 			return false;
 	}
+	
+	public int destroySession()
+	{
+		currentUser = null;
+		groupBuffer = null;
+		userBuffer = null;
+		return 1;
+	}
 	//using the email of user, load them in
 	public User loadUser(String email)
 	{	

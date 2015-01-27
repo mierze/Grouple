@@ -52,20 +52,21 @@ public class ListActivity extends ActionBarActivity
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_groups_current);
+		setContentView(R.layout.activity_list);
 
 		load();
 	}
 
 	/* loading actionbar */
-	public void initActionBar()
+	public void initActionBar(String actionBarTitle)
 	{
 		ActionBar ab = getSupportActionBar();
 		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
 		ab.setCustomView(R.layout.actionbar);
 		ab.setDisplayHomeAsUpEnabled(false);
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
-		actionbarTitle.setText(user.getFullName() + "'s Groups"); //PANDA
+
+		actionbarTitle.setText(actionBarTitle); //PANDA
 		//ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
 	}
 
@@ -80,19 +81,21 @@ public class ListActivity extends ActionBarActivity
 		if (extras.getString("content").equals("groupMembers"))
 		{
 			group = global.loadGroup(extras.getInt("gid"));
-			populateGroupMembers();
+			populateUsers();
+			initActionBar("Group Members");
 		}
 		else
 		{
 			//grabbing the user with the given email in the extras
 			user = global.loadUser(extras.getString("email"));				
 			populateGroupsCurrent();
+			initActionBar(user.getFirstName() + "'s Groups");
 		}
 		
 		
 		
 		
-		initActionBar();
+	
 		initKillswitchListener();
 	}
 
@@ -124,6 +127,7 @@ public class ListActivity extends ActionBarActivity
 		if (id == R.id.action_logout)
 		{
 			Intent login = new Intent(this, LoginActivity.class);
+			Global global = ((Global) getApplicationContext());
 			startActivity(login);
 			Intent intent = new Intent("CLOSE_ALL");
 			this.sendBroadcast(intent);
@@ -283,7 +287,7 @@ public class ListActivity extends ActionBarActivity
 		}
 	}
 	
-	public void populateGroupMembers()
+	public void populateUsers()
 	{
 		LayoutInflater li = getLayoutInflater();
 		Global global = ((Global) getApplicationContext());
@@ -292,15 +296,28 @@ public class ListActivity extends ActionBarActivity
 		 * loop through the friends and add them to the current
 		 * friends container.
 		 */
-		Map<String, String> groupMembers = group.getMembers();
-		if (groupMembers != null && !groupMembers.isEmpty())
+		
+		
+		Intent intent = getIntent();
+		Bundle extras = intent.getExtras();
+		Map<String, String> users;
+		if  (extras.getString("content").equals("groupMembers"))
+		{
+			users = group.getMembers();
+		}
+		else//to do make else ifs.
+		{
+			
+			users = user.getFriends();
+		}
+		if (users != null && !users.isEmpty())
 		{
 			LinearLayout friendsCurrentRL = (LinearLayout) findViewById(R.id.currentFriendsLayout);
 			//Bundle extras = intent.getExtras();
 			// looping thru json and adding to an array
-			 Iterator it = groupMembers.entrySet().iterator();
-			 int index = 0;
-			 while (it.hasNext()) {
+			Iterator it = users.entrySet().iterator();
+			int index = 0;
+			while (it.hasNext()) {
 				 Map.Entry pair = (Map.Entry)it.next();
 				 String email = (String) pair.getKey();
 				 String fullName = (String) pair.getValue();
@@ -316,7 +333,7 @@ public class ListActivity extends ActionBarActivity
 				 * option to delete a friend's friend.
 				 */
 
-				/* if (global.isCurrentUser(user.getEmail()))
+				 if (user != null && global.isCurrentUser(user.getEmail()))
 				 {
 					 rowView = (GridLayout) li.inflate(
 							 R.layout.listitem_friend, null);
@@ -326,10 +343,10 @@ public class ListActivity extends ActionBarActivity
 				 } 
 				 else
 				 {
-				 */
+				 
 					rowView = (GridLayout) li.inflate(
 							R.layout.listitem_friends_friend, null);
-				// }
+				 }
 				 // Add the information to the friendnamebutton and
 				 // add it to the next row.
 				 Button friendNameButton = (Button) rowView

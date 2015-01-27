@@ -74,6 +74,8 @@ public class UserProfileActivity extends ActionBarActivity
 
 	public void load()
 	{
+		
+		System.out.println("Currently OADING A USER PROFILE");
 		Global global = ((Global) getApplicationContext());
 		Intent intent = getIntent();
 		Bundle extras = intent.getExtras();
@@ -128,7 +130,7 @@ public class UserProfileActivity extends ActionBarActivity
 		// Set up the image view
 		if (iv == null)
 		{
-			iv = (ImageView) findViewById(R.id.profilePhoto);
+			iv = (ImageView) findViewById(R.id.profileImageGPA);
 		}
 		return true;
 	}
@@ -177,7 +179,7 @@ public class UserProfileActivity extends ActionBarActivity
 	{
 		if (iv == null)
 		{
-			iv = (ImageView) findViewById(R.id.profilePhoto);
+			iv = (ImageView) findViewById(R.id.profileImageUPA);
 		}
 		iv.setImageBitmap(user.getImage());
 

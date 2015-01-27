@@ -118,6 +118,7 @@ public class FriendsCurrentActivity extends ActionBarActivity
 		if (id == R.id.action_logout)
 		{
 			Intent login = new Intent(this, LoginActivity.class);
+			global.destroySession();
 			startActivity(login);
 			Intent intent = new Intent("CLOSE_ALL");
 			this.sendBroadcast(intent);

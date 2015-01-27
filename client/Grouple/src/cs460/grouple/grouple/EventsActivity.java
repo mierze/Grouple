@@ -99,6 +99,7 @@ public class EventsActivity extends ActionBarActivity
 		{
 			Global global = ((Global) getApplicationContext());
 			Intent login = new Intent(this, LoginActivity.class);
+			global.destroySession();
 			startActivity(login);
 			Intent intent = new Intent("CLOSE_ALL");
 			this.sendBroadcast(intent);

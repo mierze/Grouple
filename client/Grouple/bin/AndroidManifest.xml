@@ -170,6 +170,10 @@
             android:name=".ListActivity"
             android:label="@string/title_activity_group_members" >
         </activity>
+        <activity
+            android:name=".GroupEditActivity"
+            android:label="@string/title_activity_group_edit" >
+        </activity>
     </application>
 
 </manifest>

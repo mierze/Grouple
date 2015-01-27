@@ -106,9 +106,11 @@ public class GroupsCurrentActivity extends ActionBarActivity
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
+		Global global = ((Global) getApplicationContext());
 		if (id == R.id.action_logout)
 		{
 			Intent login = new Intent(this, LoginActivity.class);
+			global.destroySession();
 			startActivity(login);
 			Intent intent = new Intent("CLOSE_ALL");
 			this.sendBroadcast(intent);

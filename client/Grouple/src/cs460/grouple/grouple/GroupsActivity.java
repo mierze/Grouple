@@ -49,6 +49,16 @@ public class GroupsActivity extends ActionBarActivity
 
 	}
 
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event)  {
+	    if (keyCode == KeyEvent.KEYCODE_BACK) {
+	    	Intent intent = new Intent(this, HomeActivity.class);
+	    	intent.putExtra("email", user.getEmail());
+	    	startActivity(intent);
+	    }
+	    return true;
+	   }
+	
 	public void load()
 	{
 		Global global = ((Global) getApplicationContext());
@@ -104,6 +114,7 @@ public class GroupsActivity extends ActionBarActivity
 		if (id == R.id.action_logout)
 		{
 			Intent login = new Intent(this, LoginActivity.class);
+			global.destroySession();
 			startActivity(login);
 			Intent intent = new Intent("CLOSE_ALL");
 			this.sendBroadcast(intent);

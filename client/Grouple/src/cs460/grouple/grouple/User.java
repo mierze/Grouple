@@ -51,7 +51,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 
-public class User extends Activity
+public class User
 {
 	private String email; //primary key (only necessary component of a user)
 	private String fName;

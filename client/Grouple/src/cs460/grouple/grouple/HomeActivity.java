@@ -138,6 +138,7 @@ public class HomeActivity extends ActionBarActivity
 			Intent login = new Intent(this, LoginActivity.class);
 			startActivity(login);
 			Intent intent = new Intent("CLOSE_ALL");
+			global.destroySession();
 			this.sendBroadcast(intent);
 			return true;
 		}

@@ -6,10 +6,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -47,12 +43,14 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 /*
  * EditProfileActivity allows user to make changes to his/her profile.
  */
-public class ProfileEditActivity extends ActionBarActivity implements
+public class GroupEditActivity extends ActionBarActivity implements
 		View.OnClickListener
 {
 	// Set up fields. Most are just for the camera.
@@ -61,7 +59,7 @@ public class ProfileEditActivity extends ActionBarActivity implements
 	private final static int CAMERA_DATA = 0;
 	private Bitmap bmp;
 	private Intent i;
-	User user;
+	Group group;
 	BroadcastReceiver broadcastReceiver;
 
 	@Override
@@ -69,7 +67,7 @@ public class ProfileEditActivity extends ActionBarActivity implements
 	{
 		// Set the activity layout to activity_edit_profile.
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_edit_profile);
+		setContentView(R.layout.activity_group_edit);
 		
 		load();		
 	}
@@ -82,11 +80,11 @@ public class ProfileEditActivity extends ActionBarActivity implements
 		errorTextView.setVisibility(1);
 
 		Bundle extras = getIntent().getExtras();
-		user = global.loadUser(extras.getString("email"));
-		//make this utilize user object
+		group = global.loadGroup(extras.getInt("gid"));
+		//make this utilize group object
 		
-		if (user != null)
-			getProfile();
+		if (group != null)
+			getGroupProfile();
 
 		initActionBar();
 		initKillswitchListener();
@@ -103,7 +101,7 @@ public class ProfileEditActivity extends ActionBarActivity implements
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
 		//ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
 
-		actionbarTitle.setText(user.getFullName() + "'s Profile");
+		actionbarTitle.setText(group.getName() + "'s Profile");
 	}
 	
 	@Override
@@ -139,27 +137,23 @@ public class ProfileEditActivity extends ActionBarActivity implements
 	}
 
 	/*
-	 * Get profile executes get_profile.php. It uses the current users email
-	 * address to retrieve the users name, age, and bio.
+	 * Get profile executes get_groupprofile.php. It uses the current groups gid
+	 * to retrieve the groups name, about, and other info.
 	 */
-	private void getProfile()
+	private void getGroupProfile()
 	{
 		// Find the text views.
 		TextView nameTextView = (TextView) findViewById(R.id.nameEditTextEPA);
-		TextView ageTextView = (TextView) findViewById(R.id.ageEditTextEPA);
-		TextView locationTextView = (TextView) findViewById(R.id.locationEditTextEPA);
-		TextView bioTextView = (TextView) findViewById(R.id.bioEditTextEPA);
+		TextView aboutTextView = (TextView) findViewById(R.id.aboutEditTextEPA);
 		if (iv == null)
 		{
 			Log.d("scott", "7th");
-			iv = (ImageView) findViewById(R.id.profileImageGPA);
+			iv = (ImageView) findViewById(R.id.groupPhoto);
 		}
 		// Add the info to the textviews for editing.
-		nameTextView.setText(user.getFullName());
-		ageTextView.setText(Integer.toString(user.getAge()));
-		bioTextView.setText(user.getBio());
-		locationTextView.setText(user.getLocation());
-		iv.setImageBitmap(user.getImage());
+		nameTextView.setText(group.getName());
+		aboutTextView.setText(group.getBio());
+		iv.setImageBitmap(group.getImage());
 	}
 
 	@Override
@@ -168,11 +162,11 @@ public class ProfileEditActivity extends ActionBarActivity implements
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.navigation_actions, menu);
 		// Set up the edit button and image view
-		b = (Button) findViewById(R.id.editProfilePhotoButton);
+		b = (Button) findViewById(R.id.editGroupPhotoButton);
 		b.setOnClickListener(this);
 		if (iv == null)
 		{
-			iv = (ImageView) findViewById(R.id.profileImageGPA);
+			iv = (ImageView) findViewById(R.id.groupPhoto);
 		}
 
 		return true;
@@ -203,7 +197,7 @@ public class ProfileEditActivity extends ActionBarActivity implements
 
 	// Button Listener for submit changes. It the profile in the database.
 	// This executes the
-	public void submitButton(View view) throws InterruptedException, ExecutionException, TimeoutException
+	public void submitButton(View view)
 	{
 		// error checking
 
@@ -213,22 +207,49 @@ public class ProfileEditActivity extends ActionBarActivity implements
 		if (bio.length() > 100)
 		{
 			TextView errorTextView = (TextView) findViewById(R.id.errorTextViewEPA);
-			errorTextView.setText("Bio is too many characters.");
+			errorTextView.setText("About is too many characters.");
 			errorTextView.setVisibility(0);
 		} else
 		{
-			AsyncTask<String, Void, String> task = new setProfileTask()
-			.execute("http://68.59.162.183/android_connect/update_profile.php");
-	        
-			
-			task.get(10000, TimeUnit.MILLISECONDS);
-			
-
-			
+			new setProfileTask()
+					.execute("http://68.59.162.183/android_connect/update_group.php");
+			Intent intent = new Intent(this, GroupProfileActivity.class);
+			intent.putExtra("up", "true");
+			intent.putExtra("gid", group.getID());
+			try
+			{
+				Thread.sleep(500);
+			} catch (InterruptedException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			startActivity(intent);
 		}
-
 	}
 
+	public void radio (View view)
+	{
+		RadioButton publicButton = (RadioButton) findViewById(R.id.publicButton);
+		RadioButton privateButton = (RadioButton) findViewById(R.id.privateButton);
+		switch (view.getId())
+		{
+		case R.id.publicButton:
+			if (publicButton.isChecked())
+			{
+				privateButton.setChecked(false);
+			}
+			
+			break;
+		case R.id.privateButton:
+			
+			if (privateButton.isChecked())
+			{
+				publicButton.setChecked(false);
+			}
+			break;
+		}
+	}
 	/*
 	 * Set profile executes update_profile.php. It uses the current users email
 	 * address to update the users name, age, and bio.
@@ -253,7 +274,7 @@ public class ProfileEditActivity extends ActionBarActivity implements
 			HttpPost httpPost = new HttpPost(URL);
 			try
 			{
-				String email = user.getEmail();
+				//String email = group.getEmail();
 				TextView nameTextView = (TextView) findViewById(R.id.nameEditTextEPA);
 				TextView ageTextView = (TextView) findViewById(R.id.ageEditTextEPA);
 				TextView bioTextView = (TextView) findViewById(R.id.bioEditTextEPA);
@@ -298,7 +319,7 @@ public class ProfileEditActivity extends ActionBarActivity implements
 				builder.addTextBody("bio", bio, ContentType.TEXT_PLAIN);
 				builder.addTextBody("location", location,
 						ContentType.TEXT_PLAIN);
-				builder.addTextBody("email", email, ContentType.TEXT_PLAIN); 
+				//PANDAbuilder.addTextBody("email", email, ContentType.TEXT_PLAIN); 
 
 				httpPost.setEntity(builder.build());
 
@@ -344,10 +365,8 @@ public class ProfileEditActivity extends ActionBarActivity implements
 					// Success
 					//refresh?
 					Global global = ((Global) getApplicationContext());
-					global.loadUser(user.getEmail());
+					//PANDAglobal.loadUser(group.getEmail());
 					System.out.println("Success");
-					 
-					startUserProfileActivity();
 				} else
 				{
 					// Fail
@@ -360,15 +379,6 @@ public class ProfileEditActivity extends ActionBarActivity implements
 		}
 	}
 
-	
-	public void startUserProfileActivity()
-	{
-		Intent intent = new Intent(this, UserProfileActivity.class);
-		intent.putExtra("up", "true");
-		intent.putExtra("email", user.getEmail());
-
-		startActivity(intent);
-	}
 	@Override
 	public void onClick(View v) 
 	{

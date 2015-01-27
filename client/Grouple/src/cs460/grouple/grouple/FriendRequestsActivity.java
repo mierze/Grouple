@@ -115,6 +115,7 @@ public class FriendRequestsActivity extends ActionBarActivity
 		{
 			Global global = ((Global) getApplicationContext());
 			Intent login = new Intent(this, LoginActivity.class);
+			global.destroySession();
 			startActivity(login);
 			Intent intent = new Intent("CLOSE_ALL");
 			this.sendBroadcast(intent);
@@ -222,7 +223,12 @@ public class FriendRequestsActivity extends ActionBarActivity
 					user.removeFriendRequest(declineEmail);
 					System.out.println("success in decline!");
 					declineEmail = null;
-					startFriendRequestsActivity();
+					//removing all friend requests for refresh
+					LinearLayout friendRequests = (LinearLayout)findViewById(R.id.friendRequestsLayout);
+					friendRequests.removeAllViews();
+					
+					//repopulate view
+					populateFriendRequests();
 
 				} else
 				{
@@ -236,6 +242,16 @@ public class FriendRequestsActivity extends ActionBarActivity
 		}
 	}
 
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event)  {
+	    if (keyCode == KeyEvent.KEYCODE_BACK) {
+	    	Intent intent = new Intent(this, FriendsActivity.class);
+	    	intent.putExtra("email", user.getEmail());
+	    	startActivity(intent);
+	    }
+	    return true;
+	   }
+	
 	/*
 	 * Code for accepting a friend request. On success, we remove the friend
 	 * request and refresh the friend requests activity. We also confirm the
@@ -280,7 +296,7 @@ public class FriendRequestsActivity extends ActionBarActivity
 					populateFriendRequests();
 					
 					//restarting friend requests activity, could also do view removal
-					startFriendRequestsActivity();
+					//startFriendRequestsActivity();
 
 				} else
 				{

@@ -83,5 +83,6 @@
     <string name="title_activity_event_create">EventCreateActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_group_members">GroupMembersActivity</string>
+    <string name="title_activity_group_edit">GroupEditActivity</string>
 
 </resources>

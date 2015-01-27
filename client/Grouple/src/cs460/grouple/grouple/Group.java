@@ -29,11 +29,12 @@ import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
 
-public class Group extends Entity 
+public class Group //extends Entity 
 {
 	private int id; //id of the group
 	private String name; //name for the group
 	private String bio; //bio for the group
+	private String creator;
 	private Bitmap image;
 	private Map<String, String> members; //members of the groups' email->name pair
 
@@ -72,6 +73,10 @@ public class Group extends Entity
 	public String getBio()
 	{
 		return bio;
+	}
+	public Bitmap getImage()
+	{
+		return image;
 	}
 
 	public Map<String, String> getMembers()

@@ -36,6 +36,16 @@ public class FriendsActivity extends ActionBarActivity
 		initKillswitchListener();
 	}
 
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event)  {
+	    if (keyCode == KeyEvent.KEYCODE_BACK) {
+	    	Intent intent = new Intent(this, HomeActivity.class);
+	    	intent.putExtra("email", user.getEmail());
+	    	startActivity(intent);
+	    }
+	    return true;
+	   }
+	
 	public void initActionBar()
 	{
 		// Actionbar settings
@@ -105,6 +115,7 @@ public class FriendsActivity extends ActionBarActivity
 		{
 			Global global = ((Global) getApplicationContext());
 			Intent login = new Intent(this, LoginActivity.class);
+			global.destroySession();
 			startActivity(login);
 			Intent intent = new Intent("CLOSE_ALL");
 			this.sendBroadcast(intent);

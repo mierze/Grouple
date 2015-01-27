@@ -34,17 +34,7 @@ public class MessagesActivity extends ActionBarActivity
 		ab.setCustomView(R.layout.actionbar);
 		ab.setDisplayHomeAsUpEnabled(false);
 		ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
-		upButton.setOnClickListener(new OnClickListener()
-		{
 
-			@Override
-			public void onClick(View view)
-			{
-
-				startParentActivity(view);
-
-			}
-		});
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
 
 		actionbarTitle.setText("Messages");
@@ -71,6 +61,7 @@ public class MessagesActivity extends ActionBarActivity
 		{
 			Global global = ((Global) getApplicationContext());
 			Intent login = new Intent(this, LoginActivity.class);
+			global.destroySession();
 			startActivity(login);
 			Intent intent = new Intent("CLOSE_ALL");
 			this.sendBroadcast(intent);

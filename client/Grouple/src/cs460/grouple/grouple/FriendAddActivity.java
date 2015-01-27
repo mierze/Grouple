@@ -91,6 +91,7 @@ public class FriendAddActivity extends ActionBarActivity
 			// the logout screen.
 			Global global = ((Global) getApplicationContext());
 			Intent login = new Intent(this, LoginActivity.class);
+			global.destroySession();
 			startActivity(login);
 			Intent intent = new Intent("CLOSE_ALL");
 			this.sendBroadcast(intent);

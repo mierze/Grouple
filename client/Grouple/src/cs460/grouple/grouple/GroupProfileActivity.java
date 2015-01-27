@@ -60,7 +60,14 @@ public class GroupProfileActivity extends ActionBarActivity
 		//gname = extras.getString("gname");
 
 		//groupProfile = findViewById(R.id.groupProfileContainer);
-		load();//groupProfile);
+		try
+		{
+			load();
+		} catch (InterruptedException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}//groupProfile);
 	}
 
 	public void initActionBar()
@@ -78,7 +85,7 @@ public class GroupProfileActivity extends ActionBarActivity
 
 	}
 
-	public void load()
+	public void load() throws InterruptedException
 	{
 		Log.d("message", "00000000000000001");
 
@@ -100,7 +107,17 @@ public class GroupProfileActivity extends ActionBarActivity
 		TextView about = (TextView)findViewById(R.id.bioTextViewGPA);
 		about.setText(group.getBio());
 		
+		if (group.getImage() != null)
+		{
+			ImageView iv = (ImageView)findViewById(R.id.profileImageGPA);
+			iv.setImageBitmap(group.getImage());
+		}
+		
 		Button membersButton = (Button)findViewById(R.id.membersButtonGPA);
+		while (group.getMembers() == null)
+		{
+			Thread.sleep(100);
+		}
 		membersButton.setText("Members (" + group.getMembers().size() + ")");
 		//getGroupContents();
 		// startActivity(upIntent);
@@ -181,6 +198,7 @@ public class GroupProfileActivity extends ActionBarActivity
 		if (id == R.id.action_logout)
 		{
 			Intent login = new Intent(this, LoginActivity.class);
+			global.destroySession();
 			startActivity(login);
 			//bmp = null;
 			//iv = null;
@@ -208,28 +226,17 @@ public class GroupProfileActivity extends ActionBarActivity
 		finish();
 	}
 
-	public void startEditProfileActivity(View view)
+	public void startGroupEditActivity(View view)
 	{
-		Intent intent = new Intent(this, ProfileEditActivity.class);
+		Intent intent = new Intent(this, GroupEditActivity.class);
 		intent.putExtra("ParentClassName", "GroupProfileActivity");
+		intent.putExtra("gid", group.getID());
 		startActivity(intent);
 	//	bmp = null;
 	//	iv = null;
 	}
 
 	
-	public void editGroupProfileButton(View v)
-	{
-		// TODO Auto-generated method stub
-		switch (v.getId())
-		{
-		case R.id.editGroupProfilePhotoButton:
-			Intent i = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-			startActivityForResult(i, CAMERA_DATA);
-			break;
-
-		}
-	}
 
 	public void initKillswitchListener()
 	{

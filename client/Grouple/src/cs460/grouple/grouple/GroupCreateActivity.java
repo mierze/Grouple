@@ -341,7 +341,7 @@ public class GroupCreateActivity extends ActionBarActivity
 						{
 							//add code here to take user to groupaddmembersactivity page.  (pass g_id as extra so invites can be sent to correct group id)
 						}
-					});
+					}).show();
 				
 					//remove this activity from back-loop by calling finish().
 					finish();
@@ -400,6 +400,7 @@ public class GroupCreateActivity extends ActionBarActivity
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					//all working correctly, continue to next user or finish.
+					
 				} 
 				else if (jsonObject.getString("success").toString().equals("0"))
 				{	
@@ -459,6 +460,7 @@ public class GroupCreateActivity extends ActionBarActivity
 		{
 			Global global = ((Global) getApplicationContext());
 			Intent login = new Intent(this, LoginActivity.class);
+			global.destroySession();
 			startActivity(login);
 			Intent intent = new Intent("CLOSE_ALL");
 			this.sendBroadcast(intent);
