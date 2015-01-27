@@ -96,6 +96,10 @@ public class ProfileEditActivity extends ActionBarActivity implements
 		ab.setCustomView(R.layout.actionbar);
 		ab.setDisplayHomeAsUpEnabled(false);
 		//ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);		
+		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
+		//ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
+
+		actionbarTitle.setText(user.getFullName() + "'s Profile");
 	}
 	
 	@Override
@@ -122,7 +126,8 @@ public class ProfileEditActivity extends ActionBarActivity implements
 				newIntent.putExtra("email", extras.getString("ParentEmail"));
 			}
 			newIntent.putExtra("ParentClassName", "EditProfileActivity");
-		} catch (ClassNotFoundException e)
+		} 
+		catch (ClassNotFoundException e)
 		{
 			e.printStackTrace();
 		}
@@ -147,7 +152,7 @@ public class ProfileEditActivity extends ActionBarActivity implements
 		}
 		// Add the info to the textviews for editing.
 		nameTextView.setText(user.getFullName());
-		ageTextView.setText(user.getAge());
+		ageTextView.setText(Integer.toString(user.getAge()));
 		bioTextView.setText(user.getBio());
 		locationTextView.setText(user.getLocation());
 		iv.setImageBitmap(user.getImage());
@@ -178,7 +183,6 @@ public class ProfileEditActivity extends ActionBarActivity implements
 		int id = item.getItemId();
 		if (id == R.id.action_logout)
 		{
-			Global global = ((Global) getApplicationContext());
 			Intent login = new Intent(this, LoginActivity.class);
 			startActivity(login);
 			Intent intent = new Intent("CLOSE_ALL");
@@ -213,6 +217,15 @@ public class ProfileEditActivity extends ActionBarActivity implements
 					.execute("http://68.59.162.183/android_connect/update_profile.php");
 			Intent intent = new Intent(this, UserProfileActivity.class);
 			intent.putExtra("up", "true");
+			intent.putExtra("email", user.getEmail());
+			try
+			{
+				Thread.sleep(500);
+			} catch (InterruptedException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			startActivity(intent);
 		}
 
@@ -242,8 +255,7 @@ public class ProfileEditActivity extends ActionBarActivity implements
 			HttpPost httpPost = new HttpPost(URL);
 			try
 			{
-				Global global = ((Global) getApplicationContext());
-		//		String email = global.getCurrentUser(); PANDA
+				String email = user.getEmail();
 				TextView nameTextView = (TextView) findViewById(R.id.nameEditTextEPA);
 				TextView ageTextView = (TextView) findViewById(R.id.ageEditTextEPA);
 				TextView bioTextView = (TextView) findViewById(R.id.bioEditTextEPA);
@@ -288,7 +300,7 @@ public class ProfileEditActivity extends ActionBarActivity implements
 				builder.addTextBody("bio", bio, ContentType.TEXT_PLAIN);
 				builder.addTextBody("location", location,
 						ContentType.TEXT_PLAIN);
-				//builder.addTextBody("email", email, ContentType.TEXT_PLAIN); PANDA
+				builder.addTextBody("email", email, ContentType.TEXT_PLAIN); 
 
 				httpPost.setEntity(builder.build());
 
@@ -332,6 +344,9 @@ public class ProfileEditActivity extends ActionBarActivity implements
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					// Success
+					//refresh?
+					Global global = ((Global) getApplicationContext());
+					global.loadUser(user.getEmail());
 					System.out.println("Success");
 				} else
 				{
@@ -352,7 +367,7 @@ public class ProfileEditActivity extends ActionBarActivity implements
 		switch (v.getId()) 
 		{
 		case R.id.editProfilePhotoButton:
-			final CharSequence[] items = { "Take Photo", "Choose from Gallery",
+			final CharSequence[] items = {"Take Photo", "Choose from Gallery",
 					"Cancel" };
 
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);

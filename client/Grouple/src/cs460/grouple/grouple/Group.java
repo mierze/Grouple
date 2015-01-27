@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,14 +23,18 @@ import org.json.JSONObject;
 
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.util.Base64;
 import android.util.Log;
 
-public class Group extends Activity
+public class Group extends Entity 
 {
 	private int id; //id of the group
 	private String name; //name for the group
 	private String bio; //bio for the group
+	private Bitmap image;
 	private Map<String, String> members; //members of the groups' email->name pair
 
 	/*
@@ -69,6 +74,23 @@ public class Group extends Activity
 		return bio;
 	}
 
+	public Map<String, String> getMembers()
+	{
+		return members;
+	}
+	public void addToMembers(String email, String fName, String lName)
+	{
+		if (members == null)
+		{
+			members = new HashMap<String, String>();
+		}
+		
+		String name = fName + " " + lName;
+		members.put(email, name);
+		Log.d("Name for " + email, members.get(email));
+	}
+	
+	
 	/*
 	 * 
 	 * will be fetching the members email->name pairs
@@ -88,39 +110,43 @@ public class Group extends Activity
 		@Override
 		protected String doInBackground(String... urls)
 		{
-			Global global = ((Global) getApplicationContext());
-			return global.readJSONFeed(urls[0], null);
+			return readJSONFeed(urls[0], null);
 		}
-
 		@Override
 		protected void onPostExecute(String result)
 		{
-
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					String numFriends = jsonObject.getString("members")
-							.toString();
-					System.out.println("Should be setting the num friends to "
-							+ numFriends);
-					//setNumFriends(Integer.parseInt(numFriends)); //PANDA need to set the user class not global
-					//change this to populate the friends key->val list
-
+					//gotta make a json array
+					JSONArray jsonArray = jsonObject.getJSONArray("gmembers");
+					
+					//looping thru array
+					for (int i = 0; i < jsonArray.length(); i++)
+					{
+						System.out.println("fetching a group members");
+						//at each iteration set to hashmap friendEmail -> 'first last'
+						JSONObject o = (JSONObject) jsonArray.get(i);
+						//function adds friend to the friends map
+						addToMembers(o.getString("email"), o.getString("first"), o.getString("last"));
+					}
 				}
+				
 				// user has no friends
 				if (jsonObject.getString("success").toString().equals("2"))
 				{
+					Log.d("fetchgrupmembers", "failed = 2 return");
 					//setNumFriends(0); //PANDA need to set the user class not global
 				}
 			} catch (Exception e)
 			{
+				Log.d("fetchFriends", "exception caught");
 				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
 			}
 		}
-	}
-	
+	}	
 	
 	/*
 	 * 
@@ -170,8 +196,8 @@ public class Group extends Activity
 					setBio(bio);
 					
 					//get that image niggi
-					//String image = (String) jsonArray.get(2);
-					//setImage(image);
+					String image = (String) jsonArray.get(2);
+					setImage(image);
 					
 					String creator = (String) jsonArray.get(3);
 
@@ -188,6 +214,39 @@ public class Group extends Activity
 			}
 		}
 	}
+	//img is taken from json string
+		private void setImage(String img)
+		{
+			Bitmap bmp;
+			//jsonArray.getString("image");
+		
+			// decode image back to android bitmap format
+			byte[] decodedString = Base64.decode(img, Base64.DEFAULT);
+			if (decodedString != null)
+			{
+				bmp = BitmapFactory.decodeByteArray(decodedString, 0,
+						decodedString.length);
+				//setting bmp;
+				this.image = bmp;
+			}
+			else
+			{
+				this.image = null;
+			}
+				// set the image
+			/*if (bmp != null)
+			{
+				if (iv == null)
+				{
+					iv = (ImageView) findViewById(R.id.profilePhoto);
+		
+				}
+				iv.setImageBitmap(bmp);
+				img = null;
+				decodedString = null;
+			}*/
+		}
+	
 	/*
 	 * To delete group and all arrays within
 	 */

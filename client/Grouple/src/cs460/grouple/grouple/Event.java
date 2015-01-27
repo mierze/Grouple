@@ -30,6 +30,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -49,28 +50,61 @@ import android.util.Log;
 
 public class Event extends Activity
 {
-	private String email; //primary key (only necessary component of a user)
-	private String fName;
-	//private imagething profileImg;?
-	//birthday?
+	private int id;
 	private String name;
+	private String eventState;
+	//date startDate;
+	//date endDate;
+	private String category;
 	private String about;
-	private String location;
-	private int age;
-	//date
+	private int minPart;
+	private int maxPart;
+	private ArrayList<String> itemList;
+	private String creator;
+	private Bitmap image;
 	
 	/*
 	 * Constructor for User class
 	 */
-	public Event(String email)
+	public Event(int id, String name)
 	{
-
-		System.out.println("Initializing new event.");
+		this.id = id;
+		this.name = name;
 	}
 	
-
-
-	private void setImage(String img)
+	public void setID(int id)
+	{
+		this.id = id;
+	}
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+	public void setEventState(String eventState)
+	{
+		this.eventState = eventState;
+	}
+	public void setCategory(String category)
+	{
+		this.category = category;
+	}
+	public void setAbout(String about)
+	{
+		this.about = about;
+	}
+	public void setMinPart(int minPart)
+	{
+		this.minPart = minPart;
+	}
+	public void setMaxPart(int maxPart)
+	{
+		this.maxPart = maxPart;
+	}
+	public void setCreator(String creator)
+	{
+		this.creator = creator;
+	}
+	public void setImage(String img)
 	{
 		//String img = null;//jsonProfileArray.getString(5);
 	
@@ -94,6 +128,41 @@ public class Event extends Activity
 			decodedString = null;
 		}*/
 	}
+	
+	//getters
+	public int getID()
+	{
+		return id;
+	}
+	public String getName()
+	{
+		return name;
+	}
+	public String getEventState()
+	{
+		return eventState;
+	}
+	public String getCategory()
+	{
+		return category;
+	}
+	public String getAbout()
+	{
+		return about;
+	}
+	public int getMinPart()
+	{
+		return minPart;
+	}
+	public int getMaxPart()
+	{
+		return maxPart;
+	}
+	public String getCreator()
+	{
+		return creator;
+	}
+	
 	/*
 	 * To delete the user out of memory and clear all arrays
 	 */

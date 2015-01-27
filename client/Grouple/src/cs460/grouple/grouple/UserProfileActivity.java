@@ -34,7 +34,7 @@ public class UserProfileActivity extends ActionBarActivity
 	@Override
 	protected void onStart()
 	{
-		super.onResume();
+		super.onStart();
 		setNotifications();
 	}
 	
@@ -49,6 +49,15 @@ public class UserProfileActivity extends ActionBarActivity
 
 	}
 
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
+		//Global global = ((Global) getApplicationContext());
+		//global.loadUser(user.getEmail());
+		//findViewById(R.id.userProfileOuter)
+		load();
+	}
 	public void initActionBar()
 	{
 

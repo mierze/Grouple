@@ -387,8 +387,9 @@ public class User extends Activity
 					//set birthday (not yet implemented)
 					//for now do age
 					int age = (Integer) jsonArray.get(2);
+					Log.d("getUserInfoOnPost", "age: " + age);
 					setAge(age);//panda
-					Log.d("getUserInfoOnPost", "after set age");
+					//Log.d("getUserInfoOnPost", "after set age");
 					//String fName = jsonObject.getString("fName").toString();
 					//setBirthday(fName); 
 					
@@ -477,6 +478,7 @@ public class User extends Activity
 	 */
 	public int fetchFriendRequests() throws InterruptedException, ExecutionException, TimeoutException
 	{
+		Log.d("user-fetchFriendReq", "email: " + getEmail());
 		AsyncTask<String, Void, String> task = new getFriendRequestsTask()
 		.execute("http://68.59.162.183/android_connect/get_friend_requests.php?receiver="
 				+ getEmail());

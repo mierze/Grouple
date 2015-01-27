@@ -303,7 +303,7 @@ public class Global extends Application
 		//reset success
 		success = 0;
 			//json call to populate users friendKeys / friendNames
-			//success = group.fetchMembers();
+		success = group.fetchMembers();
 		
 		//was successful in fetching user info
 		if (success == 1)

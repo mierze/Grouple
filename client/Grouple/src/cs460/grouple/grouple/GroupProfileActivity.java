@@ -99,7 +99,9 @@ public class GroupProfileActivity extends ActionBarActivity
 		
 		TextView about = (TextView)findViewById(R.id.bioTextViewGPA);
 		about.setText(group.getBio());
-
+		
+		Button membersButton = (Button)findViewById(R.id.membersButtonGPA);
+		membersButton.setText("Members (" + group.getMembers().size() + ")");
 		//getGroupContents();
 		// startActivity(upIntent);
 		initActionBar();
@@ -107,6 +109,14 @@ public class GroupProfileActivity extends ActionBarActivity
 
 	}
 
+	public void startListActivity(View view)
+	{
+		Intent list = new Intent(this, ListActivity.class);
+		list.putExtra("content", "groupMembers");
+		list.putExtra("gid", group.getID());
+		startActivity(list);
+		
+	}
 
 	public void getGroupContents()
 	{

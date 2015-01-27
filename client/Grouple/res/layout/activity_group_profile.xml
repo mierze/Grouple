@@ -87,7 +87,16 @@
            android:orientation="horizontal" >
   
        </LinearLayout>
-       
+
+       <Button
+           android:id="@+id/membersButtonGPA"
+           android:layout_width="match_parent"
+           android:layout_height="50sp"
+           android:background="@drawable/button_border"
+           android:onClick="startListActivity"
+           android:text="Members (0)"
+           android:textColor="@color/button_text_color"
+           android:textSize="20sp" />
   
    </LinearLayout>
    
