@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -27,12 +30,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /*
  * CurrentFriendsActivity displays a list of all friends of user.
@@ -41,6 +46,7 @@ public class FriendsCurrentActivity extends ActionBarActivity
 {
 	private BroadcastReceiver broadcastReceiver;
 	private User user; //owner of the list of friends
+	private FrameLayout container;
 	// An array list that holds your friends by email address.
 	private ArrayList<String> friendsEmailList = new ArrayList<String>();
 
@@ -51,7 +57,7 @@ public class FriendsCurrentActivity extends ActionBarActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_current_friends);
 		
-
+		
 		// Load populates the container with all of your current friends.
 		load();
 
@@ -60,8 +66,6 @@ public class FriendsCurrentActivity extends ActionBarActivity
 	/* loading actionbar */
 	public void initActionBar()
 	{
-		//Bundle extras = parentIntent.getExtras();
-		Global global = ((Global) getApplicationContext());
 		ActionBar ab = getSupportActionBar();
 		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
 		ab.setCustomView(R.layout.actionbar);
@@ -80,9 +84,26 @@ public class FriendsCurrentActivity extends ActionBarActivity
 		
 		Intent intent = getIntent();
 		Bundle extras = intent.getExtras();
+		container = (FrameLayout)findViewById(R.id.currentFriendsContainer);
+		//container.
 		
 		//grabbing the user with the given email in the extras
-		user = global.loadUser(extras.getString("email"));
+		try
+		{
+			user = global.loadUser(extras.getString("email"));
+		} catch (InterruptedException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TimeoutException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		//populating the view with current friends list items
 		populateFriendsCurrent();
@@ -263,12 +284,17 @@ public class FriendsCurrentActivity extends ActionBarActivity
 		@Override
 		protected void onPostExecute(String result)
 		{
+			Global global = ((Global) getApplicationContext());
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
 
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
+					Context context = getApplicationContext();
+					Toast toast = Toast.makeText(context, "Friend has been deleted.", Toast.LENGTH_SHORT);
+					toast.show();
+					global.loadUser(user.getEmail());
 					// success: friend has been deleted
 					Log.d("dbmsg", jsonObject.getString("message"));
 				} else if (jsonObject.getString("success").toString()
@@ -293,6 +319,7 @@ public class FriendsCurrentActivity extends ActionBarActivity
 	public void startUserProfileActivity(View view)
 			throws InterruptedException
 	{
+
 		Global global = ((Global) getApplicationContext());
 		// need to get access to this friends email
 		// launches friendProfileActivity and loads content based on that email
@@ -300,25 +327,36 @@ public class FriendsCurrentActivity extends ActionBarActivity
 		// got the id, now we need to grab the users email and somehow pass it
 		// to the activity
 
-		RelativeLayout layout = (RelativeLayout)findViewById(R.id.currentFriendsContainer);
-		layout.removeAllViews();
+		//RelativeLayout layout = (RelativeLayout)findViewById(R.id.currentFriendsContainer);
+		//layout.removeAllViews();
 		//Bundle extras = parentIntent.getExtras();
 			
-		ActionBar ab = getSupportActionBar();
-				ab.hide();
+		//ActionBar ab = getSupportActionBar();
+				//ab.hide();
 			
 
 		
-		LayoutInflater li = getLayoutInflater();
-		View row = li.inflate(R.layout.listitem_groupprofile, null);
+		//LayoutInflater li = getLayoutInflater();
+		//View row = li.inflate(R.layout.listitem_groupprofile, null);
 
-		layout.addView(row);
+		//layout.addView(row);
 		
 		
 		String friendEmail = friendsEmailList.get(id);
 		Intent intent = new Intent(this, UserProfileActivity.class);
 		intent.putExtra("ParentClassName", "FriendsCurrentActivity");
-		user = global.loadUser(friendEmail);
+		try
+		{
+			user = global.loadUser(friendEmail);
+		} catch (ExecutionException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TimeoutException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		global.setUserBuffer(user);
 		Thread.sleep(500);//PANDA sleep should not be used
 		intent.putExtra("email", friendEmail);

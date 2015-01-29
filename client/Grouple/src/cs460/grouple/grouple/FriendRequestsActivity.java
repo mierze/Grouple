@@ -5,6 +5,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -36,6 +39,7 @@ import android.widget.ImageButton;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /*
  * FriendRequestsActivity displays a list of all active friend requests of a user.
@@ -78,7 +82,22 @@ public class FriendRequestsActivity extends ActionBarActivity
 		Intent intent = getIntent();
 		Bundle extras = intent.getExtras();
 		
-		user = global.loadUser(extras.getString("email"));
+		try
+		{
+			user = global.loadUser(extras.getString("email"));
+		} catch (InterruptedException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TimeoutException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		// Php call that gets the users friend requests.
 		if (user != null)
@@ -219,8 +238,13 @@ public class FriendRequestsActivity extends ActionBarActivity
 				System.out.println(jsonObject.getString("success"));
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
+					
+					Context context = getApplicationContext();
+					Toast toast = Toast.makeText(context, "Friend request declined.", Toast.LENGTH_SHORT);
+					toast.show();
 					//do something probably
 					user.removeFriendRequest(declineEmail);
+					global.loadUser(user.getEmail());
 					System.out.println("success in decline!");
 					declineEmail = null;
 					//removing all friend requests for refresh
@@ -275,6 +299,7 @@ public class FriendRequestsActivity extends ActionBarActivity
 		@Override
 		protected void onPostExecute(String result)
 		{
+			Global global = ((Global) getApplicationContext());
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
@@ -285,13 +310,16 @@ public class FriendRequestsActivity extends ActionBarActivity
 					
 					//removing friend request from memory
 					user.removeFriendRequest(acceptEmail);
-					
+					global.loadUser(user.getEmail());
 					acceptEmail = null; //reset
 						
 					//removing all friend requests for refresh
 					LinearLayout friendRequests = (LinearLayout)findViewById(R.id.friendRequestsLayout);
 					friendRequests.removeAllViews();
 					
+					Context context = getApplicationContext();
+					Toast toast = Toast.makeText(context, "Friend request accepted.", Toast.LENGTH_SHORT);
+					toast.show();
 					//repopulate view
 					populateFriendRequests();
 					

@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -20,6 +23,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 
 
 import android.app.Activity;
@@ -102,11 +106,16 @@ public class Group //extends Entity
 	 * 
 	 */
 	// Get numFriends, TODO: work on returning the integer
-	public int fetchMembers()
+	public int fetchMembers() throws InterruptedException, ExecutionException, TimeoutException
 	{
-		new getMembersTask()
-				.execute("http://68.59.162.183/android_connect/get_group_members.php?gid="
-						+ getID());
+		
+		AsyncTask<String, Void, String> task = new getMembersTask()
+		.execute("http://68.59.162.183/android_connect/get_group_members.php?gid="
+				+ getID());
+        
+       task.get(10000, TimeUnit.MILLISECONDS);
+	
+		
 		return 1;
 	}
 

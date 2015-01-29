@@ -3,6 +3,8 @@ package cs460.grouple.grouple;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -82,7 +84,22 @@ public class GroupInvitesActivity extends ActionBarActivity
 		//String className = extras.getString("ParentClassName");
 		
 		//String email = extras.getString("email");
-		user = global.loadUser(global.getCurrentUser().getEmail());
+		try
+		{
+			user = global.loadUser(global.getCurrentUser().getEmail());
+		} catch (InterruptedException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TimeoutException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		populateGroupInvites();
 
 		initActionBar();
@@ -211,11 +228,7 @@ public class GroupInvitesActivity extends ActionBarActivity
 			new getAcceptGroupTask().execute("http://68.59.162.183/android_connect/accept_group_invite.php",user.getEmail(),Integer.toString(parent2.getId()));
 
 			
-			//System.out.println("Just removed group" + parent2.getId());
-			
-		
-			
-			populateGroupInvites();
+			//populateGroupInvites();
 			break;
 		}
 	}
@@ -242,15 +255,16 @@ public class GroupInvitesActivity extends ActionBarActivity
 				System.out.println(jsonObject.getString("success"));
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-			
 					user.removeGroupInvite(bufferID);
-					
-					System.out.println("Just removed group" + bufferID);
+					global.loadUser(user.getEmail());
+					//Global global = ((Global) getApplicationContext());
+					Context context = getApplicationContext();
+					Toast toast = Toast.makeText(context, "Group invite declined.", Toast.LENGTH_SHORT);
+					toast.show();
 					groupInvites.removeAllViews();
-					
 					populateGroupInvites();
-
-				} else
+				} 
+				else
 				{
 					// failed
 					System.out.println("fail!");
@@ -259,7 +273,8 @@ public class GroupInvitesActivity extends ActionBarActivity
 					// addFriendMessage.setText("User not found.");
 					// addFriendMessage.setVisibility(0);
 				}
-			} catch (Exception e)
+			} 
+			catch (Exception e)
 			{
 				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
 			}
@@ -277,28 +292,28 @@ public class GroupInvitesActivity extends ActionBarActivity
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
 			nameValuePairs.add(new BasicNameValuePair("email", urls[1]));
 			nameValuePairs.add(new BasicNameValuePair("gid",urls[2]));
-			//nameValuePairs.add(new BasicNameValuePair("gname", groupName)); PANDA gid 
 			return global.readJSONFeed(urls[0], nameValuePairs);
 		}
 
 		@Override
 		protected void onPostExecute(String result)
 		{
+			Global global = ((Global) getApplicationContext());
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
 				System.out.println(jsonObject.getString("success"));
 				if (jsonObject.getString("success").toString().equals("1"))
-				{
-			
+				{		
 					user.removeGroupInvite(bufferID);
-					
-	
+					global.loadUser(user.getEmail());
+					Context context = getApplicationContext();
+					Toast toast = Toast.makeText(context, "Group invite accepted.", Toast.LENGTH_SHORT);
+					toast.show();
 					groupInvites.removeAllViews();
-					
 					populateGroupInvites();
-
-				} else
+				} 
+				else
 				{
 					// failed
 					System.out.println("fail!");

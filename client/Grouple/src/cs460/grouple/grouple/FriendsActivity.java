@@ -1,5 +1,8 @@
 package cs460.grouple.grouple;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -67,8 +70,9 @@ public class FriendsActivity extends ActionBarActivity
 		Bundle extras = intent.getExtras(); 
 		
 		//grabbing the user with the given email in the extras
-		user = global.loadUser(extras.getString("email"));
 	
+		user = global.getCurrentUser();////loadUser(extras.getString("email"));
+		
 		setNotifications();
 		initActionBar();
 		initKillswitchListener();

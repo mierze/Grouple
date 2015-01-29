@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
@@ -77,7 +80,22 @@ public class ListActivity extends ActionBarActivity
 		
 		if (extras.getString("content").equals("groupMembers"))
 		{
-			group = global.loadGroup(extras.getInt("gid"));
+			try
+			{
+				group = global.loadGroup(extras.getInt("gid"));
+			} catch (InterruptedException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ExecutionException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (TimeoutException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			populateUsers();
 			initActionBar("Group Members");
 		}
@@ -451,8 +469,21 @@ public class ListActivity extends ActionBarActivity
 			Intent groupProfile = new Intent(this, GroupProfileActivity.class);
 			System.out.println("Loading group gid: " + view.getId());
 			groupProfile.putExtra("gid", view.getId());
-			Group g = global.loadGroup(view.getId());
-			global.setGroupBuffer(g);
+			Group g = null;
+			try
+			{
+				g = global.loadGroup(view.getId());
+			} catch (ExecutionException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (TimeoutException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if (g != null)
+				global.setGroupBuffer(g);
 			Thread.sleep(800);//panda
 			startActivity(groupProfile);
 		}
@@ -521,9 +552,21 @@ public class ListActivity extends ActionBarActivity
 			String friendEmail = friendsEmailList.get(id);
 			Intent intent = new Intent(this, UserProfileActivity.class);
 			intent.putExtra("ParentClassName", "FriendsCurrentActivity");
-			User u = global.loadUser(friendEmail);
-			global.setUserBuffer(u);
-			Thread.sleep(500);//PANDA sleep should not be used
+			User u = null;
+			try
+			{
+				u = global.loadUser(friendEmail);
+			} catch (ExecutionException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (TimeoutException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if (u != null)
+				global.setUserBuffer(u);
 			intent.putExtra("email", friendEmail);
 			intent.putExtra("mod", "false");
 			startActivity(intent);

@@ -1,5 +1,8 @@
 package cs460.grouple.grouple;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
+
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.content.BroadcastReceiver;
@@ -32,9 +35,16 @@ public class GroupsActivity extends ActionBarActivity
 		setContentView(R.layout.activity_groups);
 
 		load();
-
 	}
 
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
+		setContentView(R.layout.activity_groups);
+		load();
+	}
+	
 	public void initActionBar()
 	{
 		ActionBar ab = getSupportActionBar();
@@ -62,8 +72,9 @@ public class GroupsActivity extends ActionBarActivity
 	public void load()
 	{
 		Global global = ((Global) getApplicationContext());
-		user = global.loadUser(global.getCurrentUser().getEmail());
-				
+	
+		user = global.getCurrentUser();//loadUser(global.getCurrentUser().getEmail());
+					
 		setNotifications();
 
 		initActionBar();

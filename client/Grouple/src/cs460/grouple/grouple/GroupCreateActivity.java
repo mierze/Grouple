@@ -8,6 +8,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -73,7 +76,22 @@ public class GroupCreateActivity extends ActionBarActivity
 		Global global = ((Global) getApplicationContext());
 		//grab the email of current users from our global class
 		email = global.getCurrentUser().getEmail();
-		user = global.loadUser(email);
+		try
+		{
+			user = global.loadUser(email);
+		} catch (InterruptedException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TimeoutException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		//load our list of current friends.  key is friend email -> value is full names
 		allFriends = user.getFriends();
 		
@@ -343,6 +361,8 @@ public class GroupCreateActivity extends ActionBarActivity
 						}
 					}).show();
 				
+					Global global = (Global)getApplicationContext();
+					global.loadUser(global.getCurrentUser().getEmail());
 					//remove this activity from back-loop by calling finish().
 					finish();
 				} 

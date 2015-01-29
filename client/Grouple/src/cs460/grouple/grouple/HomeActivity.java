@@ -1,5 +1,8 @@
 package cs460.grouple.grouple;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
+
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.content.BroadcastReceiver;
@@ -34,12 +37,35 @@ public class HomeActivity extends ActionBarActivity
 		
 	}
 
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event)  {
+	    if (keyCode == KeyEvent.KEYCODE_BACK) {
+	    	//do nothing
+	    }
+	    return true;
+	   }
+	
 	private void load()
 	{
 		Global global = ((Global) getApplicationContext());
 		
 		//grabbing the user with the given email in the extras
-		user = global.loadUser(global.getCurrentUser().getEmail());
+		try
+		{
+			user = global.loadUser(global.getCurrentUser().getEmail());
+		} catch (InterruptedException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TimeoutException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		//set notifications
 		setNotifications();

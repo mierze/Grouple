@@ -1,6 +1,9 @@
 package cs460.grouple.grouple;
 
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
+
 import cs460.grouple.grouple.R;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -86,9 +89,23 @@ public class UserProfileActivity extends ActionBarActivity
 		}
 		else
 		{
-			user = global.loadUser(extras.getString("email"));		
+			try
+			{
+				user = global.loadUser(extras.getString("email"));
+			} catch (InterruptedException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ExecutionException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (TimeoutException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}		
 		}
-
 
 		// the textviews
 		populateProfile();

@@ -2,6 +2,9 @@ package cs460.grouple.grouple;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
@@ -40,7 +43,22 @@ public class FriendAddActivity extends ActionBarActivity
 		Global global = ((Global) getApplicationContext());
 		Intent parentIntent = getIntent();
 		Bundle extras = parentIntent.getExtras();
-		user = global.loadUser(extras.getString("email"));
+		try
+		{
+			user = global.loadUser(extras.getString("email"));
+		} catch (InterruptedException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TimeoutException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		initActionBar();
 		// Initialize the kill switch. The kill switch will kill all open
 		// activities.

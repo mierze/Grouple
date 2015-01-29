@@ -6,6 +6,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -80,7 +83,22 @@ public class GroupEditActivity extends ActionBarActivity implements
 		errorTextView.setVisibility(1);
 
 		Bundle extras = getIntent().getExtras();
-		group = global.loadGroup(extras.getInt("gid"));
+		try
+		{
+			group = global.loadGroup(extras.getInt("gid"));
+		} catch (InterruptedException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TimeoutException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		//make this utilize group object
 		
 		if (group != null)

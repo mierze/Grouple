@@ -78,7 +78,7 @@ public class Global extends Application
 		return 1;
 	}
 	//using the email of user, load them in
-	public User loadUser(String email)
+	public User loadUser(String email) throws InterruptedException, ExecutionException, TimeoutException
 	{	
 		User user;
 		int success = 0;
@@ -90,51 +90,16 @@ public class Global extends Application
 		{
 			user = currentUser;
 			
-			//since this is currentUser we can do update on the group invites / friend requests
-			
+			//since this is currentUser we can do update on the group invites / friend requests			
 			//json call to populate users friendRequestKeys / names
 	
-			try
-			{
-				success = user.fetchFriendRequests();
-			} catch (InterruptedException e1)
-			{
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (ExecutionException e1)
-			{
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (TimeoutException e1)
-			{
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		
+			success = user.fetchFriendRequests();
 			//was successful in fetching friend requests
 			if (success == 1)
 				Log.d("loadUser","success after fetchFriendRequests()");
-			
-			
-			success = 0;
-			//fetchGroupInvites
-			try
-			{
-				success = user.fetchGroupInvites();
-			} catch (InterruptedException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ExecutionException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (TimeoutException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		
+
+			success = user.fetchGroupInvites();
 			//was successful in fetching group invites
 			if (success == 1)
 				Log.d("loadUser","success after fetchGroupInvites()");
@@ -154,79 +119,26 @@ public class Global extends Application
 		/**
 		 * Below is just updating / loading all of the user info, friends, groups, pertinent to all loaded users
 		 */
-		
-
-		//reset success to 0
-		success = 0;
-		try
-		{
-			//json call using email to fetch users fName, lName, bio, location, birthday, profileImage
-			success = user.fetchUserInfo();
-		} catch (InterruptedException e)
-		{
-			e.printStackTrace();
-		} catch (ExecutionException e)
-		{
-			e.printStackTrace();
-		} catch (TimeoutException e)
-		{
-			e.printStackTrace();
-		}
-		
+		//json call using email to fetch users fName, lName, bio, location, birthday, profileImage
+		success = user.fetchUserInfo();
 		//was successful in fetching user info
 		if (success == 1)
 			Log.d("loadUser", "success after fetchUserInfo()");
 
-		//reset success
-		success = 0;
-		try
-		{
-			//json call to populate users friendKeys / friendNames
-			success = user.fetchFriends();
-		} catch (InterruptedException e)
-		{
-			e.printStackTrace();
-		} catch (ExecutionException e)
-		{
-			e.printStackTrace();
-		} catch (TimeoutException e)
-		{
-			e.printStackTrace();
-		}
-		
+		//json call to populate users friendKeys / friendNames
+		success = user.fetchFriends();
 		//was successful in fetching friends
 		if (success == 1)
 			Log.d("loadUser","success after fetchFriends()");
+
+
 		
-	
-		//reset success
-		success = 0;
-		//json call to populate users groupKeys / groupNames
-		try
-		{
-			//could possibly take fetchGroups out of user class
-			//put it in groups, take in the email
-			//and maybe put reference ids in the user
-			success = user.fetchGroups();
-		} catch (InterruptedException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ExecutionException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TimeoutException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
+		success = user.fetchGroups();
 		//was successful in fetching groups
 		if (success == 1)
 			Log.d("loadUser","success after fetchGroups()");
-		
-		
-		
+	
 		
 		//check that currentUser has been initialized
 		//little redundancy from earlier if statement, when current user was not null
@@ -234,59 +146,31 @@ public class Global extends Application
 		if (currentUser == null)
 		{
 			//if null, then this is our current user
-			
 			//getting requests / invites since wasn't triggered above
-			
 			//json call to populate users friendRequestKeys / names
-			try
-			{
-				success = user.fetchFriendRequests();
-			} catch (InterruptedException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ExecutionException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (TimeoutException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			success = user.fetchFriendRequests();
 			//was successful in fetching groups
 			if (success == 1)
 				Log.d("loadUser","success after fetchFriendRequests()");
 			
 			//fetchGroupInvites
-			try
-			{
-				success = user.fetchGroupInvites();
-			} catch (InterruptedException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ExecutionException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (TimeoutException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			success = user.fetchGroupInvites();
+
 			
 			setCurrentUser(user);//set the user to current user
 		}	
 		
+		//saving
 		if (getUserBuffer() != null && getUserBuffer().getEmail().equals(email))
 			setUserBuffer(user);
+		else if (getCurrentUser() != null && getCurrentUser().getEmail().equals(email))
+			setCurrentUser(user);
 		
 		return user; //return the user
 	}
 	
 	//using the id of group, load them up into our array of groups
-	public Group loadGroup(int id)
+	public Group loadGroup(int id) throws InterruptedException, ExecutionException, TimeoutException
 	{	
 		Group group; //declare group variable
 		
@@ -301,19 +185,13 @@ public class Global extends Application
 		 * Below is loading all group information / members...
 		 */
 		
-		
-		int success = 0;//initialize success
 	
 		//json call using email to fetch users fName, lName, bio, location, birthday, profileImage
-		success = group.fetchGroupInfo();
-
-		
+		int success = group.fetchGroupInfo();
 		//was successful in fetching user info
 		if (success == 1)
 			Log.d("loadGroup", "success after fetchGroupInfo()");
 
-		//reset success
-		success = 0;
 			//json call to populate users friendKeys / friendNames
 		success = group.fetchMembers();
 		
@@ -322,6 +200,9 @@ public class Global extends Application
 			Log.d("loadGroup", "success after fetchMembers()");
 		
 
+		if (groupBuffer != null && groupBuffer.getID() == group.getID())
+			setGroupBuffer(group);
+		
 		return group;
 	}
 		

@@ -3,6 +3,8 @@ package cs460.grouple.grouple;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -33,6 +35,7 @@ import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /*
  * GroupsCurrentActivity displays a list of all groups a member is a part of.
@@ -73,7 +76,22 @@ public class GroupsCurrentActivity extends ActionBarActivity
 		Bundle extras = intent.getExtras();
 		
 		//grabbing the user with the given email in the extras
-		user = global.loadUser(extras.getString("email"));	
+		try
+		{
+			user = global.loadUser(extras.getString("email"));
+		} catch (InterruptedException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TimeoutException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
 		
 		populateGroupsCurrent();
 
@@ -200,9 +218,21 @@ public class GroupsCurrentActivity extends ActionBarActivity
 		Intent groupProfile = new Intent(this, GroupProfileActivity.class);
 		System.out.println("Loading group gid: " + view.getId());
 		groupProfile.putExtra("gid", view.getId());
-		Group g = global.loadGroup(view.getId());
-		global.setGroupBuffer(g);
-		Thread.sleep(800);//panda
+		Group g = null;
+		try
+		{
+			g = global.loadGroup(view.getId());
+		} catch (ExecutionException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TimeoutException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (g != null)
+			global.setGroupBuffer(g);
 		startActivity(groupProfile);
 	}
 	
@@ -218,6 +248,7 @@ public class GroupsCurrentActivity extends ActionBarActivity
 		@Override
 		protected void onPostExecute(String result)
 		{
+			Global global = ((Global) getApplicationContext());
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
@@ -229,7 +260,11 @@ public class GroupsCurrentActivity extends ActionBarActivity
 					// removing all of the views
 					LinearLayout groupsLayout = (LinearLayout) findViewById(R.id.groupsCurrentLayout);
 					groupsLayout.removeAllViews();
+					Context context = getApplicationContext();
+					Toast toast = Toast.makeText(context, "You have left the group.", Toast.LENGTH_SHORT);
+					toast.show();
 					
+					global.loadUser(user.getEmail());
 					// Refresh the page to show the removal of the group.
 					populateGroupsCurrent();
 					
