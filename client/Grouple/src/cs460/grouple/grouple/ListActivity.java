@@ -4,13 +4,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -87,15 +84,11 @@ public class ListActivity extends ActionBarActivity
 		else
 		{
 			//grabbing the user with the given email in the extras
-			user = global.loadUser(extras.getString("email"));				
+			user = global.getUserBuffer();//loadUser(extras.getString("email"));				
 			populateGroupsCurrent();
 			initActionBar(user.getFirstName() + "'s Groups");
 		}
 		
-		
-		
-		
-	
 		initKillswitchListener();
 	}
 
@@ -169,7 +162,7 @@ public class ListActivity extends ActionBarActivity
 							R.layout.listitem_group, null);
 	
 					
-				Button leaveGroupButton = (Button)rowView.findViewById(R.id.leaveGroupButton);
+				Button leaveGroupButton = (Button)rowView.findViewById(R.id.removeFriendButton);
 				//if mod true this, if not someting else
 				if (global.isCurrentUser(user.getEmail()))
 					leaveGroupButton.setId(entry.getKey());
@@ -452,6 +445,68 @@ public class ListActivity extends ActionBarActivity
 			}
 		}
 
+		public void startGroupProfileActivity(View view) throws InterruptedException
+		{
+			Global global = ((Global) getApplicationContext());
+			Intent groupProfile = new Intent(this, GroupProfileActivity.class);
+			System.out.println("Loading group gid: " + view.getId());
+			groupProfile.putExtra("gid", view.getId());
+			Group g = global.loadGroup(view.getId());
+			global.setGroupBuffer(g);
+			Thread.sleep(800);//panda
+			startActivity(groupProfile);
+		}
+		
+		private class leaveGroupTask extends AsyncTask<String, Void, String>
+		{
+			@Override
+			protected String doInBackground(String... urls)
+			{
+				Global global = ((Global) getApplicationContext());
+				return global.readJSONFeed(urls[0], null);
+			}
+
+			@Override
+			protected void onPostExecute(String result)
+			{
+				try
+				{
+					JSONObject jsonObject = new JSONObject(result);
+
+					if (jsonObject.getString("success").toString().equals("1"))
+					{
+						// success: group has been deleted
+
+						// removing all of the views
+						LinearLayout groupsLayout = (LinearLayout) findViewById(R.id.groupsCurrentLayout);
+						groupsLayout.removeAllViews();
+						
+						// Refresh the page to show the removal of the group.
+						populateGroupsCurrent();
+						
+						Log.d("dbmsg", jsonObject.getString("message"));
+					} 
+					else if (jsonObject.getString("success").toString().equals("2"))
+					{
+						// group was not found in database. Need to throw message
+
+						// alerting the user.
+						Log.d("dbmsg", jsonObject.getString("message"));
+					} 
+					else
+					{
+						// sql error
+						Log.d("dbmsg", jsonObject.getString("message"));
+					}
+
+				} catch (Exception e)
+				{
+					Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+				}
+			}
+		}
+
+		
 		// When you click on a friend, this loads up the friend's profile.
 		public void startUserProfileActivity(View view)
 				throws InterruptedException
@@ -475,66 +530,6 @@ public class ListActivity extends ActionBarActivity
 		}
 
 	
-	public void startGroupProfileActivity(View view) throws InterruptedException
-	{
-		Global global = ((Global) getApplicationContext());
-		Intent groupProfile = new Intent(this, GroupProfileActivity.class);
-		System.out.println("Loading group gid: " + view.getId());
-		groupProfile.putExtra("gid", view.getId());
-		Group g = global.loadGroup(view.getId());
-		global.setGroupBuffer(g);
-		Thread.sleep(800);//panda
-		startActivity(groupProfile);
-	}
-	
-	private class leaveGroupTask extends AsyncTask<String, Void, String>
-	{
-		@Override
-		protected String doInBackground(String... urls)
-		{
-			Global global = ((Global) getApplicationContext());
-			return global.readJSONFeed(urls[0], null);
-		}
-
-		@Override
-		protected void onPostExecute(String result)
-		{
-			try
-			{
-				JSONObject jsonObject = new JSONObject(result);
-
-				if (jsonObject.getString("success").toString().equals("1"))
-				{
-					// success: group has been deleted
-
-					// removing all of the views
-					LinearLayout groupsLayout = (LinearLayout) findViewById(R.id.groupsCurrentLayout);
-					groupsLayout.removeAllViews();
-					
-					// Refresh the page to show the removal of the group.
-					populateGroupsCurrent();
-					
-					Log.d("dbmsg", jsonObject.getString("message"));
-				} 
-				else if (jsonObject.getString("success").toString().equals("2"))
-				{
-					// group was not found in database. Need to throw message
-
-					// alerting the user.
-					Log.d("dbmsg", jsonObject.getString("message"));
-				} 
-				else
-				{
-					// sql error
-					Log.d("dbmsg", jsonObject.getString("message"));
-				}
-
-			} catch (Exception e)
-			{
-				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
-			}
-		}
-	}
 
 	public void removeGroupButton(View view) throws InterruptedException
 	{

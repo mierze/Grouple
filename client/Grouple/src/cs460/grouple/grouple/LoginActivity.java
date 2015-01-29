@@ -23,10 +23,10 @@ import android.widget.TextView;
  */
 public class LoginActivity extends Activity
 {
-	Button loginButton;
-	BroadcastReceiver broadcastReceiver;
-	ProgressBar progBar;
-	TextView loginFail;
+	private Button loginButton;
+	private BroadcastReceiver broadcastReceiver;
+	private ProgressBar progBar;
+	private TextView loginFail;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -130,19 +130,10 @@ public class LoginActivity extends Activity
 					String email = emailEditText.getText().toString();
 
 					//load the user into the system
-					User user = global.loadUser(email);
-					
-					System.out.println("user name in login is currently " + user.getFullName());
-					//can't do below here
-					
-					Log.d("LoginActivity", "after adding to users in global");
-					// Sets this users name.
-					System.out.println("Do we get here, login activity before startHome call");
+					global.loadUser(email);
+
 					//starting the home activity with the current users email
 					startHomeActivity(email);
-					Log.d("LoginActivity", "after startHomeActivity");
-					//finish(); // Finishing login (possibly save some memory)
-					Log.d("LoginActivity", "after finish");
 				} 
 				else
 				{

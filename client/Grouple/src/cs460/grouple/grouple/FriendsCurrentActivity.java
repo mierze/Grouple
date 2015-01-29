@@ -30,6 +30,8 @@ import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 /*
@@ -37,8 +39,8 @@ import android.widget.TextView;
  */
 public class FriendsCurrentActivity extends ActionBarActivity
 {
-	BroadcastReceiver broadcastReceiver;
-	User user; //owner of the list of friends
+	private BroadcastReceiver broadcastReceiver;
+	private User user; //owner of the list of friends
 	// An array list that holds your friends by email address.
 	private ArrayList<String> friendsEmailList = new ArrayList<String>();
 
@@ -48,6 +50,7 @@ public class FriendsCurrentActivity extends ActionBarActivity
 		// Set the activity layout to activity_current_friends.
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_current_friends);
+		
 
 		// Load populates the container with all of your current friends.
 		load();
@@ -186,6 +189,7 @@ public class FriendsCurrentActivity extends ActionBarActivity
 						 .findViewById(R.id.friendNameButton);
 
 				 friendNameButton.setText(fullName);
+				 
 				 /*
 				 * Setting the ID to i makes it so we can use i to
 				 * figure out the friend's email. Important for
@@ -296,14 +300,30 @@ public class FriendsCurrentActivity extends ActionBarActivity
 		// got the id, now we need to grab the users email and somehow pass it
 		// to the activity
 
+		RelativeLayout layout = (RelativeLayout)findViewById(R.id.currentFriendsContainer);
+		layout.removeAllViews();
+		//Bundle extras = parentIntent.getExtras();
+			
+		ActionBar ab = getSupportActionBar();
+				ab.hide();
+			
+
+		
+		LayoutInflater li = getLayoutInflater();
+		View row = li.inflate(R.layout.listitem_groupprofile, null);
+
+		layout.addView(row);
+		
+		
 		String friendEmail = friendsEmailList.get(id);
 		Intent intent = new Intent(this, UserProfileActivity.class);
 		intent.putExtra("ParentClassName", "FriendsCurrentActivity");
-		User u = global.loadUser(friendEmail);
-		global.setUserBuffer(u);
+		user = global.loadUser(friendEmail);
+		global.setUserBuffer(user);
 		Thread.sleep(500);//PANDA sleep should not be used
 		intent.putExtra("email", friendEmail);
 		intent.putExtra("mod", "false");
+		//progBar.setVisibility(View);
 		startActivity(intent);
 	}
 

@@ -8,15 +8,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -81,12 +78,15 @@ public class UserProfileActivity extends ActionBarActivity
 		Bundle extras = intent.getExtras();
 
 		//grabbing the user with the given email in the extras
-		user = global.loadUser(extras.getString("email"));
-	
-		if (!global.isCurrentUser(user.getEmail()))
+		if (!global.isCurrentUser(extras.getString("email")))
 		{
+			user = global.getUserBuffer();
 			Button editProfileButton = (Button)findViewById(R.id.editProfileButton);
 			editProfileButton.setVisibility(View.GONE);
+		}
+		else
+		{
+			user = global.loadUser(extras.getString("email"));		
 		}
 
 
@@ -100,17 +100,8 @@ public class UserProfileActivity extends ActionBarActivity
 
 	private void setNotifications()
 	{
-		Global global = ((Global) getApplicationContext());
 		((Button) findViewById(R.id.friendsButtonUPA)).setText("Friends\n(" + user.getNumFriends() + ")");
-		
-		((Button) findViewById(R.id.groupsButtonUPA)).setText("Groups\n(" + user.getNumGroups() + ")");
-		// set numfriends, numgroups, and numevents
-		
-		//if (user.getEmail().compareTo(global.getCurrentUser().getEmail()) != 0)
-		//{
-		//	((Button) findViewById(R.id.editProfileButton)).setVisibility(1);
-		//}
-		
+		((Button) findViewById(R.id.groupsButtonUPA)).setText("Groups\n(" + user.getNumGroups() + ")");	
 	}
 	
 	@Override
@@ -144,7 +135,6 @@ public class UserProfileActivity extends ActionBarActivity
 		int id = item.getItemId();
 		if (id == R.id.action_logout)
 		{
-			Global global = ((Global) getApplicationContext());
 			Intent login = new Intent(this, LoginActivity.class);
 			startActivity(login);
 			iv = null;
@@ -194,7 +184,6 @@ public class UserProfileActivity extends ActionBarActivity
 	public void startGroupsCurrentActivity(View view)
 	{
 		Intent intent = new Intent(this, GroupsCurrentActivity.class);
-		Global global = ((Global) getApplicationContext());
 		intent.putExtra("ParentClassName", "UserActivity");
 		intent.putExtra("email", user.getEmail());
 		//intent.putExtra("ParentEmail", global.getCurrentUser());
@@ -214,7 +203,6 @@ public class UserProfileActivity extends ActionBarActivity
 
 	public void startEventsActivity(View view)
 	{
-		Global global = ((Global) getApplicationContext());
 		Intent intent = new Intent(this, EventsActivity.class);
 		intent.putExtra("ParentClassName", "UserActivity");
 		startActivity(intent);

@@ -278,6 +278,10 @@ public class Global extends Application
 			
 			setCurrentUser(user);//set the user to current user
 		}	
+		
+		if (getUserBuffer() != null && getUserBuffer().getEmail().equals(email))
+			setUserBuffer(user);
+		
 		return user; //return the user
 	}
 	
