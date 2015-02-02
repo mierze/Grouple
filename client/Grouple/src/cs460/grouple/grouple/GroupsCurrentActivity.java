@@ -51,7 +51,7 @@ public class GroupsCurrentActivity extends ActionBarActivity
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_groups_current);
+		//setContentView(R.layout.activity_groups_current);
 
 		load();
 	}
@@ -150,7 +150,7 @@ public class GroupsCurrentActivity extends ActionBarActivity
 	{
 		Global global = ((Global) getApplicationContext());
 		LayoutInflater li = getLayoutInflater();
-		LinearLayout groupsLayout = ((LinearLayout)findViewById(R.id.groupsCurrentLayout));
+		LinearLayout groupsLayout = ((LinearLayout)findViewById(R.id.listLayout));
 		//grabbing the users groups
 		Map<Integer, String> groups = user.getGroups();
 		System.out.println("USER HAS A NAME OF" + user.getFullName());
@@ -245,7 +245,7 @@ public class GroupsCurrentActivity extends ActionBarActivity
 					// success: group has been deleted
 
 					// removing all of the views
-					LinearLayout groupsLayout = (LinearLayout) findViewById(R.id.groupsCurrentLayout);
+					LinearLayout groupsLayout = (LinearLayout) findViewById(R.id.listLayout);
 					groupsLayout.removeAllViews();
 					Context context = getApplicationContext();
 					Toast toast = Toast.makeText(context, "You have left the group.", Toast.LENGTH_SHORT);

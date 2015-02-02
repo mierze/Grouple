@@ -91,11 +91,7 @@ public class FriendsActivity extends ActionBarActivity
 	{
 		super.onResume(); // Always call the superclass method first
 		System.out.println("In Friends onResume()");
-		Global global = ((Global) getApplicationContext());
-		View friends = findViewById(R.id.friendsContainer);
-		//global.fetchNumFriendRequests(global.getCurrentUser()); PANDA
-		// friendRequests = global.getNumFriendRequests();
-		//global.setNotifications(friends);
+		load();
 
 	}
 
@@ -160,10 +156,10 @@ public class FriendsActivity extends ActionBarActivity
 
 	public void startFriendsCurrentActivity(View view)
 	{
-		Intent intent = new Intent(this, FriendsCurrentActivity.class);
+		Intent intent = new Intent(this, ListActivity.class);
 		intent.putExtra("ParentClassName", "FriendsActivity");
 		intent.putExtra("email", user.getEmail());
-		intent.putExtra("ParentEmail", user.getEmail());
+		intent.putExtra("content", "friendsCurrent");
 		intent.putExtra("mod", "true");
 		startActivity(intent);
 	}

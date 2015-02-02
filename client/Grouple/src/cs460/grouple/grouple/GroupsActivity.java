@@ -165,7 +165,7 @@ public class GroupsActivity extends ActionBarActivity
 	{
 		Global global = ((Global) getApplicationContext());
 		global.loadUser(user.getEmail());//update
-		Intent intent = new Intent(this, GroupsCurrentActivity.class);
+		Intent intent = new Intent(this, ListActivity.class);
 		intent.putExtra("ParentClassName", "GroupsActivity");
 		intent.putExtra("content", "groupsCurrent");
 		intent.putExtra("email", user.getEmail());// specifies which

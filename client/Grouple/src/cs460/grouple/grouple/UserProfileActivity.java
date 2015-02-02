@@ -182,8 +182,10 @@ public class UserProfileActivity extends ActionBarActivity
 	public void startGroupsCurrentActivity(View view)
 	{
 		Global global = ((Global) getApplicationContext());
-		Intent intent = new Intent(this, GroupsCurrentActivity.class);
+		Intent intent = new Intent(this, ListActivity.class);
 		intent.putExtra("ParentClassName", "UserActivity");
+		intent.putExtra("content", "groupsCurrent");
+		
 		intent.putExtra("email", user.getEmail());
 		
 		int success = user.fetchGroups();
@@ -200,8 +202,8 @@ public class UserProfileActivity extends ActionBarActivity
 	public void startFriendsCurrentActivity(View view)
 	{
 		Global global = ((Global) getApplicationContext());
-		Intent intent = new Intent(this, FriendsCurrentActivity.class);
-		intent.putExtra("ParentClassName", "UserActivity");
+		Intent intent = new Intent(this, ListActivity.class);
+		intent.putExtra("content", "friendsCurrent");
 		intent.putExtra("email", user.getEmail());
 		intent.putExtra("mod", "true");
 		int success = user.fetchFriends();

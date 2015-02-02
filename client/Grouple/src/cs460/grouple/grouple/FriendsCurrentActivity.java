@@ -55,7 +55,7 @@ public class FriendsCurrentActivity extends ActionBarActivity
 	{
 		// Set the activity layout to activity_current_friends.
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_current_friends);
+		setContentView(R.layout.activity_list);
 		
 		
 		// Load populates the container with all of your current friends.
@@ -84,7 +84,7 @@ public class FriendsCurrentActivity extends ActionBarActivity
 		
 		Intent intent = getIntent();
 		Bundle extras = intent.getExtras();
-		container = (FrameLayout)findViewById(R.id.currentFriendsContainer);
+		container = (FrameLayout)findViewById(R.id.listContainer);
 		//container.
 		
 		
@@ -166,7 +166,7 @@ public class FriendsCurrentActivity extends ActionBarActivity
 		Map<String, String> friends = user.getFriends();
 		if (friends != null && !friends.isEmpty())
 		{
-			LinearLayout friendsCurrentRL = (LinearLayout) findViewById(R.id.currentFriendsLayout);
+			LinearLayout friendsCurrentRL = (LinearLayout) findViewById(R.id.listLayout);
 			//Bundle extras = intent.getExtras();
 			// looping thru json and adding to an array
 			 Iterator it = friends.entrySet().iterator();
@@ -192,7 +192,7 @@ public class FriendsCurrentActivity extends ActionBarActivity
 					 rowView = (GridLayout) li.inflate(
 							 R.layout.listitem_friend, null);
 					 Button removeFriendButton = (Button) rowView
-							.findViewById(R.id.removeFriendButton);
+							.findViewById(R.id.removeButtonLI);
 					 removeFriendButton.setId(index);
 				 } 
 				 else
@@ -203,7 +203,7 @@ public class FriendsCurrentActivity extends ActionBarActivity
 				 // Add the information to the friendnamebutton and
 				 // add it to the next row.
 				 Button friendNameButton = (Button) rowView
-						 .findViewById(R.id.friendNameButton);
+						 .findViewById(R.id.nameButtonLI);
 
 				 friendNameButton.setText(fullName);
 				 
@@ -221,7 +221,7 @@ public class FriendsCurrentActivity extends ActionBarActivity
 		else
 		{		
 			// user has no friends
-			LinearLayout friendsCurrentRL = (LinearLayout) findViewById(R.id.currentFriendsLayout);
+			LinearLayout friendsCurrentRL = (LinearLayout) findViewById(R.id.listLayout);
 	
 			// The user has no friend's so display the sad guy image.
 			View row = li.inflate(R.layout.listitem_sadguy, null);
@@ -253,7 +253,7 @@ public class FriendsCurrentActivity extends ActionBarActivity
 										email, friendEmail);
 						user.removeFriend(friendEmail);
 						// removing all of the views
-						LinearLayout friendsCurrentLayout = (LinearLayout) findViewById(R.id.currentFriendsLayout);
+						LinearLayout friendsCurrentLayout = (LinearLayout) findViewById(R.id.listLayout);
 						friendsCurrentLayout.removeAllViews();
 						// calling getFriends to repopulate view
 						populateFriendsCurrent();

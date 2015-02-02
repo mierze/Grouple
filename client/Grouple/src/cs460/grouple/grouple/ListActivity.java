@@ -79,31 +79,35 @@ public class ListActivity extends ActionBarActivity
 		Intent intent = getIntent();
 		Bundle extras = intent.getExtras();
 		
-		
-		if (extras.getString("content").equals("groupMembers"))
+		if (global.isCurrentUser(extras.getString("email")))
 		{
-			group = global.loadGroup(extras.getInt("gid"));
-			if (global.isCurrentUser(extras.getString("email")))
-			{
-				user = global.getCurrentUser();
-			}
-			else if (global.getUserBuffer().getEmail().equals(extras.getString("email")))
-			{
-				user = global.getUserBuffer();
-			}
-			else
-			{
-				user = global.loadUser(extras.getString("email"));
-			}
-			populateUsers();
-			initActionBar("Group Members");
+			user = global.getCurrentUser();
+		}
+		else if (global.getUserBuffer() != null && global.getUserBuffer().getEmail().equals(extras.getString("email")))
+		{
+			user = global.getUserBuffer();
 		}
 		else
 		{
-			//grabbing the user with the given email in the extras
-			user = global.getUserBuffer();//loadUser(extras.getString("email"));				
+			user = global.loadUser(extras.getString("email"));
+		}
+		if (extras.getString("content").equals("groupMembers"))
+		{
+			group = global.loadGroup(extras.getInt("gid"));
+			
+			populateUsers();
+			initActionBar("Group Members");
+		}
+		else if (extras.getString("content").equals("groupsCurrent"))
+		{
+			//grabbing the user with the given email in the extras			
 			populateGroupsCurrent();
 			initActionBar(user.getFirstName() + "'s Groups");
+		}
+		else
+		{
+			initActionBar(user.getFirstName() + "'s Friends");
+			populateUsers();
 		}
 		
 		initKillswitchListener();
@@ -162,7 +166,9 @@ public class ListActivity extends ActionBarActivity
 	{
 		Global global = ((Global) getApplicationContext());
 		LayoutInflater li = getLayoutInflater();
-		LinearLayout groupsLayout = ((LinearLayout)findViewById(R.id.groupsCurrentLayout));
+		LinearLayout groupsLayout = ((LinearLayout)findViewById(R.id.listLayout));
+		Button addNew = (Button)findViewById(R.id.addNewButtonLiA);
+		addNew.setVisibility(View.GONE);
 		//grabbing the users groups
 		Map<Integer, String> groups = user.getGroups();
 		System.out.println("USER HAS A NAME OF" + user.getFullName());
@@ -176,22 +182,21 @@ public class ListActivity extends ActionBarActivity
 				
 		
 					rowView = (GridLayout) li.inflate(
-							R.layout.listitem_group, null);
+							R.layout.listitem_friend, null);
 	
 					
-				Button leaveGroupButton = (Button)rowView.findViewById(R.id.removeFriendButton);
+				Button leaveGroupButton = (Button)rowView.findViewById(R.id.removeButtonLI);
 				//if mod true this, if not someting else
 				if (global.isCurrentUser(user.getEmail()))
 					leaveGroupButton.setId(entry.getKey());
-					
 				else
 					leaveGroupButton.setVisibility(View.GONE);
 				
 				// Grab the buttons and set their IDs. Their IDs
 				// will fall inline with the array 'groupsNameList'.
 				Button groupNameButton = (Button) rowView
-						.findViewById(R.id.groupNameButton);
-
+						.findViewById(R.id.nameButtonLI);
+				
 				groupNameButton.setText(entry.getValue());
 				
 				//setting ids to the id of the group for button functionality
@@ -220,117 +225,40 @@ public class ListActivity extends ActionBarActivity
 			groupsLayout.addView(row);
 		}	
 	}
-
-	public void populateFriendsCurrent()
-	{
-		LayoutInflater li = getLayoutInflater();
-		Global global = ((Global) getApplicationContext());
-		/*
-		 * If jsonFriends isn't null, then we have friends and we
-		 * loop through the friends and add them to the current
-		 * friends container.
-		 */
-		Map<String, String> friends = user.getFriends();
-		if (friends != null && !friends.isEmpty())
-		{
-			LinearLayout friendsCurrentRL = (LinearLayout) findViewById(R.id.currentFriendsLayout);
-			//Bundle extras = intent.getExtras();
-			// looping thru json and adding to an array
-			 Iterator it = friends.entrySet().iterator();
-			 int index = 0;
-			 while (it.hasNext()) {
-				 Map.Entry pair = (Map.Entry)it.next();
-				 String email = (String) pair.getKey();
-				 String fullName = (String) pair.getValue();
-
-				 GridLayout rowView;
-				 friendsEmailList.add(index, email);
-				 /*
-				 * If you are the mod, add the friend button and the
-				 * remove button. If you aren't the mod, then add
-				 * the friend of a friend button without the remove
-				 * button. In this instance, mod means whether or
-				 * not these or your friends. You don't want the
-				 * option to delete a friend's friend.
-				 */
-
-				 if (global.isCurrentUser(user.getEmail()))
-				 {
-					 rowView = (GridLayout) li.inflate(
-							 R.layout.listitem_friend, null);
-					 Button removeFriendButton = (Button) rowView
-							.findViewById(R.id.removeFriendButton);
-					 removeFriendButton.setId(index);
-				 } 
-				 else
-				 {
-					rowView = (GridLayout) li.inflate(
-							R.layout.listitem_friends_friend, null);
-				 }
-				 // Add the information to the friendnamebutton and
-				 // add it to the next row.
-				 Button friendNameButton = (Button) rowView
-						 .findViewById(R.id.friendNameButton);
-
-				 friendNameButton.setText(fullName);
-				 /*
-				 * Setting the ID to i makes it so we can use i to
-				 * figure out the friend's email. Important for
-				 * finding a friend's profile.
-				 */
-				 friendNameButton.setId(index);
-				 rowView.setId(index);
-				 friendsCurrentRL.addView(rowView);	
-				 index++;
-			 }
-		}
-		else
-		{		
-			// user has no friends
-			LinearLayout friendsCurrentRL = (LinearLayout) findViewById(R.id.currentFriendsLayout);
-	
-			// The user has no friend's so display the sad guy image.
-			View row = li.inflate(R.layout.listitem_sadguy, null);
-			((TextView) row.findViewById(R.id.sadGuyTextView))
-				.setText("You do not have any friends.");
-			friendsCurrentRL.addView(row);
-		}
-	}
 	
 	public void populateUsers()
 	{
 		LayoutInflater li = getLayoutInflater();
 		Global global = ((Global) getApplicationContext());
-		/*
-		 * If jsonFriends isn't null, then we have friends and we
-		 * loop through the friends and add them to the current
-		 * friends container.
-		 */
-		
-		/*
-		 * If group members
-		 */
-		Intent intent = getIntent();
-		Bundle extras = intent.getExtras();
+
+		Bundle extras = getIntent().getExtras();
 		
 		Map<String, String> users;
 		if  (extras.getString("content").equals("groupMembers"))
 		{
+			//For now, display the invite members button if you are in group
+			//need to check admin level
 			users = group.getMembers();	
-			///Button inviteMembers = new Button(this);
-			//inviteMembers.setOnClickListener((OnClickListener) startInviteActivity());
-			//FrameLayout friendsCurrentContainer = (FrameLayout) findViewById(R.id.currentFriendsContainer);
-			//friendsCurrentRL.addView(inviteMembers);
+			if (!users.containsKey(global.getCurrentUser().getEmail()))
+			{
+				Button addNew = (Button)findViewById(R.id.addNewButtonLiA);
+				addNew.setVisibility(View.GONE);
+			}
+			
 		}
-		else//to do make else ifs.
+		else if (extras.getString("content").equals("friendsCurrent"))//to do make else ifs." +
 		{
 			users = user.getFriends();
 			Button addNew = (Button)findViewById(R.id.addNewButtonLiA);
 			addNew.setVisibility(View.GONE);
 		}
+		else
+		{
+			users = user.getFriends();
+		}
 		if (users != null && !users.isEmpty())
 		{
-			LinearLayout friendsCurrentRL = (LinearLayout) findViewById(R.id.currentFriendsLayout);
+			LinearLayout listLayout = (LinearLayout) findViewById(R.id.listLayout);
 			//Bundle extras = intent.getExtras();
 			// looping thru json and adding to an array
 			Iterator it = users.entrySet().iterator();
@@ -356,19 +284,18 @@ public class ListActivity extends ActionBarActivity
 					 rowView = (GridLayout) li.inflate(
 							 R.layout.listitem_friend, null);
 					 Button removeFriendButton = (Button) rowView
-							.findViewById(R.id.removeFriendButton);
+							.findViewById(R.id.removeButtonLI);
 					 removeFriendButton.setId(index);
 				 } 
 				 else
 				 {
-				 
 					rowView = (GridLayout) li.inflate(
 							R.layout.listitem_friends_friend, null);
 				 }
 				 // Add the information to the friendnamebutton and
 				 // add it to the next row.
 				 Button friendNameButton = (Button) rowView
-						 .findViewById(R.id.friendNameButton);
+						 .findViewById(R.id.nameButtonLI);
 
 				 friendNameButton.setText(fullName);
 				 /*
@@ -378,19 +305,22 @@ public class ListActivity extends ActionBarActivity
 				 */
 				 friendNameButton.setId(index);
 				 rowView.setId(index);
-				 friendsCurrentRL.addView(rowView);	
+				 listLayout.addView(rowView);
 				 index++;
 			 }
 		}
 		else
 		{		
 			// user has no friends
-			LinearLayout friendsCurrentRL = (LinearLayout) findViewById(R.id.currentFriendsLayout);
+			LinearLayout friendsCurrentRL = (LinearLayout) findViewById(R.id.listLayout);
 	
-			// The user has no friend's so display the sad guy image.
 			View row = li.inflate(R.layout.listitem_sadguy, null);
-			((TextView) row.findViewById(R.id.sadGuyTextView))
-				.setText("There are no members in this group.");
+			// The user has no friend's so display the sad guy image.
+			if (extras.getString("content").equals("groupMembers"))
+				((TextView) row.findViewById(R.id.sadGuyTextView)).setText("There are no members in this group.");
+			else if (extras.getString("content").equals("friendsCurrent"))
+				((TextView) row.findViewById(R.id.sadGuyTextView)).setText("You have no friends.");
+			
 			friendsCurrentRL.addView(row);
 		}
 	}
@@ -398,33 +328,74 @@ public class ListActivity extends ActionBarActivity
 	
 
 		// Handles removing a friend when the remove friend button is pushed.
-		public void removeFriendButton(View view)
+		public void removeButton(View view)
 		{
-			final int index = view.getId(); //position in friendArray
-			final String friendEmail = friendsEmailList.get(index); //friend to remove
-			final String email = user.getEmail(); //user email
+			Global global = ((Global) getApplicationContext());
+			Bundle extras = getIntent().getExtras();
+			
+			if (extras.getString("content").equals("groupMembers"))
+			{
+				//nothing for now
+			}
+			else if (extras.getString("content").equals("groupsCurrent"))
+			{
+				//Get the id.
+				clickedRemoveID = view.getId();
 
-			new AlertDialog.Builder(this)
-					.setMessage("Are you sure you want to remove that friend?")
-					.setCancelable(true)
-					.setPositiveButton("Yes", new DialogInterface.OnClickListener()
-					{
-						@Override
-						public void onClick(DialogInterface dialog, int id)
+				new AlertDialog.Builder(this)
+						.setMessage("Are you sure you want to leave this group?")
+						.setCancelable(true)
+						.setPositiveButton("Yes", new DialogInterface.OnClickListener()
 						{
+							@Override
+							public void onClick(DialogInterface dialog, int id)
+							{
+								System.out.println("Leave grp email / id: " + user.getEmail() + " " + clickedRemoveID);
+								new leaveGroupTask()
+										.execute(
+												"http://68.59.162.183/android_connect/leave_group.php?email=" + user.getEmail() + "&gid=" + clickedRemoveID);
+								user.removeGroup(clickedRemoveID);
+								clickedRemoveID = -1; //reset
+							}
+						}).setNegativeButton("Cancel", null).show();
+			}
+			else if (extras.getString("content").equals("friendsCurrent"))
+			{
+				final int index = view.getId(); //position in friendArray
+				final String friendEmail = friendsEmailList.get(index); //friend to remove
+				final String email = user.getEmail(); //user email
 
-							new deleteFriendTask()
-									.execute(
-											"http://68.59.162.183/android_connect/delete_friend.php",
-											email, friendEmail);
-							user.removeFriend(friendEmail);
-							// removing all of the views
-							LinearLayout friendsCurrentLayout = (LinearLayout) findViewById(R.id.currentFriendsLayout);
-							friendsCurrentLayout.removeAllViews();
-							// calling getFriends to repopulate view
-							populateFriendsCurrent();
-						}
-					}).setNegativeButton("Cancel", null).show();
+				new AlertDialog.Builder(this)
+						.setMessage("Are you sure you want to remove that friend?")
+						.setCancelable(true)
+						.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+						{
+							@Override
+							public void onClick(DialogInterface dialog, int id)
+							{
+
+								new deleteFriendTask()
+										.execute(
+												"http://68.59.162.183/android_connect/delete_friend.php",
+												email, friendEmail);
+								user.removeFriend(friendEmail);
+								// removing all of the views
+								LinearLayout friendsCurrentLayout = (LinearLayout) findViewById(R.id.listLayout);
+								friendsCurrentLayout.removeAllViews();
+								// calling getFriends to repopulate view
+								populateUsers();
+							}
+						}).setNegativeButton("Cancel", null).show();
+			}
+			if (user != null)
+			{
+				global.loadUser(user.getEmail());
+				
+			}
+			if (group != null)
+			{
+				global.loadGroup(group.getID());
+			}
 		}
 
 		/*
@@ -475,24 +446,13 @@ public class ListActivity extends ActionBarActivity
 		public void startInviteActivity(View view)
 		{
 			Intent invite = new Intent(this, InviteActivity.class);
+			System.out.println("Starting invite activity with user : " + user.getEmail());
 			invite.putExtra("email", user.getEmail());
 			invite.putExtra("gid", group.getID());
 			startActivity(invite);
 			
 		}
-		public void startGroupProfileActivity(View view) throws InterruptedException
-		{
-			Global global = ((Global) getApplicationContext());
-			Intent groupProfile = new Intent(this, GroupProfileActivity.class);
-			System.out.println("Loading group gid: " + view.getId());
-			groupProfile.putExtra("gid", view.getId());
-			Group g = global.loadGroup(view.getId());
-		
-			if (g != null)
-				global.setGroupBuffer(g);
-			
-			startActivity(groupProfile);
-		}
+
 		
 		private class leaveGroupTask extends AsyncTask<String, Void, String>
 		{
@@ -515,7 +475,7 @@ public class ListActivity extends ActionBarActivity
 						// success: group has been deleted
 
 						// removing all of the views
-						LinearLayout groupsLayout = (LinearLayout) findViewById(R.id.groupsCurrentLayout);
+						LinearLayout groupsLayout = (LinearLayout) findViewById(R.id.listLayout);
 						groupsLayout.removeAllViews();
 						
 						// Refresh the page to show the removal of the group.
@@ -545,53 +505,47 @@ public class ListActivity extends ActionBarActivity
 
 		
 		// When you click on a friend, this loads up the friend's profile.
-		public void startUserProfileActivity(View view)
+		public void startProfileActivity(View view)
 				throws InterruptedException
 		{
 			Global global = ((Global) getApplicationContext());
-			// need to get access to this friends email
-			// launches friendProfileActivity and loads content based on that email
-			int id = view.getId();
-			// got the id, now we need to grab the users email and somehow pass it
-			// to the activity
-
-			String friendEmail = friendsEmailList.get(id);
-			Intent intent = new Intent(this, UserProfileActivity.class);
-			intent.putExtra("ParentClassName", "FriendsCurrentActivity");
-			User u = null;
-			u = global.loadUser(friendEmail);
-		
-			if (u != null)
-				global.setUserBuffer(u);
-			intent.putExtra("email", friendEmail);
-			intent.putExtra("mod", "false");
+			Intent intent = null;
+			Bundle extras = getIntent().getExtras();
+			if (extras.getString("content").equals("groupsCurrent"))
+			{
+				intent = new Intent(this, GroupProfileActivity.class);
+				System.out.println("Loading group gid: " + view.getId());
+				intent.putExtra("gid", view.getId());
+				intent.putExtra("email", user.getEmail());
+				Group g = global.loadGroup(view.getId());
+			
+				if (g != null)
+					global.setGroupBuffer(g);
+				
+			}
+			else
+			{
+				// need to get access to this friends email
+				// launches friendProfileActivity and loads content based on that email
+				int id = view.getId();
+				// got the id, now we need to grab the users email and somehow pass it
+				// to the activity
+	
+				String friendEmail = friendsEmailList.get(id);
+				intent = new Intent(this, UserProfileActivity.class);
+				
+				User u = global.loadUser(friendEmail);
+			
+				if (u != null)
+					global.setUserBuffer(u);
+				intent.putExtra("email", friendEmail);
+				intent.putExtra("mod", "false");
+				
+			}
 			startActivity(intent);
 		}
 
 	
-
-	public void removeGroupButton(View view) throws InterruptedException
-	{
-		//Get the id.
-		clickedRemoveID = view.getId();
-
-		new AlertDialog.Builder(this)
-				.setMessage("Are you sure you want to leave this group?")
-				.setCancelable(true)
-				.setPositiveButton("Yes", new DialogInterface.OnClickListener()
-				{
-					@Override
-					public void onClick(DialogInterface dialog, int id)
-					{
-						System.out.println("Leave grp email / id: " + user.getEmail() + " " + clickedRemoveID);
-						new leaveGroupTask()
-								.execute(
-										"http://68.59.162.183/android_connect/leave_group.php?email=" + user.getEmail() + "&gid=" + clickedRemoveID);
-						user.removeGroup(clickedRemoveID);
-						clickedRemoveID = -1; //reset
-					}
-				}).setNegativeButton("Cancel", null).show();
-	}
 
 	public void initKillswitchListener()
 	{
