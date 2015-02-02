@@ -20,5 +20,16 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" />
     </ScrollView>
+
+      <Button
+          android:id="@+id/addNewButtonLiA"
+          android:layout_width="match_parent"
+          android:layout_height="50sp"
+          android:layout_below="@+id/currentFriendsScrollView"
+          android:background="@drawable/button_border"
+          android:onClick="startInviteActivity"
+          android:text="Invite Friend"
+          android:textColor="@color/button_text_color"
+          android:textSize="20sp" />
     
 </RelativeLayout>

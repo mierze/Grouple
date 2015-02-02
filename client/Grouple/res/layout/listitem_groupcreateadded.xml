@@ -20,7 +20,6 @@
         android:background="@android:color/transparent"
         android:fontFamily="sans-serif-condensed"
         android:gravity="center_vertical"
-        android:onClick="addToGroupTable"
         android:textColor="@color/text_color" />
 
     <Button
@@ -42,7 +41,6 @@
         android:layout_width="48dp"
         android:layout_height="wrap_content"
         android:layout_column="2"
-        android:layout_toLeftOf="@+id/removeFriendButtonNoAccess"
         android:background="@android:color/transparent"
         android:gravity="center"
         android:padding="0dp" />

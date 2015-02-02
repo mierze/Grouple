@@ -167,7 +167,7 @@ public class HomeActivity extends ActionBarActivity
 	{
 		super.onResume(); // Always call the superclass method first
 		Log.d("onResume()","after superonresume");
-		Global global = ((Global) getApplicationContext());
+		
 		Log.d("onResume()","after global declaratione");
 		View home = findViewById(R.id.homeLayout);
 		//global.fetchNumFriendRequests(global.getCurrentUser());
@@ -177,35 +177,10 @@ public class HomeActivity extends ActionBarActivity
 		//global.setNotifications(home); PANDA
 	}
 
-	/*
-	 * @Override public boolean onKeyDown(int keyCode, KeyEvent event) { if
-	 * (keyCode == KeyEvent.KEYCODE_BACK) { Bundle extras =
-	 * getIntent().getExtras(); if (extras.getString("ParentClassName") != null)
-	 * { Intent newIntent = null; try { // you need to define the class with
-	 * package name newIntent = new Intent(this,
-	 * Class.forName("cs460.grouple.grouple." +
-	 * extras.getString("ParentClassName")));
-	 * 
-	 * String email = extras.getString("ParentEmail");
-	 * 
-	 * String parentEmail = extras.getString("ParentParentEmail");
-	 * 
-	 * if (email != null) { newIntent.putExtra("email", email); }
-	 * 
-	 * if (parentEmail != null) { newIntent.putExtra("ParentEmail",
-	 * parentEmail); } //todo: check compared to current user first //or pass in
-	 * a parentMod in the extras newIntent.putExtra("mod", "false"); if
-	 * (extras.getString("ParentParentClassName") != null) {
-	 * newIntent.putExtra("ParentClassName",
-	 * extras.getString("ParentParentClassName")); } } catch
-	 * (ClassNotFoundException e) { e.printStackTrace(); }
-	 * startActivity(newIntent); } }
-	 * 
-	 * return false; }
-	 */
 
 	public void navigate(View view)
 	{
+		Global global = ((Global) getApplicationContext());
 		//originally setting intent to null
 		Intent intent = null;
 
@@ -232,6 +207,8 @@ public class HomeActivity extends ActionBarActivity
 		default: //default just break out
 			break;
 		}
+		
+		global.loadUser(user.getEmail());//update
 		
 		//checking that intent was assigned
 		if (intent != null)

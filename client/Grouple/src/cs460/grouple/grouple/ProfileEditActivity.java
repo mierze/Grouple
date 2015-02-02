@@ -40,6 +40,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.util.Base64;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -113,31 +114,15 @@ public class ProfileEditActivity extends ActionBarActivity implements
 		unregisterReceiver(broadcastReceiver);
 		super.onDestroy();
 	}
-
-	// Executed when hitting the back button.
-	public void startParentActivity(View view)
+	
+	@Override
+	protected void onPause()
 	{
-		Bundle extras = getIntent().getExtras();
-
-		String className = extras.getString("ParentClassName");
-		Intent newIntent = null;
-		try
-		{
-			newIntent = new Intent(this, Class.forName("cs460.grouple.grouple."
-					+ className));
-			if (extras.getString("ParentEmail") != null)
-			{
-				newIntent.putExtra("email", extras.getString("ParentEmail"));
-			}
-			newIntent.putExtra("ParentClassName", "EditProfileActivity");
-		} 
-		catch (ClassNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		startActivity(newIntent);
+		super.onPause();
+		finish();
 	}
 
+	
 	/*
 	 * Get profile executes get_profile.php. It uses the current users email
 	 * address to retrieve the users name, age, and bio.
@@ -436,7 +421,7 @@ public class ProfileEditActivity extends ActionBarActivity implements
 	}
 
 
-	public void initKillswitchListener()
+	private void initKillswitchListener()
 	{
 		// START KILL SWITCH LISTENER
 		IntentFilter intentFilter = new IntentFilter();

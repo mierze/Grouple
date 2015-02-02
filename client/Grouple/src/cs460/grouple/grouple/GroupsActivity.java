@@ -144,27 +144,30 @@ public class GroupsActivity extends ActionBarActivity
 	public void startGroupCreateActivity(View view)
 	{
 		Global global = ((Global) getApplicationContext());
+		global.loadUser(user.getEmail());
 		Intent intent = new Intent(this, GroupCreateActivity.class);
 		intent.putExtra("ParentClassName", "GroupsActivity");
-		//intent.putExtra("email", global.getCurrentUser());
+		intent.putExtra("email", user.getEmail());
 		intent.putExtra("mod", "true");
 		startActivity(intent);
 	}
 
 	public void startGroupInvitesActivity(View view)
 	{
+		Global global = ((Global) getApplicationContext());
+		global.loadUser(user.getEmail());//update
 		Intent intent = new Intent(this, GroupInvitesActivity.class);
 		intent.putExtra("ParentClassName", "GroupsActivity");
-		// intent.putExtra("mod", "true");
 		startActivity(intent);
 	}
 
 	public void startGroupsCurrentActivity(View view)
 	{
+		Global global = ((Global) getApplicationContext());
+		global.loadUser(user.getEmail());//update
 		Intent intent = new Intent(this, GroupsCurrentActivity.class);
 		intent.putExtra("ParentClassName", "GroupsActivity");
-		intent.putExtra("content", "groupscurrent");
-		System.out.println("ADDING EXTRA EMAIL AS " + user.getEmail());
+		intent.putExtra("content", "groupsCurrent");
 		intent.putExtra("email", user.getEmail());// specifies which
 															// email for the
 															// list of groups

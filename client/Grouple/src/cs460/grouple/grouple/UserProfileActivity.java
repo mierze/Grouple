@@ -47,7 +47,8 @@ public class UserProfileActivity extends ActionBarActivity
 	protected void onResume()
 	{
 		super.onResume();
-		load();
+		setNotifications();
+		populateProfile();
 	}
 	public void initActionBar()
 	{
