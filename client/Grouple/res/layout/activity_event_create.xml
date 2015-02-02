@@ -30,11 +30,11 @@
             android:id="@+id/createbioMessage"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-        	android:layout_marginTop="5dp"
-        	android:padding="5dp"
-    		android:gravity="left"
-            android:text="@string/bioMessage"
-        	android:background="@color/black"
+            android:layout_marginTop="5dp"
+            android:background="@color/black"
+            android:gravity="left"
+            android:padding="5dp"
+            android:text="About Event"
             android:textColor="@color/white" />
         
         <EditText
@@ -62,39 +62,31 @@
         android:text="@string/introMessage"
         android:background="@color/black"
         android:textColor="@color/white" />
-        
-    <ScrollView
-        android:id="@+id/scrollViewPickMembers"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-
-        android:layout_weight="2"
-    	android:background="@color/layout_background_color"
-        android:padding="0dp" >
-
-        <LinearLayout
-            android:id="@+id/linearLayoutNested1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
-    </ScrollView>
     
     
     <LinearLayout
         android:layout_width="match_parent"
         
         android:layout_height="wrap_content" >
-        
-        <Button
-            android:id="@+id/confirmButton"
-            android:layout_width="match_parent"
-            android:layout_height="50sp"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/button_border"
-            android:onClick="createGroupButton"
-            android:text="Confirm Create Event"
-            android:textColor="@color/button_text_color"
-            android:textSize="20sp" />
+
+        <Spinner
+            android:id="@+id/spinner1"
+            android:entries="@array/categorySpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_weight="1" />
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/confirmButton"
+        android:layout_width="match_parent"
+        android:layout_height="50sp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/button_border"
+        android:onClick="createGroupButton"
+        android:text="Confirm Create Event"
+        android:textColor="@color/button_text_color"
+        android:textSize="20sp" />
+
 </LinearLayout>

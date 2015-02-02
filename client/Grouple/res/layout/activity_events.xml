@@ -21,18 +21,18 @@
 	    android:textSize="20sp" />
 	
 		<Button
-	    android:id="@+id/eventsPendingButtonEA"
-	    android:layout_width="match_parent"
-	    android:layout_height="80dp"
-	    android:layout_alignParentLeft="true"
-	    android:layout_below="@+id/eventsUpcomingButtonEA"
-	    android:layout_marginTop="16dp"
-	    android:background="@drawable/button_border"
-	    android:fontFamily="sans-serif-condensed"
-	    android:onClick="startEventInvitesActivity"
-	    android:text="Event Invites"
-	    android:textColor="@color/button_text_color"
-	    android:textSize="20sp" />
+		    android:id="@+id/eventsPendingButtonEA"
+		    android:layout_width="match_parent"
+		    android:layout_height="80dp"
+		    android:layout_alignParentLeft="true"
+		    android:layout_below="@+id/eventsUpcomingButtonEA"
+		    android:layout_marginTop="16dp"
+		    android:background="@drawable/button_border"
+		    android:fontFamily="sans-serif-condensed"
+		    android:onClick="startEventInvitesActivity"
+		    android:text="Pending Events"
+		    android:textColor="@color/button_text_color"
+		    android:textSize="20sp" />
 
 	<Button
 	    android:id="@+id/eventInvitesButtonEA"

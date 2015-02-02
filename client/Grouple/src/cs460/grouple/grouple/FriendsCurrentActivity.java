@@ -87,24 +87,20 @@ public class FriendsCurrentActivity extends ActionBarActivity
 		container = (FrameLayout)findViewById(R.id.currentFriendsContainer);
 		//container.
 		
-		//grabbing the user with the given email in the extras
-		try
+		
+		if (!global.isCurrentUser(extras.getString("email")))
 		{
-			user = global.loadUser(extras.getString("email"));
-		} catch (InterruptedException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ExecutionException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TimeoutException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			if (global.getUserBuffer() != null)
+				user = global.getUserBuffer();
+			else
+				user = global.loadUser(extras.getString("email"));
 		}
-
+		else if (global.isCurrentUser(extras.getString("email")))
+		{	
+			//preloaded
+			user = global.getCurrentUser();
+		}
+	
 		//populating the view with current friends list items
 		populateFriendsCurrent();
 		
@@ -345,20 +341,11 @@ public class FriendsCurrentActivity extends ActionBarActivity
 		String friendEmail = friendsEmailList.get(id);
 		Intent intent = new Intent(this, UserProfileActivity.class);
 		intent.putExtra("ParentClassName", "FriendsCurrentActivity");
-		try
-		{
-			user = global.loadUser(friendEmail);
-		} catch (ExecutionException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TimeoutException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
+		user = global.loadUser(friendEmail);
+		
+		
 		global.setUserBuffer(user);
-		Thread.sleep(500);//PANDA sleep should not be used
 		intent.putExtra("email", friendEmail);
 		intent.putExtra("mod", "false");
 		//progBar.setVisibility(View);

@@ -1,9 +1,5 @@
 package cs460.grouple.grouple;
 
-
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
-
 import cs460.grouple.grouple.R;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -21,9 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 /*
- * UserActivity displays the profile page of the logged-in user.
- * NEED TO CHANGE THIS TO USERPROFILEACTIVITY AND JUST REMOVE FRIENDPROFILE
- * CHECK .isCurrentUser() and then enable / disable EDIT PROFILE
+ * UserActivity displays the profile page of any user
  */
 public class UserProfileActivity extends ActionBarActivity
 {
@@ -53,9 +47,6 @@ public class UserProfileActivity extends ActionBarActivity
 	protected void onResume()
 	{
 		super.onResume();
-		//Global global = ((Global) getApplicationContext());
-		//global.loadUser(user.getEmail());
-		//findViewById(R.id.userProfileOuter)
 		load();
 	}
 	public void initActionBar()
@@ -74,8 +65,6 @@ public class UserProfileActivity extends ActionBarActivity
 
 	public void load()
 	{
-		
-		System.out.println("Currently OADING A USER PROFILE");
 		Global global = ((Global) getApplicationContext());
 		Intent intent = getIntent();
 		Bundle extras = intent.getExtras();
@@ -83,29 +72,20 @@ public class UserProfileActivity extends ActionBarActivity
 		//grabbing the user with the given email in the extras
 		if (!global.isCurrentUser(extras.getString("email")))
 		{
-			user = global.getUserBuffer();
+			if (global.getUserBuffer() != null)
+				user = global.getUserBuffer();
+			else
+				user = global.loadUser(extras.getString("email"));
+			//hiding edit profile button
 			Button editProfileButton = (Button)findViewById(R.id.editProfileButton);
 			editProfileButton.setVisibility(View.GONE);
 		}
-		else
-		{
-			try
-			{
-				user = global.loadUser(extras.getString("email"));
-			} catch (InterruptedException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ExecutionException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (TimeoutException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}		
+		else if (global.isCurrentUser(extras.getString("email")))
+		{	
+			//preloaded
+			user = global.getCurrentUser();
 		}
+
 
 		// the textviews
 		populateProfile();
@@ -200,20 +180,36 @@ public class UserProfileActivity extends ActionBarActivity
 
 	public void startGroupsCurrentActivity(View view)
 	{
+		Global global = ((Global) getApplicationContext());
 		Intent intent = new Intent(this, GroupsCurrentActivity.class);
 		intent.putExtra("ParentClassName", "UserActivity");
 		intent.putExtra("email", user.getEmail());
-		//intent.putExtra("ParentEmail", global.getCurrentUser());
+		
+		int success = user.fetchGroups();
+		if (success == 1)
+			if (global.isCurrentUser(user.getEmail()))
+				global.setCurrentUser(user);
+			else
+				global.setUserBuffer(user);
+		
 		startActivity(intent);
 		iv = null;
 	}
 
 	public void startFriendsCurrentActivity(View view)
 	{
+		Global global = ((Global) getApplicationContext());
 		Intent intent = new Intent(this, FriendsCurrentActivity.class);
 		intent.putExtra("ParentClassName", "UserActivity");
 		intent.putExtra("email", user.getEmail());
 		intent.putExtra("mod", "true");
+		int success = user.fetchFriends();
+		if (success == 1)
+			if (global.isCurrentUser(user.getEmail()))
+				global.setCurrentUser(user);
+			else
+				global.setUserBuffer(user);
+		
 		startActivity(intent);
 		iv = null;
 	}

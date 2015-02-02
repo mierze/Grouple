@@ -106,14 +106,29 @@ public class Group //extends Entity
 	 * 
 	 */
 	// Get numFriends, TODO: work on returning the integer
-	public int fetchMembers() throws InterruptedException, ExecutionException, TimeoutException
+	public int fetchMembers()
 	{
 		
 		AsyncTask<String, Void, String> task = new getMembersTask()
 		.execute("http://68.59.162.183/android_connect/get_group_members.php?gid="
 				+ getID());
         
-       task.get(10000, TimeUnit.MILLISECONDS);
+       try
+	{
+		task.get(10000, TimeUnit.MILLISECONDS);
+	} catch (InterruptedException e)
+	{
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (ExecutionException e)
+	{
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (TimeoutException e)
+	{
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
 	
 		
 		return 1;
@@ -156,7 +171,6 @@ public class Group //extends Entity
 				}
 			} catch (Exception e)
 			{
-				Log.d("fetchFriends", "exception caught");
 				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
 			}
 		}
@@ -170,8 +184,26 @@ public class Group //extends Entity
 	// Get numFriends, TODO: work on returning the integer
 	public int fetchGroupInfo()
 	{
-		new getGroupInfoTask()
-				.execute("http://68.59.162.183/android_connect/get_group_profile.php", Integer.toString(getID()));
+		AsyncTask<String, Void, String> task = new getGroupInfoTask()
+		.execute("http://68.59.162.183/android_connect/get_group_profile.php", Integer.toString(getID()));
+        
+       try
+	{
+		task.get(10000, TimeUnit.MILLISECONDS);
+	} catch (InterruptedException e)
+	{
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (ExecutionException e)
+	{
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (TimeoutException e)
+	{
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+		
 		return 1;
 	}
 

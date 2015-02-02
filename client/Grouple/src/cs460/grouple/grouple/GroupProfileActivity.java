@@ -39,6 +39,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+/**
+ * TODO
+ * Group Invite Button
+ * 	-Launches list like create group
+ * 	-Choose admin / check off
+ * 	-Submit sends out like in create
+ *
+ */
+
+
 /*
  * GroupProfileActivity displays the profile of a user's group.
  */
@@ -128,8 +138,10 @@ public class GroupProfileActivity extends ActionBarActivity
 
 	public void startListActivity(View view)
 	{
+		Bundle extras = getIntent().getExtras();
 		Intent list = new Intent(this, ListActivity.class);
 		list.putExtra("content", "groupMembers");
+		list.putExtra("email", extras.getString("email"));
 		list.putExtra("gid", group.getID());
 		startActivity(list);
 		
@@ -228,9 +240,11 @@ public class GroupProfileActivity extends ActionBarActivity
 
 	public void startGroupEditActivity(View view)
 	{
+		Bundle extras = getIntent().getExtras();
 		Intent intent = new Intent(this, GroupEditActivity.class);
 		intent.putExtra("ParentClassName", "GroupProfileActivity");
 		intent.putExtra("gid", group.getID());
+		intent.putExtra("email", extras.getString("email"));
 		startActivity(intent);
 	//	bmp = null;
 	//	iv = null;

@@ -82,23 +82,8 @@ public class ProfileEditActivity extends ActionBarActivity implements
 		errorTextView.setVisibility(1);
 
 		Bundle extras = getIntent().getExtras();
-		try
-		{
-			user = global.loadUser(global.getCurrentUser().getEmail());
-		} catch (InterruptedException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ExecutionException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TimeoutException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		//make this utilize user object
+		user = global.loadUser(global.getCurrentUser().getEmail());
+	
 		
 		if (user != null)
 			getProfile();

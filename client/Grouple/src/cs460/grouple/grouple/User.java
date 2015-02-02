@@ -35,6 +35,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.AsyncTask.Status;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -67,6 +68,8 @@ public class User
 	private ArrayList<String> friendRequests; //friendRequest emails->names
 	private Map <Integer, String> groupInvites; //group invite ids
 	private boolean isCurrentUser;
+	private boolean userInfoTaskComplete = false;
+	
 	
 	/*
 	 * Constructor for User class
@@ -287,19 +290,8 @@ public class User
 		{
 			profileImg = null;
 		}
-			// set the image
-		/*if (bmp != null)
-		{
-			if (iv == null)
-			{
-				iv = (ImageView) findViewById(R.id.profilePhoto);
-	
-			}
-			iv.setImageBitmap(bmp);
-			img = null;
-			decodedString = null;
-		}*/
 	}
+	
 	/*
 	 * To delete the user out of memory and clear all arrays
 	 */
@@ -315,25 +307,37 @@ public class User
 	
 	/**
 	 * 
-	 * 
 	 * fetches the user name, bio, and everything
-	 * @throws TimeoutException 
-	 * @throws ExecutionException 
-	 * @throws InterruptedException 
-	 * 
 	 * 
 	 */
-	public int fetchUserInfo() throws InterruptedException, ExecutionException, TimeoutException
+	public int fetchUserInfo()
 	{
 		
-       AsyncTask<String, Void, String> task = new getUserInfoTask()
+		AsyncTask<String, Void, String> task = new getUserInfoTask()
 		.execute("http://68.59.162.183/android_connect/get_profile.php");
-        
-       task.get(10000, TimeUnit.MILLISECONDS);
-	
+  
+
+		try
+		{
+			task.get(10000, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TimeoutException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
+		//while (task.getStatus() != Status.FINISHED);
 		return 1;
 	}
+		
 
 	private class getUserInfoTask extends AsyncTask<String, Void, String>
 	{
@@ -356,7 +360,7 @@ public class User
 				//gotta make a json array
 				//JSONArray jsonArray = jsonObject.getJSONArray("userInfo");
 				
-				
+				 
 				//json fetch was successful
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
@@ -396,6 +400,8 @@ public class User
 					//get that image niggi
 					String image = (String) jsonArray.get(5);
 					setImage(image);
+					
+					userInfoTaskComplete = true;
 				} 
 				//unsuccessful
 				else
@@ -419,13 +425,30 @@ public class User
 	 * 
 	 */
 	// Get numFriends, TODO: work on returning the integer
-	public int fetchFriends() throws InterruptedException, ExecutionException, TimeoutException
+	public int fetchFriends() 
 	{
 		AsyncTask<String, Void, String> task = new getFriendsTask()
 				.execute("http://68.59.162.183/android_connect/get_friends.php?email="
 						+ getEmail());
 		
-		task.get(10000, TimeUnit.MILLISECONDS);
+		try
+		{
+			task.get(10000, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TimeoutException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//while (task.getStatus() != Status.FINISHED);
 		return 1;
 	}
 
@@ -476,14 +499,31 @@ public class User
 	/*
 	 * Should be getting the friendRequest key->vals here
 	 */
-	public int fetchFriendRequests() throws InterruptedException, ExecutionException, TimeoutException
+	public int fetchFriendRequests()
 	{
-		Log.d("user-fetchFriendReq", "email: " + getEmail());
+		
 		AsyncTask<String, Void, String> task = new getFriendRequestsTask()
 		.execute("http://68.59.162.183/android_connect/get_friend_requests.php?receiver="
 				+ getEmail());
 
-		task.get(10000, TimeUnit.MILLISECONDS);
+		try
+		{
+			task.get(10000, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TimeoutException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//while (task.getStatus() != Status.FINISHED);
 
 		
 		return 1;
@@ -535,13 +575,30 @@ public class User
 	/*
 	 * should be getting the groups key->vals here
 	 */
-	public int fetchGroups() throws InterruptedException, ExecutionException, TimeoutException
+	public int fetchGroups()
 	{
 		AsyncTask<String, Void, String> task = new getGroupsTask()
 		.execute("http://68.59.162.183/android_connect/get_groups.php?email="
 				+ getEmail());
-		task.get(20000, TimeUnit.MILLISECONDS);
+		try
+		{
+			task.get(10000, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TimeoutException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
+	
+		//while (task.getStatus() != Status.FINISHED);
 		
 		return 1;
 	}
@@ -607,12 +664,29 @@ public class User
 	 * 
 	 */
 	// Get numFriends, TODO: work on returning the integer
-	public int fetchGroupInvites() throws InterruptedException, ExecutionException, TimeoutException
+	public int fetchGroupInvites()
 	{
 		AsyncTask<String, Void, String> task = new getGroupInvitesTask()
 				.execute("http://68.59.162.183/android_connect/get_group_invites.php?email="
 						+ getEmail());
-		task.get(20000, TimeUnit.MILLISECONDS);
+		try
+		{
+			task.get(10000, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TimeoutException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//while (task.getStatus() != Status.FINISHED);
 		return 1;
 	}
 

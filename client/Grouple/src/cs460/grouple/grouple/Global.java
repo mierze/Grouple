@@ -78,7 +78,7 @@ public class Global extends Application
 		return 1;
 	}
 	//using the email of user, load them in
-	public User loadUser(String email) throws InterruptedException, ExecutionException, TimeoutException
+	public User loadUser(String email) 
 	{	
 		User user;
 		int success = 0;
@@ -156,7 +156,7 @@ public class Global extends Application
 			//fetchGroupInvites
 			success = user.fetchGroupInvites();
 
-			
+			System.out.println("Setting current user");
 			setCurrentUser(user);//set the user to current user
 		}	
 		
@@ -170,7 +170,7 @@ public class Global extends Application
 	}
 	
 	//using the id of group, load them up into our array of groups
-	public Group loadGroup(int id) throws InterruptedException, ExecutionException, TimeoutException
+	public Group loadGroup(int id)
 	{	
 		Group group; //declare group variable
 		

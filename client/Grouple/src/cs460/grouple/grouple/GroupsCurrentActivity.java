@@ -76,22 +76,19 @@ public class GroupsCurrentActivity extends ActionBarActivity
 		Bundle extras = intent.getExtras();
 		
 		//grabbing the user with the given email in the extras
-		try
+		
+		if (!global.isCurrentUser(extras.getString("email")))
 		{
-			user = global.loadUser(extras.getString("email"));
-		} catch (InterruptedException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ExecutionException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TimeoutException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
+			if (global.getUserBuffer() != null)
+				user = global.getUserBuffer();
+			else
+				user = global.loadUser(extras.getString("email"));
+		}
+		else if (global.isCurrentUser(extras.getString("email")))
+		{	
+			//preloaded
+			user = global.getCurrentUser();
+		}
 		
 		populateGroupsCurrent();
 
@@ -216,21 +213,11 @@ public class GroupsCurrentActivity extends ActionBarActivity
 	{
 		Global global = ((Global) getApplicationContext());
 		Intent groupProfile = new Intent(this, GroupProfileActivity.class);
-		System.out.println("Loading group gid: " + view.getId());
 		groupProfile.putExtra("gid", view.getId());
+		groupProfile.putExtra("email", user.getEmail());
 		Group g = null;
-		try
-		{
-			g = global.loadGroup(view.getId());
-		} catch (ExecutionException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TimeoutException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		g = global.loadGroup(view.getId());
+		
 		if (g != null)
 			global.setGroupBuffer(g);
 		startActivity(groupProfile);

@@ -50,22 +50,8 @@ public class HomeActivity extends ActionBarActivity
 		Global global = ((Global) getApplicationContext());
 		
 		//grabbing the user with the given email in the extras
-		try
-		{
-			user = global.loadUser(global.getCurrentUser().getEmail());
-		} catch (InterruptedException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ExecutionException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TimeoutException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		user = global.loadUser(global.getCurrentUser().getEmail());
+	
 		
 		//set notifications
 		setNotifications();

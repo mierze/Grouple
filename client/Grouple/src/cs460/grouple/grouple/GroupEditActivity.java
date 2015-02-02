@@ -83,23 +83,9 @@ public class GroupEditActivity extends ActionBarActivity implements
 		errorTextView.setVisibility(1);
 
 		Bundle extras = getIntent().getExtras();
-		try
-		{
-			group = global.loadGroup(extras.getInt("gid"));
-		} catch (InterruptedException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ExecutionException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TimeoutException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		//make this utilize group object
+		group = global.loadGroup(extras.getInt("gid"));
+		
+			
 		
 		if (group != null)
 			getGroupProfile();

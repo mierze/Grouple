@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -80,22 +81,8 @@ public class ListActivity extends ActionBarActivity
 		
 		if (extras.getString("content").equals("groupMembers"))
 		{
-			try
-			{
-				group = global.loadGroup(extras.getInt("gid"));
-			} catch (InterruptedException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ExecutionException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (TimeoutException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			group = global.loadGroup(extras.getInt("gid"));
+			user = global.loadUser(extras.getString("email"));
 			populateUsers();
 			initActionBar("Group Members");
 		}
@@ -308,17 +295,24 @@ public class ListActivity extends ActionBarActivity
 		 * friends container.
 		 */
 		
-		
+		/*
+		 * If group members
+		 */
 		Intent intent = getIntent();
 		Bundle extras = intent.getExtras();
+		
 		Map<String, String> users;
+		Map<String, String> members;
 		if  (extras.getString("content").equals("groupMembers"))
 		{
-			users = group.getMembers();
+			users = group.getMembers();	
+			Button inviteMembers = new Button(this);
+			inviteMembers.setOnClickListener((OnClickListener) inviteMembers());
+			LinearLayout friendsCurrentRL = (LinearLayout) findViewById(R.id.currentFriendsLayout);
+			friendsCurrentRL.addView(inviteMembers);
 		}
 		else//to do make else ifs.
 		{
-			
 			users = user.getFriends();
 		}
 		if (users != null && !users.isEmpty())
@@ -388,7 +382,110 @@ public class ListActivity extends ActionBarActivity
 		}
 	}
 	
-	// Handles removing a friend when the remove friend button is pushed.
+	private OnClickListener inviteMembers()
+	{
+		//remove views
+		//add create group kinda feel
+		
+		/*
+		 * Need to figure out which user to grab from, may need to pass an extra string
+		 */
+		//friends = user.getFriends();
+		//members = group.getMembers(); 
+		
+		Map<String, String> users;
+		Map<String, String> members;
+		members = group.getMembers();
+		users = user.getFriends();
+		for (Entry<String, String> mem : members.entrySet())
+		{
+			for (Entry<String, String> user : users.entrySet())
+			{
+				if (mem.getKey().equals(user.getKey()))
+					users.remove(user.getKey());				
+			}
+		}
+		//loop thru friends
+			//boolean is in group = false
+			//loop thru members
+				//if members.get(j).getEmail().equals(friends.get(i).getEmail());
+				//isingroup = true;
+			//if (!isingroup)
+				//inflate row
+		Bundle extras = getIntent().getExtras();		
+		Global global = ((Global) getApplicationContext());
+		LayoutInflater li = getLayoutInflater();
+		if (users != null && !users.isEmpty())
+		{
+			LinearLayout friendsCurrentRL = (LinearLayout) findViewById(R.id.currentFriendsLayout);
+			//Bundle extras = intent.getExtras();
+			// looping thru json and adding to an array
+			Iterator it = users.entrySet().iterator();
+			int index = 0;
+			while (it.hasNext()) {
+				 Map.Entry pair = (Map.Entry)it.next();
+				 String email = (String) pair.getKey();
+				 String fullName = (String) pair.getValue();
+
+				 GridLayout rowView;
+				 friendsEmailList.add(index, email);
+				 /*
+				 * If you are the mod, add the friend button and the
+				 * remove button. If you aren't the mod, then add
+				 * the friend of a friend button without the remove
+				 * button. In this instance, mod means whether or
+				 * not these or your friends. You don't want the
+				 * option to delete a friend's friend.
+				 */
+
+				 if (user != null && global.isCurrentUser(user.getEmail()))
+				 {
+					 rowView = (GridLayout) li.inflate(
+							 R.layout.listitem_groupcreateadded, null);
+					 //Button removeFriendButton = (Button) rowView
+					//		.findViewById(R.id.removeFriendButton);
+					 //removeFriendButton.setId(index);
+				 } 
+				 else
+				 {
+				 
+					rowView = (GridLayout) li.inflate(
+							R.layout.listitem_friends_friend, null);
+				 }
+				 // Add the information to the friendnamebutton and
+				 // add it to the next row.
+				// Button friendNameButton = (Button) rowView
+					//	 .findViewById(R.id.friendNameButton);
+
+				// friendNameButton.setText(fullName);
+				 /*
+				 * Setting the ID to i makes it so we can use i to
+				 * figure out the friend's email. Important for
+				 * finding a friend's profile.
+				 */
+				 //friendNameButton.setId(index);
+				 
+				 rowView.setId(index);
+				 friendsCurrentRL.addView(rowView);	
+				 index++;
+			 }
+		}
+		else
+		{		
+			// user has no friends
+			LinearLayout friendsCurrentRL = (LinearLayout) findViewById(R.id.currentFriendsLayout);
+	
+			// The user has no friend's so display the sad guy image.
+			View row = li.inflate(R.layout.listitem_sadguy, null);
+			((TextView) row.findViewById(R.id.sadGuyTextView))
+				.setText("There are no members in this group.");
+			friendsCurrentRL.addView(row);
+		}
+		
+		return null;
+	}
+
+		// Handles removing a friend when the remove friend button is pushed.
 		public void removeFriendButton(View view)
 		{
 			final int index = view.getId(); //position in friendArray
@@ -469,22 +566,11 @@ public class ListActivity extends ActionBarActivity
 			Intent groupProfile = new Intent(this, GroupProfileActivity.class);
 			System.out.println("Loading group gid: " + view.getId());
 			groupProfile.putExtra("gid", view.getId());
-			Group g = null;
-			try
-			{
-				g = global.loadGroup(view.getId());
-			} catch (ExecutionException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (TimeoutException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			Group g = global.loadGroup(view.getId());
+		
 			if (g != null)
 				global.setGroupBuffer(g);
-			Thread.sleep(800);//panda
+			
 			startActivity(groupProfile);
 		}
 		
@@ -553,18 +639,8 @@ public class ListActivity extends ActionBarActivity
 			Intent intent = new Intent(this, UserProfileActivity.class);
 			intent.putExtra("ParentClassName", "FriendsCurrentActivity");
 			User u = null;
-			try
-			{
-				u = global.loadUser(friendEmail);
-			} catch (ExecutionException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (TimeoutException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			u = global.loadUser(friendEmail);
+		
 			if (u != null)
 				global.setUserBuffer(u);
 			intent.putExtra("email", friendEmail);

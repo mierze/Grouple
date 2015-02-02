@@ -82,22 +82,11 @@ public class FriendRequestsActivity extends ActionBarActivity
 		Intent intent = getIntent();
 		Bundle extras = intent.getExtras();
 		
-		try
-		{
-			user = global.loadUser(extras.getString("email"));
-		} catch (InterruptedException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ExecutionException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TimeoutException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	
+		//preloaded
+		user = global.getCurrentUser();
+		
+		
 
 		// Php call that gets the users friend requests.
 		if (user != null)
