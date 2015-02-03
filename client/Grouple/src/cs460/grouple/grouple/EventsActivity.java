@@ -120,6 +120,14 @@ public class EventsActivity extends ActionBarActivity
 		startActivity(intent);
 		finish();
 	}
+	
+	
+	/* Start activity for creating a new event button*/
+	public void startEventsCreateActivity(View view)
+	{
+		Intent intent = new Intent(this, EventCreateActivity.class);
+		startActivity(intent);
+	}
 
 	public void initKillswitchListener()
 	{
