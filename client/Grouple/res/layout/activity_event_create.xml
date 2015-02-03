@@ -15,7 +15,7 @@
         android:orientation="vertical" >
 
         <EditText
-            android:id="@+id/groupName"
+            android:id="@+id/eventName"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -23,6 +23,34 @@
             android:maxLength="40"
             android:maxLines="1"
             android:minLines="1"
+            android:textColor="@color/text_color"
+            android:textColorHint="@color/hint_text_color" />
+
+        <TextView
+            android:id="@+id/TextView01"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:background="@color/black"
+            android:gravity="left"
+            android:padding="5dp"
+            android:text="Category"
+            android:textColor="@color/white" />
+
+        <EditText
+            android:id="@+id/category"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/layout_background_color"
+            android:focusable="false"
+            android:ems="10"
+            android:gravity="left"
+            android:hint="Select a category that most fits your event."
+            android:maxLength="10"
+            android:maxLines="1"
+            android:onClick="selectCategoryButton"
+            android:minLines="1"
+            android:padding="5dp"
             android:textColor="@color/text_color"
             android:textColorHint="@color/hint_text_color" />
         
@@ -38,7 +66,7 @@
             android:textColor="@color/white" />
         
         <EditText
-            android:id="@+id/groupBio"
+            android:id="@+id/eventBio"
             android:layout_width="fill_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -59,24 +87,136 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="left"
-        android:text="@string/introMessage"
+        android:text="Date and Time"
         android:background="@color/black"
+        android:padding="5dp"
         android:textColor="@color/white" />
     
     
     <LinearLayout
-        android:layout_width="match_parent"
+
+    android:id="@+id/publicButtonContainer"
+    android:background="@color/background_color"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:orientation="horizontal"
+    tools:context="cs460.grouple.grouple.ProfileEditActivity" >
+    
         
-        android:layout_height="wrap_content" >
-
-        <Spinner
-            android:id="@+id/spinner1"
-            android:entries="@array/categorySpinner"
+        <EditText
+            android:id="@+id/startTimeButton"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:layout_weight="1" />
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:background="@color/layout_background_color"
+            android:gravity="left"
+            android:hint="Start Date"
+             android:focusable="false"
+            android:maxLength="255"
+            android:maxLines="1"
+            android:onClick="selectStartDateButton"
+            android:minLines="1"
+            android:padding="5dp"
+            android:layout_marginRight="10dp"
+            android:textColor="@color/text_color"
+            android:textColorHint="@color/hint_text_color" />
 
-    </LinearLayout>
+	   <EditText
+            android:id="@+id/endTimeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:background="@color/layout_background_color"
+            android:gravity="left"
+            android:hint="End Date"
+            android:maxLength="255"
+            android:maxLines="1"
+             android:focusable="false"
+            android:onClick="selectEndDateButton"
+            android:minLines="1"
+            android:padding="5dp"
+            android:textColor="@color/text_color"
+            android:textColorHint="@color/hint_text_color" />
+	        
+	        </LinearLayout>
+
+    <TextView
+        android:id="@+id/TextView02"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:background="@color/black"
+        android:gravity="left"
+        android:padding="5dp"
+        android:text="Location"
+        android:textColor="@color/white" />
+
+    <EditText
+        android:id="@+id/EditText02"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/layout_background_color"
+        android:ems="10"
+        android:gravity="left"
+        android:hint="Where will this event take place?"
+        android:maxLength="255"
+        android:maxLines="1"
+        android:minLines="1"
+        android:padding="5dp"
+        android:textColor="@color/text_color"
+        android:textColorHint="@color/hint_text_color" />
+
+    <TextView
+        android:id="@+id/TextView03"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/black"
+        android:gravity="left"
+        android:padding="5dp"
+        android:text="Size of event"
+        android:textColor="@color/white" />
+    
+     <LinearLayout
+
+    android:id="@+id/minmaxContainer"
+    android:background="@color/background_color"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:orientation="horizontal">
+    
+        
+        <EditText
+            android:id="@+id/minPartButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:background="@color/layout_background_color"
+            android:gravity="left"
+            android:hint="Minimum"
+            android:inputType="number"
+            android:maxLength="255"
+            android:padding="5dp"
+            android:layout_marginRight="10dp"
+            android:textColor="@color/text_color"
+            android:textColorHint="@color/hint_text_color" />
+
+	   <EditText
+            android:id="@+id/maxPartButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:background="@color/layout_background_color"
+            android:gravity="left"
+            android:hint="Maximum (Optional)"
+            android:inputType="number"
+            android:maxLength="255"
+            android:padding="5dp"
+            android:textColor="@color/text_color"
+            android:textColorHint="@color/hint_text_color" />
+	        
+	        </LinearLayout>
+    
 
     <Button
         android:id="@+id/confirmButton"
@@ -84,7 +224,7 @@
         android:layout_height="50sp"
         android:layout_marginTop="5dp"
         android:background="@drawable/button_border"
-        android:onClick="createGroupButton"
+        android:onClick="createEventButton"
         android:text="Confirm Create Event"
         android:textColor="@color/button_text_color"
         android:textSize="20sp" />
