@@ -35,6 +35,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
@@ -82,11 +83,11 @@ public class FriendRequestsActivity extends ActionBarActivity
 		Intent intent = getIntent();
 		Bundle extras = intent.getExtras();
 		
-	
+		
 		//preloaded
 		user = global.getCurrentUser();
-		
-		
+		Button addNew = (Button)findViewById(R.id.addNewButtonLiA);
+		addNew.setVisibility(View.GONE);
 
 		// Php call that gets the users friend requests.
 		if (user != null)
