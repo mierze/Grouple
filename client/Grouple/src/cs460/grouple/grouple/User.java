@@ -52,14 +52,11 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 
-public class User
+public class User extends Entity
 {
 	private String email; //primary key (only necessary component of a user)
-	private String fName;
 	//private imagething profileImg;?
 	//birthday?
-	private String lName;
-	private String bio;
 	private String location;
 	private int age;
 	Bitmap profileImg;
@@ -68,17 +65,14 @@ public class User
 	private ArrayList<String> friendRequests; //friendRequest emails->names
 	private Map <Integer, String> groupInvites; //group invite ids
 	private boolean isCurrentUser;
-	private boolean userInfoTaskComplete = false;
 	
 	
 	/*
 	 * Constructor for User class
 	 */
-	public User(String email)
+	public User(String email) 
 	{
 		this.email = email;
-		this.fName = "";
-		this.lName = "";
 		this.isCurrentUser = false;
 		System.out.println("Initializing new user.");
 	}
@@ -119,18 +113,6 @@ public class User
 	public void setEmail(String email)
 	{
 		this.email = email;
-	}
-	public void setFirstName(String fName)
-	{
-		this.fName = fName;
-	}
-	public void setLastName(String lName)
-	{
-		this.lName = lName;
-	}
-	public void setBio(String bio)
-	{
-		this.bio = bio;
 	}
 	public void setLocation(String location)
 	{
@@ -193,22 +175,16 @@ public class User
 	{
 		return email;
 	}
+
 	public String getFirstName()
 	{
-		return fName;
+		String [] n = getName().split(" ");
+		return n[0];
 	}
 	public String getLastName()
 	{
-		return lName;
-	}
-	public String getFullName()
-	{
-		String fullName = fName + " " + lName;
-		return fullName;
-	}
-	public String getBio()
-	{
-		return bio;
+		String [] n = getName().split(" ");
+		return n[1];
 	}
 	public String getLocation()
 	{
@@ -217,10 +193,6 @@ public class User
 	public int getAge()
 	{
 		return age;
-	}
-	public Bitmap getImage()
-	{
-		return profileImg;
 	}
 	public boolean isCurrentUser()
 	{
@@ -271,26 +243,7 @@ public class User
 		return groupInvites;
 	}
 	
-	//img is taken from json string
-	private void setImage(String img)
-	{
-		Bitmap bmp;
-		//jsonArray.getString("image");
 	
-		// decode image back to android bitmap format
-		byte[] decodedString = Base64.decode(img, Base64.DEFAULT);
-		if (decodedString != null)
-		{
-			bmp = BitmapFactory.decodeByteArray(decodedString, 0,
-					decodedString.length);
-			//setting bmp;
-			this.profileImg = bmp;
-		}
-		else
-		{
-			profileImg = null;
-		}
-	}
 	
 	/*
 	 * To delete the user out of memory and clear all arrays
@@ -369,20 +322,13 @@ public class User
 
 					//at each iteration set to hashmap friendEmail -> 'first last'
 					String fName = (String) jsonArray.get(0);
-
-					//set first name
-					// fName = o.);
-					Log.d("getUserInfoOnPost", "after sgrabbinging fname to: " + fName);
-					setFirstName(fName);
-					Log.d("getUserInfoOnPost", "after set first name");
-					
-					//set last name
+					//set name
 					String lName = (String) jsonArray.get(1);
-					setLastName(lName);
+					setName(fName + " " + lName);
 					
 					//set bio
-					String bio = (String) jsonArray.get(3);
-					setBio(bio);
+					String about = (String) jsonArray.get(3);
+					setAbout(about);
 					
 					//set location
 					String location = (String) jsonArray.get(4);
@@ -400,8 +346,7 @@ public class User
 					//get that image niggi
 					String image = (String) jsonArray.get(5);
 					setImage(image);
-					
-					userInfoTaskComplete = true;
+				
 				} 
 				//unsuccessful
 				else

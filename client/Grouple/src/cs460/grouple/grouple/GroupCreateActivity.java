@@ -96,7 +96,7 @@ public class GroupCreateActivity extends ActionBarActivity
 		if(allFriends.size() == 0)
 		{
 			View row = inflater.inflate(
-					R.layout.listitem_groupcreateadded, null);
+					R.layout.list_row_invitefriend, null);
 
 			((Button) row.findViewById(R.id.friendNameButtonNoAccess))
 					.setText("You don't have any friends to add yet!");
@@ -113,7 +113,7 @@ public class GroupCreateActivity extends ActionBarActivity
 			
 			GridLayout rowView;
 			rowView = (GridLayout) inflater.inflate(
-					R.layout.listitem_groupcreateadded, null);
+					R.layout.list_row_invitefriend, null);
 			final Button makeAdminButton = (Button) rowView
 					.findViewById(R.id.removeFriendButtonNoAccess);
 

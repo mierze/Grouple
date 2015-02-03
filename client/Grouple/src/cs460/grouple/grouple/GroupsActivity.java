@@ -53,10 +53,6 @@ public class GroupsActivity extends ActionBarActivity
 		ab.setDisplayHomeAsUpEnabled(false);
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
 		actionbarTitle.setText("Groups");
-		// ImageView view = (ImdageView)findViewById(android.R.id.home);
-		// view.setPadding(15, 20, 5, 40);
-		//ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
-
 	}
 
 	@Override
@@ -172,9 +168,7 @@ public class GroupsActivity extends ActionBarActivity
 															// email for the
 															// list of groups
 		intent.putExtra("mod", "true");// gives user ability admin in the
-										// current groups screen
-		//intent.putExtra("Name", global.getName()); //PANDA
-		System.out.println("Adding parent intent to stack");
+
 		startActivity(intent);
 	}
 

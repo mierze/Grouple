@@ -44,6 +44,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
@@ -156,7 +157,7 @@ public class GroupEditActivity extends ActionBarActivity implements
 		}
 		// Add the info to the textviews for editing.
 		nameTextView.setText(group.getName());
-		aboutTextView.setText(group.getBio());
+		aboutTextView.setText(group.getAbout());
 		iv.setImageBitmap(group.getImage());
 	}
 
@@ -203,12 +204,13 @@ public class GroupEditActivity extends ActionBarActivity implements
 	// This executes the
 	public void submitButton(View view)
 	{
+		Global global = ((Global) getApplicationContext());
 		// error checking
 
 		// bio no more than
-		TextView bioTextView = (TextView) findViewById(R.id.bioEditTextEPA);
-		String bio = bioTextView.getText().toString();
-		if (bio.length() > 100)
+		EditText aboutEditText = (EditText) findViewById(R.id.aboutEditTextEPA);
+		String about = aboutEditText.getText().toString();
+		if (about.length() > 100)
 		{
 			TextView errorTextView = (TextView) findViewById(R.id.errorTextViewEPA);
 			errorTextView.setText("About is too many characters.");
@@ -217,18 +219,8 @@ public class GroupEditActivity extends ActionBarActivity implements
 		{
 			new setProfileTask()
 					.execute("http://68.59.162.183/android_connect/update_group.php");
-			Intent intent = new Intent(this, GroupProfileActivity.class);
-			intent.putExtra("up", "true");
-			intent.putExtra("gid", group.getID());
-			try
-			{
-				Thread.sleep(500);
-			} catch (InterruptedException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			startActivity(intent);
+			global.loadGroup(group.getID());
+			finish();
 		}
 	}
 

@@ -51,9 +51,7 @@ public class GroupInvitesActivity extends ActionBarActivity
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_group_invites);
-
-
+		setContentView(R.layout.activity_list);
 		load();
 	}
 
@@ -163,7 +161,7 @@ public class GroupInvitesActivity extends ActionBarActivity
 	private void populateGroupInvites()
 	{
 		//Get current layout.
-		LinearLayout groupInvitesLayout = (LinearLayout) findViewById(R.id.groupInvitesLayout);
+		LinearLayout groupInvitesLayout = (LinearLayout) findViewById(R.id.listLayout);
 		//Get Global. We use it for global stuff.
 		Global global = ((Global) getApplicationContext());
 		LayoutInflater li = getLayoutInflater();
@@ -178,9 +176,9 @@ public class GroupInvitesActivity extends ActionBarActivity
 			// looping thru the map
 			for (Map.Entry<Integer, String> entry : groupInvites.entrySet())
 			{
-				GridLayout row = (GridLayout) li.inflate(R.layout.listitem_group_request, null);
+				GridLayout row = (GridLayout) li.inflate(R.layout.list_row_acceptdecline, null);
 				row.setId(entry.getKey());
-				((TextView) row.findViewById(R.id.emailTextViewGRLI)).setText(entry.getValue());
+				((TextView) row.findViewById(R.id.emailTextViewFRLI)).setText(entry.getValue());
 				groupInvitesLayout.addView(row);
 			}
 		}
@@ -198,17 +196,17 @@ public class GroupInvitesActivity extends ActionBarActivity
 	
 	public void onClick(View view)
 	{
-		LinearLayout groupInvites = (LinearLayout)findViewById(R.id.groupInvitesLayout);
+		LinearLayout groupInvites = (LinearLayout)findViewById(R.id.listLayout);
 		switch (view.getId())
 		{
-		case R.id.declineGroupRequestButtonGRLI:
+		case R.id.declineButton:
 
 			View parent = (View) view.getParent();
 			bufferID = parent.getId();
 			new getDeclineGroupTask().execute("http://68.59.162.183/android_connect/leave_group.php?email="+user.getEmail()+"&gid="+parent.getId());
 		
 			break;
-		case R.id.acceptGroupRequestButtonGRLI:
+		case R.id.acceptButton:
 			
 			View parent2 = (View) view.getParent();
 			bufferID = parent2.getId();
@@ -234,7 +232,7 @@ public class GroupInvitesActivity extends ActionBarActivity
 		@Override
 		protected void onPostExecute(String result)
 		{
-			LinearLayout groupInvites = (LinearLayout) findViewById(R.id.groupInvitesLayout);
+			LinearLayout groupInvites = (LinearLayout) findViewById(R.id.listLayout);
 			Global global = ((Global) getApplicationContext());
 			try
 			{
@@ -271,7 +269,7 @@ public class GroupInvitesActivity extends ActionBarActivity
 	// Accept code.
 	private class getAcceptGroupTask extends AsyncTask<String, Void, String>
 	{
-		LinearLayout groupInvites = (LinearLayout) findViewById(R.id.groupInvitesLayout);
+		LinearLayout groupInvites = (LinearLayout) findViewById(R.id.listLayout);
 		@Override
 		protected String doInBackground(String... urls)
 		{

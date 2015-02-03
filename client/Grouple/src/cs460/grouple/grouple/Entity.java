@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 
 public class Entity
 {
 	private String email; //email of user, email of group creator, email of event creator
-	private String fName; //fName of user, fName of group creator, fName of event creator ?or possibly not
-	private String lName; //last name...
+	private String name; //fName of user, fName of group creator, fName of event creator ?or possibly not
+	
 	private String about; //about user, group, event
 	//private String location;
 	//private int age;
@@ -35,17 +37,34 @@ public class Entity
 	{
 		this.email = email;
 	}
-	public void setFirstName(String fName)
+	public void setName(String name)
 	{
-		this.fName = fName;
+		this.name = name;
 	}
-	public void setLastName(String lName)
-	{
-		this.lName = lName;
-	}
+	
 	public void setAbout(String about)
 	{
 		this.about = about;
+	}
+	//img is taken from json string
+	protected void setImage(String img)
+	{
+		Bitmap bmp;
+		//jsonArray.getString("image");
+	
+		// decode image back to android bitmap format
+		byte[] decodedString = Base64.decode(img, Base64.DEFAULT);
+		if (decodedString != null)
+		{
+			bmp = BitmapFactory.decodeByteArray(decodedString, 0,
+					decodedString.length);
+			//setting bmp;
+			this.image = bmp;
+		}
+		else
+		{
+			image = null;
+		}
 	}
 	
 	/*
@@ -55,22 +74,18 @@ public class Entity
 	{
 		return email;
 	}
-	public String getFirstName()
+	protected String getName()
 	{
-		return fName;
+		return name;
 	}
-	public String getLastName()
-	{
-		return lName;
-	}
-	public String getFullName()
-	{
-		String fullName = fName + " " + lName;
-		return fullName;
-	}
+
 	public String getAbout()
 	{
 		return about;
+	}
+	public Bitmap getImage()
+	{
+		return image;
 	}
 
 }

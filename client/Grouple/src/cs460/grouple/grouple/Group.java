@@ -33,13 +33,9 @@ import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
 
-public class Group //extends Entity 
+public class Group extends Entity 
 {
 	private int id; //id of the group
-	private String name; //name for the group
-	private String bio; //bio for the group
-	private String creator;
-	private Bitmap image;
 	private Map<String, String> members; //members of the groups' email->name pair
 
 	/*
@@ -51,17 +47,6 @@ public class Group //extends Entity
 		System.out.println("Initializing new group.");
 	}
 	
-	/*
-	 * Setters for group class below
-	 */
-	public void setName(String name)
-	{
-		this.name = name;
-	}
-	public void setBio(String bio)
-	{
-		this.bio = bio;
-	}
 	
 	/*
 	 * Getters for group class below
@@ -69,18 +54,6 @@ public class Group //extends Entity
 	public int getID()
 	{
 		return id;
-	}
-	public String getName()
-	{
-		return name;
-	}
-	public String getBio()
-	{
-		return bio;
-	}
-	public Bitmap getImage()
-	{
-		return image;
 	}
 
 	public Map<String, String> getMembers()
@@ -176,6 +149,7 @@ public class Group //extends Entity
 		}
 	}	
 	
+	
 	/*
 	 * 
 	 * will be fetching the group info
@@ -237,15 +211,15 @@ public class Group //extends Entity
 					setName(name); 
 					//set group bio
 				
-					String bio = (String) jsonArray.get(1);
-					//System.out.println("Setting aboute: " + bio);
-					setBio(bio);
+					String about = (String) jsonArray.get(1);
+					setAbout(about);
 					
 					//get that image niggi
 					String image = (String) jsonArray.get(2);
 					setImage(image);
 					
 					String creator = (String) jsonArray.get(3);
+					setEmail(creator);
 
 				}
 				//unsuccessful
@@ -260,38 +234,7 @@ public class Group //extends Entity
 			}
 		}
 	}
-	//img is taken from json string
-		private void setImage(String img)
-		{
-			Bitmap bmp;
-			//jsonArray.getString("image");
-		
-			// decode image back to android bitmap format
-			byte[] decodedString = Base64.decode(img, Base64.DEFAULT);
-			if (decodedString != null)
-			{
-				bmp = BitmapFactory.decodeByteArray(decodedString, 0,
-						decodedString.length);
-				//setting bmp;
-				this.image = bmp;
-			}
-			else
-			{
-				this.image = null;
-			}
-				// set the image
-			/*if (bmp != null)
-			{
-				if (iv == null)
-				{
-					iv = (ImageView) findViewById(R.id.profilePhoto);
-		
-				}
-				iv.setImageBitmap(bmp);
-				img = null;
-				decodedString = null;
-			}*/
-		}
+
 	
 	/*
 	 * To delete group and all arrays within

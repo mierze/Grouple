@@ -172,7 +172,7 @@ public class InviteActivity extends ActionBarActivity {
 				
 				GridLayout rowView;
 				rowView = (GridLayout) li.inflate(
-						R.layout.listitem_groupcreateadded, null);
+						R.layout.list_row_invitefriend, null);
 				final Button makeAdminButton = (Button) rowView
 						.findViewById(R.id.removeFriendButtonNoAccess);
 

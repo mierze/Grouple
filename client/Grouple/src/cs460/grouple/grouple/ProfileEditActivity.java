@@ -104,7 +104,7 @@ public class ProfileEditActivity extends ActionBarActivity implements
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
 		//ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
 
-		actionbarTitle.setText(user.getFullName() + "'s Profile");
+		actionbarTitle.setText(user.getFirstName() + "'s Profile");
 	}
 	
 	@Override
@@ -140,9 +140,9 @@ public class ProfileEditActivity extends ActionBarActivity implements
 			iv = (ImageView) findViewById(R.id.profileImageGPA);
 		}
 		// Add the info to the textviews for editing.
-		nameTextView.setText(user.getFullName());
+		nameTextView.setText(user.getName());
 		ageTextView.setText(Integer.toString(user.getAge()));
-		bioTextView.setText(user.getBio());
+		bioTextView.setText(user.getAbout());
 		locationTextView.setText(user.getLocation());
 		iv.setImageBitmap(user.getImage());
 	}
@@ -332,7 +332,7 @@ public class ProfileEditActivity extends ActionBarActivity implements
 					global.loadUser(user.getEmail());
 					System.out.println("Success");
 					 
-					startUserProfileActivity();
+					finish();
 				} else
 				{
 					// Fail
@@ -348,7 +348,7 @@ public class ProfileEditActivity extends ActionBarActivity implements
 	
 	public void startUserProfileActivity()
 	{
-		Intent intent = new Intent(this, UserProfileActivity.class);
+		Intent intent = new Intent(this, ProfileActivity.class);
 		intent.putExtra("up", "true");
 		intent.putExtra("email", user.getEmail());
 

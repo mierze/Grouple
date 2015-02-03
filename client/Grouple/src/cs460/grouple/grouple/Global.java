@@ -270,13 +270,13 @@ public class Global extends Application
 		}
 
 		// User Profile Buttons
-		if ((view.findViewById(R.id.friendsButtonUPA) != null)
-				&& (view.findViewById(R.id.groupsButtonUPA) != null)
-				&& (view.findViewById(R.id.eventsButtonUPA) != null))
+		if ((view.findViewById(R.id.profileButton1) != null)
+				&& (view.findViewById(R.id.profileButton2) != null)
+				&& (view.findViewById(R.id.profileButton3) != null))
 		{
-			((Button) view.findViewById(R.id.friendsButtonUPA))
+			((Button) view.findViewById(R.id.profileButton1))
 					.setText("Friends\n(" + numFriends + ")");
-			((Button) view.findViewById(R.id.groupsButtonUPA))
+			((Button) view.findViewById(R.id.profileButton2))
 					.setText("Groups\n(" + numGroups + ")");
 			// set numfriends, numgroups, and numevents
 		}

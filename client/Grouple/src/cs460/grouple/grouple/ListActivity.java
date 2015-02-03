@@ -171,7 +171,7 @@ public class ListActivity extends ActionBarActivity
 		addNew.setVisibility(View.GONE);
 		//grabbing the users groups
 		Map<Integer, String> groups = user.getGroups();
-		System.out.println("USER HAS A NAME OF" + user.getFullName());
+		System.out.println("USER HAS A NAME OF" + user.getName());
 		if (groups != null && groups.size() > 0)
 		{
 			int i = 0;
@@ -182,7 +182,7 @@ public class ListActivity extends ActionBarActivity
 				
 		
 					rowView = (GridLayout) li.inflate(
-							R.layout.listitem_friend, null);
+							R.layout.list_row, null);
 	
 					
 				Button leaveGroupButton = (Button)rowView.findViewById(R.id.removeButtonLI);
@@ -282,7 +282,7 @@ public class ListActivity extends ActionBarActivity
 				 if (user != null && global.isCurrentUser(user.getEmail()))
 				 {
 					 rowView = (GridLayout) li.inflate(
-							 R.layout.listitem_friend, null);
+							 R.layout.list_row, null);
 					 Button removeFriendButton = (Button) rowView
 							.findViewById(R.id.removeButtonLI);
 					 removeFriendButton.setId(index);
@@ -290,7 +290,7 @@ public class ListActivity extends ActionBarActivity
 				 else
 				 {
 					rowView = (GridLayout) li.inflate(
-							R.layout.listitem_friends_friend, null);
+							R.layout.list_row_nobutton, null);
 				 }
 				 // Add the information to the friendnamebutton and
 				 // add it to the next row.
@@ -509,14 +509,15 @@ public class ListActivity extends ActionBarActivity
 				throws InterruptedException
 		{
 			Global global = ((Global) getApplicationContext());
-			Intent intent = null;
+			Intent intent = new Intent(this, ProfileActivity.class);
 			Bundle extras = getIntent().getExtras();
 			if (extras.getString("content").equals("groupsCurrent"))
 			{
-				intent = new Intent(this, GroupProfileActivity.class);
+				
 				System.out.println("Loading group gid: " + view.getId());
 				intent.putExtra("gid", view.getId());
 				intent.putExtra("email", user.getEmail());
+				intent.putExtra("content", "group");
 				Group g = global.loadGroup(view.getId());
 			
 				if (g != null)
@@ -532,13 +533,14 @@ public class ListActivity extends ActionBarActivity
 				// to the activity
 	
 				String friendEmail = friendsEmailList.get(id);
-				intent = new Intent(this, UserProfileActivity.class);
+				
 				
 				User u = global.loadUser(friendEmail);
 			
 				if (u != null)
 					global.setUserBuffer(u);
 				intent.putExtra("email", friendEmail);
+				intent.putExtra("content", "user");
 				intent.putExtra("mod", "false");
 				
 			}

@@ -70,7 +70,7 @@ public class HomeActivity extends ActionBarActivity
 		// ab.setDisplayHomeAsUpEnabled(true);
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
 		//Global global = ((Global) getApplicationContext());
-		actionbarTitle.setText("Welcome, " + user.getFullName() + "!"); //PANDA
+		actionbarTitle.setText("Welcome, " + user.getFirstName() + "!"); //PANDA
 	}
 
 	public void setNotifications()
@@ -202,7 +202,9 @@ public class HomeActivity extends ActionBarActivity
 			intent = new Intent(this, GroupsActivity.class);
 			break;
 		case R.id.userButtonHA:
-			intent = new Intent(this, UserProfileActivity.class);
+			intent = new Intent(this, ProfileActivity.class);
+			intent.putExtra("email", user.getEmail());
+			intent.putExtra("content", "user");
 			break;
 		default: //default just break out
 			break;

@@ -54,7 +54,7 @@ public class FriendRequestsActivity extends ActionBarActivity
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_friend_requests);
+		setContentView(R.layout.activity_list);
 
 		load();
 
@@ -144,7 +144,7 @@ public class FriendRequestsActivity extends ActionBarActivity
 	 */
 	public void populateFriendRequests()
 	{
-		LinearLayout friendRequestsLayout = (LinearLayout)findViewById(R.id.friendRequestsLayout);
+		LinearLayout friendRequestsLayout = (LinearLayout)findViewById(R.id.listLayout);
 		LayoutInflater li = getLayoutInflater();
 		if (user.getNumFriendRequests() > 0)
 		{
@@ -155,7 +155,7 @@ public class FriendRequestsActivity extends ActionBarActivity
 			// friend requests list
 			for (int i = 0; i < friendRequests.size(); i++)
 			{
-				GridLayout row = (GridLayout) li.inflate(R.layout.listitem_friend_request, null);
+				GridLayout row = (GridLayout) li.inflate(R.layout.list_row_acceptdecline, null);
 				// Setting text of each friend request to the email
 				// of the sender
 				((TextView) row.findViewById(R.id.emailTextViewFRLI)).setText(friendRequests.get(i));
@@ -181,7 +181,7 @@ public class FriendRequestsActivity extends ActionBarActivity
 		View parent = (View) view.getParent();
 		switch (view.getId())
 		{
-		case R.id.declineFriendRequestButtonFRLI:
+		case R.id.declineButton:
 
 			TextView declineEmailTextView = (TextView) parent
 					.findViewById(R.id.emailTextViewFRLI);
@@ -189,7 +189,7 @@ public class FriendRequestsActivity extends ActionBarActivity
 			new getDeclineFriendTask()
 					.execute("http://68.59.162.183/android_connect/decline_friend_request.php");
 			break;
-		case R.id.acceptFriendRequestButtonFRLI:
+		case R.id.acceptButton:
 			TextView acceptEmailTextView = (TextView) parent
 					.findViewById(R.id.emailTextViewFRLI);
 			acceptEmail = acceptEmailTextView.getText().toString();
@@ -237,7 +237,7 @@ public class FriendRequestsActivity extends ActionBarActivity
 					System.out.println("success in decline!");
 					declineEmail = null;
 					//removing all friend requests for refresh
-					LinearLayout friendRequests = (LinearLayout)findViewById(R.id.friendRequestsLayout);
+					LinearLayout friendRequests = (LinearLayout)findViewById(R.id.listLayout);
 					friendRequests.removeAllViews();
 					
 					//repopulate view
@@ -303,7 +303,7 @@ public class FriendRequestsActivity extends ActionBarActivity
 					acceptEmail = null; //reset
 						
 					//removing all friend requests for refresh
-					LinearLayout friendRequests = (LinearLayout)findViewById(R.id.friendRequestsLayout);
+					LinearLayout friendRequests = (LinearLayout)findViewById(R.id.listLayout);
 					friendRequests.removeAllViews();
 					
 					Context context = getApplicationContext();
@@ -325,35 +325,6 @@ public class FriendRequestsActivity extends ActionBarActivity
 				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
 			}
 		}
-	}
-
-	public void startParentActivity(View view)
-	{
-		Bundle extras = getIntent().getExtras();
-
-		String className = extras.getString("ParentClassName");
-		Intent newIntent = null;
-		try
-		{
-			newIntent = new Intent(this, Class.forName("cs460.grouple.grouple."
-					+ className));
-			if (extras.getString("ParentEmail") != null)
-			{
-				newIntent.putExtra("email", extras.getString("ParentEmail"));
-			}
-			Global global = ((Global) getApplicationContext());
-			View friendRequests = findViewById(R.id.friendRequestsLayout);
-			View friends = ((View) friendRequests.getParent());
-			//global.fetchNumFriendRequests(global.getCurrentUser()); PANDA
-			//global.setNotifications(friendRequests);
-			// newIntent.putExtra("email", extras.getString("email"));
-			// newIntent.putExtra("ParentEmail", extras.getString("email"));
-			newIntent.putExtra("ParentClassName", "FriendRequestsActivity");
-		} catch (ClassNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		startActivity(newIntent);
 	}
 
 	/*
