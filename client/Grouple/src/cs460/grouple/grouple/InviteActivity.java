@@ -141,8 +141,8 @@ public class InviteActivity extends ActionBarActivity {
 		LinearLayout pickFriendsLayout = (LinearLayout) findViewById(R.id.pickFriendsLayout);
 		Map<String, String> members;
 		LayoutInflater li = getLayoutInflater();
-		members = group.getMembers();
-		Map<String, String> friends = user.getFriends();
+		members = group.getUsers();
+		Map<String, String> friends = user.getUsers();
 		users = new HashMap<String, String>();	
 		System.out.println("friends size: " + friends.size() + ", members size: " + members.size());
 		for (Entry<String, String> friend : friends.entrySet())

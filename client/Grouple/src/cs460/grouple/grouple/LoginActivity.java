@@ -111,12 +111,13 @@ public class LoginActivity extends Activity
 			{
 				JSONObject jsonObject = new JSONObject(result);
 				//validated for login
+				System.out.println("After JSONObject");
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					// successful
 					Global global = ((Global) getApplicationContext());
 
-					
+					System.out.println("1");
 					// Login processing finished: progress bar disappear again
 					progBar.setVisibility(View.VISIBLE);
 					// display message from json (successful login message)

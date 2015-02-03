@@ -80,7 +80,7 @@ public class GroupCreateActivity extends ActionBarActivity
 		user = global.loadUser(email);
 		
 		//load our list of current friends.  key is friend email -> value is full names
-		allFriends = user.getFriends();
+		allFriends = user.getUsers();
 		
 		populateGroupCreate();
 		initActionBar();

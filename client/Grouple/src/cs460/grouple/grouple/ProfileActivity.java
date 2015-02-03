@@ -83,7 +83,7 @@ public class ProfileActivity extends ActionBarActivity
 			Button profileButton3 = (Button)findViewById(R.id.profileButton3);
 			profileButton2.setVisibility(View.GONE);
 			profileButton3.setVisibility(View.GONE);
-			membersButton.setText("Members (" + group.getMembers().size() + ")");
+			membersButton.setText("Members (" + group.getNumUsers() + ")");
 			title = group.getName();
 		}
 		else if (extras.getString("content").equals("user"))
@@ -122,11 +122,11 @@ public class ProfileActivity extends ActionBarActivity
 		
 		if (extras.getString("content").equals("group"))
 		{
-			((Button) findViewById(R.id.profileButton1)).setText("Members\n(" + group.getMembers().size() + ")");
+			((Button) findViewById(R.id.profileButton1)).setText("Members\n(" + group.getNumUsers() + ")");
 		}
 		else if (extras.getString("content").equals("user"))
 		{
-			((Button) findViewById(R.id.profileButton1)).setText("Friends\n(" + user.getNumFriends() + ")");
+			((Button) findViewById(R.id.profileButton1)).setText("Friends\n(" + user.getNumUsers() + ")");
 			((Button) findViewById(R.id.profileButton2)).setText("Groups\n(" + user.getNumGroups() + ")");	
 		}
 		else

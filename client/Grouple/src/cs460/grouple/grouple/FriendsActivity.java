@@ -137,7 +137,7 @@ public class FriendsActivity extends ActionBarActivity
 	{
 		//setting notifications for the current view
 		Button currentFriendsButton = (Button) findViewById(R.id.currentFriendsButtonFA);
-		currentFriendsButton.setText("My Friends (" + user.getNumFriends() + ")");
+		currentFriendsButton.setText("My Friends (" + user.getNumUsers() + ")");
 		Button friendRequestsButton = (Button) findViewById(R.id.friendRequestsButtonFA);
 		friendRequestsButton.setText("Friend Requests (" + user.getNumFriendRequests() + ")"); 
 	}

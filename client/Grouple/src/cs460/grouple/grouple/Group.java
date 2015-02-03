@@ -36,7 +36,6 @@ import android.util.Log;
 public class Group extends Entity 
 {
 	private int id; //id of the group
-	private Map<String, String> members; //members of the groups' email->name pair
 
 	/*
 	 * Constructor for Group class
@@ -56,21 +55,7 @@ public class Group extends Entity
 		return id;
 	}
 
-	public Map<String, String> getMembers()
-	{
-		return members;
-	}
-	public void addToMembers(String email, String fName, String lName)
-	{
-		if (members == null)
-		{
-			members = new HashMap<String, String>();
-		}
-		
-		String name = fName + " " + lName;
-		members.put(email, name);
-		Log.d("Name for " + email, members.get(email));
-	}
+
 	
 	
 	/*
@@ -132,7 +117,7 @@ public class Group extends Entity
 						//at each iteration set to hashmap friendEmail -> 'first last'
 						JSONObject o = (JSONObject) jsonArray.get(i);
 						//function adds friend to the friends map
-						addToMembers(o.getString("email"), o.getString("first"), o.getString("last"));
+						addToUsers(o.getString("email"), o.getString("first") + " " + o.getString("last"));
 					}
 				}
 				

@@ -174,7 +174,7 @@
         android:background="@color/black"
         android:gravity="left"
         android:padding="5dp"
-        android:text="Size of event"
+        android:text="Number of Participants"
         android:textColor="@color/white" />
     
      <LinearLayout

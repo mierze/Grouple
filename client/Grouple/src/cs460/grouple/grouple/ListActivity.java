@@ -238,7 +238,7 @@ public class ListActivity extends ActionBarActivity
 		{
 			//For now, display the invite members button if you are in group
 			//need to check admin level
-			users = group.getMembers();	
+			users = group.getUsers();	
 			if (!users.containsKey(global.getCurrentUser().getEmail()))
 			{
 				Button addNew = (Button)findViewById(R.id.addNewButtonLiA);
@@ -248,13 +248,13 @@ public class ListActivity extends ActionBarActivity
 		}
 		else if (extras.getString("content").equals("friendsCurrent"))//to do make else ifs." +
 		{
-			users = user.getFriends();
+			users = user.getUsers();
 			Button addNew = (Button)findViewById(R.id.addNewButtonLiA);
 			addNew.setVisibility(View.GONE);
 		}
 		else
 		{
-			users = user.getFriends();
+			users = user.getUsers();
 		}
 		if (users != null && !users.isEmpty())
 		{
@@ -378,7 +378,7 @@ public class ListActivity extends ActionBarActivity
 										.execute(
 												"http://68.59.162.183/android_connect/delete_friend.php",
 												email, friendEmail);
-								user.removeFriend(friendEmail);
+								user.removeUser(friendEmail);
 								// removing all of the views
 								LinearLayout friendsCurrentLayout = (LinearLayout) findViewById(R.id.listLayout);
 								friendsCurrentLayout.removeAllViews();

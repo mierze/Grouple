@@ -1,34 +1,27 @@
 package cs460.grouple.grouple;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
+import android.util.Log;
 
-public class Entity
+public abstract class Entity
 {
 	private String email; //email of user, email of group creator, email of event creator
-	private String name; //fName of user, fName of group creator, fName of event creator ?or possibly not
-	
+	private String name; //fullname of user, fName of group creator, fName of event creator ?or possibly not
+	private Map<String, String> users; //group users, event participants, friends
 	private String about; //about user, group, event
-	//private String location;
-	//private int age;
 	Bitmap image; //all entities have images
-	//private Map <String, String> friends; //friends emails(key) -> friends names(value)
-	//private Map<Integer, String> groups; 
-	//private ArrayList<String> friendRequests; //friendRequest emails->names
-	//private Map <Integer, String> groupInvites; //group invite ids
-	//private boolean isCurrentUser;
+
 	
 	/*
-	 * Constructor for are parent entity of users, groups, events...
+	 * Constructor for our parent entity of users, groups, events...
 	 */
-	public Entity()
-	{
-		
-	}
+	//nothing for now, shouldn't be making any entities alone
 	
 	/*
 	 * Setters for user class below
@@ -86,6 +79,34 @@ public class Entity
 	public Bitmap getImage()
 	{
 		return image;
+	}
+	
+	public void removeUser(String email)
+	{
+		if (users.containsKey(email))
+			users.remove(email);
+	}
+	
+	public Map<String, String> getUsers()
+	{
+		return users;
+	}
+	public int getNumUsers()
+	{
+		if (users != null)
+			return users.size();
+		else 
+			return 0;
+	}
+	public void addToUsers(String email, String name)
+	{
+		if (users == null)
+		{
+			users = new HashMap<String, String>();
+		}
+		
+		users.put(email, name);
+		Log.d("Name for " + email, users.get(email));
 	}
 
 }

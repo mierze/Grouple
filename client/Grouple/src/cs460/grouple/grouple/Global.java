@@ -34,6 +34,8 @@ public class Global extends Application
 	private User currentUser; //contains the current user, is updated on every pertinent activity call
 	private Group groupBuffer;
 	private User userBuffer;
+	private Event eventBuffer;
+	
 	/*
 	 * Adds a user to the users arraylist
 	 */
@@ -58,9 +60,17 @@ public class Global extends Application
 	{
 		userBuffer = u;
 	}
+	public void setEventBuffer(Event e)
+	{
+		eventBuffer = e;
+	}
 	public User getUserBuffer()
 	{
 		return userBuffer;
+	}
+	public Event getEventBuffer()
+	{
+		return eventBuffer;
 	}
 	public boolean isCurrentUser(String email)
 	{
@@ -206,13 +216,49 @@ public class Global extends Application
 		return group;
 	}
 		
+
+	//using the id of group, load them up into our array of groups
+	public Event loadEvent(int id)
+	{	
+		Event event; //declare group variable
+		
+		//instantiate a new group
+		if (getGroupBuffer() != null && getGroupBuffer().getID() == id)
+			event = getEventBuffer();
+		else 
+			event = new Event(id);
+		
+		
+		/**
+		 * Below is loading all group information / members...
+		 */
+		
+		//json call using email to fetch users fName, lName, bio, location, birthday, profileImage
+		int success = event.fetchEventInfo();
+		//was successful in fetching user info
+		if (success == 1)
+			Log.d("loadGroup", "success after fetchGroupInfo()");
+
+			//json call to populate users friendKeys / friendNames
+		success = event.fetchParticipants();
+		
+		//was successful in fetching user info
+		if (success == 1)
+			Log.d("loadGroup", "success after fetchMembers()");
+		
+
+		if (eventBuffer != null && eventBuffer.getID() == event.getID())
+			setEventBuffer(event);
+		
+		return event;
+	}
 	
 	//may be outdated, can either update notifications here or in each activity itself
 	public int setNotifications(View view, User user)
 	{
 		// todo: If I can pass an email in here and skip setting current user
 		int numFriendRequests = user.getNumFriendRequests();
-		int numFriends = user.getNumFriends();
+		int numFriends = user.getNumUsers();
 		int numGroupInvites = user.getNumGroupInvites();
 		int numGroups = user.getNumGroups();
 
@@ -266,7 +312,7 @@ public class Global extends Application
 			Button currentFriendsButton = (Button) view
 					.findViewById(R.id.currentFriendsButtonFA);
 			currentFriendsButton
-					.setText("My Friends (" + user.getNumFriends() + ")"); //PANDA
+					.setText("My Friends (" + user.getNumUsers() + ")"); //PANDA
 		}
 
 		// User Profile Buttons

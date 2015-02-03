@@ -54,13 +54,10 @@ import android.util.Log;
 
 public class User extends Entity
 {
-	private String email; //primary key (only necessary component of a user)
 	//private imagething profileImg;?
 	//birthday?
 	private String location;
 	private int age;
-	Bitmap profileImg;
-	private Map <String, String> friends; //friends emails(key) -> friends names(value)
 	private Map<Integer, String> groups; 
 	private ArrayList<String> friendRequests; //friendRequest emails->names
 	private Map <Integer, String> groupInvites; //group invite ids
@@ -72,7 +69,7 @@ public class User extends Entity
 	 */
 	public User(String email) 
 	{
-		this.email = email;
+		setEmail(email);
 		this.isCurrentUser = false;
 		System.out.println("Initializing new user.");
 	}
@@ -95,11 +92,6 @@ public class User extends Entity
 		else
 			System.out.println("We haNTOTOTOTemoved the groupinvite");
 	}
-	public void removeFriend(String fEmail)
-	{
-		if (friends.containsKey(fEmail))
-			friends.remove(fEmail);
-	}
 	public void removeFriendRequest(String email)
 	{
 		if (friendRequests.contains(email))
@@ -110,10 +102,6 @@ public class User extends Entity
 	/*
 	 * Setters for user class below
 	 */
-	public void setEmail(String email)
-	{
-		this.email = email;
-	}
 	public void setLocation(String location)
 	{
 		this.location = location;
@@ -125,16 +113,6 @@ public class User extends Entity
 	public void setIsCurrentUser(boolean isCurrentUser)
 	{
 		this.isCurrentUser = isCurrentUser;
-	}
-	public void addToFriends(String email, String fName, String lName)
-	{
-		if (friends == null)
-		{
-			friends = new HashMap<String, String>();
-		}
-		String name = fName + " " + lName;
-		friends.put(email, name);
-		Log.d("Name for " + email, friends.get(email));
 	}
 	public void addToFriendRequests(String email)
 	{
@@ -171,10 +149,6 @@ public class User extends Entity
 	/*
 	 * Getters for user class below
 	 */
-	public String getEmail()
-	{
-		return email;
-	}
 
 	public String getFirstName()
 	{
@@ -198,13 +172,6 @@ public class User extends Entity
 	{
 		return isCurrentUser;
 	}
-	public int getNumFriends()
-	{
-		if (friends != null)
-			return friends.size(); 
-		else
-			return 0;
-	}
 	public int getNumGroups()
 	{
 		if (groups != null)
@@ -225,10 +192,6 @@ public class User extends Entity
 			return groupInvites.size();
 		else
 			return 0;
-	}
-	public Map<String, String> getFriends()
-	{
-		return friends;
 	}
 	public ArrayList<String> getFriendRequests()
 	{
@@ -423,7 +386,7 @@ public class User extends Entity
 						//at each iteration set to hashmap friendEmail -> 'first last'
 						JSONObject o = (JSONObject) jsonArray.get(i);
 						//function adds friend to the friends map
-						addToFriends(o.getString("email"), o.getString("first"), o.getString("last"));
+						addToUsers(o.getString("email"), o.getString("first") + " " + o.getString("last"));
 					}
 				}
 				
