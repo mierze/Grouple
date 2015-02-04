@@ -127,6 +127,13 @@ public class EventCreateActivity extends ActionBarActivity
 		actionBarTitle.setText("Create Event");
 	}
 	
+	@Override
+	protected void onDestroy()
+	{
+		// TODO Auto-generated method stub
+		unregisterReceiver(broadcastReceiver);
+		super.onDestroy();
+	}
 
 	//onClick for category button
 	public void selectCategoryButton(View view)
@@ -277,7 +284,20 @@ public class EventCreateActivity extends ActionBarActivity
 					new CreateEventTask().execute("http://68.59.162.183/"
 					+ "android_connect/create_event.php");
 				}
-			}).setNegativeButton("Cancel", null).show();
+			}).setNegativeButton("Invite Groups to Event", new DialogInterface.OnClickListener()
+		{
+		@Override
+		public void onClick(DialogInterface dialog, int which)
+		{
+			//take user to eventaddmembersactivity page. (pass e_id as extra so invites can be sent to correct group id)
+			Intent intent = new Intent(EventCreateActivity.this, EventAddGroupsActivity.class);
+			intent.putExtra("e_id", e_id);
+			Global global = (Global)getApplicationContext();
+			global.loadUser(global.getCurrentUser().getEmail());
+			startActivity(intent);
+			finish();
+		}
+		}).show();
 		}
 	}
 	

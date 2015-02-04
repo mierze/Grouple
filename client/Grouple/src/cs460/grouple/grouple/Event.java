@@ -12,42 +12,13 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.StatusLine;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JSONObject;
-
-import android.app.ActionBar;
-import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.util.Log;
-import android.util.SparseArray;
-import android.view.KeyEvent;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-
-import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Log;
+
 
 public class Event extends Entity
 {
@@ -116,6 +87,10 @@ public class Event extends Entity
 	{
 		return maxPart;
 	}
+	public String getLocation()
+	{
+		return location;
+	}
 	
 	
 	/*
@@ -170,7 +145,7 @@ public class Event extends Entity
 		protected String doInBackground(String... urls)
 		{
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
-			nameValuePairs.add(new BasicNameValuePair("email", getEmail()));
+			nameValuePairs.add(new BasicNameValuePair("eid", Integer.toString(getID())));
 			//ADD ALL NAME VALUE REQuirEMENTS
 			return readJSONFeed(urls[0], nameValuePairs);
 		}
@@ -184,32 +159,56 @@ public class Event extends Entity
 				JSONObject jsonObject = new JSONObject(result);
 				//gotta make a json array
 				//JSONArray jsonArray = jsonObject.getJSONArray("userInfo");
-				
 				 
 				//json fetch was successful
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					JSONArray jsonArray = jsonObject.getJSONArray("eventInfo");
 					Log.d("getUserInfoOnPost", "success1");
-
+					//$name, $state, $startdate, $enddate, $category, $about, $location, $minpart, $maxpart, $mustbringlist, $creator);
 					//at each iteration set to hashmap friendEmail -> 'first last'
+					
 					String name = (String) jsonArray.get(0);
 					//set name
+					System.out.println("before name in event load name" + name);
 					setName(name);
 					
-					//set bio
-					String about = (String) jsonArray.get(1);
+				
+					//1 = startdate
+					//2 = enddate
+					String state = (String) jsonArray.get(1);
+					setEventState(state);
+					
+					//3 = category
+					String category = (String) jsonArray.get(4);
+					System.out.println("before name in event load category" + category);
+					setCategory(category);
+					
+					//4 = about
+					String about = (String) jsonArray.get(5);
+					System.out.println("before name in event load about: " + about);
 					setAbout(about);
 					
-					//set location
-					String location = (String) jsonArray.get(2);
-					setLocation(location);
 					
-				
+					//5 = location
+					String location = (String) jsonArray.get(6);
+					System.out.println("before name in event load about: " + location);
+					setLocation(location);		
 					
-					//get that image
-					String image = (String) jsonArray.get(5);
-					setImage(image);
+					
+					//7 = minpart
+					int minPart = (Integer) jsonArray.get(7);
+					setMinPart(minPart);	
+					
+					//7 = maxpart
+					int maxPart = (Integer) jsonArray.get(8);
+					setMinPart(maxPart);	
+					
+					//9 = mustbringlist
+					
+					//10 = creator
+					String creator = (String) jsonArray.get(10);
+					setEmail(creator);		
 				
 				} 
 				//unsuccessful
@@ -307,76 +306,4 @@ public class Event extends Entity
 			}
 		}
 	}	
-	
-	public String readJSONFeed(String URL, List<NameValuePair> nameValuePairs)
-	{
-		StringBuilder stringBuilder = new StringBuilder();
-		HttpClient httpClient = new DefaultHttpClient();
-
-		if (nameValuePairs == null)
-		{
-			HttpGet httpGet = new HttpGet(URL);
-
-			try
-			{
-				HttpResponse response = httpClient.execute(httpGet);
-				StatusLine statusLine = response.getStatusLine();
-				int statusCode = statusLine.getStatusCode();
-				if (statusCode == 200)
-				{
-					HttpEntity entity = response.getEntity();
-					InputStream inputStream = entity.getContent();
-					BufferedReader reader = new BufferedReader(
-							new InputStreamReader(inputStream));
-					String line;
-					while ((line = reader.readLine()) != null)
-					{
-						System.out.println("New line: " + line);
-						stringBuilder.append(line);
-					}
-					inputStream.close();
-				} else
-				{
-					Log.d("JSON", "Failed to download file");
-				}
-			} catch (Exception e)
-			{
-				Log.d("readJSONFeed", e.getLocalizedMessage());
-			}
-
-		}
-
-		else
-		{
-			HttpPost httpPost = new HttpPost(URL);
-			try
-			{
-				httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
-				HttpResponse response = httpClient.execute(httpPost);
-				StatusLine statusLine = response.getStatusLine();
-				int statusCode = statusLine.getStatusCode();
-				if (statusCode == 200)
-				{
-					HttpEntity entity = response.getEntity();
-					InputStream inputStream = entity.getContent();
-					BufferedReader reader = new BufferedReader(
-							new InputStreamReader(inputStream));
-					String line;
-					while ((line = reader.readLine()) != null)
-					{
-						stringBuilder.append(line);
-					}
-					inputStream.close();
-				} else
-				{
-					Log.d("JSON", "Failed to download file");
-				}
-			} catch (Exception e)
-			{
-				Log.d("readJSONFeed", e.getLocalizedMessage());
-			}
-		}
-		return stringBuilder.toString();
-	}
 }

@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -50,6 +49,7 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /*
  * EditProfileActivity allows user to make changes to his/her profile.
@@ -209,16 +209,23 @@ public class GroupEditActivity extends ActionBarActivity implements
 
 		// bio no more than
 		EditText aboutEditText = (EditText) findViewById(R.id.aboutEditTextEPA);
+		EditText nameEditText = (EditText) findViewById(R.id.nameEditTextEPA);
+		TextView errorTextView = (TextView) findViewById(R.id.errorTextViewEPA);
 		String about = aboutEditText.getText().toString();
+		String name = nameEditText.getText().toString(); 
 		if (about.length() > 100)
 		{
-			TextView errorTextView = (TextView) findViewById(R.id.errorTextViewEPA);
 			errorTextView.setText("About is too many characters.");
 			errorTextView.setVisibility(0);
-		} else
+		}
+		else if(name.isEmpty() || name.compareTo("") == 0 )
 		{
-			new setProfileTask()
-					.execute("http://68.59.162.183/android_connect/update_group.php");
+			errorTextView.setText("Please enter a name.");
+			errorTextView.setVisibility(0);
+		}
+		else
+		{
+			new setProfileTask().execute("http://68.59.162.183/android_connect/update_group.php");
 			global.loadGroup(group.getID());
 			finish();
 		}
@@ -267,29 +274,25 @@ public class GroupEditActivity extends ActionBarActivity implements
 			StringBuilder stringBuilder = new StringBuilder();
 			HttpClient httpClient = new DefaultHttpClient();
 			// kaboom
+			//update_group.php using name/value pair
 			HttpPost httpPost = new HttpPost(URL);
 			try
 			{
-				//String email = group.getEmail();
-				TextView nameTextView = (TextView) findViewById(R.id.nameEditTextEPA);
-				TextView ageTextView = (TextView) findViewById(R.id.ageEditTextEPA);
-				TextView bioTextView = (TextView) findViewById(R.id.bioEditTextEPA);
-				TextView locationTextView = (TextView) findViewById(R.id.locationEditTextEPA);
-
-				String name = nameTextView.getText().toString();
-				// Split name by space because sleep.
-				String[] splitted = name.split("\\s+");
-				String firstName = splitted[0];
-				String lastName = splitted[1];
-
-				String age = ageTextView.getText().toString();
-
-				String bio = bioTextView.getText().toString();
-
-				String location = locationTextView.getText().toString();
-
-				MultipartEntityBuilder builder = MultipartEntityBuilder
-						.create();
+				//Get g_name
+				EditText nameEditText = (EditText) findViewById(R.id.nameEditTextEPA);
+				//Get about
+				EditText aboutEditText = (EditText) findViewById(R.id.aboutEditTextEPA);
+				//If private is not checked, then assume public. yes that means if the user selects nothing then it is assumed public.
+				RadioButton privateRadioButton = (RadioButton) findViewById(R.id.privateButton);
+				int publicStatus = 1;
+				if(privateRadioButton.isChecked())
+				{	
+					//Set the public column in the database to false.
+					publicStatus = 0;
+				}
+				
+			
+				MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 
 				builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
 
@@ -302,21 +305,18 @@ public class GroupEditActivity extends ActionBarActivity implements
 					bmp.compress(CompressFormat.JPEG, 100, bos);
 					data = bos.toByteArray();
 					ByteArrayBody bab = new ByteArrayBody(data, ".jpg");
-					builder.addPart("profilepic", bab);
+					builder.addPart("pic", bab);
 					data = null;
 					bab = null;
 					bos.close();
 				}
 
-				// add remaining fields to builder, then execute
-				builder.addTextBody("first", firstName, ContentType.TEXT_PLAIN);
-				builder.addTextBody("last", lastName, ContentType.TEXT_PLAIN);
-				builder.addTextBody("age", age, ContentType.TEXT_PLAIN);
-				builder.addTextBody("bio", bio, ContentType.TEXT_PLAIN);
-				builder.addTextBody("location", location,
-						ContentType.TEXT_PLAIN);
-				//PANDAbuilder.addTextBody("email", email, ContentType.TEXT_PLAIN); 
-
+				// add remaining fields to builder (g_name, about, public, g_id), then execute
+				builder.addTextBody("g_name", nameEditText.getText().toString(), ContentType.TEXT_PLAIN);
+				builder.addTextBody("about", aboutEditText.getText().toString(), ContentType.TEXT_PLAIN);
+				builder.addTextBody("public", Integer.toString(publicStatus), ContentType.TEXT_PLAIN);
+				builder.addTextBody("g_id", Integer.toString(group.getID()), ContentType.TEXT_PLAIN);
+	
 				httpPost.setEntity(builder.build());
 
 				HttpResponse response = httpClient.execute(httpPost);
@@ -358,14 +358,16 @@ public class GroupEditActivity extends ActionBarActivity implements
 				JSONObject jsonObject = new JSONObject(result);
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					// Success
-					//refresh?
-					Global global = ((Global) getApplicationContext());
-					//PANDAglobal.loadUser(group.getEmail());
-					System.out.println("Success");
+					// Success			
+					Context context = getApplicationContext();
+					Toast toast = Toast.makeText(context, "Group profile changed successfully.", Toast.LENGTH_SHORT);
+					toast.show();
 				} else
 				{
 					// Fail
+					Context context = getApplicationContext();
+					Toast toast = Toast.makeText(context, "Group profile changed unsuccessfully.", Toast.LENGTH_SHORT);
+					toast.show();
 					System.out.println("Fail");
 				}
 			} catch (Exception e)
@@ -381,7 +383,7 @@ public class GroupEditActivity extends ActionBarActivity implements
 		// TODO Auto-generated method stub
 		switch (v.getId()) 
 		{
-		case R.id.editProfilePhotoButton:
+		case R.id.editGroupPhotoButton:
 			final CharSequence[] items = {"Take Photo", "Choose from Gallery",
 					"Cancel" };
 

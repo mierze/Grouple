@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/eventAddGroupsLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="5dp"
+    android:background="@color/background_color"
+    android:orientation="vertical" >
+    
+    <LinearLayout
+        android:id="@+id/linearLayoutTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+    	android:background="@color/layout_background_color"
+        android:orientation="vertical" >
+    
+    </LinearLayout>
+    
+    <TextView
+        android:id="@+id/createIntroMessage"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:text="Check \'✓\' the groups you want to invite to the event, then click the \'Confirm Invites\' button."
+        android:background="@color/black"
+        android:textColor="@color/white" />
+        
+    <ScrollView
+        android:id="@+id/scrollViewPickMembers"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+
+        android:layout_weight="2"
+    	android:background="@color/layout_background_color"
+        android:padding="0dp" >
+
+        <LinearLayout
+            android:id="@+id/linearLayoutNested_eventAddGroups"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
+    
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        
+        android:layout_height="wrap_content" >
+        
+        <Button
+            android:id="@+id/confirmButton"
+            android:layout_width="match_parent"
+            android:layout_height="50sp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/button_border"
+            android:onClick="addGroupsButton"
+            android:text="Confirm Invites"
+            android:textColor="@color/button_text_color"
+            android:textSize="20sp" />
+
+    </LinearLayout>
+</LinearLayout>

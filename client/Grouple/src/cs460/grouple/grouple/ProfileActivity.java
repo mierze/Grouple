@@ -25,6 +25,7 @@ public class ProfileActivity extends ActionBarActivity
 	BroadcastReceiver broadcastReceiver;
 	User user; //user who's profile this is
 	Group group;
+	Event event;
 	
 	@Override
 	protected void onStart()
@@ -51,14 +52,14 @@ public class ProfileActivity extends ActionBarActivity
 		setNotifications();
 		populateProfile();
 	}
+	
 	public void initActionBar(String title)
 	{
 		
 		/* Action bar */
 		ActionBar ab = getSupportActionBar();
-		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
 		ab.setCustomView(R.layout.actionbar);
-		ab.setDisplayHomeAsUpEnabled(false);
+		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
 		//ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
 
@@ -75,15 +76,10 @@ public class ProfileActivity extends ActionBarActivity
 		if (extras.getString("content").equals("group"))
 		{
 			group = global.getGroupBuffer();
-			TextView about = (TextView)findViewById(R.id.profileAboutTextView);
-			about.setText(group.getAbout());
-			
-			Button membersButton = (Button)findViewById(R.id.profileButton1);
 			Button profileButton2 = (Button)findViewById(R.id.profileButton2);
 			Button profileButton3 = (Button)findViewById(R.id.profileButton3);
 			profileButton2.setVisibility(View.GONE);
 			profileButton3.setVisibility(View.GONE);
-			membersButton.setText("Members (" + group.getNumUsers() + ")");
 			title = group.getName();
 		}
 		else if (extras.getString("content").equals("user"))
@@ -108,7 +104,24 @@ public class ProfileActivity extends ActionBarActivity
 			title = user.getFirstName() + "'s Profile";
 			
 		}
+		else if (extras.getString("content").equals("event"))
+		{
+			event = global.getEventBuffer();
+			if (event == null)
+			{
+				System.out.println("OPUR EVEMNT IS NUL!");
+			}
+			else
+				System.out.println("NTNULL WE ARE GOOD");
+			Button profileButton2 = (Button)findViewById(R.id.profileButton2);
+			Button profileButton3 = (Button)findViewById(R.id.profileButton3);
+			profileButton2.setVisibility(View.GONE);
+			profileButton3.setVisibility(View.GONE);
+			System.out.println("EVENT NAME: " + event.getName());
+			title = event.getName();
+		}
 
+		setNotifications();
 		populateProfile(); //populates a group / user profile
 		
 		// initializing the action bar and killswitch listener
@@ -128,10 +141,12 @@ public class ProfileActivity extends ActionBarActivity
 		{
 			((Button) findViewById(R.id.profileButton1)).setText("Friends\n(" + user.getNumUsers() + ")");
 			((Button) findViewById(R.id.profileButton2)).setText("Groups\n(" + user.getNumGroups() + ")");	
+			((Button) findViewById(R.id.profileButton3)).setText("Events\n(" + user.getNumEventsUpcoming() + ")");	
 		}
 		else
 		{
 			//for event later
+			((Button) findViewById(R.id.profileButton1)).setText("Attending (" + event.getNumUsers() + ")");
 		}
 		
 	}
@@ -177,8 +192,6 @@ public class ProfileActivity extends ActionBarActivity
 		if (id == R.id.action_home)
 		{
 			Intent intent = new Intent(this, HomeActivity.class);
-			intent.putExtra("ParentClassName", "UserActivity");
-			intent.putExtra("up", "false");
 			startActivity(intent);
 		}
 		return super.onOptionsItemSelected(item);
@@ -282,7 +295,9 @@ public class ProfileActivity extends ActionBarActivity
 		}
 		else
 		{
-			
+			about.setText(event.getAbout());
+			info.setText(event.getCategory() + "\n" +
+					event.getLocation());
 		}		
 	}
 

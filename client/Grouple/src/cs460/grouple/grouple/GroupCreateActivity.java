@@ -46,7 +46,9 @@ import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /*
  * GroupCreateActivity allows a user to create a new group.
@@ -214,7 +216,9 @@ public class GroupCreateActivity extends ActionBarActivity
 	{		
 		//first check to make sure a group name has been typed by the user
 		EditText groupNameEditText = (EditText) findViewById(R.id.groupName);
-
+		//Check that a radio button was checked too.
+		RadioButton publicButton = (RadioButton) findViewById(R.id.publicButton);
+		RadioButton privateButton = (RadioButton) findViewById(R.id.privateButton);
 		String groupname = groupNameEditText.getText().toString();
 		
 		//if empty group name, display error box
@@ -222,6 +226,13 @@ public class GroupCreateActivity extends ActionBarActivity
 		{
 			new AlertDialog.Builder(this)
 			.setMessage("Please give your group a name before creating.")
+			.setCancelable(true)
+			.setNegativeButton("Ok", null).show();
+		}
+		else if(!publicButton.isChecked() && !privateButton.isChecked())
+		{
+			new AlertDialog.Builder(this)
+			.setMessage("Please select public or private for your new group's privacy setting.")
 			.setCancelable(true)
 			.setNegativeButton("Ok", null).show();
 		}
@@ -244,6 +255,30 @@ public class GroupCreateActivity extends ActionBarActivity
 		}
 	}
 	
+	//Handles the radio buttons.
+	public void radio (View view)
+	{
+		RadioButton publicButton = (RadioButton) findViewById(R.id.publicButton);
+		RadioButton privateButton = (RadioButton) findViewById(R.id.privateButton);
+		switch (view.getId())
+		{
+		case R.id.publicButton:
+			if (publicButton.isChecked())
+			{
+				privateButton.setChecked(false);
+			}
+			
+			break;
+		case R.id.privateButton:
+			
+			if (privateButton.isChecked())
+			{
+				publicButton.setChecked(false);
+			}
+			break;
+		}
+	}
+	
 	//aSynch class to create group 
 	private class CreateGroupTask extends AsyncTask<String, Void, String>
 	{
@@ -254,7 +289,8 @@ public class GroupCreateActivity extends ActionBarActivity
 			Global global = ((Global) getApplicationContext());
 			EditText groupNameEditText = (EditText) findViewById(R.id.groupName);
 			EditText groupBioEditText = (EditText) findViewById(R.id.groupBio);
-
+			RadioButton privateButton = (RadioButton) findViewById(R.id.privateButton);
+			
 			//grab group name and bio from textviews
 			String groupname = groupNameEditText.getText().toString();
 			String groupbio = groupBioEditText.getText().toString();	
@@ -263,9 +299,20 @@ public class GroupCreateActivity extends ActionBarActivity
 			nameValuePairs.add(new BasicNameValuePair("g_name", groupname));
 			nameValuePairs.add(new BasicNameValuePair("about", groupbio));
 			nameValuePairs.add(new BasicNameValuePair("creator", email));
-
+			
+			//1 for public, 0 for private.
+			int publicStatus = 1;
+			
+			if(privateButton.isChecked())
+			{
+				publicStatus = 0;
+			}
+			//Add the privacy setting
+			nameValuePairs.add(new BasicNameValuePair("public", Integer.toString(publicStatus)));
+			
 			//pass url and nameValuePairs off to global to do the JSON call.  Code continues at onPostExecute when JSON returns.
 			return global.readJSONFeed(urls[0], nameValuePairs);
+			
 		}
 
 		@Override

@@ -51,7 +51,6 @@ public class HomeActivity extends ActionBarActivity
 		
 		//grabbing the user with the given email in the extras
 		user = global.loadUser(global.getCurrentUser().getEmail());
-	
 		
 		//set notifications
 		setNotifications();
@@ -108,9 +107,28 @@ public class HomeActivity extends ActionBarActivity
 								+ " invites)");
 			}
 		} 
-		else if (numFriendRequests == 0)
+		else if (numGroupInvites == 0)
 		{
 			((Button) findViewById(R.id.groupsButtonHA)).setText("Groups");
+		}
+		
+		int numEventsPending = user.getNumEventsPending();
+		if (numEventsPending > 0)
+		{
+			if (numEventsPending == 1)
+			{
+				((Button) findViewById(R.id.eventsButtonHA)).setText("Events \n(" + numEventsPending
+								+ " invite)");
+			} 
+			else
+			{
+				((Button) findViewById(R.id.eventsButtonHA)).setText("Events \n(" + numEventsPending
+								+ " invites)");
+			}
+		} 
+		else if (numEventsPending == 0)
+		{
+			((Button) findViewById(R.id.eventsButtonHA)).setText("Events");
 		}
 	}
 	@Override

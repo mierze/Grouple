@@ -11,6 +11,7 @@
     <string name="userTextView">User Profile</string>
     <string name="groupsTextView">Groups</string>
     <string name="emailEditText">Enter email</string>
+    <string name="title_activity_event_addgroups">Add Groups</string>
     <string name="passwordEditText">Enter password</string>
     <string name="rePasswordEditText">Re-Enter Password</string>
     <string name="fNameEditText">Enter First Name</string>
@@ -93,5 +94,6 @@
     </string-array>
 
     <string name="title_activity_invite">InviteActivity</string>
+    <string name="title_activity_event_add_groups">EventAddGroupsActivity</string>
 
 </resources>

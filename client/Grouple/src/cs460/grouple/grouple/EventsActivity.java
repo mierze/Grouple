@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -22,6 +23,7 @@ import android.widget.TextView;
 public class EventsActivity extends ActionBarActivity
 {
 	BroadcastReceiver broadcastReceiver;
+	User user;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -29,55 +31,67 @@ public class EventsActivity extends ActionBarActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_events);
 
+		
+		load();
+		
+		
+	}
+
+	private void load()
+	{
+		Global global = (Global) getApplicationContext();
+		user = global.getCurrentUser();
+		setNotifications();
+		initActionBar();
+		initKillswitchListener();
+	}
+	
+	private void initActionBar()
+	{
 		/* Action bar */
 		ActionBar ab = getSupportActionBar();
 		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
 		ab.setCustomView(R.layout.actionbar);
 		ab.setDisplayHomeAsUpEnabled(false);
 		ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
-		upButton.setOnClickListener(new OnClickListener()
-		{
 
-			@Override
-			public void onClick(View view)
-			{
-
-				startParentActivity(view);
-
-			}
-		});
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
 
 		actionbarTitle.setText("Events");
-
-		initKillswitchListener();
 	}
-
+	
+	private void setNotifications()
+	{
+		((Button) findViewById(R.id.eventsUpcomingButtonEA)).setText("Upcoming Events (" + user.getNumEventsUpcoming() + ")");
+		((Button) findViewById(R.id.eventsPendingButtonEA)).setText("Pending Events (" + user.getNumEventsPending() + ")");
+		
+	}
+	
+	public void onClick(View view)
+	{
+		Intent intent =  new Intent(this, ListActivity.class);
+		switch (view.getId())
+		{
+		case R.id.eventsPendingButtonEA:
+			intent.putExtra("content", "eventsPending");
+			break;
+		case R.id.eventsUpcomingButtonEA:
+			intent.putExtra("content", "eventsUpcoming");
+			break;
+		case R.id.eventCreateButtonEA:
+			intent = new Intent(this, EventCreateActivity.class);
+			break;
+		}
+		intent.putExtra("email", user.getEmail());
+		startActivity(intent);
+	}
+	
 	@Override
 	protected void onDestroy()
 	{
 		// TODO Auto-generated method stub
 		unregisterReceiver(broadcastReceiver);
 		super.onDestroy();
-	}
-
-	public void startParentActivity(View view)
-	{
-		Bundle extras = getIntent().getExtras();
-
-		String className = "HomeActivity";
-		Intent newIntent = null;
-		try
-		{
-			newIntent = new Intent(this, Class.forName("cs460.grouple.grouple."
-					+ className));
-
-		} catch (ClassNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		startActivity(newIntent);
-		finish();
 	}
 
 	@Override
@@ -88,6 +102,13 @@ public class EventsActivity extends ActionBarActivity
 		return true;
 	}
 
+	@Override
+	public void onResume()
+	{
+		super.onResume(); // Always call the superclass method first
+		load();
+	}
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
@@ -118,16 +139,9 @@ public class EventsActivity extends ActionBarActivity
 	{
 		Intent intent = new Intent(this, HomeActivity.class);
 		startActivity(intent);
-		finish();
+		intent.putExtra("email", user.getEmail());
 	}
 	
-	
-	/* Start activity for creating a new event button*/
-	public void startEventsCreateActivity(View view)
-	{
-		Intent intent = new Intent(this, EventCreateActivity.class);
-		startActivity(intent);
-	}
 
 	public void initKillswitchListener()
 	{

@@ -114,6 +114,11 @@ public class Global extends Application
 			if (success == 1)
 				Log.d("loadUser","success after fetchGroupInvites()");
 			
+			success = user.fetchEventsPending();
+			//was successful in fetching group invites
+			if (success == 1)
+				Log.d("loadUser","success after fetchEventsPending()");
+			
 		}
 		else if (getUserBuffer() != null && getUserBuffer().getEmail().equals(email))
 		{
@@ -141,14 +146,15 @@ public class Global extends Application
 		if (success == 1)
 			Log.d("loadUser","success after fetchFriends()");
 
-
-		
-		
 		success = user.fetchGroups();
 		//was successful in fetching groups
 		if (success == 1)
 			Log.d("loadUser","success after fetchGroups()");
 	
+		success = user.fetchEventsUpcoming();
+		//was successful in fetching group invites
+		if (success == 1)
+			Log.d("loadUser","success after fetchEventsUpcoming()");
 		
 		//check that currentUser has been initialized
 		//little redundancy from earlier if statement, when current user was not null
@@ -165,8 +171,16 @@ public class Global extends Application
 			
 			//fetchGroupInvites
 			success = user.fetchGroupInvites();
+			
 
-			System.out.println("Setting current user");
+			
+			success = user.fetchEventsPending();
+			//was successful in fetching group invites
+			if (success == 1)
+				Log.d("loadUser","success after fetchEventsPending()");
+
+			System.out.println("Setting current user for first time");
+			
 			setCurrentUser(user);//set the user to current user
 		}	
 		

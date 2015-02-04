@@ -61,6 +61,9 @@ public class User extends Entity
 	private Map<Integer, String> groups; 
 	private ArrayList<String> friendRequests; //friendRequest emails->names
 	private Map <Integer, String> groupInvites; //group invite ids
+	private Map <Integer, String> eventsPending;
+	private Map <Integer, Boolean> eventsAccepted;
+	private Map <Integer, String> eventsUpcoming;
 	private boolean isCurrentUser;
 	
 	
@@ -77,20 +80,32 @@ public class User extends Entity
 	//testing
 	public void removeGroup(int gid)
 	{
-		if (groups.containsKey(gid))
+		if (groups != null && groups.containsKey(gid))
 			groups.remove(gid);
 	}
 	//testing
 	public void removeGroupInvite(int gid)
 	{
-		
-		if (groupInvites.containsKey(gid))
+		if (groupInvites != null && groupInvites.containsKey(gid))
 		{
 			groupInvites.remove(gid);
-			System.out.println("We have removed the groupinvite");
 		}
-		else
-			System.out.println("We haNTOTOTOTemoved the groupinvite");
+
+	}
+	public void removeEventUpcoming(int id)
+	{
+		if (eventsUpcoming != null && eventsUpcoming.containsKey(id))
+		{
+			eventsUpcoming.remove(id);
+		}
+	}
+	public void removeEventPending(int id)
+	{
+		
+		if (eventsPending != null && eventsPending.containsKey(id))
+		{
+			eventsPending.remove(id);
+		}
 	}
 	public void removeFriendRequest(String email)
 	{
@@ -141,11 +156,29 @@ public class User extends Entity
 		int idNum = Integer.parseInt(id);
 		
 		groupInvites.put(idNum, name);
-		
-		//create a new group and throw it in global
-		//Global global = ((Global) getApplicationContext());
-		//groupInvites.put((idNum, name), sender);
 	}
+	public void addToEventsPending(String id, String name, String sender, boolean accepted)
+	{
+		if (eventsPending == null)
+		{
+			eventsPending = new HashMap<Integer, String>();
+			eventsAccepted = new HashMap<Integer, Boolean>();
+		}
+		int idNum = Integer.parseInt(id);
+		eventsAccepted.put(idNum, accepted);
+		eventsPending.put(idNum, name);
+	}
+	public void addToEventsUpcoming(String id, String name)
+	{
+		if (eventsUpcoming == null)
+		{
+			eventsUpcoming = new HashMap<Integer, String>();
+		}
+		int idNum = Integer.parseInt(id);
+		
+		eventsUpcoming.put(idNum, name);
+	}
+	
 	/*
 	 * Getters for user class below
 	 */
@@ -193,6 +226,20 @@ public class User extends Entity
 		else
 			return 0;
 	}
+	public int getNumEventsPending()
+	{
+		if (eventsPending != null)
+			return eventsPending.size();
+		else
+			return 0;
+	}
+	public int getNumEventsUpcoming()
+	{
+		if (eventsUpcoming != null)
+			return eventsUpcoming.size();
+		else
+			return 0;
+	}
 	public ArrayList<String> getFriendRequests()
 	{
 		return friendRequests;
@@ -205,6 +252,19 @@ public class User extends Entity
 	{
 		return groupInvites;
 	}
+	public Map<Integer, String> getEventsPending()
+	{
+		return eventsPending;
+	}
+	public Map<Integer, String> getEventsUpcoming()
+	{
+		return eventsUpcoming;
+	}
+	public Map<Integer, Boolean> getEventsAccepted()
+	{
+		return eventsAccepted;
+	}
+	
 	
 	
 	
@@ -640,75 +700,157 @@ public class User extends Entity
 		}
 	}
 	
-	public String readJSONFeed(String URL, List<NameValuePair> nameValuePairs)
+
+	/*
+	 * 
+	 * should be getting the groupInvites key->vals here
+	 * 
+	 */
+	// Get numFriends, TODO: work on returning the integer
+	public int fetchEventsPending()
 	{
-		StringBuilder stringBuilder = new StringBuilder();
-		HttpClient httpClient = new DefaultHttpClient();
-
-		if (nameValuePairs == null)
+		AsyncTask<String, Void, String> task = new getEventsPendingTask()
+				.execute("http://68.59.162.183/android_connect/get_events_pending.php?email="
+						+ getEmail());
+		try
 		{
-			HttpGet httpGet = new HttpGet(URL);
-
-			try
-			{
-				HttpResponse response = httpClient.execute(httpGet);
-				StatusLine statusLine = response.getStatusLine();
-				int statusCode = statusLine.getStatusCode();
-				if (statusCode == 200)
-				{
-					HttpEntity entity = response.getEntity();
-					InputStream inputStream = entity.getContent();
-					BufferedReader reader = new BufferedReader(
-							new InputStreamReader(inputStream));
-					String line;
-					while ((line = reader.readLine()) != null)
-					{
-						System.out.println("New line: " + line);
-						stringBuilder.append(line);
-					}
-					inputStream.close();
-				} else
-				{
-					Log.d("JSON", "Failed to download file");
-				}
-			} catch (Exception e)
-			{
-				Log.d("readJSONFeed", e.getLocalizedMessage());
-			}
-
-		}
-
-		else
+			task.get(10000, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e)
 		{
-			HttpPost httpPost = new HttpPost(URL);
-			try
-			{
-				httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
-				HttpResponse response = httpClient.execute(httpPost);
-				StatusLine statusLine = response.getStatusLine();
-				int statusCode = statusLine.getStatusCode();
-				if (statusCode == 200)
-				{
-					HttpEntity entity = response.getEntity();
-					InputStream inputStream = entity.getContent();
-					BufferedReader reader = new BufferedReader(
-							new InputStreamReader(inputStream));
-					String line;
-					while ((line = reader.readLine()) != null)
-					{
-						stringBuilder.append(line);
-					}
-					inputStream.close();
-				} else
-				{
-					Log.d("JSON", "Failed to download file");
-				}
-			} catch (Exception e)
-			{
-				Log.d("readJSONFeed", e.getLocalizedMessage());
-			}
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TimeoutException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		return stringBuilder.toString();
+		
+		//while (task.getStatus() != Status.FINISHED);
+		return 1;
 	}
+
+	private class getEventsPendingTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected String doInBackground(String... urls)
+		{
+			return readJSONFeed(urls[0], null);
+		}
+
+		@Override
+		protected void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					//gotta make a json array
+					JSONArray jsonArray = jsonObject.getJSONArray("eventsPending");
+					
+					//looping thru array
+					for (int i = 0; i < jsonArray.length(); i++)
+					{
+						//at each iteration set to hashmap friendEmail -> 'first last'
+						JSONObject o = (JSONObject) jsonArray.get(i);
+						//function adds friend to the friends map
+						boolean accepted = false;
+						if (o.get("recdate") != null)
+							accepted = true;
+						System.out.println("Adding to events pending, boolean accepted = " + accepted);
+						addToEventsPending(o.getString("eid"), o.getString("name"), o.getString("sender"), accepted);
+					}
+				}
+				
+				// user has no group invites
+				if (jsonObject.getString("success").toString().equals("2"))
+				{
+					//no group invites
+				}
+			} catch (Exception e)
+			{
+				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+			}
+		}
+	}
+	
+	/*
+	 * 
+	 * should be getting the groupInvites key->vals here
+	 * 
+	 */
+	// Get numFriends, TODO: work on returning the integer
+	public int fetchEventsUpcoming()
+	{
+		AsyncTask<String, Void, String> task = new getEventsUpcomingTask()
+				.execute("http://68.59.162.183/android_connect/get_events_upcoming.php?email="
+						+ getEmail());
+		try
+		{
+			task.get(10000, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TimeoutException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//while (task.getStatus() != Status.FINISHED);
+		return 1;
+	}
+
+	private class getEventsUpcomingTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected String doInBackground(String... urls)
+		{
+			return readJSONFeed(urls[0], null);
+		}
+
+		@Override
+		protected void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					//gotta make a json array
+					JSONArray jsonArray = jsonObject.getJSONArray("eventsUpcoming");
+					
+					//looping thru array
+					for (int i = 0; i < jsonArray.length(); i++)
+					{
+						//at each iteration set to hashmap friendEmail -> 'first last'
+						JSONObject o = (JSONObject) jsonArray.get(i);
+						//function adds friend to the friends map
+						addToEventsUpcoming(o.getString("eid"), o.getString("name"));
+					}
+
+				}
+				
+				// user has no group invites
+				if (jsonObject.getString("success").toString().equals("2"))
+				{
+					//setNumFriends(0); //PANDA need to set the user class not global
+				}
+			} catch (Exception e)
+			{
+				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+			}
+		}
+	}
+	
+	
 }
