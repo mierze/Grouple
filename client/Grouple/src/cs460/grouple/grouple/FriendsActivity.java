@@ -167,9 +167,9 @@ public class FriendsActivity extends ActionBarActivity
 	public void startFriendRequestsActivity(View view)
 	{
 		Global global = ((Global) getApplicationContext());
-		Intent intent = new Intent(this, FriendRequestsActivity.class);
+		Intent intent = new Intent(this, ListActivity.class);
 		//intent.putExtra("email", global.getCurrentUser()); PANDA getEmail()
-		intent.putExtra("ParentClassName", "FriendsActivity");
+		intent.putExtra("content", "friendRequests");
 		intent.putExtra("email", user.getEmail());
 		// intent.putExtra("mod", "true");
 		startActivity(intent);

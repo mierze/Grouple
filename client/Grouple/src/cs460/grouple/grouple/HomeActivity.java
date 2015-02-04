@@ -50,7 +50,7 @@ public class HomeActivity extends ActionBarActivity
 		Global global = ((Global) getApplicationContext());
 		
 		//grabbing the user with the given email in the extras
-		user = global.loadUser(global.getCurrentUser().getEmail());
+		user = global.getCurrentUser();
 		
 		//set notifications
 		setNotifications();

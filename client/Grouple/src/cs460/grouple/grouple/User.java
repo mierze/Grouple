@@ -64,7 +64,6 @@ public class User extends Entity
 	private Map <Integer, String> eventsPending;
 	private Map <Integer, Boolean> eventsAccepted;
 	private Map <Integer, String> eventsUpcoming;
-	private boolean isCurrentUser;
 	
 	
 	/*
@@ -73,7 +72,6 @@ public class User extends Entity
 	public User(String email) 
 	{
 		setEmail(email);
-		this.isCurrentUser = false;
 		System.out.println("Initializing new user.");
 	}
 	
@@ -124,10 +122,6 @@ public class User extends Entity
 	public void setAge(int age)
 	{
 		this.age = age;
-	}
-	public void setIsCurrentUser(boolean isCurrentUser)
-	{
-		this.isCurrentUser = isCurrentUser;
 	}
 	public void addToFriendRequests(String email)
 	{
@@ -200,10 +194,6 @@ public class User extends Entity
 	public int getAge()
 	{
 		return age;
-	}
-	public boolean isCurrentUser()
-	{
-		return isCurrentUser;
 	}
 	public int getNumGroups()
 	{
@@ -439,7 +429,6 @@ public class User extends Entity
 				{
 					//gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("friends");
-					
 					//looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{

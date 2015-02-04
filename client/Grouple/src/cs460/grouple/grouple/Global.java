@@ -90,47 +90,10 @@ public class Global extends Application
 	//using the email of user, load them in
 	public User loadUser(String email) 
 	{	
-		User user;
-		int success = 0;
 		//instantiate a new user
-		
-		//this is if the current user has already been loaded and the required user is this user
-		//this will update the friend requests / group invites
-		if (currentUser != null && currentUser.getEmail().equals(email))
-		{
-			user = currentUser;
-			
-			//since this is currentUser we can do update on the group invites / friend requests			
-			//json call to populate users friendRequestKeys / names
+		User user = new User(email);
+		int success = 0;
 	
-			success = user.fetchFriendRequests();
-			//was successful in fetching friend requests
-			if (success == 1)
-				Log.d("loadUser","success after fetchFriendRequests()");
-		
-
-			success = user.fetchGroupInvites();
-			//was successful in fetching group invites
-			if (success == 1)
-				Log.d("loadUser","success after fetchGroupInvites()");
-			
-			success = user.fetchEventsPending();
-			//was successful in fetching group invites
-			if (success == 1)
-				Log.d("loadUser","success after fetchEventsPending()");
-			
-		}
-		else if (getUserBuffer() != null && getUserBuffer().getEmail().equals(email))
-		{
-			user = getUserBuffer();
-		}
-		else 
-		{
-			//instantiate new user
-			user = new User(email);
-		}
-		 
-		
 		/**
 		 * Below is just updating / loading all of the user info, friends, groups, pertinent to all loaded users
 		 */
@@ -140,6 +103,7 @@ public class Global extends Application
 		if (success == 1)
 			Log.d("loadUser", "success after fetchUserInfo()");
 
+	
 		//json call to populate users friendKeys / friendNames
 		success = user.fetchFriends();
 		//was successful in fetching friends
@@ -181,14 +145,19 @@ public class Global extends Application
 
 			System.out.println("Setting current user for first time");
 			
-			setCurrentUser(user);//set the user to current user
 		}	
 		
 		//saving
-		if (getUserBuffer() != null && getUserBuffer().getEmail().equals(email))
-			setUserBuffer(user);
-		else if (getCurrentUser() != null && getCurrentUser().getEmail().equals(email))
+		if (getCurrentUser() == null || isCurrentUser(user.getEmail()))
+		{
+			//this
 			setCurrentUser(user);
+		}
+		else
+		{
+			//set user buffer
+			setUserBuffer(user);
+		}
 		
 		return user; //return the user
 	}

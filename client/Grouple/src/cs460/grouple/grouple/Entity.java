@@ -46,6 +46,7 @@ public abstract class Entity
 	}
 	public void setName(String name)
 	{
+		System.out.println("Name is being set to: " + name);
 		this.name = name;
 	}
 	
