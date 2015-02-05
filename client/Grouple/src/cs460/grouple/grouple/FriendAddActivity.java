@@ -43,7 +43,7 @@ public class FriendAddActivity extends ActionBarActivity
 		Global global = ((Global) getApplicationContext());
 		Intent parentIntent = getIntent();
 		Bundle extras = parentIntent.getExtras();
-		user = global.loadUser(extras.getString("email"));
+		user = global.getCurrentUser();
 		
 		initActionBar();
 		// Initialize the kill switch. The kill switch will kill all open

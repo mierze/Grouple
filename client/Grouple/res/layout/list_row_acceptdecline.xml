@@ -8,7 +8,7 @@
     android:rowCount="1" >
 
     <Button
-        android:id="@+id/emailTextViewFRLI"
+        android:id="@+id/nameButtonLI"
         android:layout_column="0"
         android:layout_height="50dp"
                 android:background="@android:color/transparent"

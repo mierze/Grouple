@@ -27,6 +27,7 @@ public class GroupsActivity extends ActionBarActivity
 {
 	BroadcastReceiver broadcastReceiver;
 	User user;
+	private static Global GLOBAL;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -59,17 +60,18 @@ public class GroupsActivity extends ActionBarActivity
 	public boolean onKeyDown(int keyCode, KeyEvent event)  {
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
 	    	Intent intent = new Intent(this, HomeActivity.class);
-	    	intent.putExtra("email", user.getEmail());
+	    	intent.putExtra("EMAIL", user.getEmail());
 	    	startActivity(intent);
+	    	finish(); //preventing back-loop
 	    }
 	    return true;
 	   }
 	
 	public void load()
 	{
-		Global global = ((Global) getApplicationContext());
+		GLOBAL = ((Global) getApplicationContext());
 	
-		user = global.getCurrentUser();//loadUser(global.getCurrentUser().getEmail());
+		user = GLOBAL.getCurrentUser();//loadUser(global.getCurrentUser().getEmail());
 					
 		setNotifications();
 
@@ -117,11 +119,10 @@ public class GroupsActivity extends ActionBarActivity
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		Global global = ((Global) getApplicationContext());
 		if (id == R.id.action_logout)
 		{
 			Intent login = new Intent(this, LoginActivity.class);
-			global.destroySession();
+			GLOBAL.destroySession();
 			startActivity(login);
 			Intent intent = new Intent("CLOSE_ALL");
 			this.sendBroadcast(intent);
@@ -130,7 +131,6 @@ public class GroupsActivity extends ActionBarActivity
 		if (id == R.id.action_home)
 		{
 			Intent intent = new Intent(this, HomeActivity.class);
-			intent.putExtra("ParentClassName", "GroupsActivity");
 			startActivity(intent);
 		}
 		return super.onOptionsItemSelected(item);
@@ -139,37 +139,29 @@ public class GroupsActivity extends ActionBarActivity
 	/* Start activity methods for group sub-activities */
 	public void startGroupCreateActivity(View view)
 	{
-		Global global = ((Global) getApplicationContext());
-		global.loadUser(user.getEmail());
+		GLOBAL.loadUser(user.getEmail());
 		Intent intent = new Intent(this, GroupCreateActivity.class);
-		intent.putExtra("ParentClassName", "GroupsActivity");
-		intent.putExtra("email", user.getEmail());
-		intent.putExtra("mod", "true");
+		intent.putExtra("EMAIL", user.getEmail());
 		startActivity(intent);
 	}
 
 	public void startGroupInvitesActivity(View view)
 	{
-		Global global = ((Global) getApplicationContext());
-		global.loadUser(user.getEmail());//update
+		final String CONTENT = "GROUPS_INVITES";
+		GLOBAL.loadUser(user.getEmail());//update
 		Intent intent = new Intent(this, ListActivity.class);
-		intent.putExtra("email", user.getEmail());
-		intent.putExtra("content", "groupInvites");
+		intent.putExtra("EMAIL", user.getEmail());
+		intent.putExtra("CONTENT", "");
 		startActivity(intent);
 	}
 
 	public void startGroupsCurrentActivity(View view)
 	{
-		Global global = ((Global) getApplicationContext());
-		global.loadUser(user.getEmail());//update
+		final String CONTENT = "GROUPS_CURRENT";
+		GLOBAL.loadUser(user.getEmail());//update
 		Intent intent = new Intent(this, ListActivity.class);
-		intent.putExtra("ParentClassName", "GroupsActivity");
-		intent.putExtra("content", "groupsCurrent");
-		intent.putExtra("email", user.getEmail());// specifies which
-															// email for the
-															// list of groups
-		intent.putExtra("mod", "true");// gives user ability admin in the
-
+		intent.putExtra("CONTENT", CONTENT);
+		intent.putExtra("EMAIL", user.getEmail());// specifies which
 		startActivity(intent);
 	}
 

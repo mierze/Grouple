@@ -27,13 +27,14 @@ public class LoginActivity extends Activity
 	private BroadcastReceiver broadcastReceiver;
 	private ProgressBar progBar;
 	private TextView loginFail;
+	static Global GLOBAL;// = 
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
-
+		GLOBAL = (Global) getApplicationContext();
 		// sets up an progress bar spinner that will appear when user hits
 		// login.
 		progBar = (ProgressBar) findViewById(R.id.progressBarLA);
@@ -87,7 +88,6 @@ public class LoginActivity extends Activity
 		String password = passwordEditText.getText().toString();
 		// String email = "mierze@gmail.com";
 		// String password="pass";
-		Global global = ((Global) getApplicationContext());
 
 		new getLoginTask()
 					.execute("http://68.59.162.183/android_connect/get_login.php?email="
@@ -100,8 +100,7 @@ public class LoginActivity extends Activity
 		@Override
 		protected String doInBackground(String... urls)
 		{
-			Global global = ((Global) getApplicationContext());
-			return global.readJSONFeed(urls[0], null);
+			return GLOBAL.readJSONFeed(urls[0], null);
 		}
 
 		@Override
@@ -115,9 +114,6 @@ public class LoginActivity extends Activity
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					// successful
-					Global global = ((Global) getApplicationContext());
-
-					System.out.println("1");
 					// Login processing finished: progress bar disappear again
 					progBar.setVisibility(View.VISIBLE);
 					// display message from json (successful login message)
@@ -131,7 +127,7 @@ public class LoginActivity extends Activity
 					String email = emailEditText.getText().toString();
 
 					//load the user into the system
-					global.loadUser(email);
+					GLOBAL.loadUser(email);
 
 					//starting the home activity with the current users email
 					startHomeActivity(email);

@@ -221,8 +221,7 @@ public class HomeActivity extends ActionBarActivity
 			break;
 		case R.id.userButtonHA:
 			intent = new Intent(this, ProfileActivity.class);
-			intent.putExtra("email", user.getEmail());
-			intent.putExtra("content", "user");
+			intent.putExtra("CONTENT", "USER");
 			break;
 		default: //default just break out
 			break;
@@ -233,9 +232,7 @@ public class HomeActivity extends ActionBarActivity
 		//checking that intent was assigned
 		if (intent != null)
 		{
-			intent.putExtra("ParentClassName", "HomeActivity");
-			intent.putExtra("up", "false");
-			intent.putExtra("email", user.getEmail());
+			intent.putExtra("EMAIL", user.getEmail());
 			startActivity(intent);
 		}
 		//else do nothing

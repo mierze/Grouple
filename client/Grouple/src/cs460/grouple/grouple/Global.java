@@ -123,7 +123,7 @@ public class Global extends Application
 		//check that currentUser has been initialized
 		//little redundancy from earlier if statement, when current user was not null
 		//could for sure tweak up
-		if (currentUser == null)
+		if (currentUser == null || isCurrentUser(user.getEmail()))
 		{
 			//if null, then this is our current user
 			//getting requests / invites since wasn't triggered above
@@ -135,9 +135,7 @@ public class Global extends Application
 			
 			//fetchGroupInvites
 			success = user.fetchGroupInvites();
-			
-
-			
+		
 			success = user.fetchEventsPending();
 			//was successful in fetching group invites
 			if (success == 1)
@@ -146,7 +144,7 @@ public class Global extends Application
 			System.out.println("Setting current user for first time");
 			
 		}	
-		
+
 		//saving
 		if (getCurrentUser() == null || isCurrentUser(user.getEmail()))
 		{

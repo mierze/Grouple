@@ -27,6 +27,7 @@ public class FriendsActivity extends ActionBarActivity
 {
 	BroadcastReceiver broadcastReceiver;
 	User user; //the current user
+	static Global GLOBAL;// = 
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -43,7 +44,7 @@ public class FriendsActivity extends ActionBarActivity
 	public boolean onKeyDown(int keyCode, KeyEvent event)  {
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
 	    	Intent intent = new Intent(this, HomeActivity.class);
-	    	intent.putExtra("email", user.getEmail());
+	    	intent.putExtra("EMAIL", user.getEmail());
 	    	startActivity(intent);
 	    }
 	    return true;
@@ -63,7 +64,7 @@ public class FriendsActivity extends ActionBarActivity
 
 	public void load()
 	{
-		Global global = ((Global) getApplicationContext());
+		GLOBAL = ((Global) getApplicationContext());
 		
 		//grabbing extras from intent
 		Intent intent = getIntent();
@@ -71,7 +72,7 @@ public class FriendsActivity extends ActionBarActivity
 		
 		//grabbing the user with the given email in the extras
 	
-		user = global.getCurrentUser();////loadUser(extras.getString("email"));
+		user = GLOBAL.getCurrentUser();////loadUser(extras.getString("email"));
 		
 		setNotifications();
 		initActionBar();
@@ -113,9 +114,8 @@ public class FriendsActivity extends ActionBarActivity
 		int id = item.getItemId();
 		if (id == R.id.action_logout)
 		{
-			Global global = ((Global) getApplicationContext());
 			Intent login = new Intent(this, LoginActivity.class);
-			global.destroySession();
+			GLOBAL.destroySession();
 			startActivity(login);
 			Intent intent = new Intent("CLOSE_ALL");
 			this.sendBroadcast(intent);
@@ -124,9 +124,7 @@ public class FriendsActivity extends ActionBarActivity
 		if (id == R.id.action_home)
 		{
 			Intent intent = new Intent(this, HomeActivity.class);
-			intent.putExtra("ParentClassName", "FriendsActivity");
-			intent.putExtra("email", user.getEmail());
-			intent.putExtra("up", "false");
+			intent.putExtra("EMAIL", user.getEmail());
 			startActivity(intent);
 		}
 		return super.onOptionsItemSelected(item);
@@ -148,30 +146,25 @@ public class FriendsActivity extends ActionBarActivity
 	public void startFriendAddActivity(View view)
 	{
 		Intent intent = new Intent(this, FriendAddActivity.class);
-		intent.putExtra("ParentClassName", "FriendsActivity");
-		intent.putExtra("email", user.getEmail());
-
+		intent.putExtra("EMAIL", user.getEmail());
 		startActivity(intent);
 	}
 
 	public void startFriendsCurrentActivity(View view)
 	{
+		final String CONTENT = "FRIENDS_CURRENT";
 		Intent intent = new Intent(this, ListActivity.class);
-		intent.putExtra("ParentClassName", "FriendsActivity");
-		intent.putExtra("email", user.getEmail());
-		intent.putExtra("content", "friendsCurrent");
-		intent.putExtra("mod", "true");
+		intent.putExtra("EMAIL", user.getEmail());
+		intent.putExtra("CONTENT", CONTENT);
 		startActivity(intent);
 	}
 
 	public void startFriendRequestsActivity(View view)
 	{
-		Global global = ((Global) getApplicationContext());
+		final String CONTENT = "FRIENDS_REQUESTS";
 		Intent intent = new Intent(this, ListActivity.class);
-		//intent.putExtra("email", global.getCurrentUser()); PANDA getEmail()
-		intent.putExtra("content", "friendRequests");
-		intent.putExtra("email", user.getEmail());
-		// intent.putExtra("mod", "true");
+		intent.putExtra("CONTENT", CONTENT);
+		intent.putExtra("EMAIL", user.getEmail());
 		startActivity(intent);
 	}
 

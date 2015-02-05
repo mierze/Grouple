@@ -21,11 +21,18 @@ import android.widget.TextView;
  */
 public class ProfileActivity extends ActionBarActivity
 {
+	enum CONTENT_TYPE {
+		USER, GROUP, EVENT
+	}
+	
 	private ImageView iv;
 	BroadcastReceiver broadcastReceiver;
-	User user; //user who's profile this is
-	Group group;
-	Event event;
+	private User user; //user who's profile this is
+	private Group group;
+	private Event event;
+	private static Bundle EXTRAS;
+	private static String CONTENT; //type of content to display in profile, passed in from other activities
+	private static Global GLOBAL;
 	
 	@Override
 	protected void onStart()
@@ -68,45 +75,45 @@ public class ProfileActivity extends ActionBarActivity
 
 	public void load()
 	{
-		Global global = ((Global) getApplicationContext());
-		Intent intent = getIntent();
-		Bundle extras = intent.getExtras();
+		GLOBAL = ((Global) getApplicationContext());
+		EXTRAS = getIntent().getExtras();
+		CONTENT = EXTRAS.getString("CONTENT");
 		String title = "";
 
-		if (extras.getString("content").equals("group"))
+		if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
 		{
-			group = global.getGroupBuffer();
+			group = GLOBAL.getGroupBuffer();
 			Button profileButton2 = (Button)findViewById(R.id.profileButton2);
 			Button profileButton3 = (Button)findViewById(R.id.profileButton3);
 			profileButton2.setVisibility(View.GONE);
 			profileButton3.setVisibility(View.GONE);
 			title = group.getName();
 		}
-		else if (extras.getString("content").equals("user"))
+		else if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
 		{
-			//grabbing the user with the given email in the extras
-			if (!global.isCurrentUser(extras.getString("email")))
+			//grabbing the user with the given email in the EXTRAS
+			if (!GLOBAL.isCurrentUser(EXTRAS.getString("EMAIL")))
 			{
-				if (global.getUserBuffer() != null)
-					user = global.getUserBuffer();
+				if (GLOBAL.getUserBuffer() != null)
+					user = GLOBAL.getUserBuffer();
 				else
-					user = global.loadUser(extras.getString("email"));
+					user = GLOBAL.loadUser(EXTRAS.getString("EMAIL"));
 				//hiding edit profile button
 				Button editProfileButton = (Button)findViewById(R.id.profileEditButton);
 				editProfileButton.setVisibility(View.GONE);
 			}
-			else if (global.isCurrentUser(extras.getString("email")))
+			else if (GLOBAL.isCurrentUser(EXTRAS.getString("EMAIL")))
 			{	
 				//preloaded
-				user = global.getCurrentUser();
+				user = GLOBAL.getCurrentUser();
 			}
 	
 			title = user.getFirstName() + "'s Profile";
 			
 		}
-		else if (extras.getString("content").equals("event"))
+		else if (CONTENT.equals(CONTENT_TYPE.EVENT.toString()))
 		{
-			event = global.getEventBuffer();
+			event = GLOBAL.getEventBuffer();
 			if (event == null)
 			{
 				System.out.println("OPUR EVEMNT IS NUL!");
@@ -131,19 +138,17 @@ public class ProfileActivity extends ActionBarActivity
 
 	private void setNotifications()
 	{
-		Bundle extras = getIntent().getExtras();
-		
-		if (extras.getString("content").equals("group"))
+		if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
 		{
 			((Button) findViewById(R.id.profileButton1)).setText("Members\n(" + group.getNumUsers() + ")");
 		}
-		else if (extras.getString("content").equals("user"))
+		else if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
 		{
 			((Button) findViewById(R.id.profileButton1)).setText("Friends\n(" + user.getNumUsers() + ")");
 			((Button) findViewById(R.id.profileButton2)).setText("Groups\n(" + user.getNumGroups() + ")");	
 			((Button) findViewById(R.id.profileButton3)).setText("Events\n(" + user.getNumEventsUpcoming() + ")");	
 		}
-		else
+		else if (CONTENT.equals(CONTENT_TYPE.EVENT.toString()))
 		{
 			//for event later
 			((Button) findViewById(R.id.profileButton1)).setText("Attending (" + event.getNumUsers() + ")");
@@ -199,29 +204,26 @@ public class ProfileActivity extends ActionBarActivity
 
 	public void onClick(View view)
 	{
-		Global global = (Global) getApplicationContext();
-		Bundle extras = getIntent().getExtras();
 		Intent intent = new Intent(this, ListActivity.class);
 		switch (view.getId())
 		{
 		case R.id.profileButton1:
-			if (extras.getString("content").equals("group"))
+			if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
 			{
 				//members
-				intent.putExtra("content", "groupMembers");
-				intent.putExtra("gid", group.getID());
+				intent.putExtra("CONTENT", "GROUPS_MEMBERS");
+				intent.putExtra("GID", group.getID());
 			}
-			else if (extras.getString("content").equals("user"))
+			else if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
 			{
 				//friends
-				intent.putExtra("content", "friendsCurrent");
-				intent.putExtra("mod", "true");
+				intent.putExtra("CONTENT", "FRIENDS_CURRENT");
 				int success = user.fetchFriends();
 				if (success == 1)
-					if (global.isCurrentUser(user.getEmail()))
-						global.setCurrentUser(user);
+					if (GLOBAL.isCurrentUser(user.getEmail()))
+						GLOBAL.setCurrentUser(user);
 					else
-						global.setUserBuffer(user);
+						GLOBAL.setUserBuffer(user);
 			}
 			else
 			{
@@ -230,25 +232,25 @@ public class ProfileActivity extends ActionBarActivity
 			break;
 		case R.id.profileButton2:
 			//groups
-			intent.putExtra("content", "groupsCurrent");
+			intent.putExtra("CONTENT", "GROUPS_CURRENT");
 			int success = user.fetchGroups();
 			if (success == 1)
-				if (global.isCurrentUser(user.getEmail()))
-					global.setCurrentUser(user);
+				if (GLOBAL.isCurrentUser(user.getEmail()))
+					GLOBAL.setCurrentUser(user);
 				else
-					global.setUserBuffer(user);
+					GLOBAL.setUserBuffer(user);
 			break;
 		case R.id.profileButton3:
 			//events
 			intent = new Intent(this, EventsActivity.class);
 			break;
 		case R.id.profileEditButton:
-			if (extras.getString("content").equals("group"))
+			if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
 			{
 				intent = new Intent(this, GroupEditActivity.class);
-				intent.putExtra("gid", group.getID());
+				intent.putExtra("GID", group.getID());
 			}
-			else if (extras.getString("content").equals("user"))
+			else if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
 			{
 				intent = new Intent(this, ProfileEditActivity.class);
 			}
@@ -260,7 +262,8 @@ public class ProfileActivity extends ActionBarActivity
 		default:
 				break;
 		}
-		intent.putExtra("email", extras.getString("email"));
+		if (user != null)
+			intent.putExtra("EMAIL", user.getEmail());
 		iv = null;
 		startActivity(intent);
 	}
@@ -271,7 +274,6 @@ public class ProfileActivity extends ActionBarActivity
 	 */
 	public void populateProfile()
 	{
-		Bundle extras = getIntent().getExtras();
 		if (iv == null)
 		{
 			iv = (ImageView) findViewById(R.id.profileImageUPA);
@@ -280,20 +282,20 @@ public class ProfileActivity extends ActionBarActivity
 		
 		TextView info = (TextView) findViewById(R.id.profileInfoTextView);
 		TextView about = (TextView) findViewById(R.id.profileAboutTextView);
-		if (extras.getString("content").equals("group"))
+		if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
 		{
 			iv.setImageBitmap(group.getImage());
 			info.setText("Extra group info");
 			about.setText(group.getAbout());
 		}
-		else if (extras.getString("content").equals("user"))
+		else if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
 		{
 			iv.setImageBitmap(user.getImage());
 			info.setText(user.getAge() + "yrs old" +
 					"\n" + user.getLocation());
 			about.setText(user.getAbout());
 		}
-		else
+		else if (CONTENT.equals(CONTENT_TYPE.EVENT.toString()))
 		{
 			about.setText(event.getAbout());
 			info.setText(event.getCategory() + "\n" +

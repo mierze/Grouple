@@ -24,6 +24,7 @@ public class EventsActivity extends ActionBarActivity
 {
 	BroadcastReceiver broadcastReceiver;
 	User user;
+	Global GLOBAL;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -39,8 +40,8 @@ public class EventsActivity extends ActionBarActivity
 
 	private void load()
 	{
-		Global global = (Global) getApplicationContext();
-		user = global.getCurrentUser();
+		GLOBAL = (Global) getApplicationContext();
+		user = GLOBAL.getCurrentUser();
 		setNotifications();
 		initActionBar();
 		initKillswitchListener();
@@ -73,16 +74,16 @@ public class EventsActivity extends ActionBarActivity
 		switch (view.getId())
 		{
 		case R.id.eventsPendingButtonEA:
-			intent.putExtra("content", "eventsPending");
+			intent.putExtra("CONTENT", "EVENTS_PENDING");
 			break;
 		case R.id.eventsUpcomingButtonEA:
-			intent.putExtra("content", "eventsUpcoming");
+			intent.putExtra("CONTENT", "EVENTS_UPCOMING");
 			break;
 		case R.id.eventCreateButtonEA:
 			intent = new Intent(this, EventCreateActivity.class);
 			break;
 		}
-		intent.putExtra("email", user.getEmail());
+		intent.putExtra("EMAIL", user.getEmail());
 		startActivity(intent);
 	}
 	
@@ -118,9 +119,8 @@ public class EventsActivity extends ActionBarActivity
 		int id = item.getItemId();
 		if (id == R.id.action_logout)
 		{
-			Global global = ((Global) getApplicationContext());
 			Intent login = new Intent(this, LoginActivity.class);
-			global.destroySession();
+			GLOBAL.destroySession();
 			startActivity(login);
 			Intent intent = new Intent("CLOSE_ALL");
 			this.sendBroadcast(intent);
@@ -139,7 +139,7 @@ public class EventsActivity extends ActionBarActivity
 	{
 		Intent intent = new Intent(this, HomeActivity.class);
 		startActivity(intent);
-		intent.putExtra("email", user.getEmail());
+		intent.putExtra("EMAIL", user.getEmail());
 	}
 	
 

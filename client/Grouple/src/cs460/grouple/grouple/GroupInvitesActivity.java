@@ -181,7 +181,7 @@ public class GroupInvitesActivity extends ActionBarActivity
 			{
 				GridLayout row = (GridLayout) li.inflate(R.layout.list_row_acceptdecline, null);
 				row.setId(entry.getKey());
-				((TextView) row.findViewById(R.id.emailTextViewFRLI)).setText(entry.getValue());
+				((TextView) row.findViewById(R.id.nameButtonLI)).setText(entry.getValue());
 				groupInvitesLayout.addView(row);
 			}
 		}
