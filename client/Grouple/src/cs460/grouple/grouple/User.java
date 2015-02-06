@@ -54,6 +54,7 @@ import android.util.Log;
 
 public class User extends Entity
 {
+
 	//private imagething profileImg;?
 	//birthday?
 	private String location;
@@ -64,8 +65,15 @@ public class User extends Entity
 	private Map <Integer, String> eventsPending;
 	private Map <Integer, Boolean> eventsAccepted;
 	private Map <Integer, String> eventsUpcoming;
-	
-	
+	interface CallBackListener
+	{
+		public void callback();
+	}
+	 CallBackListener mListener;
+
+	   public void setListener(CallBackListener listener){
+	     mListener = listener;
+	   }
 	/*
 	 * Constructor for User class
 	 */
@@ -305,7 +313,7 @@ public class User extends Entity
 	}
 		
 
-	private class getUserInfoTask extends AsyncTask<String, Void, String>
+	class getUserInfoTask extends AsyncTask<String, Void, String>
 	{
 		@Override
 		protected String doInBackground(String... urls)
@@ -409,7 +417,7 @@ public class User extends Entity
 		return 1;
 	}
 
-	private class getFriendsTask extends AsyncTask<String, Void, String>
+	class getFriendsTask extends AsyncTask<String, Void, String>
 	{
 		@Override
 		protected String doInBackground(String... urls)
@@ -452,14 +460,20 @@ public class User extends Entity
 		}
 	}	
 	
+	
+	public void setFriendRequests(ArrayList<String> friendRequests)
+	{
+		this.friendRequests = friendRequests;
+	}
 	/*
 	 * Should be getting the friendRequest key->vals here
 	 */
 	public int fetchFriendRequests()
 	{
+		friendRequests = null;//reset
+		AsyncTask<String, Void, String> task = new getFriendRequestsTask();
 		
-		AsyncTask<String, Void, String> task = new getFriendRequestsTask()
-		.execute("http://68.59.162.183/android_connect/get_friend_requests.php?receiver="
+		task.execute("http://68.59.162.183/android_connect/get_friend_requests.php?receiver="
 				+ getEmail());
 
 		try
@@ -479,13 +493,13 @@ public class User extends Entity
 			e.printStackTrace();
 		}
 		
-		//while (task.getStatus() != Status.FINISHED);
+		System.out.println(task.getStatus());
 
 		
 		return 1;
 	}
 
-	private class getFriendRequestsTask extends AsyncTask<String, Void, String>
+	class getFriendRequestsTask extends AsyncTask<String, Void, String>
 	{
 		@Override
 		protected String doInBackground(String... urls)
