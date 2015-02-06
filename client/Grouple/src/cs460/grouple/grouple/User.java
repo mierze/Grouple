@@ -310,7 +310,6 @@ public class User extends Entity
 		@Override
 		protected String doInBackground(String... urls)
 		{
-			//Global global = ((Global) getApplicationContext());
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
 			nameValuePairs.add(new BasicNameValuePair("email", getEmail()));
 			return readJSONFeed(urls[0], nameValuePairs);

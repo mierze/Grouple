@@ -85,7 +85,6 @@ public class ListActivity extends ActionBarActivity
 		ab.setCustomView(R.layout.actionbar);
 		ab.setDisplayHomeAsUpEnabled(false);
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
-
 		actionbarTitle.setText(actionBarTitle); //PANDA
 		//ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
 	}
@@ -523,11 +522,6 @@ public class ListActivity extends ActionBarActivity
 				System.out.println(jsonObject.getString("success"));
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-
-					if (GLOBAL.isCurrentUser(user.getEmail()))
-						GLOBAL.setCurrentUser(null);
-					else
-						GLOBAL.setUserBuffer(null);
 					GLOBAL.loadUser(user.getEmail());
 					System.out.println("success in decline!");
 					
@@ -576,19 +570,22 @@ public class ListActivity extends ActionBarActivity
 		@Override
 		protected void onPostExecute(String result)
 		{
-			
 			try
 			{
+				System.out.println("TESTINGHEREPANDAonpost try");
 				JSONObject jsonObject = new JSONObject(result);
+
+				System.out.println("sdf");
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
+
 					// successful
 					System.out.println("success!");
 					
 					//removing friend request from memory
 				//	user.removeFriendRequest(acceptEmail);
 					//GLOBAL.destroySession();
-
+					System.out.println("TESTINGHEREPANDA");
 					GLOBAL.loadUser(user.getEmail());
 						
 					//removing all friend requests for refresh
