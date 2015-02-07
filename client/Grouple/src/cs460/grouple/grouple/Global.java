@@ -163,13 +163,7 @@ public class Global extends Application
 	//using the id of group, load them up into our array of groups
 	public Group loadGroup(int id)
 	{	
-		Group group; //declare group variable
-		
-		//instantiate a new group
-		if (getGroupBuffer() != null && getGroupBuffer().getID() == id)
-			group = getGroupBuffer();
-		else 
-			group = new Group(id);
+		Group group = new Group(id);
 		
 		
 		/**
@@ -191,8 +185,7 @@ public class Global extends Application
 			Log.d("loadGroup", "success after fetchMembers()");
 		
 
-		if (groupBuffer != null && groupBuffer.getID() == group.getID())
-			setGroupBuffer(group);
+		setGroupBuffer(group);
 		
 		return group;
 	}

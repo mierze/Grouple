@@ -27,7 +27,7 @@ public class LoginActivity extends Activity
 	private BroadcastReceiver broadcastReceiver;
 	private ProgressBar progBar;
 	private TextView loginFail;
-	static Global GLOBAL;// = 
+	private Global GLOBAL;// = 
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)

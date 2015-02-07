@@ -21,7 +21,7 @@ import android.widget.TextView;
  */
 public class MessagesActivity extends ActionBarActivity
 {
-	BroadcastReceiver broadcastReceiver;
+	private BroadcastReceiver broadcastReceiver;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)

@@ -151,7 +151,7 @@ public class GroupsActivity extends ActionBarActivity
 		GLOBAL.loadUser(user.getEmail());//update
 		Intent intent = new Intent(this, ListActivity.class);
 		intent.putExtra("EMAIL", user.getEmail());
-		intent.putExtra("CONTENT", "");
+		intent.putExtra("CONTENT", CONTENT);
 		startActivity(intent);
 	}
 

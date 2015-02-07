@@ -62,11 +62,11 @@ import android.widget.TimePicker;
 
 public class EventCreateActivity extends ActionBarActivity
 {
-	BroadcastReceiver broadcastReceiver;
+	private BroadcastReceiver broadcastReceiver;
 	private SparseArray<String> added = new SparseArray<String>();    //holds list of name of all friend rows to be added
 	private SparseArray<Boolean> role = new SparseArray<Boolean>();   //holds list of role of all friend rows to be added
 	private Map<String, String> allFriends = new HashMap<String, String>();   //holds list of all current friends
-	User user;
+	private User user;
 	private String email = null;
 	private String e_id = null;
 	private String startDate = "";
@@ -75,17 +75,17 @@ public class EventCreateActivity extends ActionBarActivity
 	private String maximum = "";
 	private String category = "";
 	private String location = "";
-	EditText categoryEditText;
-	EditText startDateEditText;
-	EditText endDateEditText;
-	AlertDialog categoryDialog;
+	private EditText categoryEditText;
+	private EditText startDateEditText;
+	private EditText endDateEditText;
+	private AlertDialog categoryDialog;
 	
 	
 	private DatePicker datePicker;
 	private Calendar calendar;
 	private TextView dateView;
 	private int year, month, day, hour, minute;
-
+	private Global GLOBAL;
 
 
 	@Override
@@ -109,9 +109,10 @@ public class EventCreateActivity extends ActionBarActivity
 	
 	private void load()
 	{
-		Global global = ((Global) getApplicationContext());
-		//grab the email of current users from our global class
-		email = global.getCurrentUser().getEmail();
+		GLOBAL = ((Global) getApplicationContext());
+		//grab the email of current users from our GLOBAL class
+		user =  GLOBAL.getCurrentUser();
+		email = user.getEmail();
 
 		initActionBar();
 		initKillswitchListener();
@@ -292,8 +293,7 @@ public class EventCreateActivity extends ActionBarActivity
 			//take user to eventaddmembersactivity page. (pass e_id as extra so invites can be sent to correct group id)
 			Intent intent = new Intent(EventCreateActivity.this, EventAddGroupsActivity.class);
 			intent.putExtra("e_id", e_id);
-			Global global = (Global)getApplicationContext();
-			global.loadUser(global.getCurrentUser().getEmail());
+			GLOBAL.loadUser(GLOBAL.getCurrentUser().getEmail());
 			startActivity(intent);
 			finish();
 		}
@@ -307,7 +307,6 @@ public class EventCreateActivity extends ActionBarActivity
 		@Override
 		protected String doInBackground(String... urls)
 		{
-			Global global = ((Global) getApplicationContext());
 			EditText eventNameEditText = (EditText) findViewById(R.id.eventName);
 			EditText eventBioEditText = (EditText) findViewById(R.id.eventBio);
 
@@ -327,8 +326,8 @@ public class EventCreateActivity extends ActionBarActivity
 			nameValuePairs.add(new BasicNameValuePair("mustbringlist", ""));
 			nameValuePairs.add(new BasicNameValuePair("location", location));
 
-			//pass url and nameValuePairs off to global to do the JSON call.  Code continues at onPostExecute when JSON returns.
-			return global.readJSONFeed(urls[0], nameValuePairs);
+			//pass url and nameValuePairs off to GLOBAL to do the JSON call.  Code continues at onPostExecute when JSON returns.
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
 
 		@Override
@@ -403,32 +402,7 @@ public class EventCreateActivity extends ActionBarActivity
 		}
 	}
 		
-	//does something
-	public void startParentActivity(View view)
-	{
-		Bundle extras = getIntent().getExtras();
 
-		String className = extras.getString("ParentClassName");
-		Intent newIntent = null;
-		try
-		{
-			newIntent = new Intent(this, Class.forName("cs460.grouple.grouple."
-					+ className));
-			if (extras.getString("ParentEmail") != null)
-			{
-				newIntent.putExtra("email", extras.getString("ParentEmail"));
-			}
-			// newIntent.putExtra("email", extras.getString("email"));
-			System.out.println("delete");
-			// newIntent.putExtra("ParentEmail", extras.getString("email"));
-			newIntent.putExtra("ParentClassName", "EventCreateActivity");
-		} catch (ClassNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		newIntent.putExtra("up", "true");
-		startActivity(newIntent);
-	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
@@ -447,9 +421,8 @@ public class EventCreateActivity extends ActionBarActivity
 		int id = item.getItemId();
 		if (id == R.id.action_logout)
 		{
-			Global global = ((Global) getApplicationContext());
 			Intent login = new Intent(this, LoginActivity.class);
-			global.destroySession();
+			GLOBAL.destroySession();
 			startActivity(login);
 			Intent intent = new Intent("CLOSE_ALL");
 			this.sendBroadcast(intent);

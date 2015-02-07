@@ -62,8 +62,8 @@ public class ProfileEditActivity extends ActionBarActivity implements
 	private final static int CAMERA_DATA = 0;
 	private Bitmap bmp;
 	private Intent i;
-	User user;
-	BroadcastReceiver broadcastReceiver;
+	private User user;
+	private BroadcastReceiver broadcastReceiver;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)

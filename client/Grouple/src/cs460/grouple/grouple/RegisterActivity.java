@@ -28,7 +28,7 @@ import android.widget.TextView;
  */
 public class RegisterActivity extends Activity
 {
-	BroadcastReceiver broadcastReceiver;
+	private BroadcastReceiver broadcastReceiver;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)

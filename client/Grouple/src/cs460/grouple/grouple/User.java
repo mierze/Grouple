@@ -54,8 +54,6 @@ import android.util.Log;
 
 public class User extends Entity
 {
-
-	//private imagething profileImg;?
 	//birthday?
 	private String location;
 	private int age;
@@ -65,6 +63,10 @@ public class User extends Entity
 	private Map <Integer, String> eventsPending;
 	private Map <Integer, Boolean> eventsAccepted;
 	private Map <Integer, String> eventsUpcoming;
+	
+	/*
+	 * nothign for now, was messign with call backs
+	 */
 	interface CallBackListener
 	{
 		public void callback();

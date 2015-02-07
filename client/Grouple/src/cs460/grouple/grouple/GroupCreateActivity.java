@@ -56,13 +56,14 @@ import android.widget.Toast;
 
 public class GroupCreateActivity extends ActionBarActivity
 {
-	BroadcastReceiver broadcastReceiver;
+	private BroadcastReceiver broadcastReceiver;
 	private SparseArray<String> added = new SparseArray<String>();    //holds list of name of all friend rows to be added
 	private SparseArray<Boolean> role = new SparseArray<Boolean>();   //holds list of role of all friend rows to be added
 	private Map<String, String> allFriends = new HashMap<String, String>();   //holds list of all current friends
-	User user;
+	private User user;
 	private String email = null;
 	private String g_id = null;
+	private Global GLOBAL;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -75,11 +76,12 @@ public class GroupCreateActivity extends ActionBarActivity
 	
 	private void load()
 	{
-		Global global = ((Global) getApplicationContext());
+		GLOBAL = ((Global) getApplicationContext());
 		//grab the email of current users from our global class
-		email = global.getCurrentUser().getEmail();
+		user = GLOBAL.getCurrentUser();
+		email = user.getEmail();
 		
-		user = global.loadUser(email);
+	
 		
 		//load our list of current friends.  key is friend email -> value is full names
 		allFriends = user.getUsers();
@@ -286,7 +288,6 @@ public class GroupCreateActivity extends ActionBarActivity
 		@Override
 		protected String doInBackground(String... urls)
 		{
-			Global global = ((Global) getApplicationContext());
 			EditText groupNameEditText = (EditText) findViewById(R.id.groupName);
 			EditText groupBioEditText = (EditText) findViewById(R.id.groupBio);
 			RadioButton privateButton = (RadioButton) findViewById(R.id.privateButton);
@@ -311,7 +312,7 @@ public class GroupCreateActivity extends ActionBarActivity
 			nameValuePairs.add(new BasicNameValuePair("public", Integer.toString(publicStatus)));
 			
 			//pass url and nameValuePairs off to global to do the JSON call.  Code continues at onPostExecute when JSON returns.
-			return global.readJSONFeed(urls[0], nameValuePairs);
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 			
 		}
 
@@ -395,8 +396,7 @@ public class GroupCreateActivity extends ActionBarActivity
 						}
 					}).show();
 				
-					Global global = (Global)getApplicationContext();
-					global.loadUser(global.getCurrentUser().getEmail());
+					GLOBAL.loadUser(user.getEmail());
 					//remove this activity from back-loop by calling finish().
 					finish();
 				} 
@@ -431,7 +431,6 @@ public class GroupCreateActivity extends ActionBarActivity
 		@Override
 		protected String doInBackground(String... urls)
 		{
-			Global global = ((Global) getApplicationContext());
 			
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("email", urls[1]));
@@ -440,7 +439,7 @@ public class GroupCreateActivity extends ActionBarActivity
 			nameValuePairs.add(new BasicNameValuePair("g_id", urls[4]));
 
 			//pass url and nameValuePairs off to global to do the JSON call.  Code continues at onPostExecute when JSON returns.
-			return global.readJSONFeed(urls[0], nameValuePairs);
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
 
 		@Override
@@ -466,33 +465,6 @@ public class GroupCreateActivity extends ActionBarActivity
 				Log.d("readJSONFeed", e.getLocalizedMessage());
 			}
 		}		
-	}
-	
-	//does something
-	public void startParentActivity(View view)
-	{
-		Bundle extras = getIntent().getExtras();
-
-		String className = extras.getString("ParentClassName");
-		Intent newIntent = null;
-		try
-		{
-			newIntent = new Intent(this, Class.forName("cs460.grouple.grouple."
-					+ className));
-			if (extras.getString("ParentEmail") != null)
-			{
-				newIntent.putExtra("email", extras.getString("ParentEmail"));
-			}
-			// newIntent.putExtra("email", extras.getString("email"));
-			System.out.println("delete");
-			// newIntent.putExtra("ParentEmail", extras.getString("email"));
-			newIntent.putExtra("ParentClassName", "GroupCreateActivity");
-		} catch (ClassNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		newIntent.putExtra("up", "true");
-		startActivity(newIntent);
 	}
 
 	@Override

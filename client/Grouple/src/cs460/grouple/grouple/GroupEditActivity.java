@@ -63,8 +63,9 @@ public class GroupEditActivity extends ActionBarActivity implements
 	private final static int CAMERA_DATA = 0;
 	private Bitmap bmp;
 	private Intent i;
-	Group group;
-	BroadcastReceiver broadcastReceiver;
+	private Group group;
+	private BroadcastReceiver broadcastReceiver;
+	private Global GLOBAL;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -78,13 +79,13 @@ public class GroupEditActivity extends ActionBarActivity implements
 
 	private void load()
 	{
-		Global global = ((Global) getApplicationContext());
+		GLOBAL = ((Global) getApplicationContext());
 		// Resetting error text view
 		TextView errorTextView = (TextView) findViewById(R.id.errorTextViewEPA);
 		errorTextView.setVisibility(1);
 
 		Bundle extras = getIntent().getExtras();
-		group = global.loadGroup(extras.getInt("gid"));
+		group = GLOBAL.loadGroup(extras.getInt("GID"));
 		
 			
 		
@@ -117,29 +118,6 @@ public class GroupEditActivity extends ActionBarActivity implements
 		super.onDestroy();
 	}
 
-	// Executed when hitting the back button.
-	public void startParentActivity(View view)
-	{
-		Bundle extras = getIntent().getExtras();
-
-		String className = extras.getString("ParentClassName");
-		Intent newIntent = null;
-		try
-		{
-			newIntent = new Intent(this, Class.forName("cs460.grouple.grouple."
-					+ className));
-			if (extras.getString("ParentEmail") != null)
-			{
-				newIntent.putExtra("email", extras.getString("ParentEmail"));
-			}
-			newIntent.putExtra("ParentClassName", "EditProfileActivity");
-		} 
-		catch (ClassNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		startActivity(newIntent);
-	}
 
 	/*
 	 * Get profile executes get_groupprofile.php. It uses the current groups gid
@@ -204,7 +182,6 @@ public class GroupEditActivity extends ActionBarActivity implements
 	// This executes the
 	public void submitButton(View view)
 	{
-		Global global = ((Global) getApplicationContext());
 		// error checking
 
 		// bio no more than
@@ -226,7 +203,7 @@ public class GroupEditActivity extends ActionBarActivity implements
 		else
 		{
 			new setProfileTask().execute("http://68.59.162.183/android_connect/update_group.php");
-			global.loadGroup(group.getID());
+			GLOBAL.loadGroup(group.getID());
 			finish();
 		}
 	}

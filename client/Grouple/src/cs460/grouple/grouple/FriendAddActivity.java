@@ -25,25 +25,24 @@ import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /*
  * AddFriendActivity allows user to add another user as a friend.
  */
 public class FriendAddActivity extends ActionBarActivity
 {
-	BroadcastReceiver broadcastReceiver;
-	User user; //current user
+	private BroadcastReceiver broadcastReceiver;
+	private User user; //current user
+	private Global GLOBAL;
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		// Set the activity layout.
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_add_friend);
-
-		Global global = ((Global) getApplicationContext());
-		Intent parentIntent = getIntent();
-		Bundle extras = parentIntent.getExtras();
-		user = global.getCurrentUser();
+		Global GLOBAL = ((Global) getApplicationContext());
+		user = GLOBAL.getCurrentUser();
 		
 		initActionBar();
 		// Initialize the kill switch. The kill switch will kill all open
@@ -93,9 +92,8 @@ public class FriendAddActivity extends ActionBarActivity
 		{
 			// If the user hits the logout button, then clear global and go to
 			// the logout screen.
-			Global global = ((Global) getApplicationContext());
 			Intent login = new Intent(this, LoginActivity.class);
-			global.destroySession();
+			GLOBAL.destroySession();
 			startActivity(login);
 			Intent intent = new Intent("CLOSE_ALL");
 			this.sendBroadcast(intent);
@@ -107,32 +105,6 @@ public class FriendAddActivity extends ActionBarActivity
 			startActivity(intent);
 		}
 		return super.onOptionsItemSelected(item);
-	}
-
-	// This function helps the action bar back button go back to the correct
-	// activity.
-	public void startParentActivity(View view)
-	{
-		Bundle extras = getIntent().getExtras();
-
-		String className = extras.getString("ParentClassName");
-		Intent newIntent = null;
-		try
-		{
-			newIntent = new Intent(this, Class.forName("cs460.grouple.grouple."
-					+ className));
-			if (extras.getString("ParentEmail") != null)
-			{
-				newIntent.putExtra("email", extras.getString("ParentEmail"));
-			}
-			// newIntent.putExtra("email", extras.getString("email"));
-			// newIntent.putExtra("ParentEmail", extras.getString("email"));
-			newIntent.putExtra("up", "true");
-		} catch (ClassNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		startActivity(newIntent);
 	}
 
 	// Adds a friend.
@@ -150,12 +122,11 @@ public class FriendAddActivity extends ActionBarActivity
 		protected String doInBackground(String... urls)
 		{
 			EditText emailEditText = (EditText) findViewById(R.id.emailEditTextAFA);
-			Global global = ((Global) getApplicationContext());
 			String receiver = emailEditText.getText().toString();
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
 			nameValuePairs.add(new BasicNameValuePair("sender", user.getEmail()));
 			nameValuePairs.add(new BasicNameValuePair("receiver", receiver));
-			return global.readJSONFeed(urls[0], nameValuePairs);
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
 
 		@Override
@@ -173,14 +144,16 @@ public class FriendAddActivity extends ActionBarActivity
 
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					System.out.println("success!");
-					addFriendMessage.setTextColor(getResources().getColor(
-							R.color.light_green));
+					Context context = getApplicationContext();
+					Toast toast = Toast.makeText(context, jsonObject.getString("message"), Toast.LENGTH_SHORT);
+					toast.show();
+			
 				} 
 				else if (jsonObject.getString("success").toString().equals("2"))
 				{
 					addFriendMessage.setTextColor(getResources().getColor(
 							R.color.orange));
+					addFriendMessage.setVisibility(0);
 				} 
 				else
 				{
@@ -188,8 +161,9 @@ public class FriendAddActivity extends ActionBarActivity
 					System.out.println("fail!");
 					addFriendMessage.setTextColor(getResources().getColor(
 							R.color.red));
+					addFriendMessage.setVisibility(0);
 				}
-				addFriendMessage.setVisibility(0);
+			
 
 			} 
 			catch (Exception e)

@@ -62,17 +62,17 @@ public class ListActivity extends ActionBarActivity
 	
 	
 	//CLASS-WIDE DECLARATIONS
-	int clickedRemoveID;
-	BroadcastReceiver broadcastReceiver;
+	private BroadcastReceiver broadcastReceiver;
 	private User user; //user whose current groups displayed
 	private Group group;
 	private static Bundle EXTRAS; //extras passed in from the activity that called ListActivity
 	private static String CONTENT; //type of content to display in list, passed in from other activities
 	private static LinearLayout listLayout; //layout for list activity (scrollable layout to inflate into)
-	static Global GLOBAL;// = 
+	private Global GLOBAL;// = 
 	private static LayoutInflater li;
 	private ArrayList<String> friendsEmailList = new ArrayList<String>();//test
 	private String PANDABUFFER = "";
+	private int bufferID;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -102,35 +102,36 @@ public class ListActivity extends ActionBarActivity
 		//INSTANTIATIONS
 		GLOBAL = ((Global) getApplicationContext());
 		EXTRAS =  getIntent().getExtras();
-	
+		System.out.println("Load 1");
 		
 		CONTENT = EXTRAS.getString("CONTENT");
+		System.out.println("Load 2");
 		listLayout = ((LinearLayout)findViewById(R.id.listLayout));
 		li = getLayoutInflater();
 		
 		String actionBarTitle = "";
 		Button addNew = (Button)findViewById(R.id.addNewButtonLiA);
+		System.out.println("Load 3");
 		
-		System.out.println("Load 2");
-		//GRABBING A USER
 		if (GLOBAL.isCurrentUser(EXTRAS.getString("EMAIL")))
 		{
-			System.out.println("Load 3 loading currentuser: " + EXTRAS.getString("EMAIL"));
 			user = GLOBAL.getCurrentUser();
+			System.out.println("Load 4 at this  time extras email: " + EXTRAS.getString("EMAIL"));
+			//GRABBING A USER
 		}
 		else if (GLOBAL.getUserBuffer() != null && GLOBAL.getUserBuffer().getEmail().equals(EXTRAS.getString("EMAIL")))
 		{
-			System.out.println("Load 3 loading user buffer: " + EXTRAS.getString("EMAIL"));
 			user = GLOBAL.getUserBuffer();
+			System.out.println("Load 4");
 		}
 		else
 		{
-			System.out.println("Load 3 loading user: " + EXTRAS.getString("EMAIL"));
+			System.out.println("Load 4 loading user: " + EXTRAS.getString("EMAIL"));
 			user = GLOBAL.loadUser(EXTRAS.getString("EMAIL"));
 			System.out.println(CONTENT_TYPE.FRIENDS_REQUESTS + " " + CONTENT + " comp: " + CONTENT_TYPE.FRIENDS_REQUESTS.toString().equals(CONTENT));
 		}
 
-		System.out.println("Load 4, at this time CONTENT is " + CONTENT);
+		System.out.println("Load 5, at this time CONTENT is " + CONTENT);
 		//CALL APPROPRIATE METHODS
 		if (CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()) || CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
 		{
@@ -307,6 +308,9 @@ public class ListActivity extends ActionBarActivity
 			//For now, display the invite members button if you are in group
 			//need to check admin level
 			users = group.getUsers();	
+			//THINKING USERS IS NUll
+			
+			if (users != null)
 			if (!users.containsKey(GLOBAL.getCurrentUser().getEmail()))
 			{
 				Button addNew = (Button)findViewById(R.id.addNewButtonLiA);
@@ -318,7 +322,10 @@ public class ListActivity extends ActionBarActivity
 		{
 			users = user.getUsers();
 			Button addNew = (Button)findViewById(R.id.addNewButtonLiA);
-			addNew.setVisibility(View.GONE);
+			if (GLOBAL.isCurrentUser(user.getEmail()))
+				addNew.setText("Add New Friend");
+			else
+				addNew.setVisibility(View.GONE);
 		}
 		else
 		{
@@ -420,6 +427,7 @@ public class ListActivity extends ActionBarActivity
 		}
 		
 		
+		
 		//FOR FRIEND REQUESTS
 		if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()) && friendRequests != null && friendRequests.size() > 0)
 		{
@@ -462,6 +470,23 @@ public class ListActivity extends ActionBarActivity
 				listLayout.addView(row);
 			}
 		}
+		else if(CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString()) && listItems != null && listItems.size() > 0 )
+		{
+			//array list needs to have group names, maybe the sender names and needs to have group ids	
+			if(listItems != null && listItems.size() > 0 )
+			{
+				//Calls user getGroups(). 
+				
+				// looping thru the map
+				for (Map.Entry<Integer, String> entry : listItems.entrySet())
+				{
+					GridLayout row = (GridLayout) li.inflate(R.layout.list_row_acceptdecline, null);
+					row.setId(entry.getKey());
+					((TextView) row.findViewById(R.id.nameButtonLI)).setText(entry.getValue());
+					listLayout.addView(row);
+				}
+			}
+		}
 		else
 		{
 			//no group requests were found
@@ -471,6 +496,7 @@ public class ListActivity extends ActionBarActivity
 			sadTextView.setText(sadGuyText);
 			listLayout.addView(sadGuy);
 		}
+		
 	}
 			
 	
@@ -484,31 +510,26 @@ public class ListActivity extends ActionBarActivity
 		case R.id.declineButton:
 			if (CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString()))
 			{
-			//bufferID = parent.getId();
-			//new getDeclineGroupTask().execute("http://68.59.162.183/android_connect/leave_group.php?email="+user.getEmail()+"&gid="+parent.getId());
+				bufferID = parent.getId();
+				new getAcceptDeclineTask().execute("http://68.59.162.183/android_connect/leave_group.php", user.getEmail(), Integer.toString(parent.getId()));
 			}
 			else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
 			{
 				PANDABUFFER = nameText.getText().toString(); //PANDA
-				new getAcceptDeclineTask()
-						.execute("http://68.59.162.183/android_connect/decline_friend_request.php", PANDABUFFER);
+				new getAcceptDeclineTask().execute("http://68.59.162.183/android_connect/decline_friend_request.php", PANDABUFFER);
 			}
 			break;
 		case R.id.acceptButton:
 			if (CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString()))
 			{
-			View parent2 = (View) view.getParent();
-			//bufferID = parent2.getId();
-			//new getAcceptGroupTask().execute("http://68.59.162.183/android_connect/accept_group_invite.php",user.getEmail(),Integer.toString(parent2.getId()));
-
-			
-			//populateGroupInvites();
+				View parent2 = (View) view.getParent();
+				bufferID = parent2.getId();
+				new getAcceptDeclineTask().execute("http://68.59.162.183/android_connect/accept_group_invite.php",user.getEmail(),Integer.toString(parent2.getId()));
 			}
 			else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
 			{
 				PANDABUFFER = nameText.getText().toString();
-				new getAcceptDeclineTask()
-						.execute("http://68.59.162.183/android_connect/accept_friend_request.php", PANDABUFFER);
+				new getAcceptDeclineTask().execute("http://68.59.162.183/android_connect/accept_friend_request.php", PANDABUFFER);
 			}
 			break;
 		}
@@ -527,12 +548,25 @@ public class ListActivity extends ActionBarActivity
 		@Override
 		protected String doInBackground(String... urls)
 		{
-			String receiver = user.getEmail();
-			// Add your data
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-			//possibly check that all gorup invtes / events follow suit
-			nameValuePairs.add(new BasicNameValuePair("sender", urls[1]));
-			nameValuePairs.add(new BasicNameValuePair("receiver", receiver));
+			// Add your data
+			
+			if (CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString()) || CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
+			{
+				nameValuePairs.add(new BasicNameValuePair("email", urls[1]));
+				nameValuePairs.add(new BasicNameValuePair("gid",urls[2]));
+			}
+			else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()) || CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
+			{
+				//possibly check that all gorup invtes / events follow suit
+				nameValuePairs.add(new BasicNameValuePair("sender", urls[1]));
+				nameValuePairs.add(new BasicNameValuePair("receiver", user.getEmail()));
+			}
+			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
+			{
+				//code for this
+			}
+
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
 
@@ -546,19 +580,42 @@ public class ListActivity extends ActionBarActivity
 				{
 					// successful
 					System.out.println("success!");
+					GLOBAL.loadUser(user.getEmail());
 					//removing all friend requests for refresh
 					listLayout.removeAllViews();
-					
+					String message = jsonObject.getString("message");
 					Context context = getApplicationContext();
-					Toast toast = Toast.makeText(context, jsonObject.getString("message"), Toast.LENGTH_SHORT);
+					
+					if (CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString()))
+					{
+						user.removeGroupInvite(bufferID);
+						if (!message.equals("Group invite accepted!"))
+						{
+							message = "Group invite declined!";
+						}
+					}
+					else if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
+						user.removeGroup(bufferID);
+					else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
+						user.removeFriendRequest(PANDABUFFER);
+					else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
+						user.removeUser(PANDABUFFER);
+					
+		
+					Toast toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
 					toast.show();
-					//repopulate view
-					GLOBAL.loadUser(user.getEmail());
-					user.removeFriendRequest(PANDABUFFER);
+			
+		
 					PANDABUFFER = "";
+					bufferID = -1;
 
-					//user.removeFriendRequest(email)
-					populateAcceptDecline();
+					///refreshing views
+					if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
+						populateUsers();
+					else if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
+						populateEntities();
+					else 
+						populateAcceptDecline();
 
 				} 
 				else
@@ -584,7 +641,7 @@ public class ListActivity extends ActionBarActivity
 			else if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
 			{
 				//Get the id.
-				clickedRemoveID = view.getId();
+				bufferID = view.getId();
 
 				new AlertDialog.Builder(this)
 						.setMessage("Are you sure you want to leave this group?")
@@ -594,12 +651,7 @@ public class ListActivity extends ActionBarActivity
 							@Override
 							public void onClick(DialogInterface dialog, int id)
 							{
-								System.out.println("Leave grp email / id: " + user.getEmail() + " " + clickedRemoveID);
-								new leaveGroupTask()
-										.execute(
-												"http://68.59.162.183/android_connect/leave_group.php?email=" + user.getEmail() + "&gid=" + clickedRemoveID);
-								//user.removeGroup(clickedRemoveID);
-								clickedRemoveID = -1; //reset
+								new getAcceptDeclineTask().execute("http://68.59.162.183/android_connect/leave_group.php", user.getEmail(), Integer.toString(bufferID));
 							}
 						}).setNegativeButton("Cancel", null).show();
 			}
@@ -608,7 +660,6 @@ public class ListActivity extends ActionBarActivity
 				final int index = view.getId(); //position in friendArray
 				final String friendEmail = friendsEmailList.get(index); //friend to remove
 				PANDABUFFER = friendEmail;//PANDA
-				final String email = user.getEmail(); //user email
 
 				new AlertDialog.Builder(this)
 						.setMessage("Are you sure you want to remove that friend?")
@@ -619,10 +670,10 @@ public class ListActivity extends ActionBarActivity
 							public void onClick(DialogInterface dialog, int id)
 							{
 
-								new deleteFriendTask()
+								new getAcceptDeclineTask()
 										.execute(
 												"http://68.59.162.183/android_connect/delete_friend.php",
-												email, friendEmail);
+												friendEmail);
 								
 							}
 						}).setNegativeButton("Cancel", null).show();
@@ -635,57 +686,6 @@ public class ListActivity extends ActionBarActivity
 			if (group != null)
 			{
 				GLOBAL.loadGroup(group.getID());
-			}
-		}
-
-		/*
-		 * Code for deleting a friend.
-		 */
-		private class deleteFriendTask extends AsyncTask<String, Void, String>
-		{
-			@Override
-			protected String doInBackground(String... urls)
-			{
-				// urls 1, 2 are the emails
-				
-				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-				nameValuePairs.add(new BasicNameValuePair("sender", urls[1]));
-				nameValuePairs.add(new BasicNameValuePair("receiver", urls[2]));
-				return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
-			}
-
-			@Override
-			protected void onPostExecute(String result)
-			{
-				try
-				{
-					JSONObject jsonObject = new JSONObject(result);
-
-					if (jsonObject.getString("success").toString().equals("1"))
-					{
-						// success: friend has been deleted
-						GLOBAL.loadUser(user.getEmail());
-						// removing all of the views
-						listLayout.removeAllViews();
-						user.removeUser(PANDABUFFER);
-						// calling getFriends to repopulate view
-						populateUsers();
-						Log.d("dbmsg", jsonObject.getString("message"));
-					} else if (jsonObject.getString("success").toString()
-							.equals("2"))
-					{
-						// friend was not found in database
-						Log.d("dbmsg", jsonObject.getString("message"));
-					} else
-					{
-						// sql error
-						Log.d("dbmsg", jsonObject.getString("message"));
-					}
-
-				} catch (Exception e)
-				{
-					Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
-				}
 			}
 		}
 
@@ -711,55 +711,6 @@ public class ListActivity extends ActionBarActivity
 		}
 
 		
-		private class leaveGroupTask extends AsyncTask<String, Void, String>
-		{
-			@Override
-			protected String doInBackground(String... urls)
-			{
-				
-				return GLOBAL.readJSONFeed(urls[0], null);
-			}
-
-			@Override
-			protected void onPostExecute(String result)
-			{
-				try
-				{
-					JSONObject jsonObject = new JSONObject(result);
-
-					if (jsonObject.getString("success").toString().equals("1"))
-					{
-						// success: group has been deleted
-
-						// removing all of the views
-						listLayout.removeAllViews();
-						
-						// Refresh the page to show the removal of the group.
-						populateEntities();
-						
-						Log.d("dbmsg", jsonObject.getString("message"));
-					} 
-					else if (jsonObject.getString("success").toString().equals("2"))
-					{
-						// group was not found in database. Need to throw message
-
-						// alerting the user.
-						Log.d("dbmsg", jsonObject.getString("message"));
-					} 
-					else
-					{
-						// sql error
-						Log.d("dbmsg", jsonObject.getString("message"));
-					}
-
-				} catch (Exception e)
-				{
-					Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
-				}
-			}
-		}
-
-		
 		// When you click on a friend, this loads up the friend's profile.
 		public void startProfileActivity(View view)
 				throws InterruptedException
@@ -772,11 +723,7 @@ public class ListActivity extends ActionBarActivity
 				intent.putExtra("GID", view.getId());
 				intent.putExtra("EMAIL", user.getEmail());
 				intent.putExtra("CONTENT", "GROUP");
-				Group g = GLOBAL.loadGroup(view.getId());
-			
-				if (g != null)
-					GLOBAL.setGroupBuffer(g);
-				
+				GLOBAL.loadGroup(view.getId());	
 			}
 			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
 			{
@@ -808,7 +755,14 @@ public class ListActivity extends ActionBarActivity
 			startActivity(intent);
 		}
 
-	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event)  {
+	    if (keyCode == KeyEvent.KEYCODE_BACK) {
+	    	//do nothing
+	    	finish();
+	    }
+	    return true;
+	   }
 
 	public void initKillswitchListener()
 	{

@@ -55,12 +55,13 @@ import android.widget.TextView;
 
 public class EventAddGroupsActivity extends ActionBarActivity
 {
-	BroadcastReceiver broadcastReceiver;
+	private BroadcastReceiver broadcastReceiver;
 	private SparseArray<String> added = new SparseArray<String>();    //holds list of name of all group rows to be added
 	private Map<Integer, String> allGroups = new HashMap<Integer, String>();   //holds list of all current groups
-	User user;
+	private User user;
 	private String email = null;
 	private String e_id = null;
+	private Global GLOBAL;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -72,11 +73,11 @@ public class EventAddGroupsActivity extends ActionBarActivity
 	
 	private void load()
 	{
-		Global global = ((Global) getApplicationContext());
-		//grab the email of current users from our global class
-		email = global.getCurrentUser().getEmail();
+		GLOBAL = ((Global) getApplicationContext());
+		//grab the email of current users from our GLOBAL class
+		email = GLOBAL.getCurrentUser().getEmail();
 		
-		user = global.loadUser(email);
+		user = GLOBAL.loadUser(email);
 		
 		//load our list of current groups.
 		allGroups = user.getGroups();
@@ -209,7 +210,6 @@ public class EventAddGroupsActivity extends ActionBarActivity
 		@Override
 		protected String doInBackground(String... urls)
 		{
-			Global global = ((Global) getApplicationContext());
 			
 			int tmpid = Integer.parseInt(urls[1]);
 			
@@ -249,15 +249,14 @@ public class EventAddGroupsActivity extends ActionBarActivity
 			@Override
 			protected String doInBackground(String... urls)
 			{
-				Global global = ((Global) getApplicationContext());
 	
 					List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 					nameValuePairs.add(new BasicNameValuePair("email", urls[1]));
 					nameValuePairs.add(new BasicNameValuePair("sender", urls[2]));
 					nameValuePairs.add(new BasicNameValuePair("e_id", urls[3]));
 
-					//pass url and nameValuePairs off to global to do the JSON call.  Code continues at onPostExecute when JSON returns.
-					return global.readJSONFeed(urls[0], nameValuePairs);
+					//pass url and nameValuePairs off to GLOBAL to do the JSON call.  Code continues at onPostExecute when JSON returns.
+					return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 				
 			}
 
@@ -328,9 +327,8 @@ public class EventAddGroupsActivity extends ActionBarActivity
 		int id = item.getItemId();
 		if (id == R.id.action_logout)
 		{
-			Global global = ((Global) getApplicationContext());
 			Intent login = new Intent(this, LoginActivity.class);
-			global.destroySession();
+			GLOBAL.destroySession();
 			startActivity(login);
 			Intent intent = new Intent("CLOSE_ALL");
 			this.sendBroadcast(intent);

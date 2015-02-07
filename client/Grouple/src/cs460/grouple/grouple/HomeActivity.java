@@ -26,6 +26,7 @@ public class HomeActivity extends ActionBarActivity
 {
 	User user; //current user
 	BroadcastReceiver broadcastReceiver;
+	static Global GLOBAL;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -47,10 +48,10 @@ public class HomeActivity extends ActionBarActivity
 	
 	private void load()
 	{
-		Global global = ((Global) getApplicationContext());
+		GLOBAL = ((Global) getApplicationContext());
 		
 		//grabbing the user with the given email in the extras
-		user = global.getCurrentUser();
+		user = GLOBAL.getCurrentUser();
 		
 		//set notifications
 		setNotifications();
@@ -68,7 +69,6 @@ public class HomeActivity extends ActionBarActivity
 		ab.setCustomView(R.layout.actionbar);
 		// ab.setDisplayHomeAsUpEnabled(true);
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
-		//Global global = ((Global) getApplicationContext());
 		actionbarTitle.setText("Welcome, " + user.getFirstName() + "!"); //PANDA
 	}
 
@@ -164,11 +164,10 @@ public class HomeActivity extends ActionBarActivity
 		int id = item.getItemId();
 		if (id == R.id.action_logout)
 		{
-			Global global = ((Global) getApplicationContext());
 			Intent login = new Intent(this, LoginActivity.class);
 			startActivity(login);
 			Intent intent = new Intent("CLOSE_ALL");
-			global.destroySession();
+			GLOBAL.destroySession();
 			this.sendBroadcast(intent);
 			return true;
 		}
@@ -186,19 +185,18 @@ public class HomeActivity extends ActionBarActivity
 		super.onResume(); // Always call the superclass method first
 		Log.d("onResume()","after superonresume");
 		
-		Log.d("onResume()","after global declaratione");
+		Log.d("onResume()","after GLOBAL declaratione");
 		View home = findViewById(R.id.homeLayout);
-		//global.fetchNumFriendRequests(global.getCurrentUser());
-		//global.fetchNumFriends(global.getCurrentUser());
-		// friendRequests = global.getNumFriendRequests();
+		//GLOBAL.fetchNumFriendRequests(GLOBAL.getCurrentUser());
+		//GLOBAL.fetchNumFriends(GLOBAL.getCurrentUser());
+		// friendRequests = GLOBAL.getNumFriendRequests();
 		Log.d("onResume()","after after all");
-		//global.setNotifications(home); PANDA
+		//GLOBAL.setNotifications(home); PANDA
 	}
 
 
 	public void navigate(View view)
 	{
-		Global global = ((Global) getApplicationContext());
 		//originally setting intent to null
 		Intent intent = null;
 
@@ -227,7 +225,7 @@ public class HomeActivity extends ActionBarActivity
 			break;
 		}
 		
-		global.loadUser(user.getEmail());//update
+		GLOBAL.loadUser(user.getEmail());//update
 		
 		//checking that intent was assigned
 		if (intent != null)

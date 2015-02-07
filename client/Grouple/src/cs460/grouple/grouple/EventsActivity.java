@@ -22,9 +22,9 @@ import android.widget.TextView;
  */
 public class EventsActivity extends ActionBarActivity
 {
-	BroadcastReceiver broadcastReceiver;
-	User user;
-	Global GLOBAL;
+	private BroadcastReceiver broadcastReceiver;
+	private User user;
+	private Global GLOBAL;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -143,7 +143,7 @@ public class EventsActivity extends ActionBarActivity
 	}
 	
 
-	public void initKillswitchListener()
+	private void initKillswitchListener()
 	{
 		// START KILL SWITCH LISTENER
 		IntentFilter intentFilter = new IntentFilter();

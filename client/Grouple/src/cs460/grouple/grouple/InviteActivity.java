@@ -37,13 +37,17 @@ import android.widget.Toast;
 
 public class InviteActivity extends ActionBarActivity {
 
-	User user;
-	Map<String, String> users;
-	Group group;
-	BroadcastReceiver broadcastReceiver;
+	private User user;
+	private Map<String, String> users;
+	private Group group;
+	private BroadcastReceiver broadcastReceiver;
 	private SparseArray<String> added = new SparseArray<String>();    //holds list of name of all friend rows to be added
 	private SparseArray<Boolean> role = new SparseArray<Boolean>();   //holds list of role of all friend rows to be added
 	private Map<String, String> allFriends = new HashMap<String, String>();   //holds list of all current friends
+	private static Global GLOBAL;
+	private static String CONTENT; //type of content to display
+	private static Bundle EXTRAS; //type of content to display
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -84,14 +88,14 @@ public class InviteActivity extends ActionBarActivity {
 	////////////////////////////////////////////////////////////////////////////////////////
 	private void load()
 	{
-		Global global = (Global)getApplicationContext();
-		Bundle extras = getIntent().getExtras();
-		
+		GLOBAL = (Global)getApplicationContext();
+		EXTRAS = getIntent().getExtras();
+		CONTENT = EXTRAS.getString("CONTENT");
 		//should always be current user
-		if (global.isCurrentUser(extras.getString("email")))
-			user = global.getCurrentUser();
+		if (GLOBAL.isCurrentUser(EXTRAS.getString("EMAIL")))
+			user = GLOBAL.getCurrentUser();
 	
-		group = global.getGroupBuffer();
+		group = GLOBAL.getGroupBuffer();
 		
 		populateInviteMembers();
 		
@@ -138,6 +142,8 @@ public class InviteActivity extends ActionBarActivity {
 	
 	private void populateInviteMembers()
 	{
+		//could use content here
+		
 		LinearLayout pickFriendsLayout = (LinearLayout) findViewById(R.id.pickFriendsLayout);
 		Map<String, String> members;
 		LayoutInflater li = getLayoutInflater();
@@ -163,7 +169,6 @@ public class InviteActivity extends ActionBarActivity {
 		if (users != null && users.size() != 0)
 		{
 			
-			//Bundle extras = intent.getExtras();
 			// looping thru json and adding to an array
 			int index = 0;
 			//setup for each friend
@@ -312,9 +317,8 @@ public class InviteActivity extends ActionBarActivity {
 					+ "android_connect/add_groupmember.php", friendsEmail, user.getEmail(), friendsRole, Integer.toString(g_id));
 		}
 		
-		Global global = (Global)getApplicationContext();
-		global.loadUser(user.getEmail());
-		global.loadGroup(group.getID());
+		GLOBAL.loadUser(user.getEmail());
+		GLOBAL.loadGroup(group.getID());
 		
 		Context context = getApplicationContext();
 		Toast toast = Toast.makeText(context, "Friends have been invited.", Toast.LENGTH_SHORT);
@@ -329,7 +333,6 @@ public class InviteActivity extends ActionBarActivity {
 		@Override
 		protected String doInBackground(String... urls)
 		{
-			Global global = ((Global) getApplicationContext());
 			
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("email", urls[1]));
@@ -337,8 +340,8 @@ public class InviteActivity extends ActionBarActivity {
 			nameValuePairs.add(new BasicNameValuePair("role", urls[3]));
 			nameValuePairs.add(new BasicNameValuePair("g_id", urls[4]));
 
-			//pass url and nameValuePairs off to global to do the JSON call.  Code continues at onPostExecute when JSON returns.
-			return global.readJSONFeed(urls[0], nameValuePairs);
+			//pass url and nameValuePairs off to GLOBAL to do the JSON call.  Code continues at onPostExecute when JSON returns.
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
 
 
