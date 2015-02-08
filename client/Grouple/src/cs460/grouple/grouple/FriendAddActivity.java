@@ -41,7 +41,7 @@ public class FriendAddActivity extends ActionBarActivity
 		// Set the activity layout.
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_add_friend);
-		Global GLOBAL = ((Global) getApplicationContext());
+		GLOBAL = ((Global) getApplicationContext());
 		user = GLOBAL.getCurrentUser();
 		
 		initActionBar();
@@ -110,9 +110,18 @@ public class FriendAddActivity extends ActionBarActivity
 	// Adds a friend.
 	public void addFriendButton(View view)
 	{
+		EditText emailEditText = (EditText) findViewById(R.id.emailEditTextAFA);
+		if (emailEditText.getText().toString() == null || emailEditText.getText().toString().isEmpty())
+		{
+			TextView addFriendMessage = (TextView) findViewById(R.id.addFriendMessageTextViewAFA);
+			addFriendMessage.setText("Please enter a valid email address.");
+			addFriendMessage.setTextColor(getResources().getColor(
+					R.color.red));
+			addFriendMessage.setVisibility(View.VISIBLE);
 
-		new getAddFriendTask()
-				.execute("http://68.59.162.183/android_connect/add_friend.php");
+		}
+		else
+			new getAddFriendTask().execute("http://68.59.162.183/android_connect/add_friend.php");
 	}
 
 	// This task sends a friend request to the given user.

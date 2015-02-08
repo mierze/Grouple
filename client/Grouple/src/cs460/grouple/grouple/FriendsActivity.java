@@ -26,8 +26,8 @@ import android.widget.TextView;
 public class FriendsActivity extends ActionBarActivity
 {
 	BroadcastReceiver broadcastReceiver;
-	User user; //the current user
-	static Global GLOBAL;// = 
+	private User user; //the current user
+	private Global GLOBAL;// = 
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
