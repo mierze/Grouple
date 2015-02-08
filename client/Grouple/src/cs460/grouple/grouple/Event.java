@@ -164,6 +164,7 @@ public class Event extends Entity
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					JSONArray jsonArray = jsonObject.getJSONArray("eventInfo");
+					System.out.println(jsonArray.toString() + " this is array");
 					Log.d("getUserInfoOnPost", "success1");
 					//$name, $state, $startdate, $enddate, $category, $about, $location, $minpart, $maxpart, $mustbringlist, $creator);
 					//at each iteration set to hashmap friendEmail -> 'first last'
@@ -191,8 +192,9 @@ public class Event extends Entity
 					
 					
 					//5 = location
+					
 					String location = (String) jsonArray.get(6);
-					System.out.println("before name in event load about: " + location);
+					System.out.println("before name in event load location: " + location);
 					setLocation(location);		
 					
 					
@@ -201,8 +203,8 @@ public class Event extends Entity
 					setMinPart(minPart);	
 					
 					//7 = maxpart
-					int maxPart = (Integer) jsonArray.get(8);
-					setMinPart(maxPart);	
+					int maxPart = (Integer) jsonArray.get(8);	
+					setMaxPart(maxPart);	
 					
 					//9 = mustbringlist
 					
@@ -281,7 +283,7 @@ public class Event extends Entity
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					//gotta make a json array
-					JSONArray jsonArray = jsonObject.getJSONArray("participants");
+					JSONArray jsonArray = jsonObject.getJSONArray("eattending");
 					
 					//looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)

@@ -1132,7 +1132,6 @@ containing a value of this type.
         public static final int user_icon=0x7f020074;
     }
     public static final class id {
-        public static final int EditText02=0x7f090061;
         public static final int TextView01=0x7f090059;
         public static final int TextView02=0x7f090060;
         public static final int TextView03=0x7f090062;
@@ -1242,6 +1241,7 @@ containing a value of this type.
         public static final int listMode=0x7f090006;
         public static final int listScrollView=0x7f09008d;
         public static final int list_item=0x7f090029;
+        public static final int locationEditTextECA=0x7f090061;
         public static final int locationEditTextEPA=0x7f09004b;
         public static final int locationLabelTextViewEPA=0x7f09004a;
         public static final int loginButtonLA=0x7f090090;

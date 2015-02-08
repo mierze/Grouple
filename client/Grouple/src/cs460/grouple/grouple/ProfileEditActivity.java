@@ -64,6 +64,7 @@ public class ProfileEditActivity extends ActionBarActivity implements
 	private Intent i;
 	private User user;
 	private BroadcastReceiver broadcastReceiver;
+	private Global GLOBAL;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -77,13 +78,13 @@ public class ProfileEditActivity extends ActionBarActivity implements
 
 	private void load()
 	{
-		Global global = ((Global) getApplicationContext());
+		GLOBAL = ((Global) getApplicationContext());
 		// Resetting error text view
 		TextView errorTextView = (TextView) findViewById(R.id.errorTextViewEPA);
 		errorTextView.setVisibility(1);
 
 		Bundle extras = getIntent().getExtras();
-		user = global.loadUser(global.getCurrentUser().getEmail());
+		user = GLOBAL.getCurrentUser();
 	
 		
 		if (user != null)
@@ -328,8 +329,7 @@ public class ProfileEditActivity extends ActionBarActivity implements
 				{
 					// Success
 					//refresh?
-					Global global = ((Global) getApplicationContext());
-					global.loadUser(user.getEmail());
+					GLOBAL.loadUser(user.getEmail());
 					System.out.println("Success");
 					 
 					finish();

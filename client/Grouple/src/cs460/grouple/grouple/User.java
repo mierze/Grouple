@@ -763,8 +763,12 @@ public class User extends Entity
 						JSONObject o = (JSONObject) jsonArray.get(i);
 						//function adds friend to the friends map
 						boolean accepted = false;
-						if (o.get("recdate") != null)
+					;
+						if (!o.get("recdate").equals(null))
+						{
+							System.out.println("receive date is not null");
 							accepted = true;
+						}
 						System.out.println("Adding to events pending, boolean accepted = " + accepted);
 						addToEventsPending(o.getString("eid"), o.getString("name"), o.getString("sender"), accepted);
 					}

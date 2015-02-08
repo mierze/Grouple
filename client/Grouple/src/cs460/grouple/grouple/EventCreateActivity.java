@@ -78,6 +78,7 @@ public class EventCreateActivity extends ActionBarActivity
 	private EditText categoryEditText;
 	private EditText startDateEditText;
 	private EditText endDateEditText;
+	private EditText locationEditText;
 	private AlertDialog categoryDialog;
 	
 	
@@ -195,6 +196,8 @@ public class EventCreateActivity extends ActionBarActivity
 	{		
 		//Checking user inputs on event name, category, start date, end date, and min_part
 		EditText eventNameEditText = (EditText) findViewById(R.id.eventName);
+		locationEditText = (EditText) findViewById(R.id.locationEditTextECA);
+		location = locationEditText.getText().toString();
 		String eventname = eventNameEditText.getText().toString();
 		startDate = startDateEditText.getText().toString();
 		endDate = endDateEditText.getText().toString();
@@ -343,7 +346,7 @@ public class EventCreateActivity extends ActionBarActivity
 					//now we can grab the newly created e_id returned from the server
 					//Note: g_id is the only unique identifier of a group and therefore must be used for any future calls concerning that group.
 					e_id = jsonObject.getString("e_id").toString();
-					
+					Context context = getApplicationContext();
 					System.out.println("e_id of newly created group is: "+e_id);
 					
 					//display confirmation box
@@ -355,7 +358,14 @@ public class EventCreateActivity extends ActionBarActivity
 						@Override
 						public void onClick(DialogInterface dialog, int id)
 						{
+							GLOBAL.loadUser(user.getEmail());
+							GLOBAL.loadEvent(Integer.parseInt(e_id));
 							//add code here to take user to newly created event profile page.  (pass e_id as extra so correct group profile can be loaded)
+							Intent intent = new Intent(EventCreateActivity.this, ProfileActivity.class);
+							intent.putExtra("CONTENT", "EVENT");
+							intent.putExtra("EID", e_id);
+							intent.putExtra("EMAIL", user.getEmail());
+							startActivity(intent);
 							finish();
 						}
 					}).setNegativeButton("Invite Groups to Event", new DialogInterface.OnClickListener()
@@ -431,8 +441,6 @@ public class EventCreateActivity extends ActionBarActivity
 		if (id == R.id.action_home)
 		{
 			Intent intent = new Intent(this, HomeActivity.class);
-			intent.putExtra("up", "false");
-			intent.putExtra("ParentClassName", "EventCreateActivity");
 			startActivity(intent);
 		}
 		return super.onOptionsItemSelected(item);

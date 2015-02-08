@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -56,6 +57,18 @@ public class ProfileActivity extends ActionBarActivity
 	protected void onResume()
 	{
 		super.onResume();
+		//load();
+		/*
+		if (user != null)
+			if (GLOBAL.isCurrentUser(user.getEmail()))
+				user = GLOBAL.getCurrentUser();
+			else
+				user = GLOBAL.getUserBuffer();
+		else if (group != null)
+			group = GLOBAL.getGroupBuffer();
+		else if (event != null)
+			event = GLOBAL.getEventBuffer();
+		*/
 		setNotifications();
 		populateProfile();
 	}
@@ -114,12 +127,7 @@ public class ProfileActivity extends ActionBarActivity
 		else if (CONTENT.equals(CONTENT_TYPE.EVENT.toString()))
 		{
 			event = GLOBAL.getEventBuffer();
-			if (event == null)
-			{
-				System.out.println("OPUR EVEMNT IS NUL!");
-			}
-			else
-				System.out.println("NTNULL WE ARE GOOD");
+
 			Button profileButton2 = (Button)findViewById(R.id.profileButton2);
 			Button profileButton3 = (Button)findViewById(R.id.profileButton3);
 			profileButton2.setVisibility(View.GONE);
@@ -212,33 +220,30 @@ public class ProfileActivity extends ActionBarActivity
 			{
 				//members
 				intent.putExtra("CONTENT", "GROUPS_MEMBERS");
+				GLOBAL.loadGroup(group.getID());
 				intent.putExtra("GID", group.getID());
 			}
 			else if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
 			{
 				//friends
 				intent.putExtra("CONTENT", "FRIENDS_CURRENT");
-				int success = user.fetchFriends();
-				if (success == 1)
-					if (GLOBAL.isCurrentUser(user.getEmail()))
-						GLOBAL.setCurrentUser(user);
-					else
-						GLOBAL.setUserBuffer(user);
+		
+				GLOBAL.loadUser(user.getEmail());
+						
 			}
 			else
 			{
 				//events
+				intent.putExtra("CONTENT", "EVENTS_ATTENDING");
+				GLOBAL.loadEvent(event.getID());
+		
 			}
 			break;
 		case R.id.profileButton2:
 			//groups
 			intent.putExtra("CONTENT", "GROUPS_CURRENT");
-			int success = user.fetchGroups();
-			if (success == 1)
-				if (GLOBAL.isCurrentUser(user.getEmail()))
-					GLOBAL.setCurrentUser(user);
-				else
-					GLOBAL.setUserBuffer(user);
+			GLOBAL.loadUser(user.getEmail());
+			
 			break;
 		case R.id.profileButton3:
 			//events
@@ -248,7 +253,6 @@ public class ProfileActivity extends ActionBarActivity
 			if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
 			{
 				intent = new Intent(this, GroupEditActivity.class);
-				intent.putExtra("GID", group.getID());
 			}
 			else if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
 			{
@@ -264,10 +268,30 @@ public class ProfileActivity extends ActionBarActivity
 		}
 		if (user != null)
 			intent.putExtra("EMAIL", user.getEmail());
+		if (group != null)
+			intent.putExtra("GID", group.getID());
+		if (event != null)
+			intent.putExtra("EID", event.getID());
 		iv = null;
 		startActivity(intent);
 	}
 
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent e)  {
+	    if (keyCode == KeyEvent.KEYCODE_BACK) {
+	    	//do nothing
+	    	if (user != null)
+	    		GLOBAL.loadUser(user.getEmail());
+	    	if (group != null)
+	    		GLOBAL.loadGroup(group.getID());
+	    	if (event != null)
+	    		GLOBAL.loadEvent(event.getID());
+	    		
+	    	finish();
+	    }
+	    return true;
+	   }
+	
 	/*
 	 * Get profile executes get_profile.php. It uses the current users email
 	 * address to retrieve the users name, age, and bio.
@@ -298,8 +322,10 @@ public class ProfileActivity extends ActionBarActivity
 		else if (CONTENT.equals(CONTENT_TYPE.EVENT.toString()))
 		{
 			about.setText(event.getAbout());
-			info.setText(event.getCategory() + "\n" +
-					event.getLocation());
+			if (event.getMaxPart() > 0)
+				info.setText(event.getCategory() + "\n(" + event.getNumUsers() + ")/" + event.getMaxPart() + " attending" + "\n" + event.getLocation());
+			else
+				info.setText(event.getCategory() + "\n" + event.getNumUsers() + " attending\nLocation: " + event.getLocation());
 		}		
 	}
 

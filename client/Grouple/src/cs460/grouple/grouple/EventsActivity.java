@@ -142,7 +142,16 @@ public class EventsActivity extends ActionBarActivity
 		intent.putExtra("EMAIL", user.getEmail());
 	}
 	
-
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event)  {
+	    if (keyCode == KeyEvent.KEYCODE_BACK) {
+	    	GLOBAL.loadUser(user.getEmail());
+	    	finish(); //preventing back-loop
+	    }
+	    return true;
+	   }
+	
+	
 	private void initKillswitchListener()
 	{
 		// START KILL SWITCH LISTENER

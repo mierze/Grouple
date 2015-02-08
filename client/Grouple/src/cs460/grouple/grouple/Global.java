@@ -197,10 +197,7 @@ public class Global extends Application
 		Event event; //declare group variable
 		
 		//instantiate a new group
-		if (getGroupBuffer() != null && getGroupBuffer().getID() == id)
-			event = getEventBuffer();
-		else 
-			event = new Event(id);
+		event = new Event(id);
 		
 		
 		/**
@@ -221,8 +218,8 @@ public class Global extends Application
 			Log.d("loadGroup", "success after fetchMembers()");
 		
 
-		if (eventBuffer != null && eventBuffer.getID() == event.getID())
-			setEventBuffer(event);
+	
+		setEventBuffer(event);
 		
 		return event;
 	}

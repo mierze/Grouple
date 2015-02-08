@@ -43,9 +43,8 @@ public class FriendsActivity extends ActionBarActivity
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)  {
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-	    	Intent intent = new Intent(this, HomeActivity.class);
-	    	intent.putExtra("EMAIL", user.getEmail());
-	    	startActivity(intent);
+	    	GLOBAL.loadUser(user.getEmail());
+	    	finish();
 	    }
 	    return true;
 	   }

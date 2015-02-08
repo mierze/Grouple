@@ -203,8 +203,7 @@ public class GroupEditActivity extends ActionBarActivity implements
 		else
 		{
 			new setProfileTask().execute("http://68.59.162.183/android_connect/update_group.php");
-			GLOBAL.loadGroup(group.getID());
-			finish();
+		
 		}
 	}
 
@@ -339,6 +338,8 @@ public class GroupEditActivity extends ActionBarActivity implements
 					Context context = getApplicationContext();
 					Toast toast = Toast.makeText(context, "Group profile changed successfully.", Toast.LENGTH_SHORT);
 					toast.show();
+					GLOBAL.loadGroup(group.getID());
+					finish();
 				} else
 				{
 					// Fail

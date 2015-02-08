@@ -185,12 +185,7 @@ public class HomeActivity extends ActionBarActivity
 		super.onResume(); // Always call the superclass method first
 		Log.d("onResume()","after superonresume");
 		
-		Log.d("onResume()","after GLOBAL declaratione");
-		View home = findViewById(R.id.homeLayout);
-		//GLOBAL.fetchNumFriendRequests(GLOBAL.getCurrentUser());
-		//GLOBAL.fetchNumFriends(GLOBAL.getCurrentUser());
-		// friendRequests = GLOBAL.getNumFriendRequests();
-		Log.d("onResume()","after after all");
+		load();
 		//GLOBAL.setNotifications(home); PANDA
 	}
 
