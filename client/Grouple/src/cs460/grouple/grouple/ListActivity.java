@@ -237,26 +237,21 @@ public class ListActivity extends ActionBarActivity
 	{
 		Map<Integer, String> entities = null;
 		String sadGuyText = "";
-		if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
-		{
-			//grabbing the users groups
-			entities = user.getGroups();
-			sadGuyText = "You do not have any groups.";
-		}
-		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
-		{
+
+		if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
+		{	
 			entities = user.getEventsUpcoming();
-			sadGuyText = "You do not have events upcoming.";
+		}
+		else if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
+		{
+			entities = user.getGroups();
 		}
 
 		if (entities != null && entities.size() > 0)
 		{
-			int i = 0;
 			for (Map.Entry<Integer, String> entry : entities.entrySet()) {
 				//Group group = GLOBAL.loadGroup(id);
-				GridLayout rowView;
-
-				rowView = (GridLayout) li.inflate(R.layout.list_row, null);
+				GridLayout rowView = (GridLayout) li.inflate(R.layout.list_row, null);
 	
 					
 				Button leaveGroupButton = (Button)rowView.findViewById(R.id.removeButtonLI);
@@ -268,28 +263,21 @@ public class ListActivity extends ActionBarActivity
 				
 				// Grab the buttons and set their IDs. Their IDs
 				// will fall inline with the array 'groupsNameList'.
-				Button groupNameButton = (Button) rowView
-						.findViewById(R.id.nameButtonLI);
-				
-				groupNameButton.setText(entry.getValue());
-				
+				Button nameButton = (Button) rowView.findViewById(R.id.nameButtonLI);
+				nameButton.setText(entry.getValue());
 				//setting ids to the id of the group for button functionality
-				groupNameButton.setId(entry.getKey());
+				nameButton.setId(entry.getKey());
 				rowView.setId(entry.getKey());
 				
 				//adding row to view
 				listLayout.addView(rowView);
-
-				//incrementing index
-				i++;
 			}
 		}
 		else
 		{
 			// The user has no groups so display the sad guy
 			View row = li.inflate(R.layout.listitem_sadguy, null);
-			((TextView) row.findViewById(R.id.sadGuyTextView))
-				.setText(sadGuyText);
+			((TextView) row.findViewById(R.id.sadGuyTextView)).setText(sadGuyText);
 			listLayout.addView(row);
 		}	
 	}
@@ -297,8 +285,11 @@ public class ListActivity extends ActionBarActivity
 	public void populateUsers()
 	{	
 		Map<String, String> users;
+		String sadGuyText = "";
+
 		if  (CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()))
 		{
+			sadGuyText = "There are no members in this group.";
 			users = group.getUsers();	
 			if (users != null)
 			if (!users.containsKey(GLOBAL.getCurrentUser().getEmail()))
@@ -309,6 +300,7 @@ public class ListActivity extends ActionBarActivity
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))//to do make else ifs." +
 		{
+			sadGuyText = "You have no friends.";
 			users = user.getUsers();
 			Button addNew = (Button)findViewById(R.id.addNewButtonLiA);
 			if (GLOBAL.isCurrentUser(user.getEmail()))
@@ -319,15 +311,16 @@ public class ListActivity extends ActionBarActivity
 		else 
 		{
 			users = event.getUsers();
+			sadGuyText = "No one is attending event.";
 		}
+	
 		if (users != null && !users.isEmpty())
 		{
-			Iterator it = users.entrySet().iterator();
-			int index = 0;
-			while (it.hasNext()) {
-				 Map.Entry pair = (Map.Entry)it.next();
-				 String email = (String) pair.getKey();
-				 String fullName = (String) pair.getValue();
+			int index = 0;//index for adding to friendsEmailList
+			for (Map.Entry<String, String> entry : users.entrySet())
+			{
+				 String email = (String) entry.getKey();
+				 String fullName = (String) entry.getValue();
 
 				 GridLayout rowView;
 				 friendsEmailList.add(index, email);
@@ -341,31 +334,22 @@ public class ListActivity extends ActionBarActivity
 				 } 
 				 else
 				 {
-					rowView = (GridLayout) li.inflate(
-							R.layout.list_row_nobutton, null);
+					rowView = (GridLayout) li.inflate(R.layout.list_row_nobutton, null);
 				 }
-				 Button friendNameButton = (Button) rowView
-						 .findViewById(R.id.nameButtonLI);
-
+				 Button friendNameButton = (Button) rowView.findViewById(R.id.nameButtonLI);
 				 friendNameButton.setText(fullName);
 				 friendNameButton.setId(index);
 				 rowView.setId(index);
 				 listLayout.addView(rowView);
 				 index++;
-			 }
+			}
 		}
 		else
 		{		
-	
 			View row = li.inflate(R.layout.listitem_sadguy, null);
 			TextView sadGuy = ((TextView) row.findViewById(R.id.sadGuyTextView));
 			// The user has no friend's so display the sad guy image.
-			if (CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()))
-				sadGuy.setText("There are no members in this group.");
-			else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
-				sadGuy.setText("You have no friends.");
-			else
-				sadGuy.setText("No one is attending this event.");
+			sadGuy.setText(sadGuyText);
 			listLayout.addView(row);
 		}
 	}
