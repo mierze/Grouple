@@ -29,9 +29,8 @@ public abstract class Entity
 	private String name; //fullname of user, fName of group creator, fName of event creator ?or possibly not
 	private Map<String, String> users; //group users, event participants, friends
 	private String about; //about user, group, event
-	Bitmap image; //all entities have images
+	private Bitmap image; //all entities have images
 
-	
 	/*
 	 * Constructor for our parent entity of users, groups, events...
 	 */

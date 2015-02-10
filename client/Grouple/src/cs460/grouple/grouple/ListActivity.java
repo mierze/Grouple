@@ -8,12 +8,10 @@ import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import cs460.grouple.grouple.User.getUserInfoTask;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -43,7 +41,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-
 /*
  * ListActivity is an activity that displays lists of different types, 
  * and performs relevant functions based on the situation
@@ -66,14 +63,15 @@ public class ListActivity extends ActionBarActivity
 	private User user; //user whose current groups displayed
 	private Group group;
 	private Event event;
-	private static Bundle EXTRAS; //extras passed in from the activity that called ListActivity
-	private static String CONTENT; //type of content to display in list, passed in from other activities
-	private static LinearLayout listLayout; //layout for list activity (scrollable layout to inflate into)
+	private Bundle EXTRAS; //extras passed in from the activity that called ListActivity
+	private String CONTENT; //type of content to display in list, passed in from other activities
+	private LinearLayout listLayout; //layout for list activity (scrollable layout to inflate into)
 	private Global GLOBAL;// = 
 	private static LayoutInflater li;
 	private ArrayList<String> friendsEmailList = new ArrayList<String>();//test
-	private String PANDABUFFER = "";
-	private int bufferID;
+	private String PANDABUFFER = ""; //same
+	private int bufferID; //same as below: could alternatively have json return the values instead of saving here
+	private boolean bufferStatus;//don't want to use all these buffers, looking to update
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -114,22 +112,24 @@ public class ListActivity extends ActionBarActivity
 		Button addNew = (Button)findViewById(R.id.addNewButtonLiA);
 		System.out.println("Load 3");
 		
+		//for now to test
 		//GRABBING A USER
-		if (GLOBAL.isCurrentUser(EXTRAS.getString("EMAIL")))
-		{
-			user = GLOBAL.getCurrentUser();
-		}
-		else if (GLOBAL.getUserBuffer() != null && GLOBAL.getUserBuffer().getEmail().equals(EXTRAS.getString("EMAIL")))
-		{
-			user = GLOBAL.getUserBuffer();
-			System.out.println("Load 4");
-		}
-		else
-		{
-			System.out.println("Load 4 loading user: " + EXTRAS.getString("EMAIL"));
-			user = GLOBAL.loadUser(EXTRAS.getString("EMAIL"));
-			System.out.println(CONTENT_TYPE.FRIENDS_REQUESTS + " " + CONTENT + " comp: " + CONTENT_TYPE.FRIENDS_REQUESTS.toString().equals(CONTENT));
-		}
+		if (EXTRAS.getString("EMAIL") != null)
+			if (GLOBAL.isCurrentUser(EXTRAS.getString("EMAIL")))
+			{
+				user = GLOBAL.getCurrentUser();
+			}
+			else if (GLOBAL.getUserBuffer() != null && GLOBAL.getUserBuffer().getEmail().equals(EXTRAS.getString("EMAIL")))
+			{
+				user = GLOBAL.getUserBuffer();
+				System.out.println("Load 4");
+			}
+			else
+			{
+				System.out.println("Load 4 loading user: " + EXTRAS.getString("EMAIL"));
+				user = GLOBAL.loadUser(EXTRAS.getString("EMAIL"));
+				System.out.println(CONTENT_TYPE.FRIENDS_REQUESTS + " " + CONTENT + " comp: " + CONTENT_TYPE.FRIENDS_REQUESTS.toString().equals(CONTENT));
+			}
 
 		System.out.println("Load 5, at this time CONTENT is " + CONTENT);
 		//CALL APPROPRIATE METHODS
@@ -137,7 +137,7 @@ public class ListActivity extends ActionBarActivity
 		{
 			if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
 				actionBarTitle = user.getFirstName() + "'s Friends";
-			else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
+			else if (CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()))
 			{
 				group = GLOBAL.getGroupBuffer();
 				actionBarTitle="Group Members";
@@ -192,8 +192,7 @@ public class ListActivity extends ActionBarActivity
 		initActionBar(actionBarTitle);
 		initKillswitchListener();
 	}
-
-
+	
 	@Override
 	protected void onDestroy()
 	{
@@ -241,10 +240,12 @@ public class ListActivity extends ActionBarActivity
 		if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
 		{	
 			entities = user.getEventsUpcoming();
+			sadGuyText = "You do not have any upcoming events.";
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
 		{
 			entities = user.getGroups();
+			sadGuyText = "You are not in any groups.";
 		}
 
 		if (entities != null && entities.size() > 0)
@@ -384,53 +385,46 @@ public class ListActivity extends ActionBarActivity
 		}
 
 		//FOR FRIEND REQUESTS
-		if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()) && friendRequests != null && friendRequests.size() > 0)
+		if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()) && friendRequests != null && !friendRequests.isEmpty())
 		{
 				for (int i = 0; i < friendRequests.size(); i++)
 				{
 					GridLayout row = (GridLayout) li.inflate(R.layout.list_row_acceptdecline, null);
-					if (friendRequests.get(i) != null)
-						((TextView) row.findViewById(R.id.nameButtonLI)).setText(friendRequests.get(i));
+		
+					Button nameButton = (Button) row.findViewById(R.id.nameButtonAD);
+					nameButton.setText(friendRequests.get(i));
+					nameButton.setId(i);
+					
 					listLayout.addView(row);
+					row.setId(i);
+					//PANDA TODO: use just a couple max data structures and make them class wide to avoid friendsEmailList
+					friendsEmailList.add(i, friendRequests.get(i));
 				}
 			
 		}
-		//FOR EVENTS PENDING
-		else if(CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) && listItems != null && listItems.size() > 0 )
+		//FOR EVENTS PENDING // group invites, both use maps, eventually want everything to be the same
+		else if((CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString())) && listItems != null && !listItems.isEmpty())
 		{	
 			// looping thru the map
 			for (Map.Entry<Integer, String> entry : listItems.entrySet())
 			{
 				GridLayout row;
-				TextView rowText;
+				Button nameButton;
 				if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) && eventsAccepted.get(entry.getKey()))
 				{
-					//REDUNDANT PANDA TODO
 					row = (GridLayout) li.inflate(R.layout.list_row_nobutton, null);
-					rowText = (TextView)row.findViewById(R.id.nameButtonLI);
+					nameButton =  (Button)row.findViewById(R.id.nameButtonLI);
 				}
-				else
+				else 
 				{
 					row = (GridLayout) li.inflate(R.layout.list_row_acceptdecline, null);
-					rowText = (TextView)row.findViewById(R.id.nameButtonLI);
+					nameButton =  (Button)row.findViewById(R.id.nameButtonAD);
 				}
+				
 				row.setId(entry.getKey());
-				rowText.setId(entry.getKey());
-				rowText.setText(entry.getValue());
+				nameButton.setId(entry.getKey());
+				nameButton.setText(entry.getValue());
 				listLayout.addView(row);
-			}
-		}
-		else if(CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString()) && listItems != null && listItems.size() > 0 )
-		{
-			if(listItems != null && listItems.size() > 0 )
-			{
-				for (Map.Entry<Integer, String> entry : listItems.entrySet())
-				{
-					GridLayout row = (GridLayout) li.inflate(R.layout.list_row_acceptdecline, null);
-					row.setId(entry.getKey());
-					((TextView) row.findViewById(R.id.nameButtonLI)).setText(entry.getValue());
-					listLayout.addView(row);
-				}
 			}
 		}
 		else
@@ -441,8 +435,7 @@ public class ListActivity extends ActionBarActivity
 			//Set the sad guy text.
 			sadTextView.setText(sadGuyText);
 			listLayout.addView(sadGuy);
-		}
-		
+		}	
 	}
 			
 	/*
@@ -450,9 +443,10 @@ public class ListActivity extends ActionBarActivity
 	 */
 	public void onClick(View view)
 	{
-		View parent = (View)view.getParent();
-		TextView nameText = (TextView) parent
-				.findViewById(R.id.nameButtonLI);
+		GridLayout parent = (GridLayout)view.getParent();
+		Button nameText = (Button) parent
+				.findViewById(R.id.nameButtonAD);
+		if (nameText == null) System.out.println("HELL YEAH IT NULL");
 		switch (view.getId())
 		{
 		case R.id.declineButton:
@@ -463,31 +457,33 @@ public class ListActivity extends ActionBarActivity
 			}
 			else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
 			{
-				PANDABUFFER = nameText.getText().toString(); //PANDA
+				PANDABUFFER = friendsEmailList.get(parent.getId()); //PANDA
 				new getAcceptDeclineTask().execute("http://68.59.162.183/android_connect/decline_friend_request.php", PANDABUFFER);
 			}
 			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
 			{
 				bufferID = parent.getId(); //PANDA
-				new getAcceptDeclineTask().execute("http://68.59.162.183/android_connect/decline_friend_request.php", Integer.toString(bufferID));
+				bufferStatus = false;
+				new getAcceptDeclineTask().execute("http://68.59.162.183/android_connect/decline_event_invite.php", Integer.toString(bufferID));
 			}
 			break;
 		case R.id.acceptButton:
-			View parent2 = (View) view.getParent();
 			if (CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString()))
 			{
-				bufferID = parent2.getId();
+				bufferID = parent.getId();
 				new getAcceptDeclineTask().execute("http://68.59.162.183/android_connect/accept_group_invite.php",user.getEmail(),Integer.toString(bufferID));
 			}
 			else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
 			{
-				PANDABUFFER = nameText.getText().toString();
+			
+				PANDABUFFER = friendsEmailList.get(parent.getId());
 				new getAcceptDeclineTask().execute("http://68.59.162.183/android_connect/accept_friend_request.php", PANDABUFFER);
 			}
 			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
 			{
-				bufferID = parent2.getId();
-				new getAcceptDeclineTask().execute("http://68.59.162.183/android_connect/accept_friend_request.php", Integer.toString(bufferID));
+				bufferID = parent.getId();
+				bufferStatus = true;
+				new getAcceptDeclineTask().execute("http://68.59.162.183/android_connect/accept_event_invite.php", Integer.toString(bufferID));
 			}
 			break;
 		}
@@ -554,12 +550,15 @@ public class ListActivity extends ActionBarActivity
 						user.removeFriendRequest(PANDABUFFER);
 					else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
 						user.removeUser(PANDABUFFER);
+					else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
+						user.alterEventsAccepted(bufferID, bufferStatus);
 	
 					Toast toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
 					toast.show();
 
 					PANDABUFFER = "";
 					bufferID = -1;
+					//bufferStatus = null;
 
 					///refreshing views
 					if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
@@ -661,20 +660,21 @@ public class ListActivity extends ActionBarActivity
 		public void startProfileActivity(View view)
 				throws InterruptedException
 		{
+			int id = view.getId();
 			
 			Intent intent = new Intent(this, ProfileActivity.class);
 			if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
 			{
-				System.out.println("Loading group gid: " + view.getId());
-				intent.putExtra("GID", view.getId());
+				System.out.println("Loading group gid: " + id);
+				intent.putExtra("GID", id);
 				intent.putExtra("EMAIL", user.getEmail());
 				intent.putExtra("CONTENT", "GROUP");
-				GLOBAL.loadGroup(view.getId());	
+				GLOBAL.loadGroup(id);	
 			}
 			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
 			{
-				System.out.println("Loading event, eid: " + view.getId());
-				intent.putExtra("EID", view.getId());
+				System.out.println("Loading event, eid: " + id);
+				intent.putExtra("EID", id);
 				intent.putExtra("EMAIL", user.getEmail());
 				intent.putExtra("CONTENT", "EVENT");
 				Event e = GLOBAL.loadEvent(view.getId());
@@ -682,15 +682,14 @@ public class ListActivity extends ActionBarActivity
 				if (e != null)
 					GLOBAL.setEventBuffer(e);
 			}
-			else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()) || CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()))
+			else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()) || CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()) || CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
 			{
-				int id = view.getId();
+				System.out.println("Loading user profile, id: " + id);
 				String friendEmail = friendsEmailList.get(id);
 				GLOBAL.loadUser(friendEmail); //reloading user
 				intent.putExtra("EMAIL", friendEmail);
 				intent.putExtra("CONTENT", "USER");	
 			}
-
 			startActivity(intent);
 		}
 

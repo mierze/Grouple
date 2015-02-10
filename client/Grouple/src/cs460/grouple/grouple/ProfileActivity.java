@@ -31,8 +31,8 @@ public class ProfileActivity extends ActionBarActivity
 	private User user; //user who's profile this is
 	private Group group;
 	private Event event;
-	private static Bundle EXTRAS;
-	private static String CONTENT; //type of content to display in profile, passed in from other activities
+	private Bundle EXTRAS;
+	private String CONTENT; //type of content to display in profile, passed in from other activities
 	private static Global GLOBAL;
 	
 	@Override
@@ -46,7 +46,7 @@ public class ProfileActivity extends ActionBarActivity
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-
+		initKillswitchListener();
 		setContentView(R.layout.activity_profile);
 		//Can we do our user load in the profile to save loading time from earlier or will the sync be off?
 		load();
@@ -57,20 +57,20 @@ public class ProfileActivity extends ActionBarActivity
 	protected void onResume()
 	{
 		super.onResume();
-		//load();
+		load();
 		/*
 		if (user != null)
 			if (GLOBAL.isCurrentUser(user.getEmail()))
-				user = GLOBAL.getCurrentUser();
-			else
+				user = GLOBAL.getCurrentUser();                                                                                ,,
+			else if (GLOBAL.getUserBuffer() != null)
 				user = GLOBAL.getUserBuffer();
-		else if (group != null)
+		else if (group != null && GLOBAL.getGroupBuffer() != null)
 			group = GLOBAL.getGroupBuffer();
 		else if (event != null)
 			event = GLOBAL.getEventBuffer();
 		*/
-		setNotifications();
-		populateProfile();
+		//setNotifications();
+		//populateProfile();
 	}
 	
 	public void initActionBar(String title)
@@ -128,9 +128,9 @@ public class ProfileActivity extends ActionBarActivity
 		{
 			event = GLOBAL.getEventBuffer();
 
-			Button profileButton2 = (Button)findViewById(R.id.profileButton2);
+			//Button profileButton2 = (Button)findViewById(R.id.profileButton2);
 			Button profileButton3 = (Button)findViewById(R.id.profileButton3);
-			profileButton2.setVisibility(View.GONE);
+			//profileButton2.setVisibility(View.GONE);
 			profileButton3.setVisibility(View.GONE);
 			System.out.println("EVENT NAME: " + event.getName());
 			title = event.getName();
@@ -141,7 +141,7 @@ public class ProfileActivity extends ActionBarActivity
 		
 		// initializing the action bar and killswitch listener
 		initActionBar(title);
-		initKillswitchListener();
+		
 	}
 
 	private void setNotifications()
@@ -152,6 +152,9 @@ public class ProfileActivity extends ActionBarActivity
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
 		{
+			System.out.println("PANCAKES");
+			System.out.println(user.getAge() + user.getName());
+			
 			((Button) findViewById(R.id.profileButton1)).setText("Friends\n(" + user.getNumUsers() + ")");
 			((Button) findViewById(R.id.profileButton2)).setText("Groups\n(" + user.getNumGroups() + ")");	
 			((Button) findViewById(R.id.profileButton3)).setText("Events\n(" + user.getNumEventsUpcoming() + ")");	
@@ -160,8 +163,8 @@ public class ProfileActivity extends ActionBarActivity
 		{
 			//for event later
 			((Button) findViewById(R.id.profileButton1)).setText("Attending (" + event.getNumUsers() + ")");
-		}
-		
+			((Button) findViewById(R.id.profileButton2)).setText("Invite Groups");
+		}	
 	}
 	
 	@Override
@@ -220,6 +223,7 @@ public class ProfileActivity extends ActionBarActivity
 			{
 				//members
 				intent.putExtra("CONTENT", "GROUPS_MEMBERS");
+				System.out.println("Loading a group with id: " + group.getID());
 				GLOBAL.loadGroup(group.getID());
 				intent.putExtra("GID", group.getID());
 			}
@@ -227,9 +231,7 @@ public class ProfileActivity extends ActionBarActivity
 			{
 				//friends
 				intent.putExtra("CONTENT", "FRIENDS_CURRENT");
-		
-				GLOBAL.loadUser(user.getEmail());
-						
+				GLOBAL.loadUser(user.getEmail());		
 			}
 			else
 			{
@@ -241,8 +243,18 @@ public class ProfileActivity extends ActionBarActivity
 			break;
 		case R.id.profileButton2:
 			//groups
-			intent.putExtra("CONTENT", "GROUPS_CURRENT");
-			GLOBAL.loadUser(user.getEmail());
+			if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
+			{
+				intent.putExtra("CONTENT", "GROUPS_CURRENT");
+				GLOBAL.loadUser(user.getEmail());
+			}
+			else 
+			{
+				intent = new Intent(this, EventAddGroupsActivity.class);
+				intent.putExtra("EID", event.getID());
+				
+			}
+			
 			
 			break;
 		case R.id.profileButton3:
@@ -260,7 +272,7 @@ public class ProfileActivity extends ActionBarActivity
 			}
 			else
 			{
-				
+				intent = new Intent(this, EventEditActivity.class);
 			}
 			break;
 		default:
@@ -303,11 +315,12 @@ public class ProfileActivity extends ActionBarActivity
 			iv = (ImageView) findViewById(R.id.profileImageUPA);
 		}
 		
-		
+		TextView aboutTitle = (TextView) findViewById(R.id.aboutTitlePA);
 		TextView info = (TextView) findViewById(R.id.profileInfoTextView);
 		TextView about = (TextView) findViewById(R.id.profileAboutTextView);
 		if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
 		{
+			aboutTitle.setText("About Group:");
 			iv.setImageBitmap(group.getImage());
 			info.setText("Extra group info");
 			about.setText(group.getAbout());
@@ -321,11 +334,15 @@ public class ProfileActivity extends ActionBarActivity
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.EVENT.toString()))
 		{
+			aboutTitle.setText("About Event:");
 			about.setText(event.getAbout());
+			iv.setImageBitmap(event.getImage());
+			String infoText = "Category: " + event.getCategory() + "\n" + event.getLocation() + "\n" + event.getStartDate();
 			if (event.getMaxPart() > 0)
-				info.setText(event.getCategory() + "\n(" + event.getNumUsers() + ")/" + event.getMaxPart() + " attending" + "\n" + event.getLocation());
+				infoText += "\n" + event.getNumUsers() + " attending / " + event.getMinPart() + " required" + "\nMax Participants: " + event.getMaxPart();
 			else
-				info.setText(event.getCategory() + "\n" + event.getNumUsers() + " attending\nLocation: " + event.getLocation());
+				infoText += "\n" + event.getNumUsers() + " attending / " + event.getMinPart() + " required";
+			info.setText(infoText);
 		}		
 	}
 

@@ -43,7 +43,8 @@
 				    android:layout_height="match_parent"
 				    android:layout_margin="5dp"
 				    android:fontFamily="sans-serif-condensed"
-				    android:gravity="center"
+				    android:layout_gravity="center"
+				    android:gravity="left"
 				    android:maxLength="999"
 				    android:maxLines="6"
 				    android:padding="5dp"
@@ -57,7 +58,7 @@
 		
    	    
    	   	<TextView
-        android:id="@+id/createIntroMessage1"
+        android:id="@+id/aboutTitlePA"
    		android:layout_marginTop="5dp"
         android:layout_width="wrap_content"
        	android:fontFamily="sans-serif-condensed"

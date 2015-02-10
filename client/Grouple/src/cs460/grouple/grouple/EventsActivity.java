@@ -31,11 +31,7 @@ public class EventsActivity extends ActionBarActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_events);
-
-		
-		load();
-		
-		
+		load();	
 	}
 
 	private void load()

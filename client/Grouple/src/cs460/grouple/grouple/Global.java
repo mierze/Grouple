@@ -31,10 +31,10 @@ import android.widget.Button;
  */
 public class Global extends Application
 {
-	private User currentUser; //contains the current user, is updated on every pertinent activity call
-	private Group groupBuffer;
-	private User userBuffer;
-	private Event eventBuffer;
+	private static User currentUser; //contains the current user, is updated on every pertinent activity call
+	private static Group groupBuffer;
+	private static User userBuffer;
+	private static Event eventBuffer;
 	
 	/*
 	 * Adds a user to the users arraylist

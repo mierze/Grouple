@@ -178,7 +178,13 @@
             android:name=".InviteActivity"
             android:label="@string/title_activity_invite" >
         </activity>
-        <activity android:name=".EventAddGroupsActivity" android:label="@string/title_activity_event_addgroups" />
+        <activity
+            android:name=".EventAddGroupsActivity"
+            android:label="@string/title_activity_event_addgroups" />
+        <activity
+            android:name=".EventEditActivity"
+            android:label="@string/title_activity_event_edit" >
+        </activity>
     </application>
 
 </manifest>

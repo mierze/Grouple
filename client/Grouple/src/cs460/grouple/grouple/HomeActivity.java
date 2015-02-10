@@ -115,16 +115,7 @@ public class HomeActivity extends ActionBarActivity
 		int numEventsPending = user.getNumEventsPending();
 		if (numEventsPending > 0)
 		{
-			if (numEventsPending == 1)
-			{
-				((Button) findViewById(R.id.eventsButtonHA)).setText("Events \n(" + numEventsPending
-								+ " invite)");
-			} 
-			else
-			{
-				((Button) findViewById(R.id.eventsButtonHA)).setText("Events \n(" + numEventsPending
-								+ " invites)");
-			}
+			((Button) findViewById(R.id.eventsButtonHA)).setText("Events \n(" + numEventsPending + " pending)");	
 		} 
 		else if (numEventsPending == 0)
 		{

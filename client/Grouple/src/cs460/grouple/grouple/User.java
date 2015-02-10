@@ -182,6 +182,11 @@ public class User extends Entity
 		
 		eventsUpcoming.put(idNum, name);
 	}
+	public void alterEventsAccepted(int id, boolean status)
+	{
+		if (eventsAccepted.get(id) != null)
+			eventsAccepted.put(id, status);
+	}
 	
 	/*
 	 * Getters for user class below

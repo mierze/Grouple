@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.KeyPair;
+import java.util.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +20,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import android.os.AsyncTask;
+import android.text.format.DateFormat;
 import android.util.Log;
 
 
@@ -24,14 +28,13 @@ public class Event extends Entity
 {
 	private int id;
 	private String eventState;
-	//date startDate;
-	//date endDate;
+	private String startDate;
+	private String endDate;
 	private String category;
 	private int minPart;
 	private String location;
 	private int maxPart;
-	private ArrayList<String> itemList;
-	//private String creator; //email of super
+	private ArrayList<String> itemList; //will come into play soon
 	
 	/*
 	 * Constructor for User class
@@ -65,6 +68,32 @@ public class Event extends Entity
 	{
 		this.location = location;
 	}
+	public void setStartDate(String startDate)
+	{
+		//string is format from json, parsedate converts
+		this.startDate = parseDate(startDate);
+	}
+	public void setEndDate(String endDate)
+	{
+		this.endDate = parseDate(endDate);
+	}
+	private String parseDate(String dateString)
+	{
+		String date = "";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM DD, h:mma");
+        try
+        {
+    		Date parsedDate = (Date) simpleDateFormat.parse(dateString);
+    		//date = dateFormat.format(parsedDate); 
+    		date = simpleDateFormat.format(parsedDate);   
+        }
+        catch (ParseException ex)
+        {
+            System.out.println("Exception "+ex);
+        }
+		return date;
+	}
 	
 	//getters
 	public int getID()
@@ -90,6 +119,14 @@ public class Event extends Entity
 	public String getLocation()
 	{
 		return location;
+	}
+	public String getStartDate()
+	{
+		return startDate;
+	}
+	public String getEndDate()
+	{
+		return endDate;
 	}
 	
 	
@@ -164,54 +201,22 @@ public class Event extends Entity
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					JSONArray jsonArray = jsonObject.getJSONArray("eventInfo");
-					System.out.println(jsonArray.toString() + " this is array");
-					Log.d("getUserInfoOnPost", "success1");
+					Log.d("getEventInfoOnPost", "success1");
 					//$name, $state, $startdate, $enddate, $category, $about, $location, $minpart, $maxpart, $mustbringlist, $creator);
 					//at each iteration set to hashmap friendEmail -> 'first last'
-					
-					String name = (String) jsonArray.get(0);
-					//set name
-					System.out.println("before name in event load name" + name);
-					setName(name);
-					
-				
-					//1 = startdate
-					//2 = enddate
-					String state = (String) jsonArray.get(1);
-					setEventState(state);
-					
-					//3 = category
-					String category = (String) jsonArray.get(4);
-					System.out.println("before name in event load category" + category);
-					setCategory(category);
-					
-					//4 = about
-					String about = (String) jsonArray.get(5);
-					System.out.println("before name in event load about: " + about);
-					setAbout(about);
-					
-					
-					//5 = location
-					
-					String location = (String) jsonArray.get(6);
-					System.out.println("before name in event load location: " + location);
-					setLocation(location);		
-					
-					
-					//7 = minpart
-					int minPart = (Integer) jsonArray.get(7);
-					setMinPart(minPart);	
-					
-					//7 = maxpart
-					int maxPart = (Integer) jsonArray.get(8);	
-					setMaxPart(maxPart);	
-					
+
+					setName((String) jsonArray.get(0));
+					setEventState((String) jsonArray.get(1));
+					setStartDate((String) jsonArray.get(2));
+					setEndDate((String) jsonArray.get(3));
+					setCategory((String) jsonArray.get(4));
+					setAbout((String) jsonArray.get(5));
+					setLocation((String) jsonArray.get(6));						
+					setMinPart((Integer) jsonArray.get(7));	
+					setMaxPart((Integer) jsonArray.get(8));	
 					//9 = mustbringlist
-					
-					//10 = creator
-					String creator = (String) jsonArray.get(10);
-					setEmail(creator);		
-				
+					setEmail((String) jsonArray.get(10));		
+					setImage((String) jsonArray.get(11));
 				} 
 				//unsuccessful
 				else
@@ -228,9 +233,6 @@ public class Event extends Entity
 			//do next thing here
 		}
 	}
-	
-	
-	
 
 	/*
 	 * 
@@ -239,12 +241,9 @@ public class Event extends Entity
 	 */
 	public int fetchParticipants()
 	{
-		
 		AsyncTask<String, Void, String> task = new getParticipantsTask()
-		.execute("http://68.59.162.183/android_connect/get_event_participants.php?eid="
-				+ getID());
-        
-       try
+		.execute("http://68.59.162.183/android_connect/get_event_participants.php?eid="+ getID());
+		try
 		{
 			task.get(10000, TimeUnit.MILLISECONDS);
 		} 
@@ -263,7 +262,6 @@ public class Event extends Entity
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 		return 1; //return success
 	}
 
@@ -288,18 +286,15 @@ public class Event extends Entity
 					//looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
-						System.out.println("fetching a group members");
-						//at each iteration set to hashmap friendEmail -> 'first last'
 						JSONObject o = (JSONObject) jsonArray.get(i);
-						//function adds friend to the friends map
 						addToUsers(o.getString("email"), o.getString("first") + " " + o.getString("last"));
 					}
 				}
 				
-				// user has no friends
+				//event has none attending
 				if (jsonObject.getString("success").toString().equals("2"))
 				{
-					Log.d("fetchgrupmembers", "failed = 2 return");
+					Log.d("Fetch Event Attending", "failed = 2 return");
 					//setNumFriends(0); //PANDA need to set the user class not global
 				}
 			} catch (Exception e)
