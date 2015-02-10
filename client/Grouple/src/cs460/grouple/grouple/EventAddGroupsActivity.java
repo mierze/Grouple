@@ -21,6 +21,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -74,14 +75,16 @@ public class EventAddGroupsActivity extends ActionBarActivity
 	private void load()
 	{
 		GLOBAL = ((Global) getApplicationContext());
-		//grab the email of current users from our GLOBAL class
-		email = GLOBAL.getCurrentUser().getEmail();
+		//grab the email of current users from our global class
+		user = GLOBAL.getCurrentUser();
+		email = user.getEmail();
 		
-		user = GLOBAL.loadUser(email);
+		Bundle extras = getIntent().getExtras();
+		//grab the e_id from extras
+		e_id = extras.getString("EID");
 		
-		//load our list of current groups.
+		//load our list of current groups.  key is group id -> value is group name
 		allGroups = user.getGroups();
-		
 		populateGroupCreate();
 		initActionBar();
 		initKillswitchListener();
@@ -174,7 +177,6 @@ public class EventAddGroupsActivity extends ActionBarActivity
 	//onClick for Confirm add groups button
 	public void addGroupsButton(View view)
 	{		
-		/*
 		//loop through list of added to add all the groups to the event
 		int size = added.size();
 		System.out.println("Total count of groups to process: "+size);
@@ -184,6 +186,7 @@ public class EventAddGroupsActivity extends ActionBarActivity
 			
 			//get the groups's g_id by matching indexes from added list with indexes from allGroupslist.
 			int key = added.keyAt(i);
+			System.out.println("key set to: "+key);
 			Iterator it1 = allGroups.entrySet().iterator();
 			for(int k=0; k<key; k++)
 			{
@@ -193,15 +196,14 @@ public class EventAddGroupsActivity extends ActionBarActivity
 			Map.Entry pairs = (Map.Entry)it1.next();
 			
 			//grab the gid of group to add
-			String groupsgid = (String) pairs.getKey();
+			String groupsgid = String.valueOf(pairs.getKey());
 				
 			System.out.println("adding group: "+groupsgid);		
 			
 			//initiate add of group
 			new EventAddGroupTask().execute("http://68.59.162.183/"
 					+ "android_connect/add_eventmember.php", groupsgid, email, e_id);
-		}
-		*/			
+		}		
 	}
 	
 	//aSynch task to add individual group to event.
@@ -210,36 +212,57 @@ public class EventAddGroupsActivity extends ActionBarActivity
 		@Override
 		protected String doInBackground(String... urls)
 		{
-			
 			int tmpid = Integer.parseInt(urls[1]);
+			System.out.println("tmpid: "+tmpid);
 			
-			Group group = new Group(tmpid);
-			group.fetchMembers();
+			//Cannot currently use because of synch problems, until fixed just calling getMembers myself here so it will WORK
+			//Group group = new Group(tmpid);
+			//group.fetchMembers();
+			//allMembers = group.getUsers();
 			
-			Map<String, String> allMembers = new HashMap<String, String>();   //holds list of all current groups
-			allMembers = group.getUsers();
-			Set<String> keys = allMembers.keySet();
+			//pass url off to GLOBAL to do the JSON call.  Code continues at onPostExecute when JSON returns.
+			return GLOBAL.readJSONFeed("http://68.59.162.183/android_connect/get_group_members.php?gid="+tmpid, null);
 			
-			System.out.println("Number of members to invite for this group: "+allMembers.size());
-			
-			//loop through list of allMembers and attempt invite of each one
-			Iterator iterator = keys.iterator();
-			
-			//setup for each group
-			while(iterator.hasNext())
-			{
-				String memberToAdd = iterator.next().toString();
-				//initiate add of group member
-				new EventAddMemberTask().execute("http://68.59.162.183/"
-						+ "android_connect/add_eventmember.php", memberToAdd, email, e_id);
-			}
-			return "";
 		}
 
 		@Override
 		protected void onPostExecute(String result)
 		{
-			
+			Map<String, String> allMembers = new HashMap<String, String>();   //list of all current members
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					//gotta make a json array
+					JSONArray jsonArray = jsonObject.getJSONArray("gmembers");
+					
+					System.out.println("gmembers inside");
+					
+					//looping thru array
+					for (int i = 0; i < jsonArray.length(); i++)
+					{
+						System.out.println("fetching a group members");
+						//at each iteration set to hashmap friendEmail -> 'first last'
+						JSONObject o = (JSONObject) jsonArray.get(i);
+						//function adds friend to the friends map
+						String memberToAdd = o.getString("email");
+						new EventAddMemberTask().execute("http://68.59.162.183/"
+								+ "android_connect/add_eventmember.php", memberToAdd, email, e_id);
+					}
+					
+					finish();
+					
+				}
+				// group has no members
+				if (jsonObject.getString("success").toString().equals("2"))
+				{
+					Log.d("fetchgroupmembers", "failed = 2 return");
+				}
+			} catch (Exception e)
+			{
+				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+			}
 		}		
 	}
 	

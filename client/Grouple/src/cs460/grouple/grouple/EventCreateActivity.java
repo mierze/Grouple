@@ -206,32 +206,36 @@ public class EventCreateActivity extends ActionBarActivity
 		System.out.println("startdate to be used is: "+startDate);
 		category = categoryEditText.getText().toString();
 		EditText minimumEditText = (EditText) findViewById(R.id.minPartButton);
+		EditText maximumEditText = (EditText) findViewById(R.id.maxPartButton);
 		minimum = minimumEditText.getText().toString();
+		maximum = maximumEditText.getText().toString();
+		Date start = null;
+		Date end = null;
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm");
-    	Date start = null;
-    	Date end = null;
-		try {
-			start = sdf.parse(startDate);
-			end = sdf.parse(endDate);
-		} catch (ParseException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		if(!(startDate.compareTo("") == 0) && !(endDate.compareTo("") == 0))
+		{
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+			try {
+				start = sdf.parse(startDate);
+				end = sdf.parse(endDate);
+			} catch (ParseException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		
-		System.out.println(sdf.format(start));
-    	System.out.println(sdf.format(end));
+			System.out.println(sdf.format(start));
+			System.out.println(sdf.format(end));
 
-    	if(start.compareTo(end)>0){
-    		System.out.println("Start is after End");
-    	}else if(start.compareTo(end)<0){
-    		System.out.println("start is before end");
-    	}else if(start.compareTo(end)==0){
-    		System.out.println("start is equal to end");
-    	}else{
-    		System.out.println("How to get here?");
-    	}
-  
+			if(start.compareTo(end)>0){
+				System.out.println("Start is after End");
+			}else if(start.compareTo(end)<0){
+				System.out.println("start is before end");
+			}else if(start.compareTo(end)==0){
+				System.out.println("start is equal to end");
+			}else{
+				System.out.println("How to get here?");
+			}
+		}
 		
 		//if empty group name, display error box
 		if(eventname.compareTo("") == 0)
@@ -273,6 +277,14 @@ public class EventCreateActivity extends ActionBarActivity
 			.setCancelable(true)
 			.setNegativeButton("Ok", null).show();
 		}
+		//if maximum is set and it is less than minimum
+		else if(!(maximum.compareTo("") == 0) && (Integer.parseInt(maximum) < Integer.parseInt(minimum)))
+		{
+			new AlertDialog.Builder(this)
+			.setMessage("Your Minimum size cannot be larger than your Maximum size.")
+			.setCancelable(true)
+			.setNegativeButton("Ok", null).show();
+		}
 		//otherwise, display confirmation box to proceed
 		else
 		{
@@ -288,19 +300,7 @@ public class EventCreateActivity extends ActionBarActivity
 					new CreateEventTask().execute("http://68.59.162.183/"
 					+ "android_connect/create_event.php");
 				}
-			}).setNegativeButton("Invite Groups to Event", new DialogInterface.OnClickListener()
-		{
-		@Override
-		public void onClick(DialogInterface dialog, int which)
-		{
-			//take user to eventaddmembersactivity page. (pass e_id as extra so invites can be sent to correct group id)
-			Intent intent = new Intent(EventCreateActivity.this, EventAddGroupsActivity.class);
-			intent.putExtra("e_id", e_id);
-			GLOBAL.loadUser(GLOBAL.getCurrentUser().getEmail());
-			startActivity(intent);
-			finish();
-		}
-		}).show();
+			}).setNegativeButton("Cancel", null).show();
 		}
 	}
 	
@@ -348,19 +348,32 @@ public class EventCreateActivity extends ActionBarActivity
 					e_id = jsonObject.getString("e_id").toString();
 					Context context = getApplicationContext();
 					System.out.println("e_id of newly created group is: "+e_id);
+					GLOBAL.loadUser(user.getEmail());
+					GLOBAL.loadEvent(Integer.parseInt(e_id));
 					
 					//display confirmation box
 					AlertDialog dialog = new AlertDialog.Builder(EventCreateActivity.this)
-					.setMessage("Nice work, you've successfully created an event!")
+					.setMessage("You've successfully created an event!")
 					.setCancelable(true)
-					.setPositiveButton("View your Event Profile", new DialogInterface.OnClickListener()
+					.setPositiveButton("Invite Groups to Your Event", new DialogInterface.OnClickListener()
 					{
 						@Override
 						public void onClick(DialogInterface dialog, int id)
 						{
-							GLOBAL.loadUser(user.getEmail());
-							GLOBAL.loadEvent(Integer.parseInt(e_id));
-							//add code here to take user to newly created event profile page.  (pass e_id as extra so correct group profile can be loaded)
+							//code here to take user to eventaddmembersactivity page.  (pass e_id as extra so invites can be sent to correct event id)
+							Intent intent = new Intent(EventCreateActivity.this, EventAddGroupsActivity.class);
+							intent.putExtra("CONTENT", "EVENT");
+							intent.putExtra("EID", e_id);
+							intent.putExtra("EMAIL", user.getEmail());
+							startActivity(intent);
+							finish();
+						}
+					}).setNegativeButton("View Your Event Profile", new DialogInterface.OnClickListener()
+					{
+						@Override
+						public void onClick(DialogInterface dialog, int which) 
+						{
+							//code here to take user to newly created event profile page.  (pass e_id as extra so correct event profile can be loaded)
 							Intent intent = new Intent(EventCreateActivity.this, ProfileActivity.class);
 							intent.putExtra("CONTENT", "EVENT");
 							intent.putExtra("EID", e_id);
@@ -368,16 +381,8 @@ public class EventCreateActivity extends ActionBarActivity
 							startActivity(intent);
 							finish();
 						}
-					}).setNegativeButton("Invite Groups to Event", new DialogInterface.OnClickListener()
-					{
-						@Override
-						public void onClick(DialogInterface dialog, int which) 
-						{
-							//add code here to take user to eventaddmembersactivity page.  (pass e_id as extra so invites can be sent to correct group id)
-							finish();
-						}
 					}).show();
-					
+					//if user dimisses the confirmation box, gets sent to back to eventActivity.class
 					dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
 
 			            @Override
@@ -385,9 +390,8 @@ public class EventCreateActivity extends ActionBarActivity
 			            	finish();			                
 			            }
 			        });
-				
 				} 
-				//Create event failed for some reasons.
+				//Create event failed for some reasons.  Allow user to retry.
 				else if (jsonObject.getString("success").toString().equals("0"))
 				{	
 					//display error box
