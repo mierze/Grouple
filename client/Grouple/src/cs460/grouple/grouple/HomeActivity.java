@@ -193,20 +193,31 @@ public class HomeActivity extends ActionBarActivity
 		{
 		case R.id.friendsButtonHA:
 			intent = new Intent(this, FriendsActivity.class);
+			user.fetchFriendRequests();
+			user.fetchFriends();
 			break;
 		case R.id.settingsButtonHA:
 			intent = new Intent(this, SettingsActivity.class);
 			break;
 		case R.id.eventsButtonHA:
+			user.fetchEventsInvites();
+			user.fetchEventsPending();
+			user.fetchEventsUpcoming();
 			intent = new Intent(this, EventsActivity.class);
 			break;
 		case R.id.messagesButtonHA:
 			intent = new Intent(this, MessagesActivity.class);
 			break;
 		case R.id.groupsButtonHA:
+			user.fetchGroupInvites();
+			user.fetchGroups();
 			intent = new Intent(this, GroupsActivity.class);
 			break;
 		case R.id.userButtonHA:
+			user.fetchUserInfo();
+			user.fetchEventsUpcoming();
+			user.fetchFriends();
+			user.fetchGroups();
 			intent = new Intent(this, ProfileActivity.class);
 			intent.putExtra("CONTENT", "USER");
 			break;
@@ -214,7 +225,7 @@ public class HomeActivity extends ActionBarActivity
 			break;
 		}
 		
-		GLOBAL.loadUser(user.getEmail());//update
+		GLOBAL.setCurrentUser(user);//update
 		
 		//checking that intent was assigned
 		if (intent != null)

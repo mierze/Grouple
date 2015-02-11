@@ -348,8 +348,14 @@ public class EventCreateActivity extends ActionBarActivity
 					e_id = jsonObject.getString("e_id").toString();
 					Context context = getApplicationContext();
 					System.out.println("e_id of newly created group is: "+e_id);
-					GLOBAL.loadUser(user.getEmail());
-					GLOBAL.loadEvent(Integer.parseInt(e_id));
+					user.fetchEventsInvites();
+					user.fetchEventsPending();
+					user.fetchEventsUpcoming();
+					Event e = new Event(Integer.parseInt(e_id));
+					e.fetchEventInfo();
+					e.fetchParticipants();
+					GLOBAL.setCurrentUser(user);
+					GLOBAL.setEventBuffer(e);
 					
 					//display confirmation box
 					AlertDialog dialog = new AlertDialog.Builder(EventCreateActivity.this)

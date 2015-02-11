@@ -43,7 +43,10 @@ public class FriendsActivity extends ActionBarActivity
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)  {
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-	    	GLOBAL.loadUser(user.getEmail());
+	    	user.fetchEventsInvites();
+	    	user.fetchFriendRequests();
+	    	user.fetchGroupInvites();
+	    	GLOBAL.setCurrentUser(user);
 	    	finish();
 	    }
 	    return true;

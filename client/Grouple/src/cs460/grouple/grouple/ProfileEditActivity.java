@@ -2,6 +2,8 @@ package cs460.grouple.grouple;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -37,6 +39,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.util.Base64;
 import android.util.Log;
@@ -329,9 +332,9 @@ public class ProfileEditActivity extends ActionBarActivity implements
 				{
 					// Success
 					//refresh?
-					GLOBAL.loadUser(user.getEmail());
+					user.fetchUserInfo();
+					GLOBAL.setCurrentUser(user);
 					System.out.println("Success");
-					 
 					finish();
 				} else
 				{
@@ -345,15 +348,6 @@ public class ProfileEditActivity extends ActionBarActivity implements
 		}
 	}
 
-	
-	public void startUserProfileActivity()
-	{
-		Intent intent = new Intent(this, ProfileActivity.class);
-		intent.putExtra("up", "true");
-		intent.putExtra("email", user.getEmail());
-
-		startActivity(intent);
-	}
 	@Override
 	public void onClick(View v) 
 	{
@@ -412,10 +406,16 @@ public class ProfileEditActivity extends ActionBarActivity implements
 			} else if (reqCode == 2) 
 			{
 				Uri selectedImageUri = data.getData();
-
-				String tempPath = selectedImageUri.getPath();
-				bmp = BitmapFactory.decodeFile(tempPath);
-				iv.setImageBitmap(bmp);
+				try {
+					bmp= MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				iv.setImageURI(selectedImageUri);
 			}
 		}
 	}

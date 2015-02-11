@@ -59,7 +59,7 @@ public class GroupCreateActivity extends ActionBarActivity
 	private BroadcastReceiver broadcastReceiver;
 	private SparseArray<String> added = new SparseArray<String>();    //holds list of name of all friend rows to be added
 	private SparseArray<Boolean> role = new SparseArray<Boolean>();   //holds list of role of all friend rows to be added
-	private Map<String, String> allFriends = new HashMap<String, String>();   //holds list of all current friends
+	private ArrayList<User> allFriends = new ArrayList<User>();   //holds list of all current friends
 	private User user;
 	private String email = null;
 	private String g_id = null;
@@ -109,7 +109,6 @@ public class GroupCreateActivity extends ActionBarActivity
 			membersToAdd.addView(row);
 		}
 		
-		Iterator iterator = allFriends.entrySet().iterator();
 		
 		//setup for each friend
 		for(int i=0; i<allFriends.size(); i++)
@@ -195,8 +194,7 @@ public class GroupCreateActivity extends ActionBarActivity
 				}
 			});
 			
-			Entry thisEntry = (Entry) iterator.next();
-			friendNameButton.setText(thisEntry.getValue().toString());
+			friendNameButton.setText(allFriends.get(i).getName());
 			friendNameButton.setId(i);
 			rowView.setId(i);
 			membersToAdd.addView(rowView);	
@@ -345,16 +343,10 @@ public class GroupCreateActivity extends ActionBarActivity
 						
 						//get the user's email by matching indexes from added list with indexes from allFriendslist.
 						int key = added.keyAt(i);
-						Iterator it1 = allFriends.entrySet().iterator();
-						for(int k=0; k<key; k++)
-						{
-							//skip over iterations until arriving at key
-							it1.next();
-						}
-						Map.Entry pairs = (Map.Entry)it1.next();
+						User u = allFriends.get(key);
 						
 						//grab the email of friend to add
-						String friendsEmail = (String) pairs.getKey();
+						String friendsEmail = u.getEmail();
 						
 						//grab the role of friend to add
 						boolean tmpRole = role.valueAt(i);
@@ -396,7 +388,14 @@ public class GroupCreateActivity extends ActionBarActivity
 						}
 					}).show();
 				
-					GLOBAL.loadUser(user.getEmail());
+					user.fetchGroupInvites();
+					user.fetchGroups();
+					Group g = new Group(Integer.parseInt(g_id));
+					g.fetchGroupInfo();
+					g.fetchMembers();
+					GLOBAL.setCurrentUser(user);
+					GLOBAL.setGroupBuffer(g);
+					
 					//remove this activity from back-loop by calling finish().
 					finish();
 				} 

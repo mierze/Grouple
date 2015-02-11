@@ -109,8 +109,6 @@ public class ProfileActivity extends ActionBarActivity
 			{
 				if (GLOBAL.getUserBuffer() != null)
 					user = GLOBAL.getUserBuffer();
-				else
-					user = GLOBAL.loadUser(EXTRAS.getString("EMAIL"));
 				//hiding edit profile button
 				Button editProfileButton = (Button)findViewById(R.id.profileEditButton);
 				editProfileButton.setVisibility(View.GONE);
@@ -224,66 +222,70 @@ public class ProfileActivity extends ActionBarActivity
 				//members
 				intent.putExtra("CONTENT", "GROUPS_MEMBERS");
 				System.out.println("Loading a group with id: " + group.getID());
-				GLOBAL.loadGroup(group.getID());
+				group.fetchMembers();
+				GLOBAL.setGroupBuffer(group);
 				intent.putExtra("GID", group.getID());
 			}
 			else if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
 			{
 				//friends
 				intent.putExtra("CONTENT", "FRIENDS_CURRENT");
-				GLOBAL.loadUser(user.getEmail());		
+				user.fetchFriends();
 			}
 			else
 			{
 				//events
 				intent.putExtra("CONTENT", "EVENTS_ATTENDING");
-				GLOBAL.loadEvent(event.getID());
-		
+				event.fetchParticipants();
+				GLOBAL.setEventBuffer(event);
 			}
 			break;
 		case R.id.profileButton2:
 			//groups
-			if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
+			if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
 			{
 				intent.putExtra("CONTENT", "GROUPS_CURRENT");
-				GLOBAL.loadUser(user.getEmail());
+				user.fetchGroups();
 			}
-			else 
+			else if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
 			{
-				intent = new Intent(this, EventAddGroupsActivity.class);
-				intent.putExtra("EID", event.getID());
-				
-			}
-			
-			
-			break;
-		case R.id.profileButton3:
-			//events
-			intent = new Intent(this, EventsActivity.class);
-			break;
-		case R.id.profileEditButton:
-			if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
-			{
-				intent = new Intent(this, GroupEditActivity.class);
-			}
-			else if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
-			{
-				intent = new Intent(this, ProfileEditActivity.class);
+				intent = new Intent(this, InviteActivity.class);
+				user.fetchGroups();
 			}
 			else
 			{
-				intent = new Intent(this, EventEditActivity.class);
+				intent = new Intent(this, EventAddGroupsActivity.class);
+				GLOBAL.getCurrentUser().fetchGroups();
 			}
+			break;
+		case R.id.profileButton3:
+			//events UPCOMING
+			user.fetchEventsUpcoming();
+			intent.putExtra("CONTENT", "EVENTS_UPCOMING");
+			break;
+		case R.id.profileEditButton:
+			if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
+				intent = new Intent(this, GroupEditActivity.class);
+			else if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
+				intent = new Intent(this, ProfileEditActivity.class);
+			else
+				intent = new Intent(this, EventEditActivity.class);
 			break;
 		default:
 				break;
 		}
 		if (user != null)
+		{
+			if (!GLOBAL.isCurrentUser(user.getEmail()))
+				GLOBAL.setUserBuffer(user);
+			else
+				GLOBAL.setCurrentUser(user);
 			intent.putExtra("EMAIL", user.getEmail());
+		}
 		if (group != null)
-			intent.putExtra("GID", group.getID());
+			intent.putExtra("GID", Integer.toString(group.getID()));
 		if (event != null)
-			intent.putExtra("EID", event.getID());
+			intent.putExtra("EID", Integer.toString(event.getID()));
 		iv = null;
 		startActivity(intent);
 	}
@@ -292,13 +294,35 @@ public class ProfileActivity extends ActionBarActivity
 	public boolean onKeyDown(int keyCode, KeyEvent e)  {
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
 	    	//do nothing
-	    	if (user != null)
-	    		GLOBAL.loadUser(user.getEmail());
-	    	if (group != null)
-	    		GLOBAL.loadGroup(group.getID());
-	    	if (event != null)
-	    		GLOBAL.loadEvent(event.getID());
-	    		
+	    	if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
+	    	{
+	    		//current friends case
+	    		GLOBAL.getCurrentUser().fetchFriends();
+	    		//friend requests case
+	    		GLOBAL.getCurrentUser().fetchFriendRequests();
+	    		//group members case
+	    		if (GLOBAL.getGroupBuffer() != null)
+	    			GLOBAL.getGroupBuffer().fetchMembers();
+	    		//event parts case
+	    		if (GLOBAL.getEventBuffer() != null)
+	    			GLOBAL.getEventBuffer().fetchParticipants();
+	    	}
+	    	else if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
+	    	{
+	    		//current groups case
+	    		GLOBAL.getCurrentUser().fetchGroups();
+	    		//group invites case
+	    		GLOBAL.getCurrentUser().fetchGroupInvites();
+	    	}
+	    	else if (CONTENT.equals(CONTENT_TYPE.EVENT.toString()))
+	    	{
+	    		//events pending case
+	    		GLOBAL.getCurrentUser().fetchEventsUpcoming();
+	    		//events pending case
+	    		GLOBAL.getCurrentUser().fetchEventsPending();
+	    		//event invites case
+	    		GLOBAL.getCurrentUser().fetchEventsInvites();
+	    	}
 	    	finish();
 	    }
 	    return true;
@@ -327,9 +351,18 @@ public class ProfileActivity extends ActionBarActivity
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
 		{
+			String infoT = "";
+			String location = user.getLocation();
+			if (location == null)
+				location = "";
+
+			int age = user.getAge();
+			if (age == 0)
+				infoT = location;
+			else
+				infoT = age + " yrs young\n" + location;
 			iv.setImageBitmap(user.getImage());
-			info.setText(user.getAge() + "yrs old" +
-					"\n" + user.getLocation());
+			info.setText(infoT);
 			about.setText(user.getAbout());
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.EVENT.toString()))

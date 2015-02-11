@@ -58,7 +58,7 @@ public class EventAddGroupsActivity extends ActionBarActivity
 {
 	private BroadcastReceiver broadcastReceiver;
 	private SparseArray<String> added = new SparseArray<String>();    //holds list of name of all group rows to be added
-	private Map<Integer, String> allGroups = new HashMap<Integer, String>();   //holds list of all current groups
+	private ArrayList<Group> allGroups = new ArrayList<Group>();   //holds list of all current groups
 	private User user;
 	private String email = null;
 	private String e_id = null;
@@ -85,6 +85,10 @@ public class EventAddGroupsActivity extends ActionBarActivity
 		
 		//load our list of current groups.  key is group id -> value is group name
 		allGroups = user.getGroups();
+		if (allGroups != null)
+			System.out.println("AT THIS TIME ALL GROUPS IS THIS BIG: " + allGroups.size());
+		else
+			System.out.println("IT IS NULL AT THIS TIME ALLGROUPS");
 		populateGroupCreate();
 		initActionBar();
 		initKillswitchListener();
@@ -116,12 +120,10 @@ public class EventAddGroupsActivity extends ActionBarActivity
 			membersToAdd.addView(row);
 		}
 		
-		Iterator iterator = allGroups.entrySet().iterator();
 		
 		//setup for each group
 		for(int i=0; i<allGroups.size(); i++)
 		{
-			
 			GridLayout rowView;
 			rowView = (GridLayout) inflater.inflate(
 					R.layout.list_row_eventinvitegroup, null);
@@ -144,20 +146,17 @@ public class EventAddGroupsActivity extends ActionBarActivity
 					if(cb.isChecked())
 					{
 						added.put(view.getId(), text);
-						
 						System.out.println("Added size: "+added.size());
 					}
 					else
 					{
 						added.remove(view.getId());
-						
 						System.out.println("Added size: "+added.size());
 					}
 				}
 			});
 			
-			Entry thisEntry = (Entry) iterator.next();
-			groupNameButton.setText(thisEntry.getValue().toString());
+			groupNameButton.setText(allGroups.get(i).getName());
 			groupNameButton.setId(i);
 			rowView.setId(i);
 			membersToAdd.addView(rowView);	
@@ -183,20 +182,10 @@ public class EventAddGroupsActivity extends ActionBarActivity
 		for(int i = 0; i < size; i++) 
 		{
 			System.out.println("adding group #"+i+"/"+added.size());
-			
 			//get the groups's g_id by matching indexes from added list with indexes from allGroupslist.
 			int key = added.keyAt(i);
-			System.out.println("key set to: "+key);
-			Iterator it1 = allGroups.entrySet().iterator();
-			for(int k=0; k<key; k++)
-			{
-				//skip over iterations until arriving at key
-				it1.next();
-			}
-			Map.Entry pairs = (Map.Entry)it1.next();
-			
 			//grab the gid of group to add
-			String groupsgid = String.valueOf(pairs.getKey());
+			String groupsgid = String.valueOf(allGroups.get(key).getID());
 				
 			System.out.println("adding group: "+groupsgid);		
 			
@@ -242,11 +231,12 @@ public class EventAddGroupsActivity extends ActionBarActivity
 					//looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
-						System.out.println("fetching a group members");
+						
 						//at each iteration set to hashmap friendEmail -> 'first last'
 						JSONObject o = (JSONObject) jsonArray.get(i);
 						//function adds friend to the friends map
 						String memberToAdd = o.getString("email");
+						System.out.println("FETCHING GROUP MEMBER" + memberToAdd + " EID is " + e_id);
 						new EventAddMemberTask().execute("http://68.59.162.183/"
 								+ "android_connect/add_eventmember.php", memberToAdd, email, e_id);
 					}
@@ -305,33 +295,6 @@ public class EventAddGroupsActivity extends ActionBarActivity
 				}
 			}		
 		}
-	
-	//does something
-	public void startParentActivity(View view)
-	{
-		Bundle extras = getIntent().getExtras();
-
-		String className = extras.getString("ParentClassName");
-		Intent newIntent = null;
-		try
-		{
-			newIntent = new Intent(this, Class.forName("cs460.grouple.grouple."
-					+ className));
-			if (extras.getString("ParentEmail") != null)
-			{
-				newIntent.putExtra("email", extras.getString("ParentEmail"));
-			}
-			// newIntent.putExtra("email", extras.getString("email"));
-			System.out.println("delete");
-			// newIntent.putExtra("ParentEmail", extras.getString("email"));
-			newIntent.putExtra("ParentClassName", "EventAddGroupsActivity");
-		} catch (ClassNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		newIntent.putExtra("up", "true");
-		startActivity(newIntent);
-	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
@@ -360,12 +323,11 @@ public class EventAddGroupsActivity extends ActionBarActivity
 		if (id == R.id.action_home)
 		{
 			Intent intent = new Intent(this, HomeActivity.class);
-			intent.putExtra("up", "false");
-			intent.putExtra("ParentClassName", "GroupCreateActivity");
 			startActivity(intent);
 		}
 		return super.onOptionsItemSelected(item);
 	}
+	
 	public void initKillswitchListener()
 	{
 		// START KILL SWITCH LISTENER

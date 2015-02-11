@@ -338,7 +338,9 @@ public class GroupEditActivity extends ActionBarActivity implements
 					Context context = getApplicationContext();
 					Toast toast = Toast.makeText(context, "Group profile changed successfully.", Toast.LENGTH_SHORT);
 					toast.show();
-					GLOBAL.loadGroup(group.getID());
+					group.fetchGroupInfo();
+					group.fetchMembers();
+					GLOBAL.setGroupBuffer(group);
 					finish();
 				} else
 				{

@@ -127,7 +127,13 @@ public class LoginActivity extends Activity
 					String email = emailEditText.getText().toString();
 
 					//load the user into the system
-					GLOBAL.loadUser(email);
+					User u = new User(email);
+					u.fetchUserInfo();
+					u.fetchEventsInvites();
+					u.fetchFriendRequests();
+					u.fetchGroupInvites();
+				
+					GLOBAL.setCurrentUser(u);
 
 					//starting the home activity with the current users email
 					startHomeActivity(email);

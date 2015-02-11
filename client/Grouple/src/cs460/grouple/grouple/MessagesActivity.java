@@ -33,7 +33,6 @@ public class MessagesActivity extends ActionBarActivity
 		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
 		ab.setCustomView(R.layout.actionbar);
 		ab.setDisplayHomeAsUpEnabled(false);
-		ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
 
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
 

@@ -38,12 +38,12 @@ import android.widget.Toast;
 public class InviteActivity extends ActionBarActivity {
 
 	private User user;
-	private Map<String, String> users;
+	private ArrayList<User> users;
 	private Group group;
 	private BroadcastReceiver broadcastReceiver;
 	private SparseArray<String> added = new SparseArray<String>();    //holds list of name of all friend rows to be added
 	private SparseArray<Boolean> role = new SparseArray<Boolean>();   //holds list of role of all friend rows to be added
-	private Map<String, String> allFriends = new HashMap<String, String>();   //holds list of all current friends
+	private ArrayList<User> allFriends = new ArrayList<User>();   //holds list of all current friends
 	private static Global GLOBAL;
 	private static String CONTENT; //type of content to display
 	private static Bundle EXTRAS; //type of content to display
@@ -92,8 +92,7 @@ public class InviteActivity extends ActionBarActivity {
 		EXTRAS = getIntent().getExtras();
 		CONTENT = EXTRAS.getString("CONTENT");
 		//should always be current user
-		if (GLOBAL.isCurrentUser(EXTRAS.getString("EMAIL")))
-			user = GLOBAL.getCurrentUser();
+		user = GLOBAL.getCurrentUser();
 	
 		group = GLOBAL.getGroupBuffer();
 		
@@ -145,25 +144,25 @@ public class InviteActivity extends ActionBarActivity {
 		//could use content here
 		
 		LinearLayout pickFriendsLayout = (LinearLayout) findViewById(R.id.pickFriendsLayout);
-		Map<String, String> members;
+		ArrayList<User> members;
 		LayoutInflater li = getLayoutInflater();
 		members = group.getUsers();
-		Map<String, String> friends = user.getUsers();
-		users = new HashMap<String, String>();	
+		ArrayList<User> friends = user.getUsers();
+		users = new ArrayList<User>();
 		System.out.println("friends size: " + friends.size() + ", members size: " + members.size());
-		for (Entry<String, String> friend : friends.entrySet())
+		for (User friend : friends)
 		{
 			boolean inGroup = false;
-			for (Entry<String, String> mem : members.entrySet())
+			for (User member : members)
 			{
-				if (mem.getKey().equals(friend.getKey()))
+				if (member.getEmail().equals(friend.getEmail()))
 				{
 					inGroup = true;			
 				}
 			}
 			
 			if (!inGroup)
-				users.put(friend.getKey(), friend.getValue());
+				users.add(friend);
 		}
 
 		if (users != null && users.size() != 0)
@@ -172,7 +171,7 @@ public class InviteActivity extends ActionBarActivity {
 			// looping thru json and adding to an array
 			int index = 0;
 			//setup for each friend
-			for(Entry <String, String> entry : users.entrySet())
+			for(User user : users)
 			{
 				
 				GridLayout rowView;
@@ -255,7 +254,7 @@ public class InviteActivity extends ActionBarActivity {
 					}
 				});
 				
-				friendNameButton.setText(entry.getValue());
+				friendNameButton.setText(user.getName());
 				friendNameButton.setId(index);
 				rowView.setId(index);
 				pickFriendsLayout.addView(rowView);	
@@ -286,16 +285,10 @@ public class InviteActivity extends ActionBarActivity {
 			
 			//get the user's email by matching indexes from added list with indexes from allFriendslist.
 			int key = added.keyAt(i);
-			Iterator it1 = users.entrySet().iterator();
-			for(int k=0; k<key; k++)
-			{
-				//skip over iterations until arriving at key
-				it1.next();
-			}
-			Map.Entry pairs = (Map.Entry)it1.next();
+			
 			
 			//grab the email of friend to add
-			String friendsEmail = (String) pairs.getKey();
+			String friendsEmail = users.get(key).getEmail();
 			
 			//grab the role of friend to add
 			boolean tmpRole = role.valueAt(i);
@@ -317,8 +310,13 @@ public class InviteActivity extends ActionBarActivity {
 					+ "android_connect/add_groupmember.php", friendsEmail, user.getEmail(), friendsRole, Integer.toString(g_id));
 		}
 		
-		GLOBAL.loadUser(user.getEmail());
-		GLOBAL.loadGroup(group.getID());
+		//GLOBAL.loadUser(user.getEmail());
+		group.fetchGroupInfo();
+		group.fetchMembers();
+		user.fetchGroupInvites();
+		user.fetchGroups();
+		GLOBAL.setCurrentUser(user);
+		GLOBAL.setGroupBuffer(group);
 		
 		Context context = getApplicationContext();
 		Toast toast = Toast.makeText(context, "Friends have been invited.", Toast.LENGTH_SHORT);

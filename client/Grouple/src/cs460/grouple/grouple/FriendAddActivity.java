@@ -57,7 +57,6 @@ public class FriendAddActivity extends ActionBarActivity
 		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
 		ab.setCustomView(R.layout.actionbar);
 		ab.setDisplayHomeAsUpEnabled(false);
-		ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
 		// Set up the back button listener for the action bar.
 
 		// Set the action bar title.
@@ -182,6 +181,18 @@ public class FriendAddActivity extends ActionBarActivity
 		}
 	}
 
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event)  {
+	    if (keyCode == KeyEvent.KEYCODE_BACK) {
+	    	user.fetchFriends();
+	    	user.fetchFriendRequests();
+	    	GLOBAL.setCurrentUser(user);
+	    	finish(); //preventing back-loop
+	    }
+	    return true;
+	   }
+	
 	public void initKillswitchListener()
 	{
 		// START KILL SWITCH LISTENER

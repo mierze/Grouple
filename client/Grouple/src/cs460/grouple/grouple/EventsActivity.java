@@ -50,7 +50,6 @@ public class EventsActivity extends ActionBarActivity
 		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
 		ab.setCustomView(R.layout.actionbar);
 		ab.setDisplayHomeAsUpEnabled(false);
-		ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
 
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
 
@@ -71,18 +70,22 @@ public class EventsActivity extends ActionBarActivity
 		switch (view.getId())
 		{
 		case R.id.eventsPendingButtonEA:
+			user.fetchEventsPending();
 			intent.putExtra("CONTENT", "EVENTS_PENDING");
 			break;
 		case R.id.eventsUpcomingButtonEA:
+			user.fetchEventsUpcoming();
 			intent.putExtra("CONTENT", "EVENTS_UPCOMING");
 			break;
 		case R.id.eventCreateButtonEA:
 			intent = new Intent(this, EventCreateActivity.class);
 			break;
 		case R.id.eventInvitesButtonEA:
+			user.fetchEventsInvites();
 			intent.putExtra("CONTENT", "EVENTS_INVITES");
 			break;
 		}
+		GLOBAL.setCurrentUser(user);
 		intent.putExtra("EMAIL", user.getEmail());
 		startActivity(intent);
 	}
@@ -145,7 +148,10 @@ public class EventsActivity extends ActionBarActivity
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)  {
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-	    	GLOBAL.loadUser(user.getEmail());
+	    	user.fetchEventsInvites();
+	    	user.fetchFriendRequests();
+	    	user.fetchGroupInvites();
+	    	GLOBAL.setCurrentUser(user);
 	    	finish(); //preventing back-loop
 	    }
 	    return true;

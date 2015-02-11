@@ -109,7 +109,8 @@ public class Group extends Entity
 				{
 					//gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("gmembers");
-					
+					if (getUsers() != null)
+						getUsers().clear();
 					//looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
@@ -117,7 +118,9 @@ public class Group extends Entity
 						//at each iteration set to hashmap friendEmail -> 'first last'
 						JSONObject o = (JSONObject) jsonArray.get(i);
 						//function adds friend to the friends map
-						addToUsers(o.getString("email"), o.getString("first") + " " + o.getString("last"));
+						User u = new User(o.getString("email"));
+						u.setName(o.getString("first") + " " + o.getString("last"));
+						addToUsers(u);
 					}
 				}
 				

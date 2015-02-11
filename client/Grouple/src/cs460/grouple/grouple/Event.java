@@ -28,6 +28,7 @@ public class Event extends Entity
 {
 	private int id;
 	private String eventState;
+	private String inviter;
 	private String startDate;
 	private String endDate;
 	private String category;
@@ -94,6 +95,10 @@ public class Event extends Entity
         }
 		return date;
 	}
+	public void setInviter(String inviter)
+	{
+		this.inviter = inviter;
+	}
 	
 	//getters
 	public int getID()
@@ -127,6 +132,10 @@ public class Event extends Entity
 	public String getEndDate()
 	{
 		return endDate;
+	}
+	public String getInviter()
+	{
+		return inviter;
 	}
 	
 	
@@ -278,6 +287,8 @@ public class Event extends Entity
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
+				if (getUsers() != null)
+					getUsers().clear();
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					//gotta make a json array
@@ -287,7 +298,9 @@ public class Event extends Entity
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
 						JSONObject o = (JSONObject) jsonArray.get(i);
-						addToUsers(o.getString("email"), o.getString("first") + " " + o.getString("last"));
+						User u = new User(o.getString("email"));
+						u.setName(o.getString("first") + " " + o.getString("last"));
+						addToUsers(u);
 					}
 				}
 				

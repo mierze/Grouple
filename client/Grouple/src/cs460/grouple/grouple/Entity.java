@@ -27,7 +27,7 @@ public abstract class Entity
 {
 	private String email; //email of user, email of group creator, email of event creator
 	private String name; //fullname of user, fName of group creator, fName of event creator ?or possibly not
-	private Map<String, String> users; //group users, event participants, friends
+	private ArrayList<User> users; //group users, event participants, friends
 	private String about; //about user, group, event
 	private Bitmap image; //all entities have images
 
@@ -94,14 +94,14 @@ public abstract class Entity
 	{
 		return image;
 	}
-	
 	public void removeUser(String email)
 	{
-		if (users.containsKey(email))
-			users.remove(email);
+		for (User u : users)
+			if (u.getEmail().equals(email))
+				users.remove(u);
 	}
 	
-	public Map<String, String> getUsers()
+	public ArrayList<User> getUsers()
 	{
 		return users;
 	}
@@ -112,15 +112,14 @@ public abstract class Entity
 		else 
 			return 0;
 	}
-	public void addToUsers(String email, String name)
+	public void addToUsers(User u)
 	{
 		if (users == null)
 		{
-			users = new HashMap<String, String>();
+			users = new ArrayList<User>();
 		}
 		
-		users.put(email, name);
-		Log.d("Name for " + email, users.get(email));
+		users.add(u);
 	}
 	
 	/*

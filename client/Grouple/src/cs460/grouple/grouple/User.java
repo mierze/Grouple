@@ -57,12 +57,14 @@ public class User extends Entity
 	//birthday?
 	private String location;
 	private int age;
-	private Map<Integer, String> groups; 
+	private ArrayList<Group> groups; 
 	private ArrayList<String> friendRequests; //friendRequest emails->names
 	private Map <Integer, String> groupInvites; //group invite ids
-	private Map <Integer, String> eventsPending;
+	//private Map <Integer, String> eventsPending;
 	private Map <Integer, String> eventsUpcoming;
 	private Map <Integer, String> eventsInvites;
+	//TESTING
+	private ArrayList<Event> eventsPending;
 	
 	/*
 	 * nothign for now, was messign with call backs
@@ -86,10 +88,11 @@ public class User extends Entity
 	}
 	
 	//testing
-	public void removeGroup(int gid)
+	public void removeGroup(int id)
 	{
-		if (groups != null && groups.containsKey(gid))
-			groups.remove(gid);
+		for (Group g : groups)
+			if (g.getID() == id)
+				groups.remove(g);
 	}
 	//testing
 	public void removeGroupInvite(int gid)
@@ -108,11 +111,17 @@ public class User extends Entity
 		}
 	}
 	public void removeEventPending(int id)
+	{	
+		for (Event e : eventsPending)
+			if (e.getID() == id)
+				eventsPending.remove(e);
+	}
+	public void removeEventInvite(int id)
 	{
 		
-		if (eventsPending != null && eventsPending.containsKey(id))
+		if (eventsInvites != null && eventsInvites.containsKey(id))
 		{
-			eventsPending.remove(id);
+			eventsInvites.remove(id);
 		}
 	}
 	public void removeFriendRequest(String email)
@@ -142,14 +151,13 @@ public class User extends Entity
 		if (!friendRequests.contains(email))
 			friendRequests.add(email);
 	}
-	public void addToGroups(String id, String name)
+	public void addToGroups(Group g)
 	{
 		if (groups == null)
 		{
-			groups = new HashMap<Integer, String>();
+			groups = new ArrayList<Group>();
 		}
-		int idNum = Integer.parseInt(id);
-		groups.put(idNum, name);
+		groups.add(g);
 	}
 	public void addToGroupInvites(String id, String name, String sender)
 	{
@@ -161,14 +169,13 @@ public class User extends Entity
 		
 		groupInvites.put(idNum, name);
 	}
-	public void addToEventsPending(String id, String name, String sender)
+	public void addToEventsPending(Event e)
 	{
 		if (eventsPending == null)
 		{
-			eventsPending = new HashMap<Integer, String>();
+			eventsPending = new ArrayList<Event>();
 		}
-		int idNum = Integer.parseInt(id);
-		eventsPending.put(idNum, name);
+		eventsPending.add(e);
 	}
 	public void addToEventsInvites(String id, String name, String sender)
 	{
@@ -260,7 +267,7 @@ public class User extends Entity
 	{
 		return friendRequests;
 	}
-	public Map<Integer, String> getGroups()
+	public ArrayList<Group> getGroups()
 	{
 		return groups;
 	}
@@ -268,7 +275,7 @@ public class User extends Entity
 	{
 		return groupInvites;
 	}
-	public Map<Integer, String> getEventsPending()
+	public ArrayList<Event> getEventsPending()
 	{
 		return eventsPending;
 	}
@@ -307,7 +314,7 @@ public class User extends Entity
 		
 		AsyncTask<String, Void, String> task = new getUserInfoTask()
 		.execute("http://68.59.162.183/android_connect/get_profile.php");
-  
+		
 
 		try
 		{
@@ -441,7 +448,6 @@ public class User extends Entity
 		protected String doInBackground(String... urls)
 		{
 			return readJSONFeed(urls[0], null);
-			
 		}
 		
 		@Override
@@ -454,13 +460,18 @@ public class User extends Entity
 				{
 					//gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("friends");
+					//success so clear previous
+					if (getUsers() != null)
+						getUsers().clear();
 					//looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
 						//at each iteration set to hashmap friendEmail -> 'first last'
 						JSONObject o = (JSONObject) jsonArray.get(i);
 						//function adds friend to the friends map
-						addToUsers(o.getString("email"), o.getString("first") + " " + o.getString("last"));
+						User u = new User(o.getString("email"));
+						u.setName(o.getString("first") + " " + o.getString("last"));
+						addToUsers(u);
 					}
 				}
 				
@@ -535,7 +546,8 @@ public class User extends Entity
 				{
 					//gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("friendRequests");
-					
+					if (friendRequests != null)
+						friendRequests.clear();
 					//looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
@@ -612,8 +624,7 @@ public class User extends Entity
 				{
 					//gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("groups");
-					
-					
+
 					//clearing old groups
 					if (groups != null)
 					{
@@ -629,7 +640,9 @@ public class User extends Entity
 						JSONObject o = (JSONObject) jsonArray.get(i);
 						//function adds friend to the friends map
 						System.out.println("HERE WE ARE ABOUT TO ADD A GROUP TO THE GROUPS TABLE");
-						addToGroups(o.getString("gid"), o.getString("gname"));
+						Group g = new Group(Integer.parseInt(o.getString("gid")));
+						g.setName(o.getString("gname"));
+						addToGroups(g);
 					}
 
 				}
@@ -771,15 +784,22 @@ public class User extends Entity
 				{
 					//gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("eventsPending");
-					
+					if (eventsPending != null)
+						eventsPending.clear();
 					//looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
 						//at each iteration set to hashmap friendEmail -> 'first last'
 						JSONObject o = (JSONObject) jsonArray.get(i);
 						//function adds friend to the friends map
-				
-						addToEventsPending(o.getString("eid"), o.getString("name"), o.getString("sender"));
+						Event e = new Event(Integer.parseInt(o.getString("eid")));
+						e.setName(o.getString("name"));
+						e.setInviter(o.getString("sender"));	
+						e.setMinPart(Integer.parseInt(o.getString("minpart")));
+						e.setMaxPart(Integer.parseInt(o.getString("maxpart")));
+						e.fetchParticipants();
+						addToEventsPending(e);
+						//set min max
 					}
 				}
 				
@@ -839,7 +859,8 @@ public class User extends Entity
 				{
 					//gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("eventsInvites");
-					System.out.println("HERE IS WHAT WE LOOKCING AT: " + jsonArray);
+					if (eventsInvites != null)
+						eventsInvites.clear();
 					//looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
@@ -912,7 +933,8 @@ public class User extends Entity
 				{
 					//gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("eventsUpcoming");
-					
+					if (eventsUpcoming != null)
+						eventsUpcoming.clear();
 					//looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{

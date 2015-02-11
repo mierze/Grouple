@@ -71,6 +71,10 @@ public class ListActivity extends ActionBarActivity
 	private ArrayList<String> friendsEmailList = new ArrayList<String>();//test
 	private String PANDABUFFER = ""; //same
 	private int bufferID; //same as below: could alternatively have json return the values instead of saving here
+	
+	
+	//TESTING
+	private ArrayList<User> users;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -123,12 +127,6 @@ public class ListActivity extends ActionBarActivity
 				user = GLOBAL.getUserBuffer();
 				System.out.println("Load 4");
 			}
-			else
-			{
-				System.out.println("Load 4 loading user: " + EXTRAS.getString("EMAIL"));
-				user = GLOBAL.loadUser(EXTRAS.getString("EMAIL"));
-				System.out.println(CONTENT_TYPE.FRIENDS_REQUESTS + " " + CONTENT + " comp: " + CONTENT_TYPE.FRIENDS_REQUESTS.toString().equals(CONTENT));
-			}
 
 		System.out.println("Load 5, at this time CONTENT is " + CONTENT);
 		//CALL APPROPRIATE METHODS
@@ -152,12 +150,16 @@ public class ListActivity extends ActionBarActivity
 		{
 			System.out.println("Load 4.5 now in else no button stuff : " + user.getFirstName());
 			if (addNew != null)addNew.setVisibility(View.GONE);
-			if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
+			if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
 			{
 				if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
-					{
+				{
 					actionBarTitle = user.getFirstName() + "'s Groups";
-					}
+				}
+				else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
+				{
+					actionBarTitle = user.getFirstName() + "'s Pending Events";
+				}
 				else 
 				{
 					actionBarTitle = user.getFirstName() + "'s Upcoming Events";
@@ -167,11 +169,7 @@ public class ListActivity extends ActionBarActivity
 			else
 			{
 				System.out.println("Load 4.5 now in else acceptdecline stuff : " + user.getFirstName());
-				if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
-				{
-					actionBarTitle = user.getFirstName() + "'s Pending Events";
 		
-				}
 				if (CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()))
 				{
 					actionBarTitle = user.getFirstName() + "'s Event Invites";
@@ -239,7 +237,15 @@ public class ListActivity extends ActionBarActivity
 	{
 		Map<Integer, String> entities = null;
 		String sadGuyText = "";
+		ArrayList<Event> eventList = null;
+		ArrayList<Group> groupList = null;
 
+		
+		if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
+		{
+			eventList = user.getEventsPending();
+			sadGuyText = "You do not have any pending events.";
+		}
 		if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
 		{	
 			entities = user.getEventsUpcoming();
@@ -247,7 +253,7 @@ public class ListActivity extends ActionBarActivity
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
 		{
-			entities = user.getGroups();
+			groupList = user.getGroups();
 			sadGuyText = "You are not in any groups.";
 		}
 
@@ -277,6 +283,55 @@ public class ListActivity extends ActionBarActivity
 				listLayout.addView(rowView);
 			}
 		}
+		else if (eventList != null && eventList.size() > 0)
+		{
+			for (Event e : eventList) 
+			{
+				//Group group = GLOBAL.loadGroup(id);
+				Button nameButton = null;
+				GridLayout row = (GridLayout) li.inflate(R.layout.list_row, null);
+				//if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
+				//{
+					row = (GridLayout) li.inflate(R.layout.list_row_nobutton, null);
+					nameButton =  (Button)row.findViewById(R.id.nameButtonLI);
+				//}
+				
+				
+				// Grab the buttons and set their IDs. Their IDs
+				// will fall inline with the array 'groupsNameList'.
+				
+				nameButton.setText(e.getName() + "\t(" + e.getNumUsers() + ")/" + e.getMinPart() + " attending");
+				//setting ids to the id of the group for button functionality
+				nameButton.setId(e.getID());
+				row.setId(e.getID());
+				
+				//adding row to view
+				listLayout.addView(row);
+			}
+		}
+		else if (groupList != null && groupList.size() > 0)
+		{
+			for (Group g : groupList)
+			{
+				//Group group = GLOBAL.loadGroup(id);
+				GridLayout rowView = (GridLayout) li.inflate(R.layout.list_row, null);
+				Button leaveGroupButton = (Button)rowView.findViewById(R.id.removeButtonLI);
+				//if mod true this, if not someting else
+				if (GLOBAL.isCurrentUser(user.getEmail()))
+					leaveGroupButton.setId(g.getID());
+				else
+					leaveGroupButton.setVisibility(View.GONE);
+				
+				// Grab the buttons and set their IDs. Their IDs
+				Button nameButton = (Button) rowView.findViewById(R.id.nameButtonLI);
+				nameButton.setText(g.getName());
+				//setting ids to the id of the group for button functionality
+				nameButton.setId(g.getID());
+				rowView.setId(g.getID());
+				//adding row to view
+				listLayout.addView(rowView);
+			}
+		}
 		else
 		{
 			// The user has no groups so display the sad guy
@@ -288,19 +343,24 @@ public class ListActivity extends ActionBarActivity
 	
 	public void populateUsers()
 	{	
-		Map<String, String> users;
 		String sadGuyText = "";
 
 		if  (CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()))
 		{
 			sadGuyText = "There are no members in this group.";
 			users = group.getUsers();	
+			boolean currUserInGroup = false;
 			if (users != null)
-			if (!users.containsKey(GLOBAL.getCurrentUser().getEmail()))
+				for (User u : users)
+					if (u.getEmail().equals(GLOBAL.getCurrentUser().getEmail()))
+						currUserInGroup = true;
+				
+			if (!currUserInGroup)
 			{
 				Button addNew = (Button)findViewById(R.id.addNewButtonLiA);
 				addNew.setVisibility(View.GONE);
 			}
+				
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))//to do make else ifs." +
 		{
@@ -320,14 +380,14 @@ public class ListActivity extends ActionBarActivity
 	
 		if (users != null && !users.isEmpty())
 		{
-			int index = 0;//index for adding to friendsEmailList
-			for (Map.Entry<String, String> entry : users.entrySet())
+			for (User u : users)
 			{
-				 String email = (String) entry.getKey();
-				 String fullName = (String) entry.getValue();
+				int index = users.indexOf(u);
+				 String email = u.getEmail();
+				 System.out.println("IN USERS POP : emaiL: " + email);
+				 String fullName = u.getName();
 
 				 GridLayout rowView;
-				 friendsEmailList.add(index, email);
 				 if (user != null && GLOBAL.isCurrentUser(user.getEmail()) && !CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()))
 				 {
 					 rowView = (GridLayout) li.inflate(
@@ -335,6 +395,7 @@ public class ListActivity extends ActionBarActivity
 					 Button removeFriendButton = (Button) rowView
 							.findViewById(R.id.removeButtonLI);
 					 removeFriendButton.setId(index);
+					 
 				 } 
 				 else
 				 {
@@ -345,7 +406,6 @@ public class ListActivity extends ActionBarActivity
 				 friendNameButton.setId(index);
 				 rowView.setId(index);
 				 listLayout.addView(rowView);
-				 index++;
 			}
 		}
 		else
@@ -368,11 +428,6 @@ public class ListActivity extends ActionBarActivity
 		/*
 		 * Checking which CONTENT we need to inflate
 		 */
-		if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
-		{
-			listItems = user.getEventsPending();
-			sadGuyText = "You do not have any pending events.";
-		}
 		if (CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()))
 		{
 			listItems = user.getEventsInvites();
@@ -396,13 +451,12 @@ public class ListActivity extends ActionBarActivity
 				for (int i = 0; i < friendRequests.size(); i++)
 				{
 					GridLayout row = (GridLayout) li.inflate(R.layout.list_row_acceptdecline, null);
-		
 					Button nameButton = (Button) row.findViewById(R.id.nameButtonAD);
 					nameButton.setText(friendRequests.get(i));
 					nameButton.setId(i);
-					
-					listLayout.addView(row);
 					row.setId(i);
+					listLayout.addView(row);
+					
 					//PANDA TODO: use just a couple max data structures and make them class wide to avoid friendsEmailList
 					friendsEmailList.add(i, friendRequests.get(i));
 				}
@@ -416,17 +470,10 @@ public class ListActivity extends ActionBarActivity
 			{
 				GridLayout row;
 				Button nameButton;
+			
+				row = (GridLayout) li.inflate(R.layout.list_row_acceptdecline, null);
+				nameButton =  (Button)row.findViewById(R.id.nameButtonAD);
 				
-				if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
-				{
-					row = (GridLayout) li.inflate(R.layout.list_row_nobutton, null);
-					nameButton =  (Button)row.findViewById(R.id.nameButtonLI);
-				}
-				else
-				{
-					row = (GridLayout) li.inflate(R.layout.list_row_acceptdecline, null);
-					nameButton =  (Button)row.findViewById(R.id.nameButtonAD);
-				}
 				row.setId(entry.getKey());
 				nameButton.setId(entry.getKey());
 				nameButton.setText(entry.getValue());
@@ -487,6 +534,7 @@ public class ListActivity extends ActionBarActivity
 			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()))
 			{
 				bufferID = parent.getId();
+				System.out.println("Accepting event invite, eid: " + bufferID);
 				new getAcceptDeclineTask().execute("http://68.59.162.183/android_connect/accept_event_invite.php", Integer.toString(bufferID));
 			}
 			break;
@@ -509,11 +557,13 @@ public class ListActivity extends ActionBarActivity
 			}
 			else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()) || CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
 			{
+				System.out.println("SENDER: " + urls[1]);
+				//System.out.println()
 				//possibly check that all gorup invtes / events follow suit
 				nameValuePairs.add(new BasicNameValuePair("sender", urls[1]));
 				nameValuePairs.add(new BasicNameValuePair("receiver", user.getEmail()));
 			}
-			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
+			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()))
 			{
 				//code for this
 				//possibly check that all gorup invtes / events follow suit
@@ -533,15 +583,18 @@ public class ListActivity extends ActionBarActivity
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					// successful
-					System.out.println("success!");
-					GLOBAL.loadUser(user.getEmail());
+					System.out.println("success in acceptdecline on post!");
+					
+		
 					//removing all friend requests for refresh
 					listLayout.removeAllViews();
 					String message = jsonObject.getString("message");
 					Context context = getApplicationContext();
+					System.out.println("ACCEPT DECLINE POST 2");
 					
 					if (CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString()))
 					{
+						//user.fetchGroupInvites();
 						user.removeGroupInvite(bufferID);
 						if (!message.equals("Group invite accepted!"))
 						{
@@ -549,29 +602,58 @@ public class ListActivity extends ActionBarActivity
 						}
 					}
 					else if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
+					{
+						//user.fetchGroups();
 						user.removeGroup(bufferID);
+					}
 					else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
+					{
+						System.out.println("ACCEPT DECLINE POST 3");
 						user.removeFriendRequest(PANDABUFFER);
+						System.out.println("ACCEPT DECLINE POST 4");
+						//user.fetchFriendRequests();
+						System.out.println("ACCEPT DECLINE POST 5");
+					}
 					else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
+					{
+						System.out.println("NOW IN ACCEPT DECLINE ONPOST");
 						user.removeUser(PANDABUFFER);
+						//user.fetchFriends();
+					
+					}
 					else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
+					{
 						user.removeEventPending(bufferID);
-	
+						//user.fetchEventsPending();
+				
+					}
+					else if (CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()))
+					{
+						user.removeEventInvite(bufferID);
+						//user.fetchEventsInvites();
+			
+						if (!message.equals("Event invite accepted!"))
+							message = "Event invite declined!";
+					}
+					
+					/*if (GLOBAL.isCurrentUser(user.getEmail()))
+						GLOBAL.setCurrentUser(user);
+					else
+						GLOBAL.setUserBuffer(user);
+					 */
 					Toast toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
 					toast.show();
 
 					PANDABUFFER = "";
 					bufferID = -1;
-					//bufferStatus = null;
 
 					///refreshing views
 					if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
 						populateUsers();
-					else if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
+					else if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
 						populateEntities();
 					else 
 						populateAcceptDecline();
-
 				} 
 				else
 				{
@@ -632,15 +714,6 @@ public class ListActivity extends ActionBarActivity
 							}
 						}).setNegativeButton("Cancel", null).show();
 			}
-			if (user != null)
-			{
-				GLOBAL.loadUser(user.getEmail());
-				
-			}
-			if (group != null)
-			{
-				GLOBAL.loadGroup(group.getID());
-			}
 		}
 
 		public void startInviteActivity(View view)
@@ -656,7 +729,8 @@ public class ListActivity extends ActionBarActivity
 
 				intent.putExtra("GID", group.getID());
 			}
-			intent.putExtra("EMAIL", user.getEmail());
+			if (user != null)
+				intent.putExtra("EMAIL", user.getEmail());
 			startActivity(intent);	
 		}
 
@@ -667,31 +741,66 @@ public class ListActivity extends ActionBarActivity
 			int id = view.getId();
 			
 			Intent intent = new Intent(this, ProfileActivity.class);
-			if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
+			if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()) || CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString()) )
 			{
 				System.out.println("Loading group gid: " + id);
 				intent.putExtra("GID", id);
 				intent.putExtra("EMAIL", user.getEmail());
 				intent.putExtra("CONTENT", "GROUP");
-				GLOBAL.loadGroup(id);	
+				Group g = new Group(id);
+				g.fetchGroupInfo();
+				g.fetchMembers();
+				GLOBAL.setGroupBuffer(g);
 			}
-			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
+			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()))
 			{
 				System.out.println("Loading event, eid: " + id);
 				intent.putExtra("EID", id);
 				intent.putExtra("EMAIL", user.getEmail());
 				intent.putExtra("CONTENT", "EVENT");
-				Event e = GLOBAL.loadEvent(view.getId());
-			
-				if (e != null)
-					GLOBAL.setEventBuffer(e);
+				Event e = new Event(id);
+				e.fetchEventInfo();
+				e.fetchParticipants();
+				GLOBAL.setEventBuffer(e);
+				//TODO use the event object instead eventually
 			}
 			else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()) || CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()) || CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
 			{
+				String friendEmail;
 				System.out.println("Loading user profile, id: " + id);
-				String friendEmail = friendsEmailList.get(id);
-				GLOBAL.loadUser(friendEmail); //reloading user
+				if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
+				{
+					friendEmail = friendsEmailList.get(id);
+					User u = new User(friendEmail);
+					u.fetchEventsUpcoming();
+					u.fetchFriends();
+					u.fetchGroups();
+					u.fetchUserInfo();
+					if (!GLOBAL.isCurrentUser(friendEmail))
+						GLOBAL.setUserBuffer(u);
+					else
+						GLOBAL.setCurrentUser(u); //reloading user
+				}
+				else
+				{
+					friendEmail = users.get(id).getEmail();
+					users.get(id).fetchUserInfo();
+					users.get(id).fetchGroups();
+					users.get(id).fetchEventsUpcoming();
+					users.get(id).fetchFriends();
+					if (!GLOBAL.isCurrentUser(friendEmail))
+						GLOBAL.setUserBuffer(users.get(id));
+					else
+						GLOBAL.setCurrentUser(users.get(id)); //reloading user
+				}
+
+	
+				
+				System.out.println("Friend email is " +  friendEmail);
+				
+				
 				intent.putExtra("EMAIL", friendEmail);
+				System.out.println("CURRENTLY SETTING CONTENT");
 				intent.putExtra("CONTENT", "USER");	
 			}
 			startActivity(intent);
@@ -700,13 +809,81 @@ public class ListActivity extends ActionBarActivity
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent e)  {
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-	    	//do nothing
-			if (user != null)
-				GLOBAL.loadUser(user.getEmail());
-			if (group != null)
-				GLOBAL.loadGroup(group.getID());
-			if (event != null)
-				GLOBAL.loadEvent(event.getID());
+	    	//refresh pertinent info
+			/*FRIENDS_CURRENT, FRIENDS_REQUESTS,
+			GROUPS_CURRENT, GROUPS_INVITES, GROUPS_MEMBERS,
+		    EVENTS_UPCOMING, EVENTS_PENDING, EVENTS_PAST, EVENTS_ATTENDING, EVENTS_INVITES;    */
+	    	if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()) || CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
+	    	{
+	    		user.fetchFriends();
+	    		//FRIENDS
+	    		if (GLOBAL.isCurrentUser(user.getEmail()))
+	    			user.fetchFriendRequests();
+	    		if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
+				{
+	    			//USER PROFILE
+		    		//FRIEND PROFILE
+	    			user.fetchEventsUpcoming();
+	    			user.fetchGroups();
+				}
+	    	}
+	    	else if (CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString()) || CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
+	    	{
+	    		//GROUPS
+	    		user.fetchGroupInvites();
+	    		user.fetchGroups();
+	    		if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
+	    		{
+	    			user.fetchFriends();
+	    			user.fetchEventsUpcoming();
+	        		//USER PROFILE
+		    		//FRIEND PROFILE
+	    		}
+	    	}
+	    	else if (CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()))
+	    	{
+	    		//GROUP PROFILE
+	    		group.fetchMembers();
+	    	}
+	    	else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
+	    	{
+	    		//EVENTS
+	    		user.fetchEventsUpcoming();
+	    		if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
+	    		{
+	    			//profile case
+	        		user.fetchFriends();
+	        		user.fetchGroups();
+	    		}
+	    		if (GLOBAL.isCurrentUser(user.getEmail()))
+	    		{
+		    		user.fetchEventsInvites();
+		    		user.fetchEventsPending();
+	    		}
+	    	}
+	    	else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
+	    	{
+	    		//nothing yet
+	    	}
+	    	else if (CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()))
+	    	{
+	    		//EVENT PROFILE
+	    		event.fetchParticipants();
+	    	}
+	    	
+	    	
+	    	//SETTING GLOBALS
+	    	if (user != null)
+	    		if (GLOBAL.isCurrentUser(user.getEmail()))
+	    		{
+	    			GLOBAL.setCurrentUser(user);
+	    		}
+	    		else
+	    			GLOBAL.setUserBuffer(user);
+	    	if (group != null)
+	    		GLOBAL.setGroupBuffer(group);
+	    	if (event != null)
+	    		GLOBAL.setEventBuffer(event);
 	    	finish();
 	    }
 	    return true;

@@ -59,7 +59,10 @@ public class GroupsActivity extends ActionBarActivity
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)  {
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-	    	GLOBAL.loadUser(user.getEmail());
+	    	user.fetchEventsInvites();
+	    	user.fetchFriendRequests();
+	    	user.fetchGroupInvites();
+	    	GLOBAL.setCurrentUser(user);
 	    	finish(); //preventing back-loop
 	    }
 	    return true;
@@ -135,9 +138,11 @@ public class GroupsActivity extends ActionBarActivity
 	}
 
 	/* Start activity methods for group sub-activities */
+	//TODO : MAKE THESE ONCLICK
 	public void startGroupCreateActivity(View view)
 	{
-		GLOBAL.loadUser(user.getEmail());
+		user.fetchFriends();
+		GLOBAL.setCurrentUser(user);
 		Intent intent = new Intent(this, GroupCreateActivity.class);
 		intent.putExtra("EMAIL", user.getEmail());
 		startActivity(intent);
@@ -146,7 +151,8 @@ public class GroupsActivity extends ActionBarActivity
 	public void startGroupInvitesActivity(View view)
 	{
 		final String CONTENT = "GROUPS_INVITES";
-		GLOBAL.loadUser(user.getEmail());//update
+		user.fetchGroupInvites();
+		GLOBAL.setCurrentUser(user);//update
 		Intent intent = new Intent(this, ListActivity.class);
 		intent.putExtra("EMAIL", user.getEmail());
 		intent.putExtra("CONTENT", CONTENT);
@@ -156,7 +162,8 @@ public class GroupsActivity extends ActionBarActivity
 	public void startGroupsCurrentActivity(View view)
 	{
 		final String CONTENT = "GROUPS_CURRENT";
-		GLOBAL.loadUser(user.getEmail());//update
+		user.fetchGroups();
+		GLOBAL.setCurrentUser(user);//update
 		Intent intent = new Intent(this, ListActivity.class);
 		intent.putExtra("CONTENT", CONTENT);
 		intent.putExtra("EMAIL", user.getEmail());// specifies which
@@ -180,7 +187,6 @@ public class GroupsActivity extends ActionBarActivity
 					// System.exit(1);
 					finish();
 				}
-
 			}
 		};
 		registerReceiver(broadcastReceiver, intentFilter);

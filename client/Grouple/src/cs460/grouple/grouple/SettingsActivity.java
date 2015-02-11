@@ -34,18 +34,7 @@ public class SettingsActivity extends ActionBarActivity
 		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
 		ab.setCustomView(R.layout.actionbar);
 		ab.setDisplayHomeAsUpEnabled(false);
-		ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
-		upButton.setOnClickListener(new OnClickListener()
-		{
 
-			@Override
-			public void onClick(View view)
-			{
-
-				startParentActivity(view);
-
-			}
-		});
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
 
 		actionbarTitle.setText("Settings");

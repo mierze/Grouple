@@ -495,7 +495,9 @@ public class EventEditActivity extends ActionBarActivity implements
 					Context context = getApplicationContext();
 					Toast toast = Toast.makeText(context, "Event profile changed successfully.", Toast.LENGTH_SHORT);
 					toast.show();
-					GLOBAL.loadEvent(event.getID());
+					event.fetchEventInfo();
+					event.fetchParticipants();
+					GLOBAL.setEventBuffer(event);
 					finish();
 				} else
 				{
