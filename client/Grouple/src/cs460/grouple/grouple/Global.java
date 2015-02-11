@@ -137,6 +137,8 @@ public class Global extends Application
 			success = user.fetchGroupInvites();
 		
 			success = user.fetchEventsPending();
+			
+			success = user.fetchEventsInvites();
 			//was successful in fetching group invites
 			if (success == 1)
 				Log.d("loadUser","success after fetchEventsPending()");

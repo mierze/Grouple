@@ -61,8 +61,8 @@ public class User extends Entity
 	private ArrayList<String> friendRequests; //friendRequest emails->names
 	private Map <Integer, String> groupInvites; //group invite ids
 	private Map <Integer, String> eventsPending;
-	private Map <Integer, Boolean> eventsAccepted;
 	private Map <Integer, String> eventsUpcoming;
+	private Map <Integer, String> eventsInvites;
 	
 	/*
 	 * nothign for now, was messign with call backs
@@ -161,16 +161,24 @@ public class User extends Entity
 		
 		groupInvites.put(idNum, name);
 	}
-	public void addToEventsPending(String id, String name, String sender, boolean accepted)
+	public void addToEventsPending(String id, String name, String sender)
 	{
 		if (eventsPending == null)
 		{
 			eventsPending = new HashMap<Integer, String>();
-			eventsAccepted = new HashMap<Integer, Boolean>();
 		}
 		int idNum = Integer.parseInt(id);
-		eventsAccepted.put(idNum, accepted);
 		eventsPending.put(idNum, name);
+	}
+	public void addToEventsInvites(String id, String name, String sender)
+	{
+		System.out.println("ADDOING TIO EVENT INVITES");
+		if (eventsInvites == null)
+		{
+			eventsInvites = new HashMap<Integer, String>();
+		}
+		int idNum = Integer.parseInt(id);
+		eventsInvites.put(idNum, name);
 	}
 	public void addToEventsUpcoming(String id, String name)
 	{
@@ -182,11 +190,7 @@ public class User extends Entity
 		
 		eventsUpcoming.put(idNum, name);
 	}
-	public void alterEventsAccepted(int id, boolean status)
-	{
-		if (eventsAccepted.get(id) != null)
-			eventsAccepted.put(id, status);
-	}
+
 	
 	/*
 	 * Getters for user class below
@@ -238,6 +242,13 @@ public class User extends Entity
 		else
 			return 0;
 	}
+	public int getNumEventsInvites()
+	{
+		if (eventsInvites != null)
+			return eventsInvites.size();
+		else
+			return 0;
+	}
 	public int getNumEventsUpcoming()
 	{
 		if (eventsUpcoming != null)
@@ -265,9 +276,9 @@ public class User extends Entity
 	{
 		return eventsUpcoming;
 	}
-	public Map<Integer, Boolean> getEventsAccepted()
+	public Map<Integer, String> getEventsInvites()
 	{
-		return eventsAccepted;
+		return eventsInvites;
 	}
 	
 	
@@ -767,15 +778,75 @@ public class User extends Entity
 						//at each iteration set to hashmap friendEmail -> 'first last'
 						JSONObject o = (JSONObject) jsonArray.get(i);
 						//function adds friend to the friends map
-						boolean accepted = false;
-					;
-						if (!o.get("recdate").equals(null))
-						{
-							System.out.println("receive date is not null");
-							accepted = true;
-						}
-						System.out.println("Adding to events pending, boolean accepted = " + accepted);
-						addToEventsPending(o.getString("eid"), o.getString("name"), o.getString("sender"), accepted);
+				
+						addToEventsPending(o.getString("eid"), o.getString("name"), o.getString("sender"));
+					}
+				}
+				
+				// user has no group invites
+				if (jsonObject.getString("success").toString().equals("2"))
+				{
+					//no group invites
+				}
+			} catch (Exception e)
+			{
+				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+			}
+		}
+	}
+	
+	public int fetchEventsInvites()
+	{
+		AsyncTask<String, Void, String> task = new getEventsInvitesTask()
+				.execute("http://68.59.162.183/android_connect/get_events_invites.php?email="
+						+ getEmail());
+		try
+		{
+			task.get(10000, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TimeoutException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//while (task.getStatus() != Status.FINISHED);
+		return 1;
+	}
+
+	private class getEventsInvitesTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected String doInBackground(String... urls)
+		{
+			return readJSONFeed(urls[0], null);
+		}
+
+		@Override
+		protected void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					//gotta make a json array
+					JSONArray jsonArray = jsonObject.getJSONArray("eventsInvites");
+					System.out.println("HERE IS WHAT WE LOOKCING AT: " + jsonArray);
+					//looping thru array
+					for (int i = 0; i < jsonArray.length(); i++)
+					{
+						//at each iteration set to hashmap friendEmail -> 'first last'
+						JSONObject o = (JSONObject) jsonArray.get(i);
+						
+						addToEventsInvites(o.getString("eid"), o.getString("name"), o.getString("sender"));
 					}
 				}
 				

@@ -112,12 +112,15 @@ public class HomeActivity extends ActionBarActivity
 			((Button) findViewById(R.id.groupsButtonHA)).setText("Groups");
 		}
 		
-		int numEventsPending = user.getNumEventsPending();
-		if (numEventsPending > 0)
+		int numEventsInvites = user.getNumEventsInvites();
+		if (numEventsInvites > 0)
 		{
-			((Button) findViewById(R.id.eventsButtonHA)).setText("Events \n(" + numEventsPending + " pending)");	
+			if (numEventsInvites == 1)
+				((Button) findViewById(R.id.eventsButtonHA)).setText("Events \n(" + numEventsInvites + " invite)");
+			else
+				((Button) findViewById(R.id.eventsButtonHA)).setText("Events \n(" + numEventsInvites + " invites)");
 		} 
-		else if (numEventsPending == 0)
+		else if (numEventsInvites == 0)
 		{
 			((Button) findViewById(R.id.eventsButtonHA)).setText("Events");
 		}

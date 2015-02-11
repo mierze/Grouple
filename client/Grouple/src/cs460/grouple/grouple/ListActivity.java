@@ -54,7 +54,7 @@ public class ListActivity extends ActionBarActivity
 	{
 		FRIENDS_CURRENT, FRIENDS_REQUESTS,
 		GROUPS_CURRENT, GROUPS_INVITES, GROUPS_MEMBERS,
-	    EVENTS_UPCOMING, EVENTS_PENDING, EVENTS_PAST, EVENTS_ATTENDING;    
+	    EVENTS_UPCOMING, EVENTS_PENDING, EVENTS_PAST, EVENTS_ATTENDING, EVENTS_INVITES;    
 	}
 	
 	
@@ -71,7 +71,6 @@ public class ListActivity extends ActionBarActivity
 	private ArrayList<String> friendsEmailList = new ArrayList<String>();//test
 	private String PANDABUFFER = ""; //same
 	private int bufferID; //same as below: could alternatively have json return the values instead of saving here
-	private boolean bufferStatus;//don't want to use all these buffers, looking to update
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -172,6 +171,10 @@ public class ListActivity extends ActionBarActivity
 				{
 					actionBarTitle = user.getFirstName() + "'s Pending Events";
 		
+				}
+				if (CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()))
+				{
+					actionBarTitle = user.getFirstName() + "'s Event Invites";
 				}
 				else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
 				{
@@ -360,7 +363,6 @@ public class ListActivity extends ActionBarActivity
 	{
 		Map<Integer, String> listItems = null;
 		ArrayList<String> friendRequests = null;
-		Map<Integer, Boolean> eventsAccepted = null;
 		String sadGuyText = "";
 		
 		/*
@@ -369,8 +371,12 @@ public class ListActivity extends ActionBarActivity
 		if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
 		{
 			listItems = user.getEventsPending();
-			eventsAccepted = user.getEventsAccepted();
 			sadGuyText = "You do not have any pending events.";
+		}
+		if (CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()))
+		{
+			listItems = user.getEventsInvites();
+			sadGuyText = "You do not have any event invites.";
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
 		{
@@ -403,24 +409,24 @@ public class ListActivity extends ActionBarActivity
 			
 		}
 		//FOR EVENTS PENDING // group invites, both use maps, eventually want everything to be the same
-		else if((CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString())) && listItems != null && !listItems.isEmpty())
+		else if((CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString())) && listItems != null && !listItems.isEmpty())
 		{	
 			// looping thru the map
 			for (Map.Entry<Integer, String> entry : listItems.entrySet())
 			{
 				GridLayout row;
 				Button nameButton;
-				if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) && eventsAccepted.get(entry.getKey()))
+				
+				if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
 				{
 					row = (GridLayout) li.inflate(R.layout.list_row_nobutton, null);
 					nameButton =  (Button)row.findViewById(R.id.nameButtonLI);
 				}
-				else 
+				else
 				{
 					row = (GridLayout) li.inflate(R.layout.list_row_acceptdecline, null);
 					nameButton =  (Button)row.findViewById(R.id.nameButtonAD);
 				}
-				
 				row.setId(entry.getKey());
 				nameButton.setId(entry.getKey());
 				nameButton.setText(entry.getValue());
@@ -460,11 +466,10 @@ public class ListActivity extends ActionBarActivity
 				PANDABUFFER = friendsEmailList.get(parent.getId()); //PANDA
 				new getAcceptDeclineTask().execute("http://68.59.162.183/android_connect/decline_friend_request.php", PANDABUFFER);
 			}
-			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
+			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()))
 			{
 				bufferID = parent.getId(); //PANDA
-				bufferStatus = false;
-				new getAcceptDeclineTask().execute("http://68.59.162.183/android_connect/decline_event_invite.php", Integer.toString(bufferID));
+				new getAcceptDeclineTask().execute("http://68.59.162.183/android_connect/leave_event.php", Integer.toString(bufferID));
 			}
 			break;
 		case R.id.acceptButton:
@@ -479,10 +484,9 @@ public class ListActivity extends ActionBarActivity
 				PANDABUFFER = friendsEmailList.get(parent.getId());
 				new getAcceptDeclineTask().execute("http://68.59.162.183/android_connect/accept_friend_request.php", PANDABUFFER);
 			}
-			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
+			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()))
 			{
 				bufferID = parent.getId();
-				bufferStatus = true;
 				new getAcceptDeclineTask().execute("http://68.59.162.183/android_connect/accept_event_invite.php", Integer.toString(bufferID));
 			}
 			break;
@@ -551,7 +555,7 @@ public class ListActivity extends ActionBarActivity
 					else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
 						user.removeUser(PANDABUFFER);
 					else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
-						user.alterEventsAccepted(bufferID, bufferStatus);
+						user.removeEventPending(bufferID);
 	
 					Toast toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
 					toast.show();

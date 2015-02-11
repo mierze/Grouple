@@ -61,6 +61,7 @@ public class EventsActivity extends ActionBarActivity
 	{
 		((Button) findViewById(R.id.eventsUpcomingButtonEA)).setText("Upcoming Events (" + user.getNumEventsUpcoming() + ")");
 		((Button) findViewById(R.id.eventsPendingButtonEA)).setText("Pending Events (" + user.getNumEventsPending() + ")");
+		((Button) findViewById(R.id.eventInvitesButtonEA)).setText("Event Invites (" + user.getNumEventsInvites() + ")");
 		
 	}
 	
@@ -77,6 +78,9 @@ public class EventsActivity extends ActionBarActivity
 			break;
 		case R.id.eventCreateButtonEA:
 			intent = new Intent(this, EventCreateActivity.class);
+			break;
+		case R.id.eventInvitesButtonEA:
+			intent.putExtra("CONTENT", "EVENTS_INVITES");
 			break;
 		}
 		intent.putExtra("EMAIL", user.getEmail());
