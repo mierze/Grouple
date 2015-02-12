@@ -58,11 +58,10 @@ public class User extends Entity
 	private String location;
 	private int age;
 	private ArrayList<Group> groups; 
-	private ArrayList<String> friendRequests; //friendRequest emails->names
+	private ArrayList<User> friendRequests; //friendRequest emails->names
 	private Map <Integer, String> groupInvites; //group invite ids
-	//private Map <Integer, String> eventsPending;
-	private Map <Integer, String> eventsUpcoming;
-	private Map <Integer, String> eventsInvites;
+	private ArrayList<Event> eventsUpcoming;
+	private ArrayList<Event> eventsInvites;
 	//TESTING
 	private ArrayList<Event> eventsPending;
 	
@@ -105,10 +104,9 @@ public class User extends Entity
 	}
 	public void removeEventUpcoming(int id)
 	{
-		if (eventsUpcoming != null && eventsUpcoming.containsKey(id))
-		{
-			eventsUpcoming.remove(id);
-		}
+		for (Event e : eventsUpcoming)
+			if (e.getID() == id)
+				eventsUpcoming.remove(e);
 	}
 	public void removeEventPending(int id)
 	{	
@@ -118,11 +116,9 @@ public class User extends Entity
 	}
 	public void removeEventInvite(int id)
 	{
-		
-		if (eventsInvites != null && eventsInvites.containsKey(id))
-		{
-			eventsInvites.remove(id);
-		}
+		for (Event e : eventsInvites)
+			if (e.getID() == id)
+				eventsInvites.remove(e);
 	}
 	public void removeFriendRequest(String email)
 	{
@@ -142,14 +138,14 @@ public class User extends Entity
 	{
 		this.age = age;
 	}
-	public void addToFriendRequests(String email)
+	public void addToFriendRequests(User u)
 	{
 		if (friendRequests == null)
 		{
-			friendRequests = new ArrayList<String>();
+			friendRequests = new ArrayList<User>();
 		}
-		if (!friendRequests.contains(email))
-			friendRequests.add(email);
+		if (!friendRequests.contains(u)) //TODO: this?
+			friendRequests.add(u);
 	}
 	public void addToGroups(Group g)
 	{
@@ -177,25 +173,21 @@ public class User extends Entity
 		}
 		eventsPending.add(e);
 	}
-	public void addToEventsInvites(String id, String name, String sender)
+	public void addToEventsInvites(Event e)
 	{
-		System.out.println("ADDOING TIO EVENT INVITES");
 		if (eventsInvites == null)
 		{
-			eventsInvites = new HashMap<Integer, String>();
+			eventsInvites = new ArrayList<Event>();
 		}
-		int idNum = Integer.parseInt(id);
-		eventsInvites.put(idNum, name);
+		eventsInvites.add(e);
 	}
-	public void addToEventsUpcoming(String id, String name)
+	public void addToEventsUpcoming(Event e)
 	{
 		if (eventsUpcoming == null)
 		{
-			eventsUpcoming = new HashMap<Integer, String>();
-		}
-		int idNum = Integer.parseInt(id);
-		
-		eventsUpcoming.put(idNum, name);
+			eventsUpcoming = new ArrayList<Event>();
+		}		
+		eventsUpcoming.add(e);
 	}
 
 	
@@ -263,7 +255,7 @@ public class User extends Entity
 		else
 			return 0;
 	}
-	public ArrayList<String> getFriendRequests()
+	public ArrayList<User> getFriendRequests()
 	{
 		return friendRequests;
 	}
@@ -279,11 +271,11 @@ public class User extends Entity
 	{
 		return eventsPending;
 	}
-	public Map<Integer, String> getEventsUpcoming()
+	public ArrayList<Event> getEventsUpcoming()
 	{
 		return eventsUpcoming;
 	}
-	public Map<Integer, String> getEventsInvites()
+	public ArrayList<Event> getEventsInvites()
 	{
 		return eventsInvites;
 	}
@@ -490,7 +482,7 @@ public class User extends Entity
 	}	
 	
 	
-	public void setFriendRequests(ArrayList<String> friendRequests)
+	public void setFriendRequests(ArrayList<User> friendRequests)
 	{
 		this.friendRequests = friendRequests;
 	}
@@ -546,7 +538,7 @@ public class User extends Entity
 				{
 					//gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("friendRequests");
-					if (friendRequests != null)
+					if (friendRequests != null) //TODO: nah?
 						friendRequests.clear();
 					//looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
@@ -555,7 +547,7 @@ public class User extends Entity
 						JSONObject o = (JSONObject) jsonArray.get(i);
 						//function adds friend to the friends map=
 						Log.d("fetchFriendRequestsPost", "array length: " + jsonArray.length() + ", email: " + o.getString("email"));
-						addToFriendRequests(o.getString("email"));
+						addToFriendRequests(new User(o.getString("email")));
 					}
 				}
 				// user has no friend requests
@@ -866,8 +858,12 @@ public class User extends Entity
 					{
 						//at each iteration set to hashmap friendEmail -> 'first last'
 						JSONObject o = (JSONObject) jsonArray.get(i);
-						
-						addToEventsInvites(o.getString("eid"), o.getString("name"), o.getString("sender"));
+						Event e = new Event(Integer.parseInt(o.getString("eid")));
+						e.setName(o.getString("name"));
+						e.setInviter(o.getString("sender"));
+						e.setMinPart(Integer.parseInt(o.getString("minpart")));
+						e.setMaxPart(Integer.parseInt(o.getString("maxpart")));
+						addToEventsInvites(e);
 					}
 				}
 				
@@ -941,7 +937,9 @@ public class User extends Entity
 						//at each iteration set to hashmap friendEmail -> 'first last'
 						JSONObject o = (JSONObject) jsonArray.get(i);
 						//function adds friend to the friends map
-						addToEventsUpcoming(o.getString("eid"), o.getString("name"));
+						Event e = new Event(Integer.parseInt(o.getString("eid")));
+						e.setName(o.getString("name"));
+						addToEventsUpcoming(e);
 					}
 
 				}

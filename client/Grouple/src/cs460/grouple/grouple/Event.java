@@ -299,6 +299,7 @@ public class Event extends Entity
 					{
 						JSONObject o = (JSONObject) jsonArray.get(i);
 						User u = new User(o.getString("email"));
+						System.out.println("ADDIGN NEW PARTICIPANT - " + u.getEmail());
 						u.setName(o.getString("first") + " " + o.getString("last"));
 						addToUsers(u);
 					}

@@ -96,9 +96,14 @@ public abstract class Entity
 	}
 	public void removeUser(String email)
 	{
+		if (users != null)
 		for (User u : users)
 			if (u.getEmail().equals(email))
-				users.remove(u);
+			{
+				System.out.println("WE FOUND A MATCH");
+				users.remove(users.indexOf(u));
+				System.out.println("REMOVE SEEMS SUCCS");
+			}
 	}
 	
 	public ArrayList<User> getUsers()
@@ -118,7 +123,6 @@ public abstract class Entity
 		{
 			users = new ArrayList<User>();
 		}
-		
 		users.add(u);
 	}
 	

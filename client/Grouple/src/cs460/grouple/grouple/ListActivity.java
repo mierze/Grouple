@@ -75,6 +75,8 @@ public class ListActivity extends ActionBarActivity
 	
 	//TESTING
 	private ArrayList<User> users;
+	private ArrayList<Group> groups;
+	private ArrayList<Event> events;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -99,21 +101,15 @@ public class ListActivity extends ActionBarActivity
 	/* loading in everything needed to generate the list */
 	public void load()
 	{
-		System.out.println("Load 1");
 	
 		//INSTANTIATIONS
 		GLOBAL = ((Global) getApplicationContext());
 		EXTRAS =  getIntent().getExtras();
-		System.out.println("Load 1");
-		
 		CONTENT = EXTRAS.getString("CONTENT");
-		System.out.println("Load 2");
 		listLayout = ((LinearLayout)findViewById(R.id.listLayout));
-		li = getLayoutInflater();
-		
+		li = getLayoutInflater();	
 		String actionBarTitle = "";
-		Button addNew = (Button)findViewById(R.id.addNewButtonLiA);
-		System.out.println("Load 3");
+		Button addNew = (Button)findViewById(R.id.addNewButtonLiA); //TODO: hide / unhide
 		
 		//for now to test
 		//GRABBING A USER
@@ -128,9 +124,10 @@ public class ListActivity extends ActionBarActivity
 				System.out.println("Load 4");
 			}
 
-		System.out.println("Load 5, at this time CONTENT is " + CONTENT);
 		//CALL APPROPRIATE METHODS
-		if (CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()) || CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()))
+		//CONTENT_TYPE -> POPULATEUSERS
+		if (CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()) || CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()) 
+				||  CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()) || CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
 		{
 			if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
 				actionBarTitle = user.getFirstName() + "'s Friends";
@@ -139,6 +136,12 @@ public class ListActivity extends ActionBarActivity
 				group = GLOBAL.getGroupBuffer();
 				actionBarTitle="Group Members";
 			}
+			else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
+			{
+				if (addNew != null)addNew.setVisibility(View.GONE);
+				System.out.println("Load 5 now setting action bar title to : " + user.getFirstName());
+				actionBarTitle = user.getFirstName() + "'s Friend Requests";
+			}
 			else 
 			{
 				event = GLOBAL.getEventBuffer();
@@ -146,6 +149,11 @@ public class ListActivity extends ActionBarActivity
 			}
 			populateUsers();
 		}
+		//CONTENT_TYPE -> POPULATEGROUPS
+		
+		
+		
+		//CONTENT_TYPE -> POPULATEEVENTS
 		else 
 		{
 			System.out.println("Load 4.5 now in else no button stuff : " + user.getFirstName());
@@ -174,12 +182,7 @@ public class ListActivity extends ActionBarActivity
 				{
 					actionBarTitle = user.getFirstName() + "'s Event Invites";
 				}
-				else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
-				{
-					System.out.println("Load 5 now setting action bar title to : " + user.getFirstName());
-					actionBarTitle = user.getFirstName() + "'s Friend Requests";
-			
-				}
+				
 				else if (CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString()))
 				{
 					actionBarTitle = user.getFirstName() + "'s Group Invites";
@@ -230,12 +233,9 @@ public class ListActivity extends ActionBarActivity
 		return super.onOptionsItemSelected(item);
 	}
 
-	/*
-	 * Uses the mapping of ids and group names to display the users current groups / events...
-	 */
+	//SOON TO BE POPULATE GROUPS
 	private void populateEntities()
 	{
-		Map<Integer, String> entities = null;
 		String sadGuyText = "";
 		ArrayList<Event> eventList = null;
 		ArrayList<Group> groupList = null;
@@ -248,7 +248,7 @@ public class ListActivity extends ActionBarActivity
 		}
 		if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
 		{	
-			entities = user.getEventsUpcoming();
+			eventList = user.getEventsUpcoming();
 			sadGuyText = "You do not have any upcoming events.";
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
@@ -257,33 +257,7 @@ public class ListActivity extends ActionBarActivity
 			sadGuyText = "You are not in any groups.";
 		}
 
-		if (entities != null && entities.size() > 0)
-		{
-			for (Map.Entry<Integer, String> entry : entities.entrySet()) {
-				//Group group = GLOBAL.loadGroup(id);
-				GridLayout rowView = (GridLayout) li.inflate(R.layout.list_row, null);
-	
-					
-				Button leaveGroupButton = (Button)rowView.findViewById(R.id.removeButtonLI);
-				//if mod true this, if not someting else
-				if (GLOBAL.isCurrentUser(user.getEmail()))
-					leaveGroupButton.setId(entry.getKey());
-				else
-					leaveGroupButton.setVisibility(View.GONE);
-				
-				// Grab the buttons and set their IDs. Their IDs
-				// will fall inline with the array 'groupsNameList'.
-				Button nameButton = (Button) rowView.findViewById(R.id.nameButtonLI);
-				nameButton.setText(entry.getValue());
-				//setting ids to the id of the group for button functionality
-				nameButton.setId(entry.getKey());
-				rowView.setId(entry.getKey());
-				
-				//adding row to view
-				listLayout.addView(rowView);
-			}
-		}
-		else if (eventList != null && eventList.size() > 0)
+		if (eventList != null && eventList.size() > 0)
 		{
 			for (Event e : eventList) 
 			{
@@ -299,8 +273,15 @@ public class ListActivity extends ActionBarActivity
 				
 				// Grab the buttons and set their IDs. Their IDs
 				// will fall inline with the array 'groupsNameList'.
+				if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
+				{
+					nameButton.setText(e.getName());//future get date too?
+				}
+				else
+				{
+					nameButton.setText(e.getName() + "\t(" + e.getNumUsers() + ")/" + e.getMinPart() + " attending");
+				}
 				
-				nameButton.setText(e.getName() + "\t(" + e.getNumUsers() + ")/" + e.getMinPart() + " attending");
 				//setting ids to the id of the group for button functionality
 				nameButton.setId(e.getID());
 				row.setId(e.getID());
@@ -341,9 +322,15 @@ public class ListActivity extends ActionBarActivity
 		}	
 	}
 	
-	public void populateUsers()
+	//METHOD FOR POPULATING A LIST OF USERS
+	private void populateUsers()
 	{	
 		String sadGuyText = "";
+		View row = null;
+		int index;
+		String email = "";
+		String nameText = "";
+		Button nameButton = null;
 
 		if  (CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()))
 		{
@@ -372,6 +359,12 @@ public class ListActivity extends ActionBarActivity
 			else
 				addNew.setVisibility(View.GONE);
 		}
+		else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
+		{
+			System.out.println("GRABBING FRIEND REQUESTS");
+			users = user.getFriendRequests();
+			sadGuyText = "You do not have any friend requests.";
+		}
 		else 
 		{
 			users = event.getUsers();
@@ -382,47 +375,55 @@ public class ListActivity extends ActionBarActivity
 		{
 			for (User u : users)
 			{
-				int index = users.indexOf(u);
-				 String email = u.getEmail();
-				 System.out.println("IN USERS POP : emaiL: " + email);
-				 String fullName = u.getName();
+				index = users.indexOf(u);
+				email = u.getEmail();
+				System.out.println("IN USERS POP : emaiL: " + email);
 
-				 GridLayout rowView;
-				 if (user != null && GLOBAL.isCurrentUser(user.getEmail()) && !CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()))
-				 {
-					 rowView = (GridLayout) li.inflate(
-							 R.layout.list_row, null);
-					 Button removeFriendButton = (Button) rowView
-							.findViewById(R.id.removeButtonLI);
-					 removeFriendButton.setId(index);
-					 
-				 } 
-				 else
-				 {
-					rowView = (GridLayout) li.inflate(R.layout.list_row_nobutton, null);
-				 }
-				 Button friendNameButton = (Button) rowView.findViewById(R.id.nameButtonLI);
-				 friendNameButton.setText(fullName);
-				 friendNameButton.setId(index);
-				 rowView.setId(index);
-				 listLayout.addView(rowView);
-			}
+				if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()) && GLOBAL.isCurrentUser(user.getEmail()) && !CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()))
+				{
+					nameText = u.getName();
+					row = (GridLayout) li.inflate(R.layout.list_row, null);
+					nameButton = (Button) row.findViewById(R.id.nameButtonLI);
+					Button removeFriendButton = (Button) row.findViewById(R.id.removeButtonLI);
+					removeFriendButton.setId(index);	 
+				} 
+				//FOR FRIEND REQUESTS
+				else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
+				{	
+					System.out.println("SHOULD BE IN THIS NOW");
+					row = (GridLayout) li.inflate(R.layout.list_row_acceptdecline, null);
+					nameButton = (Button) row.findViewById(R.id.nameButtonAD);
+					nameText = email;
+				}
+				//FOR GROUP MEMBERS / CURRENT FRIENDS NON MOD
+				else
+				{
+					nameText = u.getName();
+					row = (GridLayout) li.inflate(R.layout.list_row_nobutton, null);
+					nameButton = (Button) row.findViewById(R.id.nameButtonLI);
+				}
+				nameButton.setText(nameText);
+				nameButton.setId(index);
+				row.setId(index);
+				listLayout.addView(row);
+			}		
 		}
 		else
 		{		
-			View row = li.inflate(R.layout.listitem_sadguy, null);
+			row = li.inflate(R.layout.listitem_sadguy, null);
 			TextView sadGuy = ((TextView) row.findViewById(R.id.sadGuyTextView));
 			// The user has no friend's so display the sad guy image.
 			sadGuy.setText(sadGuyText);
 			listLayout.addView(row);
 		}
+
 	}
 	
-	//
+	//SOON TO BE POPULATE EVENTS
 	private void populateAcceptDecline()
 	{
+		ArrayList<Event> eventList = null;//TODO: make populateEvents, populateUsers, populateGroups
 		Map<Integer, String> listItems = null;
-		ArrayList<String> friendRequests = null;
 		String sadGuyText = "";
 		
 		/*
@@ -430,41 +431,40 @@ public class ListActivity extends ActionBarActivity
 		 */
 		if (CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()))
 		{
-			listItems = user.getEventsInvites();
+			eventList = user.getEventsInvites();
 			sadGuyText = "You do not have any event invites.";
-		}
-		else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
-		{
-			System.out.println("GRABBING FRIEND REQUESTS");
-			friendRequests = user.getFriendRequests();
-			sadGuyText = "You do not have any friend requests.";
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString()))
 		{
 			listItems = user.getGroupInvites();
 			sadGuyText = "You do not have any group invites.";
 		}
-
-		//FOR FRIEND REQUESTS
-		if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()) && friendRequests != null && !friendRequests.isEmpty())
-		{
-				for (int i = 0; i < friendRequests.size(); i++)
-				{
-					GridLayout row = (GridLayout) li.inflate(R.layout.list_row_acceptdecline, null);
-					Button nameButton = (Button) row.findViewById(R.id.nameButtonAD);
-					nameButton.setText(friendRequests.get(i));
-					nameButton.setId(i);
-					row.setId(i);
-					listLayout.addView(row);
-					
-					//PANDA TODO: use just a couple max data structures and make them class wide to avoid friendsEmailList
-					friendsEmailList.add(i, friendRequests.get(i));
-				}
-			
-		}
-		//FOR EVENTS PENDING // group invites, both use maps, eventually want everything to be the same
-		else if((CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString())) && listItems != null && !listItems.isEmpty())
+		if((CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()) && eventList != null && !eventList.isEmpty()))
 		{	
+			for (Event e : eventList) 
+			{
+				//Group group = GLOBAL.loadGroup(id);
+				Button nameButton = null;
+				GridLayout row = (GridLayout) li.inflate(R.layout.list_row, null);
+				//if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
+				//{
+				row = (GridLayout) li.inflate(R.layout.list_row_acceptdecline, null);
+				nameButton =  (Button)row.findViewById(R.id.nameButtonAD);
+				//}
+	
+				nameButton.setText(e.getName() + "\t(" + e.getNumUsers() + ")/" + e.getMinPart() + " attending");
+				
+				
+				//setting ids to the id of the group for button functionality
+				nameButton.setId(e.getID());
+				row.setId(e.getID());
+				
+				//adding row to view
+				listLayout.addView(row);
+			}
+		}
+		else if  (CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString()) && listItems != null && !listItems.isEmpty())
+		{
 			// looping thru the map
 			for (Map.Entry<Integer, String> entry : listItems.entrySet())
 			{
@@ -510,7 +510,7 @@ public class ListActivity extends ActionBarActivity
 			}
 			else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
 			{
-				PANDABUFFER = friendsEmailList.get(parent.getId()); //PANDA
+				PANDABUFFER = users.get(parent.getId()).getEmail();
 				new getAcceptDeclineTask().execute("http://68.59.162.183/android_connect/decline_friend_request.php", PANDABUFFER);
 			}
 			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()))
@@ -528,7 +528,7 @@ public class ListActivity extends ActionBarActivity
 			else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
 			{
 			
-				PANDABUFFER = friendsEmailList.get(parent.getId());
+				PANDABUFFER = users.get(parent.getId()).getEmail();
 				new getAcceptDeclineTask().execute("http://68.59.162.183/android_connect/accept_friend_request.php", PANDABUFFER);
 			}
 			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()))
@@ -591,7 +591,6 @@ public class ListActivity extends ActionBarActivity
 					String message = jsonObject.getString("message");
 					Context context = getApplicationContext();
 					System.out.println("ACCEPT DECLINE POST 2");
-					
 					if (CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString()))
 					{
 						//user.fetchGroupInvites();
@@ -616,8 +615,10 @@ public class ListActivity extends ActionBarActivity
 					}
 					else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
 					{
-						System.out.println("NOW IN ACCEPT DECLINE ONPOST");
+						System.out.println("NOW IN ACCEPT DECLINE ONPOST PANDABUFFER IS " + PANDABUFFER);
+						//sYSTEM.
 						user.removeUser(PANDABUFFER);
+						System.out.println("NOW IN ACCEPT DECLINE ONPOST2");
 						//user.fetchFriends();
 					
 					}
@@ -635,6 +636,7 @@ public class ListActivity extends ActionBarActivity
 						if (!message.equals("Event invite accepted!"))
 							message = "Event invite declined!";
 					}
+					System.out.println("NOW IN ACCEPT DECLINE ONPOST3");
 					
 					/*if (GLOBAL.isCurrentUser(user.getEmail()))
 						GLOBAL.setCurrentUser(user);
@@ -643,6 +645,7 @@ public class ListActivity extends ActionBarActivity
 					 */
 					Toast toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
 					toast.show();
+					System.out.println("NOW IN ACCEPT DECLINE ONPOST4");
 
 					PANDABUFFER = "";
 					bufferID = -1;
@@ -654,6 +657,7 @@ public class ListActivity extends ActionBarActivity
 						populateEntities();
 					else 
 						populateAcceptDecline();
+					System.out.println("NOW IN ACCEPT DECLINE ONPOST5");
 				} 
 				else
 				{
@@ -694,8 +698,8 @@ public class ListActivity extends ActionBarActivity
 			else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
 			{
 				final int index = view.getId(); //position in friendArray
-				final String friendEmail = friendsEmailList.get(index); //friend to remove
-				PANDABUFFER = friendEmail;//PANDA
+				final String friendEmail = users.get(index).getEmail(); //friend to remove
+				PANDABUFFER = friendEmail;//PANDA TODO
 
 				new AlertDialog.Builder(this)
 						.setMessage("Are you sure you want to remove that friend?")
