@@ -249,8 +249,11 @@ public class ProfileActivity extends ActionBarActivity
 			}
 			else if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
 			{
+				//invite members, only for the current user, this isn't even real right now?
 				intent = new Intent(this, InviteActivity.class);
-				user.fetchGroups();
+				//user.fetchGroups();
+				GLOBAL.getCurrentUser().fetchFriends();
+				group.fetchMembers();
 			}
 			else
 			{
@@ -283,7 +286,10 @@ public class ProfileActivity extends ActionBarActivity
 			intent.putExtra("EMAIL", user.getEmail());
 		}
 		if (group != null)
+		{
 			intent.putExtra("GID", Integer.toString(group.getID()));
+			GLOBAL.setGroupBuffer(group);
+		}
 		if (event != null)
 			intent.putExtra("EID", Integer.toString(event.getID()));
 		iv = null;

@@ -93,7 +93,6 @@ public class InviteActivity extends ActionBarActivity {
 		CONTENT = EXTRAS.getString("CONTENT");
 		//should always be current user
 		user = GLOBAL.getCurrentUser();
-	
 		group = GLOBAL.getGroupBuffer();
 		
 		populateInviteMembers();

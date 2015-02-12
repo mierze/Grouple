@@ -726,11 +726,18 @@ public class ListActivity extends ActionBarActivity
 			else if (CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()))
 			{
 				intent = new Intent(this, InviteActivity.class);
-
-				intent.putExtra("GID", group.getID());
+				group.fetchMembers();
+				GLOBAL.getCurrentUser().fetchFriends();
 			}
 			if (user != null)
+			{
 				intent.putExtra("EMAIL", user.getEmail());
+			}
+			
+			if (group != null){
+				intent.putExtra("GID", group.getID());
+				GLOBAL.setGroupBuffer(group);
+			}
 			startActivity(intent);	
 		}
 
