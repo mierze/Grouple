@@ -63,6 +63,8 @@ public class InviteActivity extends ActionBarActivity {
 		return true;
 	}
 
+	//Hey
+	//THIS CODE LOOKS DIFFERENT than the onOptionsItemSelected methods in other Activities.  Problem, or no?
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle action bar item clicks here. The action bar will

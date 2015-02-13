@@ -29,12 +29,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.util.Base64;
 import android.util.Log;
@@ -164,6 +166,13 @@ public class GroupEditActivity extends ActionBarActivity implements
 		int id = item.getItemId();
 		if (id == R.id.action_logout)
 		{
+			//Get rid of sharepreferences for token login
+			SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+			SharedPreferences.Editor editor = preferences.edit();
+			editor.remove("session_email");
+			editor.remove("session_token");
+			editor.commit();
+			
 			Intent login = new Intent(this, LoginActivity.class);
 			startActivity(login);
 			Intent intent = new Intent("CLOSE_ALL");

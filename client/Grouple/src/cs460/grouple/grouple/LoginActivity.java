@@ -7,9 +7,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -28,25 +30,45 @@ public class LoginActivity extends Activity
 	private ProgressBar progBar;
 	private TextView loginFail;
 	private Global GLOBAL;// = 
+	boolean tokenFlag;
+	SharedPreferences prefs;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_login);
 		GLOBAL = (Global) getApplicationContext();
-		// sets up an progress bar spinner that will appear when user hits
-		// login.
-		progBar = (ProgressBar) findViewById(R.id.progressBarLA);
-		progBar.setVisibility(View.GONE);
+		//before showing login screen, attempt to login user using session token stored in SharedPreferences
+		prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		String token = prefs.getString("session_token", null);
+		String email = prefs.getString("session_email", null);
+		if(token !=null && email != null)
+		{
+			System.out.println("token was found... initiating login with email: "+email + ", token: "+token);
+			
+			tokenFlag = true;
+			//Token and email was found in SharedPreferences, try to use it to login.
+			new getLoginTask()
+			.execute("http://68.59.162.183/android_connect/get_login.php?email="
+					+ email + "&token=" + token);
+		}
+		else
+		{
+			System.out.println("no token found... initiating normal login activity.");
+			setContentView(R.layout.activity_login);
+			// sets up an progress bar spinner that will appear when user hits
+			// login.
+			progBar = (ProgressBar) findViewById(R.id.progressBarLA);
+			progBar.setVisibility(View.GONE);
 
-		// sets up error message that will appear if user enters invalid
-		// login/pass.
-		loginFail = (TextView) findViewById(R.id.loginFailTextViewLA);
+			// sets up error message that will appear if user enters invalid
+			// login/pass.
+			loginFail = (TextView) findViewById(R.id.loginFailTextViewLA);
 
 
-		Log.d("app666", "we created");
-		initKillswitchListener();
+			Log.d("app666", "we created");
+			initKillswitchListener();
+		}	
 	}
 
 	@Override
@@ -86,8 +108,6 @@ public class LoginActivity extends Activity
 		EditText passwordEditText = (EditText) findViewById(R.id.passwordEditTextLA);
 		String email = emailEditText.getText().toString();
 		String password = passwordEditText.getText().toString();
-		// String email = "mierze@gmail.com";
-		// String password="pass";
 
 		new getLoginTask()
 					.execute("http://68.59.162.183/android_connect/get_login.php?email="
@@ -100,12 +120,14 @@ public class LoginActivity extends Activity
 		@Override
 		protected String doInBackground(String... urls)
 		{
+			System.out.println("in doInBackground");
 			return GLOBAL.readJSONFeed(urls[0], null);
 		}
 
 		@Override
 		protected void onPostExecute(String result)
 		{
+			System.out.println("in onPostExecute");
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
@@ -113,19 +135,32 @@ public class LoginActivity extends Activity
 				System.out.println("After JSONObject");
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					// successful
-					// Login processing finished: progress bar disappear again
-					progBar.setVisibility(View.VISIBLE);
-					// display message from json (successful login message)
-					loginFail.setText(jsonObject.getString("message"));
-					loginFail.setTextColor(getResources().getColor(
-							R.color.light_green));
-					loginFail.setVisibility(View.VISIBLE);
+					String email;
+					if(tokenFlag)
+					{
+						System.out.println("token login successful.");
+						email = prefs.getString("session_email", null);						
+					}
+					else
+					{
+						// successful
+						// display message from json (successful login message)
+						loginFail.setText(jsonObject.getString("message"));
+						loginFail.setTextColor(getResources().getColor(
+								R.color.light_green));
+						loginFail.setVisibility(View.VISIBLE);
 
-					//get the email
-					EditText emailEditText = (EditText) findViewById(R.id.emailEditTextLA);
-					String email = emailEditText.getText().toString();
-
+						EditText emailEditText = (EditText) findViewById(R.id.emailEditTextLA);
+						//get the email
+						email = emailEditText.getText().toString();
+					}
+					
+					//update user's sharepreferences information
+					SharedPreferences.Editor editor = prefs.edit();
+					editor.putString("session_email", email);
+					editor.putString("session_token", jsonObject.getString("token").toString());
+					editor.apply();
+					
 					//load the user into the system
 					User u = new User(email);
 					u.fetchUserInfo();
@@ -140,14 +175,37 @@ public class LoginActivity extends Activity
 				} 
 				else
 				{
-					//login validation failed
-					// Login processing finished: progress bar disappear again
-					progBar.setVisibility(View.GONE);
-					System.out.println("failed");
-					// display message from json (failed login reason)
-					loginFail.setText(jsonObject.getString("message"));
-					loginFail.setTextColor(getResources().getColor(R.color.red));
-					loginFail.setVisibility(View.VISIBLE);
+					if(tokenFlag)
+					{
+						tokenFlag = false;
+						System.out.println("token login failed");
+						setContentView(R.layout.activity_login);
+						GLOBAL = (Global) getApplicationContext();
+						// sets up an progress bar spinner that will appear when user hits
+						// login.
+						progBar = (ProgressBar) findViewById(R.id.progressBarLA);
+						progBar.setVisibility(View.GONE);
+
+						// sets up error message that will appear if user enters invalid
+						// login/pass.
+						loginFail = (TextView) findViewById(R.id.loginFailTextViewLA);
+
+
+						Log.d("app666", "we created");
+						initKillswitchListener();
+					}
+					else
+					{
+						//login validation failed
+						// Login processing finished: progress bar disappear again
+						progBar.setVisibility(View.GONE);
+						System.out.println("failed");
+						// display message from json (failed login reason)
+						loginFail.setText(jsonObject.getString("message"));
+						loginFail.setTextColor(getResources().getColor(R.color.red));
+						loginFail.setVisibility(View.VISIBLE);
+					}
+					
 				}
 			} catch (Exception e)
 			{
