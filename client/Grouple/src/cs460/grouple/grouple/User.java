@@ -59,7 +59,7 @@ public class User extends Entity
 	private int age;
 	private ArrayList<Group> groups; 
 	private ArrayList<User> friendRequests; //friendRequest emails->names
-	private Map <Integer, String> groupInvites; //group invite ids
+	private ArrayList<Group> groupInvites; //group invite ids
 	private ArrayList<Event> eventsUpcoming;
 	private ArrayList<Event> eventsInvites;
 	//TESTING
@@ -89,41 +89,76 @@ public class User extends Entity
 	//testing
 	public void removeGroup(int id)
 	{
+		if (groups != null)
 		for (Group g : groups)
-			if (g.getID() == id)
-				groups.remove(g);
+			if (g.getID() == g.getID())
+			{
+				System.out.println("WE FOUND A MATCH");
+				groups.remove(groups.indexOf(g));
+				System.out.println("REMOVE SEEMS SUCCS");
+				break;
+			}
 	}
 	//testing
-	public void removeGroupInvite(int gid)
+	public void removeGroupInvite(int id)
 	{
-		if (groupInvites != null && groupInvites.containsKey(gid))
-		{
-			groupInvites.remove(gid);
-		}
-
+		if (groupInvites != null)
+		for (Group g : groupInvites)
+			if (g.getID() == g.getID())
+			{
+				System.out.println("WE FOUND A MATCH");
+				groupInvites.remove(groupInvites.indexOf(g));
+				System.out.println("REMOVE SEEMS SUCCS");
+				break;
+			}
 	}
 	public void removeEventUpcoming(int id)
 	{
+		if (eventsUpcoming != null)
 		for (Event e : eventsUpcoming)
-			if (e.getID() == id)
-				eventsUpcoming.remove(e);
+			if (e.getID() == e.getID())
+			{
+				System.out.println("WE FOUND A MATCH");
+				eventsUpcoming.remove(eventsUpcoming.indexOf(e));
+				System.out.println("REMOVE SEEMS SUCCS");
+				break;
+			}
 	}
 	public void removeEventPending(int id)
 	{	
+		if (eventsPending != null)
 		for (Event e : eventsPending)
-			if (e.getID() == id)
-				eventsPending.remove(e);
+			if (e.getID() == e.getID())
+			{
+				System.out.println("WE FOUND A MATCH");
+				eventsPending.remove(eventsPending.indexOf(e));
+				System.out.println("REMOVE SEEMS SUCCS");
+				break;
+			}
 	}
 	public void removeEventInvite(int id)
 	{
+		if (eventsInvites != null)
 		for (Event e : eventsInvites)
-			if (e.getID() == id)
-				eventsInvites.remove(e);
+			if (e.getID() == e.getID())
+			{
+				System.out.println("WE FOUND A MATCH");
+				eventsInvites.remove(eventsInvites.indexOf(e));
+				System.out.println("REMOVE SEEMS SUCCS");
+				break;
+			}
 	}
 	public void removeFriendRequest(String email)
 	{
-		if (friendRequests.contains(email))
-			friendRequests.remove(email);
+		if (friendRequests != null)
+			for (User u : friendRequests)
+				if (u.getEmail().equals(u.getEmail()))
+				{
+					System.out.println("WE FOUND A MATCH");
+					friendRequests.remove(friendRequests.indexOf(u));
+					System.out.println("REMOVE SEEMS SUCCS");
+					break;
+				}
 	}
 	
 	
@@ -155,15 +190,13 @@ public class User extends Entity
 		}
 		groups.add(g);
 	}
-	public void addToGroupInvites(String id, String name, String sender)
+	public void addToGroupInvites(Group g)
 	{
 		if (groupInvites == null)
 		{
-			groupInvites = new HashMap<Integer, String>();
+			groupInvites = new ArrayList<Group>();
 		}
-		int idNum = Integer.parseInt(id);
-		
-		groupInvites.put(idNum, name);
+		groupInvites.add(g);
 	}
 	public void addToEventsPending(Event e)
 	{
@@ -263,7 +296,7 @@ public class User extends Entity
 	{
 		return groups;
 	}
-	public Map<Integer, String> getGroupInvites()
+	public ArrayList<Group> getGroupInvites()
 	{
 		return groupInvites;
 	}
@@ -453,8 +486,7 @@ public class User extends Entity
 					//gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("friends");
 					//success so clear previous
-					if (getUsers() != null)
-						getUsers().clear();
+					//	getUsers().clear();
 					//looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
@@ -708,7 +740,10 @@ public class User extends Entity
 						//at each iteration set to hashmap friendEmail -> 'first last'
 						JSONObject o = (JSONObject) jsonArray.get(i);
 						//function adds friend to the friends map
-						addToGroupInvites(o.getString("gid"), o.getString("gname"), o.getString("sender"));
+						Group g = new Group(Integer.parseInt(o.getString("gid")));
+						g.setName(o.getString("gname"));
+						g.setInviter(o.getString("sender"));
+						addToGroupInvites(g);
 					}
 
 				}

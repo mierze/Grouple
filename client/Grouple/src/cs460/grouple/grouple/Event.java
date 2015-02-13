@@ -28,7 +28,6 @@ public class Event extends Entity
 {
 	private int id;
 	private String eventState;
-	private String inviter;
 	private String startDate;
 	private String endDate;
 	private String category;
@@ -95,10 +94,6 @@ public class Event extends Entity
         }
 		return date;
 	}
-	public void setInviter(String inviter)
-	{
-		this.inviter = inviter;
-	}
 	
 	//getters
 	public int getID()
@@ -132,10 +127,6 @@ public class Event extends Entity
 	public String getEndDate()
 	{
 		return endDate;
-	}
-	public String getInviter()
-	{
-		return inviter;
 	}
 	
 	

@@ -30,6 +30,7 @@ public abstract class Entity
 	private ArrayList<User> users; //group users, event participants, friends
 	private String about; //about user, group, event
 	private Bitmap image; //all entities have images
+	private String inviter;
 
 	/*
 	 * Constructor for our parent entity of users, groups, events...
@@ -73,6 +74,10 @@ public abstract class Entity
 			image = null;
 		}
 	}
+	public void setInviter(String inviter)
+	{
+		this.inviter = inviter;
+	}
 	
 	/*
 	 * Getters for user class below
@@ -103,7 +108,12 @@ public abstract class Entity
 				System.out.println("WE FOUND A MATCH");
 				users.remove(users.indexOf(u));
 				System.out.println("REMOVE SEEMS SUCCS");
+				break;
 			}
+	}
+	public String getInviter()
+	{
+		return inviter;
 	}
 	
 	public ArrayList<User> getUsers()
@@ -119,11 +129,21 @@ public abstract class Entity
 	}
 	public void addToUsers(User u)
 	{
+		boolean inUsers = false;
 		if (users == null)
 		{
 			users = new ArrayList<User>();
+			users.add(u);
 		}
-		users.add(u);
+		else
+		{
+			for (User t : users)
+				if (t.getEmail().equals(u.getEmail()))
+					inUsers = true;
+			if (!inUsers)
+				users.add(u);
+		}
+	
 	}
 	
 	/*
