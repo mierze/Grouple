@@ -278,8 +278,6 @@ public class Event extends Entity
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
-				if (getUsers() != null)
-					getUsers().clear();
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					//gotta make a json array

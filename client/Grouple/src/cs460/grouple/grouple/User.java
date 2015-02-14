@@ -91,7 +91,7 @@ public class User extends Entity
 	{
 		if (groups != null)
 		for (Group g : groups)
-			if (g.getID() == g.getID())
+			if (g.getID() == id)
 			{
 				System.out.println("WE FOUND A MATCH");
 				groups.remove(groups.indexOf(g));
@@ -104,7 +104,7 @@ public class User extends Entity
 	{
 		if (groupInvites != null)
 		for (Group g : groupInvites)
-			if (g.getID() == g.getID())
+			if (g.getID() == id)
 			{
 				System.out.println("WE FOUND A MATCH");
 				groupInvites.remove(groupInvites.indexOf(g));
@@ -116,7 +116,7 @@ public class User extends Entity
 	{
 		if (eventsUpcoming != null)
 		for (Event e : eventsUpcoming)
-			if (e.getID() == e.getID())
+			if (e.getID() == id)
 			{
 				System.out.println("WE FOUND A MATCH");
 				eventsUpcoming.remove(eventsUpcoming.indexOf(e));
@@ -128,7 +128,7 @@ public class User extends Entity
 	{	
 		if (eventsPending != null)
 		for (Event e : eventsPending)
-			if (e.getID() == e.getID())
+			if (e.getID() == id)
 			{
 				System.out.println("WE FOUND A MATCH");
 				eventsPending.remove(eventsPending.indexOf(e));
@@ -140,7 +140,7 @@ public class User extends Entity
 	{
 		if (eventsInvites != null)
 		for (Event e : eventsInvites)
-			if (e.getID() == e.getID())
+			if (e.getID() == id)
 			{
 				System.out.println("WE FOUND A MATCH");
 				eventsInvites.remove(eventsInvites.indexOf(e));
@@ -148,11 +148,12 @@ public class User extends Entity
 				break;
 			}
 	}
+	
 	public void removeFriendRequest(String email)
 	{
 		if (friendRequests != null)
 			for (User u : friendRequests)
-				if (u.getEmail().equals(u.getEmail()))
+				if (u.getEmail().equals(email))
 				{
 					System.out.println("WE FOUND A MATCH");
 					friendRequests.remove(friendRequests.indexOf(u));
@@ -175,52 +176,81 @@ public class User extends Entity
 	}
 	public void addToFriendRequests(User u)
 	{
+		boolean inFriendRequests = false;
 		if (friendRequests == null)
 		{
 			friendRequests = new ArrayList<User>();
 		}
-		if (!friendRequests.contains(u)) //TODO: this?
+		for (User t : friendRequests)
+			if (t.getEmail().equals(u.getEmail()))
+				inFriendRequests = true;
+		if (!inFriendRequests) //TODO: this?
 			friendRequests.add(u);
 	}
 	public void addToGroups(Group g)
 	{
+		boolean inGroups = false;
 		if (groups == null)
 		{
 			groups = new ArrayList<Group>();
 		}
-		groups.add(g);
+		for (Group t : groups)
+			if (t.getID() == g.getID())
+				inGroups = true;
+		if (!inGroups)
+			groups.add(g);
 	}
 	public void addToGroupInvites(Group g)
 	{
+		boolean inGroupInvites = false;
 		if (groupInvites == null)
 		{
 			groupInvites = new ArrayList<Group>();
 		}
-		groupInvites.add(g);
+		for (Group t : groupInvites)
+			if (t.getID() == g.getID())
+				inGroupInvites = true;
+		if (!inGroupInvites)
+			groupInvites.add(g);
 	}
 	public void addToEventsPending(Event e)
 	{
+		boolean inEventsPending = false;
 		if (eventsPending == null)
 		{
 			eventsPending = new ArrayList<Event>();
 		}
-		eventsPending.add(e);
+		for (Event t : eventsPending)
+			if (t.getID() == e.getID())
+				inEventsPending = true;
+		if (!inEventsPending)
+			eventsPending.add(e);
 	}
 	public void addToEventsInvites(Event e)
 	{
+		boolean inEventsInvites = false;
 		if (eventsInvites == null)
 		{
 			eventsInvites = new ArrayList<Event>();
 		}
-		eventsInvites.add(e);
+		for (Event t : eventsInvites)
+			if (t.getID() == e.getID())
+				inEventsInvites = true;
+		if (!inEventsInvites)
+			eventsInvites.add(e);
 	}
 	public void addToEventsUpcoming(Event e)
 	{
+		boolean inEventsUpcoming = false;
 		if (eventsUpcoming == null)
 		{
 			eventsUpcoming = new ArrayList<Event>();
 		}		
-		eventsUpcoming.add(e);
+		for (Event t : eventsUpcoming)
+			if (t.getID() == e.getID())
+				inEventsUpcoming = true;
+		if (!inEventsUpcoming)
+			eventsUpcoming.add(e);
 	}
 
 	
@@ -523,7 +553,7 @@ public class User extends Entity
 	 */
 	public int fetchFriendRequests()
 	{
-		friendRequests = null;//reset
+		//friendRequests = null;//reset
 		AsyncTask<String, Void, String> task = new getFriendRequestsTask();
 		
 		task.execute("http://68.59.162.183/android_connect/get_friend_requests.php?receiver="
@@ -570,8 +600,6 @@ public class User extends Entity
 				{
 					//gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("friendRequests");
-					if (friendRequests != null) //TODO: nah?
-						friendRequests.clear();
 					//looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
@@ -648,13 +676,6 @@ public class User extends Entity
 				{
 					//gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("groups");
-
-					//clearing old groups
-					if (groups != null)
-					{
-						System.out.println("Clearing groups of user.");
-						groups.clear();
-					}
 					
 					
 					//looping thru array
@@ -811,8 +832,6 @@ public class User extends Entity
 				{
 					//gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("eventsPending");
-					if (eventsPending != null)
-						eventsPending.clear();
 					//looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
@@ -886,8 +905,6 @@ public class User extends Entity
 				{
 					//gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("eventsInvites");
-					if (eventsInvites != null)
-						eventsInvites.clear();
 					//looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
@@ -964,8 +981,6 @@ public class User extends Entity
 				{
 					//gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("eventsUpcoming");
-					if (eventsUpcoming != null)
-						eventsUpcoming.clear();
 					//looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
