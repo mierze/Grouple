@@ -31,6 +31,7 @@ public abstract class Entity
 	private String about; //about user, group, event
 	private Bitmap image; //all entities have images
 	private String inviter;
+	private int pub;//public 1=yes, 0=no(private)
 
 	/*
 	 * Constructor for our parent entity of users, groups, events...
@@ -78,6 +79,11 @@ public abstract class Entity
 	{
 		this.inviter = inviter;
 	}
+	public void setPub(int pub)
+	{
+		this.pub = pub;
+	}
+
 	
 	/*
 	 * Getters for user class below
@@ -99,6 +105,15 @@ public abstract class Entity
 	{
 		return image;
 	}
+	public int getPub()
+	{
+		return pub;
+	}
+	public String getInviter()
+	{
+		return inviter;
+	}
+	
 	public void removeUser(String email)
 	{
 		if (users != null)
@@ -110,10 +125,6 @@ public abstract class Entity
 				System.out.println("REMOVE SEEMS SUCCS");
 				break;
 			}
-	}
-	public String getInviter()
-	{
-		return inviter;
 	}
 	
 	public ArrayList<User> getUsers()

@@ -133,17 +133,6 @@ public class Event extends Entity
 	}
 	
 	
-	/*
-	 * To delete the user out of memory and clear all arrays
-	 */
-	public int delete()
-	{
-		//delete code here
-		
-		return 1; //successful
-	}
-	
-	
 
 	/**
 	 * 
@@ -220,6 +209,7 @@ public class Event extends Entity
 					//9 = mustbringlist
 					setEmail((String) jsonArray.get(10));		
 					setImage((String) jsonArray.get(11));
+					setPub((Integer) jsonArray.get(12));
 				} 
 				//unsuccessful
 				else

@@ -66,18 +66,6 @@ public class User extends Entity
 	private ArrayList<Event> eventsPending;
 	
 	/*
-	 * nothign for now, was messign with call backs
-	 */
-	interface CallBackListener
-	{
-		public void callback();
-	}
-	 CallBackListener mListener;
-
-	   public void setListener(CallBackListener listener){
-	     mListener = listener;
-	   }
-	/*
 	 * Constructor for User class
 	 */
 	public User(String email) 

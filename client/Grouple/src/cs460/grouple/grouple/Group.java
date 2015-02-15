@@ -36,7 +36,6 @@ import android.util.Log;
 public class Group extends Entity 
 {
 	private int id; //id of the group
-
 	/*
 	 * Constructor for Group class
 	 */
@@ -145,7 +144,7 @@ public class Group extends Entity
 	public int fetchGroupInfo()
 	{
 		AsyncTask<String, Void, String> task = new getGroupInfoTask()
-		.execute("http://68.59.162.183/android_connect/get_group_profile.php", Integer.toString(getID()));
+		.execute("http://68.59.162.183/android_connect/get_group_info.php", Integer.toString(getID()));
         
        try
 	{
@@ -206,6 +205,9 @@ public class Group extends Entity
 					
 					String creator = (String) jsonArray.get(3);
 					setEmail(creator);
+					
+					int pub = (Integer) jsonArray.get(4);
+					setPub(pub); 
 
 				}
 				//unsuccessful
@@ -221,17 +223,6 @@ public class Group extends Entity
 		}
 	}
 
-	
-	/*
-	 * To delete group and all arrays within
-	 */
-	public int delete()
-	{
-		//delete code here
-		
-		return 1; //successful
-	}
-	
 	public String readJSONFeed(String URL, List<NameValuePair> nameValuePairs)
 	{
 		StringBuilder stringBuilder = new StringBuilder();

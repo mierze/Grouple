@@ -185,6 +185,10 @@
             android:name=".EventEditActivity"
             android:label="@string/title_activity_event_edit" >
         </activity>
+        <activity
+            android:name=".ManageMembersActivity"
+            android:label="@string/title_activity_manage_members" >
+        </activity>
     </application>
 
 </manifest>

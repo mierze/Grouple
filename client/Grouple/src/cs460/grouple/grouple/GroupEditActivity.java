@@ -43,6 +43,7 @@ import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -51,6 +52,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -114,14 +116,6 @@ public class GroupEditActivity extends ActionBarActivity implements
 
 		actionbarTitle.setText(group.getName() + "'s Profile");
 	}
-	
-	@Override
-	protected void onDestroy()
-	{
-		// TODO Auto-generated method stub
-		unregisterReceiver(broadcastReceiver);
-		super.onDestroy();
-	}
 
 
 	/*
@@ -144,45 +138,13 @@ public class GroupEditActivity extends ActionBarActivity implements
 		iv.setImageBitmap(group.getImage());
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu)
+	public void manageGroup(View view)
 	{
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.navigation_actions, menu);
-		// Set up the edit button and image view
-		b = (Button) findViewById(R.id.editGroupPhotoButton);
-		b.setOnClickListener(this);
-		if (iv == null)
-		{
-			iv = (ImageView) findViewById(R.id.groupPhoto);
-		}
-
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item)
-	{
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_logout)
-		{
-			GLOBAL.destroySession();
-			
-			Intent login = new Intent(this, LoginActivity.class);
-			startActivity(login);
-			Intent intent = new Intent("CLOSE_ALL");
-			this.sendBroadcast(intent);
-			return true;
-		}
-		if (id == R.id.action_home)
-		{
-			Intent intent = new Intent(this, HomeActivity.class);
-			startActivity(intent);
-		}
-		return super.onOptionsItemSelected(item);
+		Intent intent = new Intent(this, ManageMembersActivity.class);
+		intent.putExtra("GID", group.getID());
+		group.fetchMembers();
+		GLOBAL.setGroupBuffer(group);
+		startActivity(intent);
 	}
 
 	// Button Listener for submit changes. It the profile in the database.
@@ -436,7 +398,55 @@ public class GroupEditActivity extends ActionBarActivity implements
 		}
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.navigation_actions, menu);
+		// Set up the edit button and image view
+		b = (Button) findViewById(R.id.editGroupPhotoButton);
+		b.setOnClickListener(this);
+		if (iv == null)
+		{
+			iv = (ImageView) findViewById(R.id.groupPhoto);
+		}
 
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		// Handle action bar item clicks here. The action bar will
+		// automatically handle clicks on the Home/Up button, so long
+		// as you specify a parent activity in AndroidManifest.xml.
+		int id = item.getItemId();
+		if (id == R.id.action_logout)
+		{
+			GLOBAL.destroySession();
+			
+			Intent login = new Intent(this, LoginActivity.class);
+			startActivity(login);
+			Intent intent = new Intent("CLOSE_ALL");
+			this.sendBroadcast(intent);
+			return true;
+		}
+		if (id == R.id.action_home)
+		{
+			Intent intent = new Intent(this, HomeActivity.class);
+			startActivity(intent);
+		}
+		return super.onOptionsItemSelected(item);
+	}
+	
+	@Override
+	protected void onDestroy()
+	{
+		// TODO Auto-generated method stub
+		unregisterReceiver(broadcastReceiver);
+		super.onDestroy();
+	}
+	
 	public void initKillswitchListener()
 	{
 		// START KILL SWITCH LISTENER

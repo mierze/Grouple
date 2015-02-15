@@ -12,6 +12,8 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import cs460.grouple.grouple.ProfileActivity.CONTENT_TYPE;
 import cs460.grouple.grouple.User.getUserInfoTask;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -68,11 +70,11 @@ public class ListActivity extends ActionBarActivity
 	private String CONTENT; //type of content to display in list, passed in from other activities
 	private LinearLayout listLayout; //layout for list activity (scrollable layout to inflate into)
 	private Global GLOBAL;// = thinking making few static and do some null checks and regrabs
-	private static LayoutInflater li;
-	//private ArrayList<String> friendsEmailList = new ArrayList<String>();//test
+	private LayoutInflater li;
+	private String ROLE = "M";//defaulting to lowest level
 	private String PANDABUFFER = ""; //same
 	private int bufferID; //same as below: could alternatively have json return the values instead of saving here	
-	
+	private Button addNew;
 	//TESTING
 	private ArrayList<User> users;
 	private ArrayList<Group> groups;
@@ -107,9 +109,9 @@ public class ListActivity extends ActionBarActivity
 		listLayout = ((LinearLayout)findViewById(R.id.listLayout));
 		li = getLayoutInflater();	
 		String actionBarTitle = "";
-		Button addNew = (Button)findViewById(R.id.addNewButtonLiA); //TODO: hide / unhide
+		addNew = (Button)findViewById(R.id.addNewButtonLiA);
+		addNew.setVisibility(View.GONE); //GONE FOR NOW
 		
-		//for now to test
 		//GRABBING A USER
 		if (EXTRAS.getString("EMAIL") != null)
 			if (GLOBAL.isCurrentUser(EXTRAS.getString("EMAIL")))
@@ -123,22 +125,27 @@ public class ListActivity extends ActionBarActivity
 				||  CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()) || CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
 		{
 			if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
+			{
+				addNew.setText("Add New Friend");
+				addNew.setVisibility(View.VISIBLE);
 				actionBarTitle = user.getFirstName() + "'s Friends";
+			}
 			else if (CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()))
 			{
 				group = GLOBAL.getGroupBuffer();
+				setRole();
 				actionBarTitle="Group Members";
 			}
 			else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
 			{
-				if (addNew != null)addNew.setVisibility(View.GONE);
+		
 				System.out.println("Load 5 now setting action bar title to : " + user.getFirstName());
 				actionBarTitle = user.getFirstName() + "'s Friend Requests";
 			}
-			else 
+			else //EVENTS_ATTENDING
 			{
-				addNew.setText("Invite Groups");//TODO: Mod checks
 				event = GLOBAL.getEventBuffer();
+				setRole();
 				actionBarTitle = "Attending " + event.getName();
 			}
 			populateUsers();
@@ -172,6 +179,89 @@ public class ListActivity extends ActionBarActivity
 		initActionBar(actionBarTitle);
 		initKillswitchListener();
 	}
+	
+	
+	private void setRole()
+	{
+		ArrayList<User> users = new ArrayList<User>();
+		if (CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()))
+		{
+			users = event.getUsers();
+			addNew.setText("Invite Groups");//TODO: Mod checks
+		}
+		else
+		{
+			users = group.getUsers();
+			addNew.setText("Invite Friends");
+		}
+		
+		//checking if user is in group/event
+		boolean inEntity = false;
+		for (User u : users)
+			if (u.getEmail().equals(user.getEmail()))
+				inEntity = true;
+		
+		if (inEntity)
+		{
+			System.out.println("NOW IN SET ROLE");
+			if (CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()))
+				new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_group.php", Integer.toString(group.getID()));
+			else
+				new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_event.php", Integer.toString(event.getID()));
+		}
+	}
+		
+
+	private class getRoleTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected String doInBackground(String... urls)
+		{
+			String type = (CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString())) ? "gid" : "eid";
+			String email = user.getEmail();
+			String id = urls[1];
+			
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+			nameValuePairs.add(new BasicNameValuePair("email", email));
+			nameValuePairs.add(new BasicNameValuePair(type, id));
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+		}
+
+		@Override
+		protected void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+				 
+				//json fetch was successful
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					
+					ROLE = jsonObject.getString("role").toString();
+					System.out.println("ROLE IS BEING SET TO " + ROLE);
+					if (!ROLE.equals("M"))
+						addNew.setVisibility(View.VISIBLE);
+				//	setControls(); //for group / event
+				
+				} 
+				//unsuccessful
+				else
+				{
+					// failed
+					Log.d("FETCH ROLE FAILED", "FAILED");
+				}
+			} 
+			catch (Exception e)
+			{
+				Log.d("atherjsoninuserpost", "here");
+				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+			}
+			//do next thing here
+		}
+	}
+	
+	
 	
 	@Override
 	protected void onDestroy()
@@ -209,8 +299,6 @@ public class ListActivity extends ActionBarActivity
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
-	//SOON TO BE POPULATE GROUPS
 	private void populateGroups()
 	{
 		String sadGuyText = "";
@@ -219,9 +307,6 @@ public class ListActivity extends ActionBarActivity
 		View row = null;
 		int index;
 		int id;
-
-		Button addNew = (Button)findViewById(R.id.addNewButtonLiA);
-		addNew.setVisibility(View.GONE);
 		
 		
 		if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
@@ -288,18 +373,6 @@ public class ListActivity extends ActionBarActivity
 		{
 			sadGuyText = "There are no members in this group.";
 			users = group.getUsers();	
-			boolean currUserInGroup = false;
-			if (users != null)
-				for (User u : users)
-					if (u.getEmail().equals(GLOBAL.getCurrentUser().getEmail()))
-						currUserInGroup = true;
-				
-			if (!currUserInGroup)
-			{
-				Button addNew = (Button)findViewById(R.id.addNewButtonLiA);
-				addNew.setVisibility(View.GONE);
-			}
-				
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))//to do make else ifs." +
 		{
@@ -378,19 +451,6 @@ public class ListActivity extends ActionBarActivity
 		listLayout = ((LinearLayout)findViewById(R.id.listLayout));
 		listLayout.removeAllViews();
 		load();
-		/*
-		if (user != null)
-			if (GLOBAL.isCurrentUser(user.getEmail()))
-				user = GLOBAL.getCurrentUser();                                                                                ,,
-			else if (GLOBAL.getUserBuffer() != null)
-				user = GLOBAL.getUserBuffer();
-		else if (group != null && GLOBAL.getGroupBuffer() != null)
-			group = GLOBAL.getGroupBuffer();
-		else if (event != null)
-			event = GLOBAL.getEventBuffer();
-		*/
-		//setNotifications();
-		//populateProfile();
 	}
 	
 	//SOON TO BE POPULATE EVENTS
@@ -728,11 +788,15 @@ System.out.println("WHERE WE NEED");
 				group.fetchMembers();
 				GLOBAL.getCurrentUser().fetchFriends();
 			}
-			if (user != null)
+			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()))
 			{
-				intent.putExtra("EMAIL", user.getEmail());
+				intent = new Intent(this, EventAddGroupsActivity.class);
+				GLOBAL.getCurrentUser().fetchGroups();
 			}
-			
+			if (user != null)
+				intent.putExtra("EMAIL", user.getEmail());
+			if (event != null)
+				intent.putExtra("EID", event.getID());
 			if (group != null){
 				intent.putExtra("GID", group.getID());
 				GLOBAL.setGroupBuffer(group);

@@ -1,7 +1,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" 
-    android:id="@+id/edigroupProfileContainer"
+    android:id="@+id/editGroupContainer"
     android:background="@color/background_color"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
@@ -105,11 +105,11 @@
 	    
 	   
 	  	    <Button
-	        android:id="@+id/manageButtonEPA"
+	        android:id="@+id/manageGroupButton"
 			android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:background="@drawable/button_border"
-	        android:onClick="manageButton"
+	        android:onClick="manageGroup"
 	        android:layout_weight="1"
 	        android:layout_marginBottom="5dp"
 	        android:text="Manage Members"

@@ -58,7 +58,7 @@
             android:focusable="false"
             android:ems="10"
             android:gravity="left"
-            android:hint="Select a category that most fits your event."
+            android:hint="Select a category that most fits your event"
             android:maxLength="10"
             android:maxLines="1"
             android:onClick="selectCategoryButton"
@@ -119,9 +119,29 @@
         
         <EditText android:id="@+id/minPartButton" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_weight="2" android:background="@color/layout_background_color" android:gravity="left" android:hint="Minimum" android:inputType="number" android:maxLength="255" android:padding="5dp" android:layout_marginRight="10dp" android:textColor="@color/text_color" android:textColorHint="@color/hint_text_color" />
 
-	   <EditText android:id="@+id/maxPartButton" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_weight="2" android:background="@color/layout_background_color" android:gravity="left" android:hint="Maximum" android:inputType="number" android:maxLength="255" android:padding="5dp" android:textColor="@color/text_color" android:textColorHint="@color/hint_text_color" />
+	   <EditText android:id="@+id/maxPartButton" 
+	       android:layout_width="fill_parent" 
+	       android:layout_height="wrap_content" 
+	       android:layout_weight="2" 
+	       android:background="@color/layout_background_color" 
+	       android:gravity="left" 
+	       android:hint="Maximum (Optional)" 
+	       android:inputType="number" 
+	       android:maxLength="255" 
+	       android:padding="5dp" 
+	       android:textColor="@color/text_color" 
+	       android:textColorHint="@color/hint_text_color" />
 	        
-	        </LinearLayout><Button android:id="@+id/confirmButton" android:layout_width="match_parent" android:layout_height="50sp" android:layout_marginTop="5dp" android:background="@drawable/button_border" android:onClick="createEventButton" android:text="Confirm Create Event" android:textColor="@color/button_text_color" android:textSize="20sp" />
+	        </LinearLayout>
+	        <Button android:id="@+id/confirmButton" 
+	            android:layout_width="match_parent" 
+	            android:layout_height="50sp" 
+	            android:layout_marginTop="5dp" 
+	            android:background="@drawable/button_border" 
+	            android:onClick="createEventButton" 
+	            android:text="Confirm Create Event" 
+	            android:textColor="@color/button_text_color" 
+	            android:textSize="20sp" />
     
     </LinearLayout>
     

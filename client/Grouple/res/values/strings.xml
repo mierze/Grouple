@@ -96,5 +96,6 @@
     <string name="title_activity_invite">InviteActivity</string>
     <string name="title_activity_event_add_groups">EventAddGroupsActivity</string>
     <string name="title_activity_event_edit">EventEditActivity</string>
+    <string name="title_activity_manage_members">ManageMembersActivity</string>
 
 </resources>

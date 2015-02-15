@@ -1,6 +1,17 @@
 package cs460.grouple.grouple;
 
-import cs460.grouple.grouple.R;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import cs460.grouple.grouple.User.getUserInfoTask;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.content.BroadcastReceiver;
@@ -8,6 +19,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -18,6 +30,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /*
  * UserActivity displays the profile page of any user
@@ -28,30 +41,33 @@ public class ProfileActivity extends ActionBarActivity
 		USER, GROUP, EVENT
 	}
 	private ImageView iv;
-	BroadcastReceiver broadcastReceiver;
+	private BroadcastReceiver broadcastReceiver;
 	private User user; //user who's profile this is
 	private Group group;
 	private Event event;
 	private Bundle EXTRAS;
+	private String ROLE = "M";//defaulting to lowest level
 	private String CONTENT; //type of content to display in profile, passed in from other activities
-	private static Global GLOBAL;
+	private Global GLOBAL;
 	
+	
+	private Button profileButton1;
+	private Button profileButton2;
+	private Button profileButton3;
+	private Button editProfileButton;
 	@Override
 	protected void onStart()
 	{
 		super.onStart();
-		setNotifications();
 	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		initKillswitchListener();
 		setContentView(R.layout.activity_profile);
-		//Can we do our user load in the profile to save loading time from earlier or will the sync be off?
+		initKillswitchListener();
 		load();
-
 	}
 
 	@Override
@@ -59,19 +75,7 @@ public class ProfileActivity extends ActionBarActivity
 	{
 		super.onResume();
 		load();
-		/*
-		if (user != null)
-			if (GLOBAL.isCurrentUser(user.getEmail()))
-				user = GLOBAL.getCurrentUser();                                                                                ,,
-			else if (GLOBAL.getUserBuffer() != null)
-				user = GLOBAL.getUserBuffer();
-		else if (group != null && GLOBAL.getGroupBuffer() != null)
-			group = GLOBAL.getGroupBuffer();
-		else if (event != null)
-			event = GLOBAL.getEventBuffer();
-		*/
-		//setNotifications();
-		//populateProfile();
+
 	}
 	
 	public void initActionBar(String title)
@@ -93,49 +97,44 @@ public class ProfileActivity extends ActionBarActivity
 		EXTRAS = getIntent().getExtras();
 		CONTENT = EXTRAS.getString("CONTENT");
 		String title = "";
-
-		if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
+		System.out.println("CONTENT IS SET TO " + CONTENT);
+		profileButton1 = (Button)findViewById(R.id.profileButton1);
+		profileButton2 = (Button)findViewById(R.id.profileButton2);
+		profileButton3 = (Button)findViewById(R.id.profileButton3);
+		editProfileButton = (Button)findViewById(R.id.profileEditButton);
+		profileButton2.setVisibility(View.GONE);
+		profileButton3.setVisibility(View.GONE);
+		editProfileButton.setVisibility(View.GONE);
+		if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
 		{
-			group = GLOBAL.getGroupBuffer();
-			Button profileButton2 = (Button)findViewById(R.id.profileButton2);
-			Button profileButton3 = (Button)findViewById(R.id.profileButton3);
-			profileButton2.setVisibility(View.GONE);
-			profileButton3.setVisibility(View.GONE);
-			title = group.getName();
-		}
-		else if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
-		{
+			System.out.println("NOW IN USER");
 			//grabbing the user with the given email in the EXTRAS
 			if (!GLOBAL.isCurrentUser(EXTRAS.getString("EMAIL")))
 			{
 				if (GLOBAL.getUserBuffer() != null)
 					user = GLOBAL.getUserBuffer();
-				//hiding edit profile button
-				Button editProfileButton = (Button)findViewById(R.id.profileEditButton);
-				editProfileButton.setVisibility(View.GONE);
 			}
-			else if (GLOBAL.isCurrentUser(EXTRAS.getString("EMAIL")))
-			{	
-				//preloaded
+			else
 				user = GLOBAL.getCurrentUser();
-			}
-	
 			title = user.getFirstName() + "'s Profile";
-			
+			setNotifications();
 		}
-		else if (CONTENT.equals(CONTENT_TYPE.EVENT.toString()))
+		else 
 		{
-			event = GLOBAL.getEventBuffer();
-
-			//Button profileButton2 = (Button)findViewById(R.id.profileButton2);
-			Button profileButton3 = (Button)findViewById(R.id.profileButton3);
-			//profileButton2.setVisibility(View.GONE);
-			profileButton3.setVisibility(View.GONE);
-			System.out.println("EVENT NAME: " + event.getName());
-			title = event.getName();
+			user = GLOBAL.getCurrentUser();
+			if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
+			{
+				group = GLOBAL.getGroupBuffer();
+				title = group.getName();
+			}
+			else
+			{
+				event = GLOBAL.getEventBuffer();
+				title = event.getName();
+			}
+			setRole();
 		}
 
-		setNotifications();
 		populateProfile(); //populates a group / user profile
 		
 		// initializing the action bar and killswitch listener
@@ -143,25 +142,122 @@ public class ProfileActivity extends ActionBarActivity
 		
 	}
 
+	private void setRole()
+	{
+		int pub;
+		String pro2Text;
+		ArrayList<User> users = new ArrayList<User>();
+		if (CONTENT.equals(CONTENT_TYPE.EVENT.toString()))
+		{
+			pub = event.getPub();
+			users = event.getUsers();
+			pro2Text = "Join Event";
+		}
+		else
+		{
+			pub = group.getPub();
+			users = group.getUsers();
+			pro2Text = "Join Group";
+		}
+		
+		//checking if user is in group/event
+		boolean inEntity = false;
+		for (User u : users)
+			if (u.getEmail().equals(user.getEmail()))
+				inEntity = true;
+		
+		if (!inEntity) //user not in group, check if public so they can join
+		{
+			if (pub == 1)
+			{
+				profileButton2.setVisibility(View.VISIBLE);
+				profileButton2.setText(pro2Text);
+			}
+			setNotifications();//call here since not checking role first
+		}
+		else //user is in group, check role
+		{
+			if (CONTENT.equals(CONTENT_TYPE.EVENT.toString()))
+				new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_event.php", Integer.toString(event.getID()));
+			else
+				new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_group.php", Integer.toString(group.getID()));
+		}
+	}
+		
+
+	private class getRoleTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected String doInBackground(String... urls)
+		{
+			String type = (CONTENT.equals(CONTENT_TYPE.EVENT.toString())) ? "eid" : "gid";
+			String email = user.getEmail();
+			String id = urls[1];
+			
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+			nameValuePairs.add(new BasicNameValuePair("email", email));
+			nameValuePairs.add(new BasicNameValuePair(type, id));
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+		}
+
+		@Override
+		protected void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+				 
+				//json fetch was successful
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					
+					ROLE = jsonObject.getString("role").toString();
+					System.out.println("ROLE IS BEING SET TO " + ROLE);
+					setNotifications(); //for group / event
+				
+				} 
+				//unsuccessful
+				else
+				{
+					// failed
+					Log.d("FETCH ROLE FAILED", "FAILED");
+				}
+			} 
+			catch (Exception e)
+			{
+				Log.d("atherjsoninuserpost", "here");
+				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+			}
+			//do next thing here
+		}
+	}
+	
 	private void setNotifications()
 	{
-		Button profileButton1 = (Button)findViewById(R.id.profileButton1);
-		Button profileButton2 = (Button)findViewById(R.id.profileButton2);
-		Button profileButton3 = (Button)findViewById(R.id.profileButton3);
+		System.out.println("NOW IN SET NOTIFICATIONS");
 		if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
 		{
-		profileButton1.setText("Members\n(" + group.getNumUsers() + ")");
+			profileButton1.setText("Members\n(" + group.getNumUsers() + ")");
+			if (ROLE.equals("C"))
+				editProfileButton.setVisibility(View.VISIBLE);
+			
+		
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
 		{
+			profileButton2.setVisibility(View.VISIBLE);
+			profileButton3.setVisibility(View.VISIBLE);
 			profileButton1.setText("Friends\n(" + user.getNumUsers() + ")");
 			profileButton2.setText("Groups\n(" + user.getNumGroups() + ")");	
 			profileButton3.setText("Events\n(" + user.getNumEventsUpcoming() + ")");	
+			if (GLOBAL.isCurrentUser(user.getEmail()))
+				editProfileButton.setVisibility(View.VISIBLE);
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.EVENT.toString()))
 		{
-			profileButton1.setText("Attending (" + event.getNumUsers() + ")");
-			profileButton2.setText("Invite Groups");
+			profileButton1.setText("Attending (" + event.getNumUsers() + ")");	
+			if (ROLE.equals("C"))
+				editProfileButton.setVisibility(View.VISIBLE);
 		}	
 	}
 	
@@ -214,6 +310,7 @@ public class ProfileActivity extends ActionBarActivity
 
 	public void onClick(View view)
 	{
+		boolean noIntent = false;
 		Intent intent = new Intent(this, ListActivity.class);
 		switch (view.getId())
 		{
@@ -250,16 +347,18 @@ public class ProfileActivity extends ActionBarActivity
 			}
 			else if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
 			{
-				//invite members, only for the current user, this isn't even real right now?
-				intent = new Intent(this, InviteActivity.class);
-				//user.fetchGroups();
-				GLOBAL.getCurrentUser().fetchFriends();
-				group.fetchMembers();
+				//join the group
+				new JoinPublicTask().execute("http://68.59.162.183/"
+						+ "android_connect/join_public_group.php", user.getEmail(), "M", Integer.toString(group.getID()));
+					System.out.println("NOW ADDING TO  GROUP");	
+					noIntent = true;
 			}
 			else
 			{
-				intent = new Intent(this, EventAddGroupsActivity.class);
-				GLOBAL.getCurrentUser().fetchGroups();
+				System.out.println("ABOUT TO START JOIN EVENT");
+				new JoinPublicTask().execute("http://68.59.162.183/"
+						+ "android_connect/join_public_event.php", user.getEmail(), "M", Integer.toString(event.getID()));
+					noIntent = true;
 			}
 			break;
 		case R.id.profileButton3:
@@ -294,7 +393,8 @@ public class ProfileActivity extends ActionBarActivity
 		if (event != null)
 			intent.putExtra("EID", Integer.toString(event.getID()));
 		iv = null;
-		startActivity(intent);
+		if (!noIntent) //TODO, move buttons elsewhere that dont start list
+			startActivity(intent);
 	}
 
 	@Override
@@ -408,5 +508,66 @@ public class ProfileActivity extends ActionBarActivity
 		};
 		registerReceiver(broadcastReceiver, intentFilter);
 		// End Kill switch listener
+	}
+	
+	//aSynch task to add individual member to group.
+	private class JoinPublicTask extends AsyncTask<String,Void,String>
+	{
+		@Override
+		protected String doInBackground(String... urls)
+		{
+			String type = (CONTENT.equals(CONTENT_TYPE.EVENT.toString())) ? "e_id" : "g_id";
+			System.out.println("ABOUT TO START JOIN EVENT now type is " + type);
+			System.out.println("urls are " + urls[1] + " " + urls[2] + " " + urls[3]);
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("email", urls[1]));
+			nameValuePairs.add(new BasicNameValuePair("role", urls[2]));
+			nameValuePairs.add(new BasicNameValuePair(type, urls[3]));
+
+			//pass url and nameValuePairs off to GLOBAL to do the JSON call.  Code continues at onPostExecute when JSON returns.
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+		}
+
+
+		@Override
+		protected void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+
+				// member has been successfully added
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					System.out.println("USER HAS SUCCESSFULLY BEEN ADDED");
+					Context context = getApplicationContext();
+					
+					Toast toast = GLOBAL.getToast(context, jsonObject.getString("message"));
+					toast.show();
+					profileButton2.setVisibility(View.GONE);
+					if (CONTENT.equals(CONTENT_TYPE.EVENT.toString()))
+					{
+						event.fetchParticipants();
+						event.addToUsers(user);
+					}
+					else
+					{
+						group.fetchMembers();
+						group.addToUsers(user);
+					}
+					load();
+					//all working correctly, continue to next user or finish.
+					
+				} 
+				else if (jsonObject.getString("success").toString().equals("0"))
+				{	
+					//a particular user was unable to be added to database for some reason...
+					//Don't tell the user!
+				}
+			} catch (Exception e)
+			{
+				Log.d("readJSONFeed", e.getLocalizedMessage());
+			}
+		}	
 	}
 }
