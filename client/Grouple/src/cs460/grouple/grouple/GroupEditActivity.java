@@ -2,6 +2,8 @@ package cs460.grouple.grouple;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -37,6 +39,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.util.Base64;
 import android.util.Log;
@@ -166,12 +169,7 @@ public class GroupEditActivity extends ActionBarActivity implements
 		int id = item.getItemId();
 		if (id == R.id.action_logout)
 		{
-			//Get rid of sharepreferences for token login
-			SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-			SharedPreferences.Editor editor = preferences.edit();
-			editor.remove("session_email");
-			editor.remove("session_token");
-			editor.commit();
+			GLOBAL.destroySession();
 			
 			Intent login = new Intent(this, LoginActivity.class);
 			startActivity(login);
@@ -345,7 +343,7 @@ public class GroupEditActivity extends ActionBarActivity implements
 				{
 					// Success			
 					Context context = getApplicationContext();
-					Toast toast = Toast.makeText(context, "Group profile changed successfully.", Toast.LENGTH_SHORT);
+					Toast toast = GLOBAL.getToast(context, "Group profile changed successfully.");
 					toast.show();
 					group.fetchGroupInfo();
 					group.fetchMembers();
@@ -355,7 +353,7 @@ public class GroupEditActivity extends ActionBarActivity implements
 				{
 					// Fail
 					Context context = getApplicationContext();
-					Toast toast = Toast.makeText(context, "Group profile changed unsuccessfully.", Toast.LENGTH_SHORT);
+					Toast toast = GLOBAL.getToast(context, "Failed to update group profile.");
 					toast.show();
 					System.out.println("Fail");
 				}
@@ -424,10 +422,16 @@ public class GroupEditActivity extends ActionBarActivity implements
 			} else if (reqCode == 2) 
 			{
 				Uri selectedImageUri = data.getData();
-
-				String tempPath = selectedImageUri.getPath();
-				bmp = BitmapFactory.decodeFile(tempPath);
-				iv.setImageBitmap(bmp);
+				try {
+					bmp= MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				iv.setImageURI(selectedImageUri);
 			}
 		}
 	}

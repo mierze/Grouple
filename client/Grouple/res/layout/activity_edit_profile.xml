@@ -10,7 +10,7 @@
 
 	
 	    <ImageView
-	        android:id="@+id/profileImageGPA"
+	        android:id="@+id/profileImageEPA"
 	        android:contentDescription="Profile photo."
 	        android:layout_weight="2"
 	        android:layout_width="wrap_content"
@@ -45,6 +45,8 @@
 	    <EditText
 	        android:id="@+id/nameEditTextEPA"
 			android:layout_width="fill_parent"
+			android:inputType="textPersonName"
+			android:capitalize="words"
 			android:layout_weight="1"
 	        android:layout_height="wrap_content"
 	        android:textColor="@color/text_color" />

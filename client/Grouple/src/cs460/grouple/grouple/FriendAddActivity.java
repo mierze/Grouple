@@ -91,14 +91,6 @@ public class FriendAddActivity extends ActionBarActivity
 		int id = item.getItemId();
 		if (id == R.id.action_logout)
 		{
-			
-			//Get rid of sharepreferences for token login
-			SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-			SharedPreferences.Editor editor = preferences.edit();
-			editor.remove("session_email");
-			editor.remove("session_token");
-			editor.commit();
-			
 			// If the user hits the logout button, then clear global and go to
 			// the logout screen.
 			Intent login = new Intent(this, LoginActivity.class);
@@ -163,7 +155,7 @@ public class FriendAddActivity extends ActionBarActivity
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					Context context = getApplicationContext();
-					Toast toast = Toast.makeText(context, jsonObject.getString("message"), Toast.LENGTH_SHORT);
+					Toast toast = GLOBAL.getToast(context, jsonObject.getString("message"));
 					toast.show();
 			
 				} 

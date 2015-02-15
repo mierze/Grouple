@@ -20,11 +20,16 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONObject;
 import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 /*
  * Global stores user values needed for notifications.
@@ -85,7 +90,20 @@ public class Global extends Application
 		currentUser = null;
 		groupBuffer = null;
 		userBuffer = null;
+		//Get rid of sharepreferences for token login
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+		SharedPreferences.Editor editor = preferences.edit();
+		editor.remove("session_email");
+		editor.remove("session_token");
+		editor.commit();
 		return 1;
+	}
+	
+	public Toast getToast(Context context, String message)
+	{
+		Toast toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
+		toast.setGravity(Gravity.CENTER, 0, 0);
+		return toast;
 	}
 	
 	public String readJSONFeed(String URL, List<NameValuePair> nameValuePairs)

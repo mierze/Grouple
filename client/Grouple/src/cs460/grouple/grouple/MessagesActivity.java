@@ -24,10 +24,11 @@ import android.widget.TextView;
 public class MessagesActivity extends ActionBarActivity
 {
 	private BroadcastReceiver broadcastReceiver;
-
+	private Global GLOBAL;
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
+		GLOBAL = ((Global) getApplicationContext());
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_messages);
 		/* Action bar */
@@ -60,16 +61,9 @@ public class MessagesActivity extends ActionBarActivity
 		int id = item.getItemId();
 		if (id == R.id.action_logout)
 		{
-			//Get rid of sharepreferences for token login
-			SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-			SharedPreferences.Editor editor = preferences.edit();
-			editor.remove("session_email");
-			editor.remove("session_token");
-			editor.commit();
 			
-			Global global = ((Global) getApplicationContext());
 			Intent login = new Intent(this, LoginActivity.class);
-			global.destroySession();
+			GLOBAL.destroySession();
 			startActivity(login);
 			Intent intent = new Intent("CLOSE_ALL");
 			this.sendBroadcast(intent);
@@ -81,30 +75,6 @@ public class MessagesActivity extends ActionBarActivity
 			startActivity(intent);
 		}
 		return super.onOptionsItemSelected(item);
-	}
-
-	public void startParentActivity(View view)
-	{
-		Bundle extras = getIntent().getExtras();
-
-		String className = extras.getString("ParentClassName");
-		Intent newIntent = null;
-		try
-		{
-			newIntent = new Intent(this, Class.forName("cs460.grouple.grouple."
-					+ className));
-			if (extras.getString("ParentEmail") != null)
-			{
-				newIntent.putExtra("email", extras.getString("ParentEmail"));
-			}
-			// newIntent.putExtra("email", extras.getString("email"));
-			// newIntent.putExtra("ParentEmail", extras.getString("email"));
-			newIntent.putExtra("ParentClassName", "MessagesActivity");
-		} catch (ClassNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		startActivity(newIntent);
 	}
 
 	public void initKillswitchListener()

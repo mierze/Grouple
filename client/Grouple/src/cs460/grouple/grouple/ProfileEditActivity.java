@@ -51,9 +51,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /*
  * EditProfileActivity allows user to make changes to his/her profile.
@@ -121,13 +123,6 @@ public class ProfileEditActivity extends ActionBarActivity implements
 		super.onDestroy();
 	}
 	
-	@Override
-	protected void onPause()
-	{
-		super.onPause();
-		finish();
-	}
-
 	
 	/*
 	 * Get profile executes get_profile.php. It uses the current users email
@@ -143,7 +138,7 @@ public class ProfileEditActivity extends ActionBarActivity implements
 		if (iv == null)
 		{
 			Log.d("scott", "7th");
-			iv = (ImageView) findViewById(R.id.profileImageGPA);
+			iv = (ImageView) findViewById(R.id.profileImageEPA);
 		}
 		// Add the info to the textviews for editing.
 		nameTextView.setText(user.getName());
@@ -163,7 +158,7 @@ public class ProfileEditActivity extends ActionBarActivity implements
 		b.setOnClickListener(this);
 		if (iv == null)
 		{
-			iv = (ImageView) findViewById(R.id.profileImageGPA);
+			iv = (ImageView) findViewById(R.id.profileImageEPA);
 		}
 
 		return true;
@@ -178,13 +173,7 @@ public class ProfileEditActivity extends ActionBarActivity implements
 		int id = item.getItemId();
 		if (id == R.id.action_logout)
 		{
-			//Get rid of sharepreferences for token login
-			SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-			SharedPreferences.Editor editor = preferences.edit();
-			editor.remove("session_email");
-			editor.remove("session_token");
-			editor.commit();
-			
+			GLOBAL.destroySession();
 			Intent login = new Intent(this, LoginActivity.class);
 			startActivity(login);
 			Intent intent = new Intent("CLOSE_ALL");
@@ -215,12 +204,9 @@ public class ProfileEditActivity extends ActionBarActivity implements
 			errorTextView.setVisibility(0);
 		} else
 		{
-			AsyncTask<String, Void, String> task = new setProfileTask()
+			new setProfileTask()
 			.execute("http://68.59.162.183/android_connect/update_profile.php");
-	        
-			
-			task.get(10000, TimeUnit.MILLISECONDS);
-			
+	       
 
 			
 		}
@@ -252,22 +238,22 @@ public class ProfileEditActivity extends ActionBarActivity implements
 			try
 			{
 				String email = user.getEmail();
-				TextView nameTextView = (TextView) findViewById(R.id.nameEditTextEPA);
-				TextView ageTextView = (TextView) findViewById(R.id.ageEditTextEPA);
-				TextView bioTextView = (TextView) findViewById(R.id.bioEditTextEPA);
-				TextView locationTextView = (TextView) findViewById(R.id.locationEditTextEPA);
+				EditText nameEditText = (EditText) findViewById(R.id.nameEditTextEPA);
+				EditText ageEditText = (EditText) findViewById(R.id.ageEditTextEPA);
+				EditText bioEditText = (EditText) findViewById(R.id.bioEditTextEPA);
+				EditText locationEditText = (EditText) findViewById(R.id.locationEditTextEPA);
 
-				String name = nameTextView.getText().toString();
+				String name = nameEditText.getText().toString();
 				// Split name by space because sleep.
 				String[] splitted = name.split("\\s+");
 				String firstName = splitted[0];
 				String lastName = splitted[1];
 
-				String age = ageTextView.getText().toString();
+				String age = ageEditText.getText().toString();
 
-				String bio = bioTextView.getText().toString();
+				String bio = bioEditText.getText().toString();
 
-				String location = locationTextView.getText().toString();
+				String location = locationEditText.getText().toString();
 
 				MultipartEntityBuilder builder = MultipartEntityBuilder
 						.create();
@@ -279,6 +265,7 @@ public class ProfileEditActivity extends ActionBarActivity implements
 				// process photo if set and add it to builder
 				if (bmp != null)
 				{
+					System.out.println("We are processing photo!");
 					ByteArrayOutputStream bos = new ByteArrayOutputStream();
 					bmp.compress(CompressFormat.JPEG, 100, bos);
 					data = bos.toByteArray();
@@ -287,6 +274,7 @@ public class ProfileEditActivity extends ActionBarActivity implements
 					data = null;
 					bab = null;
 					bos.close();
+					System.out.println("WE PROCESSED IT");
 				}
 
 				// add remaining fields to builder, then execute
@@ -339,7 +327,11 @@ public class ProfileEditActivity extends ActionBarActivity implements
 				JSONObject jsonObject = new JSONObject(result);
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
+					System.out.println("IN SUCCESS PROFILE EDIT");
 					// Success
+					Context context = getApplicationContext();
+					Toast toast = GLOBAL.getToast(context, "User profile changed successfully!");
+					toast.show();
 					//refresh?
 					user.fetchUserInfo();
 					GLOBAL.setCurrentUser(user);
@@ -365,39 +357,39 @@ public class ProfileEditActivity extends ActionBarActivity implements
 		{
 		case R.id.editProfilePhotoButton:
 			final CharSequence[] items = {"Take Photo", "Choose from Gallery",
-					"Cancel" };
-
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle("Choose your profile picture:");
-			builder.setItems(items, new DialogInterface.OnClickListener() 
+			"Cancel" };
+	
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Choose your profile picture:");
+		builder.setItems(items, new DialogInterface.OnClickListener() 
+		{
+			@Override
+			public void onClick(DialogInterface dialog, int item) 
 			{
-				@Override
-				public void onClick(DialogInterface dialog, int item) 
+				if (items[item].equals("Take Photo")) 
 				{
-					if (items[item].equals("Take Photo")) 
-					{
-						i = new Intent(
-								android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-						startActivityForResult(i, 1);
-					}
-					else if (items[item].equals("Choose from Gallery")) 
-					{
-						Intent intent = new Intent(
-								Intent.ACTION_PICK,
-								android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-						intent.setType("image/*");
-						startActivityForResult(
-								Intent.createChooser(intent, "Select Photo"), 2);
-					} 
-					else if (items[item].equals("Cancel")) 
-					{
-						dialog.dismiss();
-					}
+					i = new Intent(
+							android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+					startActivityForResult(i, 1);
 				}
-			});
-			builder.show();
-			
-			break;
+				else if (items[item].equals("Choose from Gallery")) 
+				{
+					Intent intent = new Intent(
+							Intent.ACTION_PICK,
+							android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+					intent.setType("image/*");
+					startActivityForResult(
+							Intent.createChooser(intent, "Select Photo"), 2);
+				} 
+				else if (items[item].equals("Cancel")) 
+				{
+					dialog.dismiss();
+				}
+			}
+		});
+		builder.show();
+		
+		break;
 		}
 	}
 
@@ -428,6 +420,7 @@ public class ProfileEditActivity extends ActionBarActivity implements
 			}
 		}
 	}
+
 
 
 	private void initKillswitchListener()

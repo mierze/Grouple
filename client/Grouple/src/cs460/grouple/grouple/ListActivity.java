@@ -25,6 +25,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -93,14 +94,12 @@ public class ListActivity extends ActionBarActivity
 		ab.setCustomView(R.layout.actionbar);
 		ab.setDisplayHomeAsUpEnabled(false);
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
-		actionbarTitle.setText(actionBarTitle); //PANDA
-		//ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
+		actionbarTitle.setText(actionBarTitle);
 	}
 
 	/* loading in everything needed to generate the list */
 	public void load()
 	{
-	
 		//INSTANTIATIONS
 		GLOBAL = ((Global) getApplicationContext());
 		EXTRAS =  getIntent().getExtras();
@@ -138,6 +137,7 @@ public class ListActivity extends ActionBarActivity
 			}
 			else 
 			{
+				addNew.setText("Invite Groups");//TODO: Mod checks
 				event = GLOBAL.getEventBuffer();
 				actionBarTitle = "Attending " + event.getName();
 			}
@@ -195,6 +195,7 @@ public class ListActivity extends ActionBarActivity
 		int id = item.getItemId();
 		if (id == R.id.action_logout)
 		{
+			GLOBAL.destroySession();
 			Intent login = new Intent(this, LoginActivity.class);
 			startActivity(login);
 			Intent intent = new Intent("CLOSE_ALL");
@@ -370,12 +371,36 @@ public class ListActivity extends ActionBarActivity
 
 	}
 	
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
+		listLayout = ((LinearLayout)findViewById(R.id.listLayout));
+		listLayout.removeAllViews();
+		load();
+		/*
+		if (user != null)
+			if (GLOBAL.isCurrentUser(user.getEmail()))
+				user = GLOBAL.getCurrentUser();                                                                                ,,
+			else if (GLOBAL.getUserBuffer() != null)
+				user = GLOBAL.getUserBuffer();
+		else if (group != null && GLOBAL.getGroupBuffer() != null)
+			group = GLOBAL.getGroupBuffer();
+		else if (event != null)
+			event = GLOBAL.getEventBuffer();
+		*/
+		//setNotifications();
+		//populateProfile();
+	}
+	
 	//SOON TO BE POPULATE EVENTS
 	private void populateEvents()
 	{
 		View row = null;
 		String sadGuyText = "";
 		Button nameButton = null;
+		Button removeFriendButton = null;
+
 		int id;
 		int index;
 		String nameText = "";
@@ -405,17 +430,16 @@ public class ListActivity extends ActionBarActivity
 				id = e.getID();
 				index = events.indexOf(e);
 				//Group group = GLOBAL.loadGroup(id);
-				if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
+				if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
 				{
 					row = (GridLayout) li.inflate(R.layout.list_row, null);
 					nameButton =  (Button)row.findViewById(R.id.nameButtonLI);
-					nameButton.setText(e.getName());//future get date too?
-				}
-				else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
-				{
-					row = (GridLayout) li.inflate(R.layout.list_row_nobutton, null);
-					nameButton =  (Button)row.findViewById(R.id.nameButtonLI);
-					nameButton.setText(e.getName() + "\t(" + e.getNumUsers() + ")/" + e.getMinPart() + " attending");
+					removeFriendButton = (Button) row.findViewById(R.id.removeButtonLI);
+					removeFriendButton.setId(id);	
+					if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
+						nameButton.setText(e.getName());//future get date too?
+					else
+						nameButton.setText(e.getName() + "\t(" + e.getNumUsers() + ")/" + e.getMinPart() + " attending");
 				}
 				else
 				{
@@ -499,6 +523,7 @@ public class ListActivity extends ActionBarActivity
 		@Override
 		protected String doInBackground(String... urls)
 		{
+			System.out.println("IN ACCEPT DECLINE NOW");
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
 			// Add your data
 			
@@ -515,9 +540,10 @@ public class ListActivity extends ActionBarActivity
 				nameValuePairs.add(new BasicNameValuePair("sender", urls[1]));
 				nameValuePairs.add(new BasicNameValuePair("receiver", user.getEmail()));
 			}
-			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()))
+			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
 			{
 				//code for this
+System.out.println("WHERE WE NEED");
 				//possibly check that all gorup invtes / events follow suit
 				nameValuePairs.add(new BasicNameValuePair("email", user.getEmail()));
 				nameValuePairs.add(new BasicNameValuePair("eid", urls[1]));
@@ -542,7 +568,6 @@ public class ListActivity extends ActionBarActivity
 					listLayout.removeAllViews();
 					String message = jsonObject.getString("message");
 					Context context = getApplicationContext();
-					System.out.println("ACCEPT DECLINE POST 2");
 					if (CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString()))
 					{
 						//user.fetchGroupInvites();
@@ -559,32 +584,31 @@ public class ListActivity extends ActionBarActivity
 					}
 					else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
 					{
-						System.out.println("ACCEPT DECLINE POST 3");
 						user.removeFriendRequest(PANDABUFFER);
-						System.out.println("ACCEPT DECLINE POST 4");
-						//user.fetchFriendRequests();
-						System.out.println("ACCEPT DECLINE POST 5");
+						user.fetchFriendRequests();
 					}
 					else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
 					{
-						System.out.println("NOW IN ACCEPT DECLINE ONPOST PANDABUFFER IS " + PANDABUFFER);
-						//sYSTEM.
 						user.removeUser(PANDABUFFER);
-						System.out.println("NOW IN ACCEPT DECLINE ONPOST2");
-						//user.fetchFriends();
+						user.fetchFriends();
 					
 					}
 					else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
 					{
 						user.removeEventPending(bufferID);
-						//user.fetchEventsPending();
-				
+						user.fetchEventsPending();
+					}
+					else if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
+					{
+						user.removeEventUpcoming(bufferID);
+						user.fetchEventsUpcoming();
 					}
 					else if (CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()))
 					{
 						user.removeEventInvite(bufferID);
-						//user.fetchEventsInvites();
+						user.fetchEventsInvites();
 			
+						System.out.println("THE MESSAGE IS" + message);
 						if (!message.equals("Event invite accepted!"))
 							message = "Event invite declined!";
 					}
@@ -595,10 +619,11 @@ public class ListActivity extends ActionBarActivity
 					else
 						GLOBAL.setUserBuffer(user);
 					 */
-					Toast toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
+					Toast toast = GLOBAL.getToast(context, message);
+					
 					toast.show();
 					System.out.println("NOW IN ACCEPT DECLINE ONPOST4");
-
+					
 					PANDABUFFER = "";
 					bufferID = -1;
 
@@ -644,6 +669,24 @@ public class ListActivity extends ActionBarActivity
 							public void onClick(DialogInterface dialog, int id)
 							{
 								new getAcceptDeclineTask().execute("http://68.59.162.183/android_connect/leave_group.php", user.getEmail(), Integer.toString(bufferID));
+							}
+						}).setNegativeButton("Cancel", null).show();
+			}
+			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
+			{
+				
+				//Get the id.
+				bufferID = view.getId();
+				System.out.println("ID IS SET TO" + bufferID);
+				new AlertDialog.Builder(this)
+						.setMessage("Are you sure you want to leave this event?")
+						.setCancelable(true)
+						.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+						{
+							@Override
+							public void onClick(DialogInterface dialog, int id)
+							{
+								new getAcceptDeclineTask().execute("http://68.59.162.183/android_connect/leave_event.php", Integer.toString(bufferID));
 							}
 						}).setNegativeButton("Cancel", null).show();
 			}

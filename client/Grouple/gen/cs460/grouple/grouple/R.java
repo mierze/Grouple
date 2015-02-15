@@ -1280,7 +1280,7 @@ containing a value of this type.
         public static final int profileButton2=0x7f0900ac;
         public static final int profileButton3=0x7f0900ad;
         public static final int profileEditButton=0x7f0900ae;
-        public static final int profileImageGPA=0x7f090043;
+        public static final int profileImageEPA=0x7f090043;
         public static final int profileImageUPA=0x7f0900a5;
         public static final int profileInfoTextView=0x7f0900a7;
         public static final int progressBarLA=0x7f0900a1;

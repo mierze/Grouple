@@ -180,10 +180,47 @@ public class EventEditActivity extends ActionBarActivity implements
 		minEditText.setText(String.valueOf(event.getMinPart()));
 		if (event.getMaxPart() > 0)
 			maxEditText.setText(String.valueOf(event.getMaxPart()));
-		startEditText.setText(event.getStartDate());
-		endEditText.setText(event.getEndDate());
+		startEditText.setText(toRawDate(event.getStartDate()));
+		endEditText.setText(toRawDate(event.getEndDate()));
 	}
 
+	private String toRawDate(String date)
+	{
+		String rawDate = "";
+        SimpleDateFormat raw = new SimpleDateFormat("yyyy-M-d h:mm:ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM d, h:mma");
+        try
+        {
+    		Date parsedDate = (Date) dateFormat.parse(date);
+    		rawDate = raw.format(parsedDate); 
+    		
+        }
+        catch (ParseException ex)
+        {
+            System.out.println("Exception "+ex);
+        }
+        return rawDate;
+	}
+	private String fromRawDate(String dateString)
+	{
+		System.out.println("\n\nDATE IS FIRST: " + dateString);
+		String date = "";
+        SimpleDateFormat raw = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM dd, h:mma");
+        try
+        {
+    		Date parsedDate = (Date) raw.parse(dateString);
+    		date = dateFormat.format(parsedDate); 
+    		//date = raw.format(parsedDate);   
+    		System.out.println("\nDATE IN RAW TRANSLATION: " + raw.format(parsedDate));
+    		System.out.println("\nDATE IN FINAL: " + dateFormat.format(parsedDate) + "\n\n");
+        }
+        catch (ParseException ex)
+        {
+            System.out.println("Exception "+ex);
+        }
+		return date;
+	}
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
@@ -209,12 +246,7 @@ public class EventEditActivity extends ActionBarActivity implements
 		int id = item.getItemId();
 		if (id == R.id.action_logout)
 		{
-			//Get rid of sharepreferences for token login
-			SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-			SharedPreferences.Editor editor = preferences.edit();
-			editor.remove("session_email");
-			editor.remove("session_token");
-			editor.commit();
+			GLOBAL.destroySession();
 			
 			Intent login = new Intent(this, LoginActivity.class);
 			startActivity(login);
@@ -502,7 +534,7 @@ public class EventEditActivity extends ActionBarActivity implements
 				{
 					// Success			
 					Context context = getApplicationContext();
-					Toast toast = Toast.makeText(context, "Event profile changed successfully.", Toast.LENGTH_SHORT);
+					Toast toast = GLOBAL.getToast(context, "Event profile changed successfully!");
 					toast.show();
 					event.fetchEventInfo();
 					event.fetchParticipants();

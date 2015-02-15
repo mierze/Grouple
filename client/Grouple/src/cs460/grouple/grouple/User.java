@@ -346,19 +346,6 @@ public class User extends Entity
 	
 	
 	
-	/*
-	 * To delete the user out of memory and clear all arrays
-	 */
-	public int delete()
-	{
-		//delete code here
-		
-		return 1; //successful
-	}
-	
-	
-
-	
 	/**
 	 * 
 	 * fetches the user name, bio, and everything
@@ -915,6 +902,7 @@ public class User extends Entity
 						e.setInviter(o.getString("sender"));
 						e.setMinPart(Integer.parseInt(o.getString("minpart")));
 						e.setMaxPart(Integer.parseInt(o.getString("maxpart")));
+						e.fetchParticipants();
 						addToEventsInvites(e);
 					}
 				}

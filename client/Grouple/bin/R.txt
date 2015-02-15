@@ -433,7 +433,7 @@ int id profileButton1 0x7f0900ab
 int id profileButton2 0x7f0900ac
 int id profileButton3 0x7f0900ad
 int id profileEditButton 0x7f0900ae
-int id profileImageGPA 0x7f090043
+int id profileImageEPA 0x7f090043
 int id profileImageUPA 0x7f0900a5
 int id profileInfoTextView 0x7f0900a7
 int id progressBarLA 0x7f0900a1

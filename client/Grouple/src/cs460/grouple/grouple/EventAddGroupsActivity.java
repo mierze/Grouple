@@ -51,6 +51,7 @@ import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /*
  * EventAddGroupsActivity allows a user to invite groups to a created event.
@@ -243,6 +244,10 @@ public class EventAddGroupsActivity extends ActionBarActivity
 								+ "android_connect/add_eventmember.php", memberToAdd, email, e_id);
 					}
 					
+					Context context = getApplicationContext();
+					String message = "Successfully invited groups!";
+					Toast toast = GLOBAL.getToast(context, message);
+					toast.show();
 					finish();
 					
 				}
@@ -315,13 +320,6 @@ public class EventAddGroupsActivity extends ActionBarActivity
 		int id = item.getItemId();
 		if (id == R.id.action_logout)
 		{
-			
-			//Get rid of sharepreferences for token login
-			SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-			SharedPreferences.Editor editor = preferences.edit();
-			editor.remove("session_email");
-			editor.remove("session_token");
-			editor.commit();
 			
 			Intent login = new Intent(this, LoginActivity.class);
 			GLOBAL.destroySession();

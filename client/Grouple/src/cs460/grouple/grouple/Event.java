@@ -79,14 +79,17 @@ public class Event extends Entity
 	}
 	private String parseDate(String dateString)
 	{
+		System.out.println("\n\nDATE IS FIRST: " + dateString);
 		String date = "";
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM DD, h:mma");
+        SimpleDateFormat raw = new SimpleDateFormat("yyyy-M-d h:mm:ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM d, h:mma");
         try
         {
-    		Date parsedDate = (Date) simpleDateFormat.parse(dateString);
-    		//date = dateFormat.format(parsedDate); 
-    		date = simpleDateFormat.format(parsedDate);   
+    		Date parsedDate = (Date) raw.parse(dateString);
+    		date = dateFormat.format(parsedDate); 
+    		//date = raw.format(parsedDate);   
+    		System.out.println("\nDATE IN RAW TRANSLATION: " + raw.format(parsedDate));
+    		System.out.println("\nDATE IN FINAL: " + dateFormat.format(parsedDate) + "\n\n");
         }
         catch (ParseException ex)
         {

@@ -45,6 +45,7 @@
 	    <EditText
 	        android:id="@+id/nameEditTextEPA"
 			android:layout_width="fill_parent"
+			android:inputType="textCapSentences"
 			android:layout_weight="1"
 	        android:layout_height="wrap_content"
 	        android:textColor="@color/text_color" />
@@ -62,6 +63,7 @@
 	      	android:layout_width="match_parent"
 	        android:layout_weight="1"
 	        android:layout_height="wrap_content"
+	        android:inputType="textCapSentences"
 	        android:textColor="@color/text_color"
 	        android:textColorHint="@color/text_color" />
 

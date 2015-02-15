@@ -63,6 +63,7 @@
 	    <EditText
 	        android:id="@+id/nameEditTextEPA"
 			android:layout_width="fill_parent"
+			android:inputType="textCapSentences"
 			android:layout_weight="1"
 	        android:layout_height="wrap_content"
 	        android:background="@color/layout_background_color"
@@ -101,6 +102,7 @@
 	    <EditText
 	        android:id="@+id/aboutEditTextEPA"
 	      	android:layout_width="match_parent"
+	      	android:inputType="textCapSentences"
 	        android:layout_weight="1"
 	        android:background="@color/layout_background_color"
 	        android:layout_height="wrap_content"
@@ -135,6 +137,7 @@
 	    <EditText
 	        android:id="@+id/locationEditTextEPA"
 	      	android:layout_width="match_parent"
+	      	android:inputType="textCapSentences"
 	        android:layout_weight="1"
 	        android:background="@color/layout_background_color"
 	        android:layout_height="wrap_content"

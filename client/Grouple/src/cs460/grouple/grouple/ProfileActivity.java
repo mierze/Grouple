@@ -27,7 +27,6 @@ public class ProfileActivity extends ActionBarActivity
 	enum CONTENT_TYPE {
 		USER, GROUP, EVENT
 	}
-	
 	private ImageView iv;
 	BroadcastReceiver broadcastReceiver;
 	private User user; //user who's profile this is
@@ -146,24 +145,23 @@ public class ProfileActivity extends ActionBarActivity
 
 	private void setNotifications()
 	{
+		Button profileButton1 = (Button)findViewById(R.id.profileButton1);
+		Button profileButton2 = (Button)findViewById(R.id.profileButton2);
+		Button profileButton3 = (Button)findViewById(R.id.profileButton3);
 		if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
 		{
-			((Button) findViewById(R.id.profileButton1)).setText("Members\n(" + group.getNumUsers() + ")");
+		profileButton1.setText("Members\n(" + group.getNumUsers() + ")");
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
 		{
-			System.out.println("PANCAKES");
-			System.out.println(user.getAge() + user.getName());
-			
-			((Button) findViewById(R.id.profileButton1)).setText("Friends\n(" + user.getNumUsers() + ")");
-			((Button) findViewById(R.id.profileButton2)).setText("Groups\n(" + user.getNumGroups() + ")");	
-			((Button) findViewById(R.id.profileButton3)).setText("Events\n(" + user.getNumEventsUpcoming() + ")");	
+			profileButton1.setText("Friends\n(" + user.getNumUsers() + ")");
+			profileButton2.setText("Groups\n(" + user.getNumGroups() + ")");	
+			profileButton3.setText("Events\n(" + user.getNumEventsUpcoming() + ")");	
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.EVENT.toString()))
 		{
-			//for event later
-			((Button) findViewById(R.id.profileButton1)).setText("Attending (" + event.getNumUsers() + ")");
-			((Button) findViewById(R.id.profileButton2)).setText("Invite Groups");
+			profileButton1.setText("Attending (" + event.getNumUsers() + ")");
+			profileButton2.setText("Invite Groups");
 		}	
 	}
 	
@@ -184,7 +182,7 @@ public class ProfileActivity extends ActionBarActivity
 		// Set up the image view
 		if (iv == null)
 		{
-			iv = (ImageView) findViewById(R.id.profileImageGPA);
+			iv = (ImageView) findViewById(R.id.profileImageUPA);
 		}
 		return true;
 	}
@@ -198,13 +196,7 @@ public class ProfileActivity extends ActionBarActivity
 		int id = item.getItemId();
 		if (id == R.id.action_logout)
 		{
-			//Get rid of sharepreferences for token login
-			SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-			SharedPreferences.Editor editor = preferences.edit();
-			editor.remove("session_email");
-			editor.remove("session_token");
-			editor.commit();
-			
+			GLOBAL.destroySession();
 			Intent login = new Intent(this, LoginActivity.class);
 			startActivity(login);
 			iv = null;

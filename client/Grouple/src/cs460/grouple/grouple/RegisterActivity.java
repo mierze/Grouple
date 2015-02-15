@@ -29,6 +29,7 @@ import android.widget.TextView;
 public class RegisterActivity extends Activity
 {
 	private BroadcastReceiver broadcastReceiver;
+	private Global GLOBAL;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
