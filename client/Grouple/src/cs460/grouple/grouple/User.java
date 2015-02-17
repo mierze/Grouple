@@ -56,7 +56,7 @@ public class User extends Entity
 {
 	//birthday?
 	private String location;
-	private int age;
+	private String age;
 	private ArrayList<Group> groups; 
 	private ArrayList<User> friendRequests; //friendRequest emails->names
 	private ArrayList<Group> groupInvites; //group invite ids
@@ -158,7 +158,7 @@ public class User extends Entity
 	{
 		this.location = location;
 	}
-	public void setAge(int age)
+	public void setAge(String age)
 	{
 		this.age = age;
 	}
@@ -260,7 +260,7 @@ public class User extends Entity
 	{
 		return location;
 	}
-	public int getAge()
+	public String getAge()
 	{
 		return age;
 	}
@@ -401,19 +401,41 @@ public class User extends Entity
 					String lName = (String) jsonArray.get(1);
 					setName(fName + " " + lName);
 					
+					//it must do this null check for brand new users who have never updated these optional fields, since database defaults them to NULL.
 					//set bio
-					String about = (String) jsonArray.get(3);
-					setAbout(about);
+					Object about = jsonArray.get(3);
+					if(about.toString().equals("null"))
+					{
+						setAbout("");
+					}
+					else
+					{
+						setAbout(about.toString());
+					}
 					
 					//set location
-					String location = (String) jsonArray.get(4);
-					setLocation(location);
+					Object location = jsonArray.get(4);
+					if(location.toString().equals("null"))
+					{
+						setLocation("");
+					}
+					else
+					{
+						setLocation(location.toString());
+					}
 					
 					//set birthday (not yet implemented)
 					//for now do age
-					int age = (Integer) jsonArray.get(2);
+					Object age = jsonArray.get(2);
+					if(age.toString().equals("null"))
+					{
+						setAge("");
+					}
+					else
+					{
+						setAge(age.toString());//panda
+					}
 					Log.d("getUserInfoOnPost", "age: " + age);
-					setAge(age);//panda
 					//Log.d("getUserInfoOnPost", "after set age");
 					//String fName = jsonObject.getString("fName").toString();
 					//setBirthday(fName); 
