@@ -391,7 +391,7 @@ public class ProfileEditActivity extends ActionBarActivity implements
 		// TODO Auto-generated method stub
 		switch (v.getId()) 
 		{
-		case R.id.editEventPhotoButton:
+		case R.id.editProfilePhotoButton:
 			final CharSequence[] items = {"Take Photo", "Choose from Gallery",
 					"Cancel" };
 
