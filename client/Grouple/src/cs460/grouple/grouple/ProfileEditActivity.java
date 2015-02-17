@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -28,6 +29,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import android.support.v7.app.ActionBarActivity;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -51,6 +54,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -72,7 +76,7 @@ public class ProfileEditActivity extends ActionBarActivity implements
 	private User user;
 	private BroadcastReceiver broadcastReceiver;
 	private Global GLOBAL;
-
+	TextView birthdateTextView;
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -111,7 +115,6 @@ public class ProfileEditActivity extends ActionBarActivity implements
 		//ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);		
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
 		//ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
-
 		actionbarTitle.setText(user.getFirstName() + "'s Profile");
 	}
 	
@@ -132,7 +135,7 @@ public class ProfileEditActivity extends ActionBarActivity implements
 	{
 		// Find the text views.
 		TextView nameTextView = (TextView) findViewById(R.id.nameEditTextEPA);
-		TextView ageTextView = (TextView) findViewById(R.id.ageEditTextEPA);
+		birthdateTextView = (TextView) findViewById(R.id.ageEditTextEPA);
 		TextView locationTextView = (TextView) findViewById(R.id.locationEditTextEPA);
 		TextView bioTextView = (TextView) findViewById(R.id.bioEditTextEPA);
 		if (iv == null)
@@ -142,7 +145,7 @@ public class ProfileEditActivity extends ActionBarActivity implements
 		}
 		// Add the info to the textviews for editing.
 		nameTextView.setText(user.getName());
-		ageTextView.setText(Integer.toString(user.getAge()));
+		birthdateTextView.setText(user.getAge());
 		bioTextView.setText(user.getAbout());
 		locationTextView.setText(user.getLocation());
 		iv.setImageBitmap(user.getImage());
@@ -187,14 +190,40 @@ public class ProfileEditActivity extends ActionBarActivity implements
 		}
 		return super.onOptionsItemSelected(item);
 	}
+	
+	//Button Listener for selecting birthdate.
+		public void selectBirthdate(View view)
+		{
+			int year, month, day;
+			//if a previous birthdate had been set, use that date when initializing datepicker
+			if(!birthdateTextView.getText().toString().equalsIgnoreCase(""))
+			{
+				//parse the date out of textfield
+				year = Integer.parseInt(birthdateTextView.getText().toString().substring(0, 4));
+				month = Integer.parseInt(birthdateTextView.getText().toString().substring(5, 7));
+				
+				day = Integer.parseInt(birthdateTextView.getText().toString().substring(8, 10));
+				System.out.println(year+" "+month+" "+day);
+				new DatePickerDialog(this, myBirthdateListener, year, month-1, day).show();
+			}
+			else
+			{
+				//get the current date to initialize datepicker
+				Calendar calendar;
+				calendar = Calendar.getInstance();
+				year = calendar.get(Calendar.YEAR);
+				month = calendar.get(Calendar.MONTH);
+				day = calendar.get(Calendar.DAY_OF_MONTH);
+				System.out.println(year+" "+month+" "+day);
+				new DatePickerDialog(this, myBirthdateListener, year, month, day).show();
+			}	
+		}
 
-	// Button Listener for submit changes. It the profile in the database.
-	// This executes the
+	// Button Listener for submit changes. It updates the profile in the database.
 	public void submitButton(View view) throws InterruptedException, ExecutionException, TimeoutException
 	{
-		// error checking
-
-		// bio no more than
+		// error checking:
+		// bio no more than 100 characters
 		TextView bioTextView = (TextView) findViewById(R.id.bioEditTextEPA);
 		String bio = bioTextView.getText().toString();
 		if (bio.length() > 100)
@@ -206,16 +235,12 @@ public class ProfileEditActivity extends ActionBarActivity implements
 		{
 			new setProfileTask()
 			.execute("http://68.59.162.183/android_connect/update_profile.php");
-	       
-
-			
 		}
-
 	}
 
 	/*
 	 * Set profile executes update_profile.php. It uses the current users email
-	 * address to update the users name, age, and bio.
+	 * address to update the users name, birthdate, and bio.
 	 */
 	private class setProfileTask extends AsyncTask<String, Void, String>
 	{
@@ -239,7 +264,6 @@ public class ProfileEditActivity extends ActionBarActivity implements
 			{
 				String email = user.getEmail();
 				EditText nameEditText = (EditText) findViewById(R.id.nameEditTextEPA);
-				EditText ageEditText = (EditText) findViewById(R.id.ageEditTextEPA);
 				EditText bioEditText = (EditText) findViewById(R.id.bioEditTextEPA);
 				EditText locationEditText = (EditText) findViewById(R.id.locationEditTextEPA);
 
@@ -249,7 +273,7 @@ public class ProfileEditActivity extends ActionBarActivity implements
 				String firstName = splitted[0];
 				String lastName = splitted[1];
 
-				String age = ageEditText.getText().toString();
+				String age = birthdateTextView.getText().toString();
 
 				String bio = bioEditText.getText().toString();
 
@@ -276,6 +300,8 @@ public class ProfileEditActivity extends ActionBarActivity implements
 					bos.close();
 					System.out.println("WE PROCESSED IT");
 				}
+				
+				System.out.println(firstName+"\n"+lastName+"\n"+age+"\n"+bio+"\n"+location+"\n"+email);
 
 				// add remaining fields to builder, then execute
 				builder.addTextBody("first", firstName, ContentType.TEXT_PLAIN);
@@ -337,10 +363,20 @@ public class ProfileEditActivity extends ActionBarActivity implements
 					GLOBAL.setCurrentUser(user);
 					System.out.println("Success");
 					finish();
-				} else
+				} else if (jsonObject.getString("success").toString().equals("2"))
 				{
-					// Fail
-					System.out.println("Fail");
+					Context context = getApplicationContext();
+					Toast toast = GLOBAL.getToast(context, "User profile changed successfully!");
+					toast.show();
+					//refresh?
+					user.fetchUserInfo();
+					GLOBAL.setCurrentUser(user);
+					System.out.println("Success");
+					finish();
+				}
+				else
+				{
+					System.out.println("fail!");
 				}
 			} catch (Exception e)
 			{
@@ -355,41 +391,41 @@ public class ProfileEditActivity extends ActionBarActivity implements
 		// TODO Auto-generated method stub
 		switch (v.getId()) 
 		{
-		case R.id.editProfilePhotoButton:
+		case R.id.editEventPhotoButton:
 			final CharSequence[] items = {"Take Photo", "Choose from Gallery",
-			"Cancel" };
-	
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Choose your profile picture:");
-		builder.setItems(items, new DialogInterface.OnClickListener() 
-		{
-			@Override
-			public void onClick(DialogInterface dialog, int item) 
+					"Cancel" };
+
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Choose your profile picture:");
+			builder.setItems(items, new DialogInterface.OnClickListener() 
 			{
-				if (items[item].equals("Take Photo")) 
+				@Override
+				public void onClick(DialogInterface dialog, int item) 
 				{
-					i = new Intent(
-							android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-					startActivityForResult(i, 1);
+					if (items[item].equals("Take Photo")) 
+					{
+						i = new Intent(
+								android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+						startActivityForResult(i, 1);
+					}
+					else if (items[item].equals("Choose from Gallery")) 
+					{
+						Intent intent = new Intent(
+								Intent.ACTION_PICK,
+								android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+						intent.setType("image/*");
+						startActivityForResult(
+								Intent.createChooser(intent, "Select Photo"), 2);
+					} 
+					else if (items[item].equals("Cancel")) 
+					{
+						dialog.dismiss();
+					}
 				}
-				else if (items[item].equals("Choose from Gallery")) 
-				{
-					Intent intent = new Intent(
-							Intent.ACTION_PICK,
-							android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-					intent.setType("image/*");
-					startActivityForResult(
-							Intent.createChooser(intent, "Select Photo"), 2);
-				} 
-				else if (items[item].equals("Cancel")) 
-				{
-					dialog.dismiss();
-				}
-			}
-		});
-		builder.show();
-		
-		break;
+			});
+			builder.show();
+			
+			break;
 		}
 	}
 
@@ -422,7 +458,39 @@ public class ProfileEditActivity extends ActionBarActivity implements
 	}
 
 
+	private DatePickerDialog.OnDateSetListener myBirthdateListener
+	   = new DatePickerDialog.OnDateSetListener() 
+	 {
 
+	   @Override
+	   public void onDateSet(DatePicker view, int year, int month, int day) 
+	   {
+		   if (view.isShown()) 
+		   {
+			   int tmpMonth = month+1;
+			   //add missing '0' digit to months and day
+			   if(tmpMonth < 10 && day < 10)
+			   {
+				   birthdateTextView.setText(year+"-0"+tmpMonth+"-0"+day);
+			   }
+			   //add missing '0' digit to just months
+			   else if(tmpMonth < 10)
+			   {
+				   birthdateTextView.setText(year+"-0"+tmpMonth+"-"+day);
+			   }
+			   //add missing '0' digit to just days
+			   else if(day < 10)
+			   {
+				   birthdateTextView.setText(year+"-"+tmpMonth+"-0"+day);
+			   }
+			   else
+			   {
+				   birthdateTextView.setText(year+"-"+tmpMonth+"-"+day);
+			   }
+		   }
+	   }
+	};
+	
 	private void initKillswitchListener()
 	{
 		// START KILL SWITCH LISTENER
