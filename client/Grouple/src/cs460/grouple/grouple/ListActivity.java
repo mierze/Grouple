@@ -330,14 +330,16 @@ public class ListActivity extends ActionBarActivity
 				//
 				if  (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
 				{
-					row = (GridLayout) li.inflate(R.layout.list_row, null);
-					nameButton =  (Button)row.findViewById(R.id.nameButtonLI);
-					Button leaveGroupButton = (Button)row.findViewById(R.id.removeButtonLI);
-					//if mod true this, if not someting else
 					if (GLOBAL.isCurrentUser(user.getEmail()))
+					{
+						row = (GridLayout) li.inflate(R.layout.list_row, null);
+						Button leaveGroupButton = (Button)row.findViewById(R.id.removeButtonLI);
 						leaveGroupButton.setId(g.getID());
+					}
 					else
-						leaveGroupButton.setVisibility(View.GONE);	
+						row = (GridLayout) li.inflate(R.layout.list_row_nobutton, null);
+					
+					nameButton =  (Button)row.findViewById(R.id.nameButtonLI);
 				}
 				else //GROUP INVITES
 				{
@@ -459,7 +461,7 @@ public class ListActivity extends ActionBarActivity
 		View row = null;
 		String sadGuyText = "";
 		Button nameButton = null;
-		Button removeFriendButton = null;
+		Button removeEventButton = null;
 
 		int id;
 		int index;
@@ -492,10 +494,18 @@ public class ListActivity extends ActionBarActivity
 				//Group group = GLOBAL.loadGroup(id);
 				if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
 				{
-					row = (GridLayout) li.inflate(R.layout.list_row, null);
+					if (GLOBAL.isCurrentUser(user.getEmail()))
+					{
+						row = (GridLayout) li.inflate(R.layout.list_row, null);
+						removeEventButton = (Button) row.findViewById(R.id.removeButtonLI);
+						removeEventButton.setId(id);	
+						
+					}
+					else //user does not have ability to remove events
+						row = (GridLayout) li.inflate(R.layout.list_row_nobutton, null);
+					
 					nameButton =  (Button)row.findViewById(R.id.nameButtonLI);
-					removeFriendButton = (Button) row.findViewById(R.id.removeButtonLI);
-					removeFriendButton.setId(id);	
+
 					if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
 						nameButton.setText(e.getName());//future get date too?
 					else

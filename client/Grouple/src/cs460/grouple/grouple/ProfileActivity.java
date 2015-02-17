@@ -109,13 +109,17 @@ public class ProfileActivity extends ActionBarActivity
 		{
 			System.out.println("NOW IN USER");
 			//grabbing the user with the given email in the EXTRAS
+			
 			if (!GLOBAL.isCurrentUser(EXTRAS.getString("EMAIL")))
 			{
 				if (GLOBAL.getUserBuffer() != null)
 					user = GLOBAL.getUserBuffer();
 			}
 			else
+			{
+				
 				user = GLOBAL.getCurrentUser();
+			}
 			title = user.getFirstName() + "'s Profile";
 			setNotifications();
 		}
