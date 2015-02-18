@@ -483,9 +483,9 @@ public class ProfileActivity extends ActionBarActivity
 			iv.setImageBitmap(event.getImage());
 			String infoText = "Category: " + event.getCategory() + "\n" + event.getLocation() + "\n" + event.getStartDate();
 			if (event.getMaxPart() > 0)
-				infoText += "\n" + event.getNumUsers() + " attending / " + event.getMinPart() + " required" + "\nMax Participants: " + event.getMaxPart();
+				infoText += "\n(" + event.getNumUsers() + " confirmed / " + event.getMinPart() + " required)" + "\nMax Participants: " + event.getMaxPart();
 			else
-				infoText += "\n" + event.getNumUsers() + " attending / " + event.getMinPart() + " required";
+				infoText += "\n(" + event.getNumUsers() + " confirmed / " + event.getMinPart() + " required)";
 			info.setText(infoText);
 		}		
 	}

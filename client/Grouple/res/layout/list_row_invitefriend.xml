@@ -9,7 +9,7 @@
     android:onClick="addToGroupTable"
     android:rowCount="1" >
 
-    <Button
+    <TextView
         android:id="@+id/friendNameButtonNoAccess"
         android:layout_height="50dp"
         android:layout_column="0"

@@ -54,11 +54,25 @@
 	    android:layout_height="80dp"
 	    android:layout_alignLeft="@+id/eventsUpcomingButtonEA"
 	    android:layout_alignParentTop="true"
-	    android:layout_marginTop="41dp"
+	    android:layout_marginTop="12dp"
 	    android:background="@drawable/button_border"
 	    android:fontFamily="sans-serif-condensed"
 	    android:onClick="onClick"
 	    android:text="Create Event"
+	    android:textColor="@color/button_text_color"
+	    android:textSize="20sp" />
+
+	<Button
+	    android:id="@+id/eventsPastButtonEA"
+	    android:layout_width="match_parent"
+	    android:layout_height="80dp"
+	    android:layout_alignLeft="@+id/eventInvitesButtonEA"
+	    android:layout_below="@+id/eventInvitesButtonEA"
+	    android:layout_marginTop="18dp"
+	    android:background="@drawable/button_border"
+	    android:fontFamily="sans-serif-condensed"
+	    android:onClick="onClick"
+	    android:text="Past Events"
 	    android:textColor="@color/button_text_color"
 	    android:textSize="20sp" />
 

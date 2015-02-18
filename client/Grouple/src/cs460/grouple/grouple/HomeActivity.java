@@ -206,6 +206,7 @@ public class HomeActivity extends ActionBarActivity
 			user.fetchEventsInvites();
 			user.fetchEventsPending();
 			user.fetchEventsUpcoming();
+			user.fetchEventsPast();
 			intent = new Intent(this, EventsActivity.class);
 			break;
 		case R.id.messagesButtonHA:

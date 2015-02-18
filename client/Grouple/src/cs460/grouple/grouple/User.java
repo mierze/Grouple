@@ -61,6 +61,7 @@ public class User extends Entity
 	private ArrayList<User> friendRequests; //friendRequest emails->names
 	private ArrayList<Group> groupInvites; //group invite ids
 	private ArrayList<Event> eventsUpcoming;
+	private ArrayList<Event> eventsPast;
 	private ArrayList<Event> eventsInvites;
 	//TESTING
 	private ArrayList<Event> eventsPending;
@@ -132,6 +133,18 @@ public class User extends Entity
 			{
 				System.out.println("WE FOUND A MATCH");
 				eventsInvites.remove(eventsInvites.indexOf(e));
+				System.out.println("REMOVE SEEMS SUCCS");
+				break;
+			}
+	}
+	public void removeEventPast(int id)
+	{
+		if (eventsPast != null)
+		for (Event e : eventsPast)
+			if (e.getID() == id)
+			{
+				System.out.println("WE FOUND A MATCH");
+				eventsPast.remove(eventsPast.indexOf(e));
 				System.out.println("REMOVE SEEMS SUCCS");
 				break;
 			}
@@ -240,6 +253,19 @@ public class User extends Entity
 		if (!inEventsUpcoming)
 			eventsUpcoming.add(e);
 	}
+	public void addToEventsPast(Event e)
+	{
+		boolean inEventsPast = false;
+		if (eventsPast == null)
+		{
+			eventsPast = new ArrayList<Event>();
+		}		
+		for (Event t : eventsPast)
+			if (t.getID() == e.getID())
+				inEventsPast = true;
+		if (!inEventsPast)
+			eventsPast.add(e);
+	}
 
 	
 	/*
@@ -292,6 +318,13 @@ public class User extends Entity
 		else
 			return 0;
 	}
+	public int getNumEventsPast()
+	{
+		if (eventsPast != null)
+			return eventsPast.size();
+		else
+			return 0;
+	}
 	public int getNumEventsInvites()
 	{
 		if (eventsInvites != null)
@@ -329,6 +362,10 @@ public class User extends Entity
 	public ArrayList<Event> getEventsInvites()
 	{
 		return eventsInvites;
+	}
+	public ArrayList<Event> getEventsPast()
+	{
+		return eventsPast;
 	}
 	
 	
@@ -842,6 +879,85 @@ public class User extends Entity
 						e.setMaxPart(Integer.parseInt(o.getString("maxpart")));
 						e.fetchParticipants();
 						addToEventsPending(e);
+						//set min max
+					}
+				}
+				
+				// user has no group invites
+				if (jsonObject.getString("success").toString().equals("2"))
+				{
+					//no group invites
+				}
+			} catch (Exception e)
+			{
+				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+			}
+		}
+	}
+	
+	/*
+	 * 
+	 * should be getting the groupInvites key->vals here
+	 * 
+	 */
+	// Get numFriends, TODO: work on returning the integer
+	public int fetchEventsPast()
+	{
+		AsyncTask<String, Void, String> task = new getEventsPastTask()
+				.execute("http://68.59.162.183/android_connect/get_events_past.php?email="
+						+ getEmail());
+		try
+		{
+			task.get(10000, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TimeoutException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//while (task.getStatus() != Status.FINISHED);
+		return 1;
+	}
+
+	private class getEventsPastTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected String doInBackground(String... urls)
+		{
+			return readJSONFeed(urls[0], null);
+		}
+
+		@Override
+		protected void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					//gotta make a json array
+					JSONArray jsonArray = jsonObject.getJSONArray("eventsPast");
+					//looping thru array
+					for (int i = 0; i < jsonArray.length(); i++)
+					{
+						//at each iteration set to hashmap friendEmail -> 'first last'
+						JSONObject o = (JSONObject) jsonArray.get(i);
+						//function adds friend to the friends map
+						Event e = new Event(Integer.parseInt(o.getString("eid")));
+						e.setName(o.getString("name"));
+						e.setInviter(o.getString("sender"));	
+						e.setMinPart(Integer.parseInt(o.getString("minpart")));
+						e.setMaxPart(Integer.parseInt(o.getString("maxpart")));
+						e.fetchParticipants();
+						addToEventsPast(e);
 						//set min max
 					}
 				}

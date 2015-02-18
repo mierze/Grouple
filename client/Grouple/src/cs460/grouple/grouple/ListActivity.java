@@ -58,8 +58,7 @@ public class ListActivity extends ActionBarActivity
 		FRIENDS_CURRENT, FRIENDS_REQUESTS, GROUPS_MEMBERS, EVENTS_ATTENDING,
 		GROUPS_CURRENT, GROUPS_INVITES, 
 	    EVENTS_UPCOMING, EVENTS_PENDING, EVENTS_PAST, EVENTS_INVITES;    
-	}
-	
+	}	
 	
 	//CLASS-WIDE DECLARATIONS
 	private BroadcastReceiver broadcastReceiver;
@@ -163,16 +162,19 @@ public class ListActivity extends ActionBarActivity
 			populateGroups();
 		//CONTENT_TYPE -> POPULATEEVENTS
 		}
-		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()))
+		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
 		{
+			System.out.println("in the if to call the pop");
 			if (addNew != null)
 				addNew.setVisibility(View.GONE);//DOI?
 			if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
 				actionBarTitle = user.getFirstName() + "'s Pending Events";
 			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()))
 				actionBarTitle = user.getFirstName() + "'s Event Invites";
-			else 
+			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
 				actionBarTitle = user.getFirstName() + "'s Upcoming Events";
+			else
+				actionBarTitle = user.getFirstName() + "'s Past Events";
 			populateEvents();
 		}
 
@@ -484,6 +486,13 @@ public class ListActivity extends ActionBarActivity
 			events = user.getEventsInvites();
 			sadGuyText = "You do not have any event invites.";
 		}
+		else
+		{
+			events = user.getEventsPast();
+			System.out.println("GRABBING EVENTS PAST");
+			System.out.println("Size: " + user.getNumEventsPast());
+			sadGuyText = "You do not have any past events.";
+		}
 		
 		if (events != null && !events.isEmpty())
 		{
@@ -492,30 +501,30 @@ public class ListActivity extends ActionBarActivity
 				id = e.getID();
 				index = events.indexOf(e);
 				//Group group = GLOBAL.loadGroup(id);
-				if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
+				if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
 				{
+					System.out.println("IN FIRST EVENT IF");
 					if (GLOBAL.isCurrentUser(user.getEmail()))
 					{
-						row = (GridLayout) li.inflate(R.layout.list_row, null);
+						row = (GridLayout) li.inflate(R.layout.list_row, null);	
 						removeEventButton = (Button) row.findViewById(R.id.removeButtonLI);
-						removeEventButton.setId(id);	
-						
+						removeEventButton.setId(id);		
 					}
 					else //user does not have ability to remove events
 						row = (GridLayout) li.inflate(R.layout.list_row_nobutton, null);
 					
 					nameButton =  (Button)row.findViewById(R.id.nameButtonLI);
 
-					if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
+					if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
 						nameButton.setText(e.getName());//future get date too?
 					else
-						nameButton.setText(e.getName() + "\t(" + e.getNumUsers() + ")/" + e.getMinPart() + " attending");
+						nameButton.setText(e.getName() + "\n(" + e.getNumUsers() + " confirmed / " + e.getMinPart() + " required)");
 				}
 				else
 				{
 					row = (GridLayout) li.inflate(R.layout.list_row_acceptdecline, null);
 					nameButton =  (Button)row.findViewById(R.id.nameButtonAD);
-					nameButton.setText(e.getName() + "\t(" + e.getNumUsers() + ")/" + e.getMinPart() + " attending");
+					nameButton.setText(e.getName() + "\n(" + e.getNumUsers() + " confirmed / " + e.getMinPart() + " required)");
 				}
 
 				//setting ids to the id of the group for button functionality
@@ -742,9 +751,8 @@ System.out.println("WHERE WE NEED");
 							}
 						}).setNegativeButton("Cancel", null).show();
 			}
-			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
-			{
-				
+			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
+			{	
 				//Get the id.
 				bufferID = view.getId();
 				System.out.println("ID IS SET TO" + bufferID);
@@ -801,6 +809,8 @@ System.out.println("WHERE WE NEED");
 			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()))
 			{
 				intent = new Intent(this, EventAddGroupsActivity.class);
+				intent.putExtra("EID", Integer.toString(event.getID()));
+				System.out.println("Setting EID to " + event.getID());
 				GLOBAL.getCurrentUser().fetchGroups();
 			}
 			if (user != null)

@@ -193,7 +193,7 @@ public class InviteActivity extends ActionBarActivity {
 				final Button makeAdminButton = (Button) rowView
 						.findViewById(R.id.removeFriendButtonNoAccess);
 
-				final Button friendNameButton = (Button) rowView
+				final TextView friendName = (TextView) rowView
 						.findViewById(R.id.friendNameButtonNoAccess);
 				final CheckBox cb = (CheckBox) rowView
 						.findViewById(R.id.addToGroupBox);
@@ -237,7 +237,7 @@ public class InviteActivity extends ActionBarActivity {
 					@Override
 					public void onCheckedChanged(CompoundButton view, boolean isChecked)
 					{
-						String text = friendNameButton.getLayout()
+						String text = friendName.getLayout()
 								.getText().toString();
 					
 						if(makeAdminButton.getText().toString().equals("A") && cb.isChecked())
@@ -267,8 +267,8 @@ public class InviteActivity extends ActionBarActivity {
 					}
 				});
 				
-				friendNameButton.setText(user.getName());
-				friendNameButton.setId(index);
+				friendName.setText(user.getName());
+				friendName.setId(index);
 				rowView.setId(index);
 				pickFriendsLayout.addView(rowView);	
 				index++;

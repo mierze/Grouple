@@ -300,7 +300,7 @@ public class EventCreateActivity extends ActionBarActivity
 				{
 					//initiate creation of event
 					new CreateEventTask().execute("http://68.59.162.183/"
-					+ "android_connect/create_event.php");
+					+ "android_connect/create_event2.php");
 				}
 			}).setNegativeButton("Cancel", null).show();
 		}
@@ -349,6 +349,7 @@ public class EventCreateActivity extends ActionBarActivity
 					//Note: g_id is the only unique identifier of a group and therefore must be used for any future calls concerning that group.
 					e_id = jsonObject.getString("e_id").toString();
 					Context context = getApplicationContext();
+					System.out.println("MEssage: " + jsonObject.getString("message"));
 					System.out.println("e_id of newly created group is: "+e_id);
 					user.fetchEventsInvites();
 					user.fetchEventsPending();

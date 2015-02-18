@@ -63,7 +63,7 @@ public class EventsActivity extends ActionBarActivity
 		((Button) findViewById(R.id.eventsUpcomingButtonEA)).setText("Upcoming Events (" + user.getNumEventsUpcoming() + ")");
 		((Button) findViewById(R.id.eventsPendingButtonEA)).setText("Pending Events (" + user.getNumEventsPending() + ")");
 		((Button) findViewById(R.id.eventInvitesButtonEA)).setText("Event Invites (" + user.getNumEventsInvites() + ")");
-		
+		((Button) findViewById(R.id.eventsPastButtonEA)).setText("Past Events (" + user.getNumEventsPast() + ")");		
 	}
 	
 	public void onClick(View view)
@@ -81,10 +81,15 @@ public class EventsActivity extends ActionBarActivity
 			break;
 		case R.id.eventCreateButtonEA:
 			intent = new Intent(this, EventCreateActivity.class);
+			user.fetchGroups();
 			break;
 		case R.id.eventInvitesButtonEA:
 			user.fetchEventsInvites();
 			intent.putExtra("CONTENT", "EVENTS_INVITES");
+			break;
+		case R.id.eventsPastButtonEA:
+			user.fetchEventsPast();
+			intent.putExtra("CONTENT", "EVENTS_PAST");
 			break;
 		}
 		GLOBAL.setCurrentUser(user);

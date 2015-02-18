@@ -236,7 +236,7 @@ public class ManageMembersActivity extends ActionBarActivity {
 				rowView = (GridLayout) li.inflate(R.layout.list_row_invitefriend, null);
 				final Button makeAdminButton = (Button) rowView.findViewById(R.id.removeFriendButtonNoAccess);
 
-				final Button friendNameButton = (Button) rowView.findViewById(R.id.friendNameButtonNoAccess);
+				final TextView friendName = (TextView) rowView.findViewById(R.id.friendNameButtonNoAccess);
 				final CheckBox cb = (CheckBox) rowView.findViewById(R.id.addToGroupBox);
 				makeAdminButton.setId(index);
 				cb.setId(makeAdminButton.getId());
@@ -289,7 +289,7 @@ public class ManageMembersActivity extends ActionBarActivity {
 						
 						if (cb.isChecked())
 						{
-							String text = friendNameButton.getLayout()
+							String text = friendName.getLayout()
 									.getText().toString();
 						
 							View parent = (View)view.getParent();
@@ -319,8 +319,9 @@ public class ManageMembersActivity extends ActionBarActivity {
 					}
 				});
 				
-				friendNameButton.setText(user.getName());
-				friendNameButton.setId(index);
+				friendName.setText(user.getName());
+				friendName.setId(index);
+				friendName.setOnClickListener(null);
 				toUpdate.put(index, user.getEmail());
 				toUpdateRole.put(index, roles.get(index));
 				rowView.setId(index);
