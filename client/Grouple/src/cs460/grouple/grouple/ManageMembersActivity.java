@@ -374,32 +374,16 @@ public class ManageMembersActivity extends ActionBarActivity {
 
 			//initiate add of user
 			//INSTEAD OF ADD MEMBERS WE WILL NEED TO UPDATE
-			//new AddGroupMembersTask().execute("http://68.59.162.183/"
-					//+ "android_connect/add_groupmember.php", friendsEmail, user.getEmail(), friendsRole, Integer.toString(g_id));
+			System.out.println("http://68.59.162.183/android_connect/update_group_member.php, url1: " + friendsEmail + ", 2: no, 3: " + friendsRole +", 4: " + Integer.toString(g_id));
+			new UpdateGroupMembersTask().execute("http://68.59.162.183/android_connect/update_group_member.php", friendsEmail, "no", friendsRole, Integer.toString(g_id));
 		}
 		size = toRemove.size();
 		for(int i = 0; i < size; i++) 
 		{
-			
-			//get the user's email by matching indexes from added list with indexes from allFriendslist.
-		
-			
-			
-			//grab the email of friend to add
 			String friendsEmail = toRemove.valueAt(i);
-		
-
-
 			System.out.println("removing mg member: "+friendsEmail);
-		//	for (String email : toUpdate.valueAt)
-			//{
-			//	System.out.println("remove: " + entry.getValue() + "\n");
-			//}
-
-			//initiate add of user
-			//INSTEAD OF ADD MEMBERS WE WILL NEED TO UPDATE
-			//new AddGroupMembersTask().execute("http://68.59.162.183/"
-					//+ "android_connect/add_groupmember.php", friendsEmail, user.getEmail(), friendsRole, Integer.toString(g_id));
+			new UpdateGroupMembersTask().execute("http://68.59.162.183/"
+					+ "android_connect/update_group_member.php", friendsEmail, "yes", "M", Integer.toString(g_id));
 		}
 		
 		//group.fetchGroupInfo();
@@ -410,14 +394,14 @@ public class ManageMembersActivity extends ActionBarActivity {
 		//GLOBAL.setGroupBuffer(group);
 		
 		Context context = getApplicationContext();
-		Toast toast = Toast.makeText(context, "Friends have been invited.", Toast.LENGTH_SHORT);
+		Toast toast = Toast.makeText(context, "Group members have been updated.", Toast.LENGTH_SHORT);
 		toast.show();
 		//remove this activity from back-loop by calling finish().
-		//finish();
+		finish();
 	}
 	
 	//aSynch task to add individual member to group.
-	private class AddGroupMembersTask extends AsyncTask<String,Void,String>
+	private class UpdateGroupMembersTask extends AsyncTask<String,Void,String>
 	{
 		@Override
 		protected String doInBackground(String... urls)
@@ -425,7 +409,7 @@ public class ManageMembersActivity extends ActionBarActivity {
 			
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("email", urls[1]));
-			nameValuePairs.add(new BasicNameValuePair("sender", urls[2]));
+			nameValuePairs.add(new BasicNameValuePair("remove", urls[2]));
 			nameValuePairs.add(new BasicNameValuePair("role", urls[3]));
 			nameValuePairs.add(new BasicNameValuePair("g_id", urls[4]));
 
@@ -444,7 +428,7 @@ public class ManageMembersActivity extends ActionBarActivity {
 				// member has been successfully added
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					System.out.println("USER HAS SUCCESSFULLY BEEN ADDED");
+					System.out.println("USER HAS SUCCESSFULLY BEEN UPDATED");
 					//all working correctly, continue to next user or finish.
 					
 				} 
