@@ -243,7 +243,13 @@ public class ListActivity extends ActionBarActivity
 					ROLE = jsonObject.getString("role").toString();
 					System.out.println("ROLE IS BEING SET TO " + ROLE);
 					if (!ROLE.equals("M"))
-						addNew.setVisibility(View.VISIBLE);
+						if (CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()))
+						{
+							if (!event.getEventState().equals("Ended"))
+								addNew.setVisibility(View.VISIBLE);
+						}
+						else
+							addNew.setVisibility(View.VISIBLE);
 				//	setControls(); //for group / event
 				
 				} 

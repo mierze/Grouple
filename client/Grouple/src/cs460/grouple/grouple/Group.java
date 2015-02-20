@@ -208,6 +208,8 @@ public class Group extends Entity
 					
 					int pub = (Integer) jsonArray.get(4);
 					setPub(pub); 
+					
+					
 
 				}
 				//unsuccessful

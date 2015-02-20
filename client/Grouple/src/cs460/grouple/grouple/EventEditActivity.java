@@ -180,8 +180,8 @@ public class EventEditActivity extends ActionBarActivity implements
 		minEditText.setText(String.valueOf(event.getMinPart()));
 		if (event.getMaxPart() > 0)
 			maxEditText.setText(String.valueOf(event.getMaxPart()));
-		startEditText.setText(toRawDate(event.getStartDate()));
-		endEditText.setText(toRawDate(event.getEndDate()));
+		startEditText.setText(toRawDate(event.getStartText()));
+		endEditText.setText(toRawDate(event.getEndText()));
 	}
 
 	private String toRawDate(String date)

@@ -1,6 +1,7 @@
 package cs460.grouple.grouple;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -166,13 +167,19 @@ public class ProfileActivity extends ActionBarActivity
 		
 		//checking if user is in group/event
 		boolean inEntity = false;
+		boolean past = false;
+		if (event != null)
+			if (event.getEnd().compareTo(new Date()) < 0)
+				past = true;
+			else 
+				past = false;
 		for (User u : users)
 			if (u.getEmail().equals(user.getEmail()))
 				inEntity = true;
 		
 		if (!inEntity) //user not in group, check if public so they can join
 		{
-			if (pub == 1)
+			if (pub == 1 && !past) 
 			{
 				profileButton2.setVisibility(View.VISIBLE);
 				profileButton2.setText(pro2Text);
@@ -181,6 +188,7 @@ public class ProfileActivity extends ActionBarActivity
 		}
 		else //user is in group, check role
 		{
+			// and check for not past
 			if (CONTENT.equals(CONTENT_TYPE.EVENT.toString()))
 				new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_event.php", Integer.toString(event.getID()));
 			else

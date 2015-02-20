@@ -29,6 +29,9 @@ public class Event extends Entity
 	private int id;
 	private String eventState;
 	private String startDate;
+	private String startText;
+	private Date end;
+	private String endText;
 	private String endDate;
 	private String category;
 	private int minPart;
@@ -70,15 +73,22 @@ public class Event extends Entity
 	}
 	public void setStartDate(String startDate)
 	{
+		startText = startDate;
 		//string is format from json, parsedate converts
 		this.startDate = parseDate(startDate);
 	}
+	public Date getEnd()
+	{
+		return end;
+	}
 	public void setEndDate(String endDate)
 	{
+		endText = endDate;
 		this.endDate = parseDate(endDate);
 	}
 	private String parseDate(String dateString)
 	{
+		
 		System.out.println("\n\nDATE IS FIRST: " + dateString);
 		String date = "";
         SimpleDateFormat raw = new SimpleDateFormat("yyyy-M-d h:mm:ss");
@@ -86,6 +96,7 @@ public class Event extends Entity
         try
         {
     		Date parsedDate = (Date) raw.parse(dateString);
+    		this.end = parsedDate;
     		date = dateFormat.format(parsedDate); 
     		//date = raw.format(parsedDate);   
     		System.out.println("\nDATE IN RAW TRANSLATION: " + raw.format(parsedDate));
@@ -131,7 +142,14 @@ public class Event extends Entity
 	{
 		return endDate;
 	}
-	
+	public String getEndText()
+	{
+		return endText;
+	}
+	public String getStartText()
+	{
+		return startText;
+	}
 	
 
 	/**
