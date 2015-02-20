@@ -380,7 +380,7 @@ public class User extends Entity
 	{
 		
 		AsyncTask<String, Void, String> task = new getUserInfoTask()
-		.execute("http://68.59.162.183/android_connect/get_profile.php");
+		.execute("http://68.59.162.183/android_connect/get_user_info.php");
 		
 
 		try
@@ -410,6 +410,7 @@ public class User extends Entity
 		@Override
 		protected String doInBackground(String... urls)
 		{
+			System.out.println("ABOT TO GET USER INFO");
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
 			nameValuePairs.add(new BasicNameValuePair("email", getEmail()));
 			return readJSONFeed(urls[0], nameValuePairs);
@@ -429,11 +430,14 @@ public class User extends Entity
 				//json fetch was successful
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					JSONArray jsonArray = jsonObject.getJSONArray("profile");
+					System.out.println("in succuess USER INFO");
+					JSONArray jsonArray = jsonObject.getJSONArray("userInfo");
+					System.out.println("in succuess USER INFO1");
 					Log.d("getUserInfoOnPost", "success1");
 
 					//at each iteration set to hashmap friendEmail -> 'first last'
 					String fName = (String) jsonArray.get(0);
+					
 					//set name
 					String lName = (String) jsonArray.get(1);
 					setName(fName + " " + lName);
@@ -478,8 +482,8 @@ public class User extends Entity
 					//setBirthday(fName); 
 					
 					//get that image niggi
-					String image = (String) jsonArray.get(5);
-					setImage(image);
+					//String image = (String) jsonArray.get(5);
+					//setImage(image);
 				
 				} 
 				//unsuccessful

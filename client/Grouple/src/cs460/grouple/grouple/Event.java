@@ -30,7 +30,6 @@ public class Event extends Entity
 	private String eventState;
 	private String startDate;
 	private String startText;
-	private Date end;
 	private String endText;
 	private String endDate;
 	private String category;
@@ -77,10 +76,6 @@ public class Event extends Entity
 		//string is format from json, parsedate converts
 		this.startDate = parseDate(startDate);
 	}
-	public Date getEnd()
-	{
-		return end;
-	}
 	public void setEndDate(String endDate)
 	{
 		endText = endDate;
@@ -96,7 +91,6 @@ public class Event extends Entity
         try
         {
     		Date parsedDate = (Date) raw.parse(dateString);
-    		this.end = parsedDate;
     		date = dateFormat.format(parsedDate); 
     		//date = raw.format(parsedDate);   
     		System.out.println("\nDATE IN RAW TRANSLATION: " + raw.format(parsedDate));
@@ -226,7 +220,7 @@ public class Event extends Entity
 					setMaxPart((Integer) jsonArray.get(8));	
 					//9 = mustbringlist
 					setEmail((String) jsonArray.get(10));		
-					setImage((String) jsonArray.get(11));
+					//setImage((String) jsonArray.get(11));
 					setPub((Integer) jsonArray.get(12));
 				} 
 				//unsuccessful

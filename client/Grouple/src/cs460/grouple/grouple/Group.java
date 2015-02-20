@@ -189,7 +189,7 @@ public class Group extends Entity
 				//successful run
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					JSONArray jsonArray = jsonObject.getJSONArray("profile");
+					JSONArray jsonArray = jsonObject.getJSONArray("groupInfo");
 					//set group name
 					System.out.println("In on post user success 1");
 					String name = (String) jsonArray.get(0);
@@ -200,9 +200,7 @@ public class Group extends Entity
 					String about = (String) jsonArray.get(1);
 					setAbout(about);
 					
-					//get that image niggi
-					String image = (String) jsonArray.get(2);
-					setImage(image);
+					//get that image
 					
 					String creator = (String) jsonArray.get(3);
 					setEmail(creator);

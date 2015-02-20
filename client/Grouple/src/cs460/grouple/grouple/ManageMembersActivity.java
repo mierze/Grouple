@@ -277,6 +277,7 @@ public class ManageMembersActivity extends ActionBarActivity {
 							makeAdminButton.setTextColor(getResources().getColor(
 									R.color.orange));
 						}
+						System.out.println("Setting role for user: " + toUpdate.get(view.getId()) + " to: " + toUpdateRole.get(view.getId()));
 					}
 				});
 						
@@ -352,7 +353,7 @@ public class ManageMembersActivity extends ActionBarActivity {
 		//now loop through list of added to add all the additional users to the group
 		int size = toUpdate.size();
 		System.out.println("Total count of users to process: "+size);
-		for(int i = 0; i < size; i++) 
+		for (int i = 0 ; i < size ; i++)
 		{
 			System.out.println("adding friend #"+i+"/"+toUpdate.size());
 			
@@ -361,10 +362,10 @@ public class ManageMembersActivity extends ActionBarActivity {
 			
 			
 			//grab the email of friend to add
-			String friendsEmail = toUpdate.valueAt(i);
+			String friendsEmail = toUpdate.valueAt(key);
 		
 			//grab the role of friend to add
-			String friendsRole = toUpdateRole.valueAt(i);
+			String friendsRole = toUpdateRole.valueAt(key);
 
 			System.out.println("adding member: "+friendsEmail+", role: "+friendsRole);
 		//	for (String email : toUpdate.valueAt)
@@ -380,7 +381,8 @@ public class ManageMembersActivity extends ActionBarActivity {
 		size = toRemove.size();
 		for(int i = 0; i < size; i++) 
 		{
-			String friendsEmail = toRemove.valueAt(i);
+			int key = toUpdate.keyAt(i);
+			String friendsEmail = toRemove.valueAt(key);
 			System.out.println("removing mg member: "+friendsEmail);
 			new UpdateGroupMembersTask().execute("http://68.59.162.183/"
 					+ "android_connect/update_group_member.php", friendsEmail, "yes", "M", Integer.toString(g_id));

@@ -106,6 +106,8 @@ public class ProfileActivity extends ActionBarActivity
 		profileButton2.setVisibility(View.GONE);
 		profileButton3.setVisibility(View.GONE);
 		editProfileButton.setVisibility(View.GONE);
+		//new getImageTask().execute("http://68.59.162.183/android_connect/get_profile_image.php");
+		
 		if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
 		{
 			System.out.println("NOW IN USER");
@@ -194,7 +196,81 @@ public class ProfileActivity extends ActionBarActivity
 				new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_group.php", Integer.toString(group.getID()));
 		}
 	}
-		
+
+
+	private class getImageTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected String doInBackground(String... urls)
+		{
+			String type;
+			String id;
+			if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
+			{
+				type = "email";
+				id = user.getEmail();
+			}
+			else
+			{
+				type = (CONTENT.equals(CONTENT_TYPE.EVENT.toString())) ? "eid" : "gid";
+				id = (CONTENT.equals(CONTENT_TYPE.EVENT.toString())) ? Integer.toString(event.getID()) : Integer.toString(group.getID());
+			}
+			
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair(type, id));
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+		}
+
+		@Override
+		protected void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+				 
+				//json fetch was successful
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					if (iv == null)
+					{
+						iv = (ImageView) findViewById(R.id.profileImageUPA);
+					}
+					String image = jsonObject.getString("image").toString();
+					if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
+					{
+						user.setImage(image);
+						iv.setImageBitmap(user.getImage());
+					}
+					else if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
+					{
+						group.setImage(image);
+						iv.setImageBitmap(group.getImage());
+					}
+					else
+					{
+						//event
+						event.setImage(image);
+						iv.setImageBitmap(event.getImage());
+					}
+					System.out.println("ROLE IS BEING SET TO " + ROLE);
+					setNotifications(); //for group / event
+				
+				} 
+				//unsuccessful
+				else
+				{
+					// failed
+					Log.d("FETCH ROLE FAILED", "FAILED");
+				}
+			} 
+			catch (Exception e)
+			{
+				Log.d("atherjsoninuserpost", "here");
+				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+			}
+			//do next thing here
+		}
+	}
 
 	private class getRoleTask extends AsyncTask<String, Void, String>
 	{
@@ -452,10 +528,7 @@ public class ProfileActivity extends ActionBarActivity
 	 */
 	public void populateProfile()
 	{
-		if (iv == null)
-		{
-			iv = (ImageView) findViewById(R.id.profileImageUPA);
-		}
+
 		
 		TextView aboutTitle = (TextView) findViewById(R.id.aboutTitlePA);
 		TextView info = (TextView) findViewById(R.id.profileInfoTextView);
@@ -463,7 +536,7 @@ public class ProfileActivity extends ActionBarActivity
 		if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
 		{
 			aboutTitle.setText("About Group:");
-			iv.setImageBitmap(group.getImage());
+			//iv.setImageBitmap(group.getImage());
 			info.setText("Extra group info");
 			about.setText(group.getAbout());
 		}
