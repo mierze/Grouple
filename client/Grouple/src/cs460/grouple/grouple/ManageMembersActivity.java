@@ -387,7 +387,7 @@ public class ManageMembersActivity extends ActionBarActivity {
 		}
 		
 		//group.fetchGroupInfo();
-		//group.fetchMembers();
+		group.fetchMembers();
 		//user.fetchGroupInvites();
 		//user.fetchGroups();
 		//GLOBAL.setCurrentUser(user);
@@ -396,6 +396,7 @@ public class ManageMembersActivity extends ActionBarActivity {
 		Context context = getApplicationContext();
 		Toast toast = Toast.makeText(context, "Group members have been updated.", Toast.LENGTH_SHORT);
 		toast.show();
+		
 		//remove this activity from back-loop by calling finish().
 		finish();
 	}

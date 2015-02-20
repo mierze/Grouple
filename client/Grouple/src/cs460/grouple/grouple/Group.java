@@ -108,6 +108,7 @@ public class Group extends Entity
 				{
 					//gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("gmembers");
+					if (getUsers() != null) getUsers().clear();
 					//looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
