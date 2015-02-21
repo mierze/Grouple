@@ -410,8 +410,8 @@ public class User extends Entity
 		@Override
 		protected String doInBackground(String... urls)
 		{
-			System.out.println("ABOT TO GET USER INFO");
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+			System.out.println("ABOT TO GET USER INFO for " + getEmail());
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("email", getEmail()));
 			return readJSONFeed(urls[0], nameValuePairs);
 		}
@@ -426,7 +426,7 @@ public class User extends Entity
 				//gotta make a json array
 				//JSONArray jsonArray = jsonObject.getJSONArray("userInfo");
 				
-				 
+				System.out.println("USER INFO on post TRY");
 				//json fetch was successful
 				if (jsonObject.getString("success").toString().equals("1"))
 				{

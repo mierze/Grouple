@@ -106,7 +106,7 @@ public class ProfileActivity extends ActionBarActivity
 		profileButton2.setVisibility(View.GONE);
 		profileButton3.setVisibility(View.GONE);
 		editProfileButton.setVisibility(View.GONE);
-		//new getImageTask().execute("http://68.59.162.183/android_connect/get_profile_image.php");
+		
 		
 		if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
 		{
@@ -141,7 +141,7 @@ public class ProfileActivity extends ActionBarActivity
 			}
 			setRole();
 		}
-
+		new getImageTask().execute("http://68.59.162.183/android_connect/get_profile_image.php");
 		populateProfile(); //populates a group / user profile
 		
 		// initializing the action bar and killswitch listener
@@ -552,7 +552,7 @@ public class ProfileActivity extends ActionBarActivity
 				infoT = location;
 			else
 				infoT = "Birthdate: "+age + "\n" + location;
-			iv.setImageBitmap(user.getImage());
+			//iv.setImageBitmap(user.getImage());
 			info.setText(infoT);
 			about.setText(user.getAbout());
 		}
@@ -560,7 +560,7 @@ public class ProfileActivity extends ActionBarActivity
 		{
 			aboutTitle.setText("About Event:");
 			about.setText(event.getAbout());
-			iv.setImageBitmap(event.getImage());
+			//iv.setImageBitmap(event.getImage());
 			String infoText = "Category: " + event.getCategory() + "\n" + event.getLocation() + "\n" + event.getStartDate();
 			if (event.getMaxPart() > 0)
 				infoText += "\n(" + event.getNumUsers() + " confirmed / " + event.getMinPart() + " required)" + "\nMax Participants: " + event.getMaxPart();
