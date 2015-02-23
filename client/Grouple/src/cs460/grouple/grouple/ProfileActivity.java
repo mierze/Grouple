@@ -38,7 +38,8 @@ import android.widget.Toast;
  */
 public class ProfileActivity extends ActionBarActivity
 {
-	enum CONTENT_TYPE {
+	enum CONTENT_TYPE 
+	{
 		USER, GROUP, EVENT
 	}
 	private ImageView iv;
@@ -50,12 +51,11 @@ public class ProfileActivity extends ActionBarActivity
 	private String ROLE = "M";//defaulting to lowest level
 	private String CONTENT; //type of content to display in profile, passed in from other activities
 	private Global GLOBAL;
-	
-	
 	private Button profileButton1;
 	private Button profileButton2;
 	private Button profileButton3;
 	private Button editProfileButton;
+	
 	@Override
 	protected void onStart()
 	{
@@ -76,7 +76,6 @@ public class ProfileActivity extends ActionBarActivity
 	{
 		super.onResume();
 		load();
-
 	}
 	
 	public void initActionBar(String title)
@@ -105,8 +104,7 @@ public class ProfileActivity extends ActionBarActivity
 		editProfileButton = (Button)findViewById(R.id.profileEditButton);
 		profileButton2.setVisibility(View.GONE);
 		profileButton3.setVisibility(View.GONE);
-		editProfileButton.setVisibility(View.GONE);
-		
+		editProfileButton.setVisibility(View.GONE);		
 		
 		if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
 		{
@@ -119,8 +117,7 @@ public class ProfileActivity extends ActionBarActivity
 					user = GLOBAL.getUserBuffer();
 			}
 			else
-			{
-				
+			{			
 				user = GLOBAL.getCurrentUser();
 			}
 			title = user.getFirstName() + "'s Profile";
@@ -198,6 +195,7 @@ public class ProfileActivity extends ActionBarActivity
 	}
 
 
+	/* TASK FOR GRABBING IMAGE OF EVENT/USER/GROUP */
 	private class getImageTask extends AsyncTask<String, Void, String>
 	{
 		@Override
@@ -232,9 +230,7 @@ public class ProfileActivity extends ActionBarActivity
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					if (iv == null)
-					{
 						iv = (ImageView) findViewById(R.id.profileImageUPA);
-					}
 					String image = jsonObject.getString("image").toString();
 					if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
 					{
@@ -253,10 +249,8 @@ public class ProfileActivity extends ActionBarActivity
 						iv.setImageBitmap(event.getImage());
 					}
 					System.out.println("ROLE IS BEING SET TO " + ROLE);
-					setNotifications(); //for group / event
-				
+					setNotifications(); //for group / event	
 				} 
-				//unsuccessful
 				else
 				{
 					// failed
@@ -272,6 +266,7 @@ public class ProfileActivity extends ActionBarActivity
 		}
 	}
 
+	/* CLASS TO FETCH THE ROLE OF THE USER IN GROUP / EVENT */
 	private class getRoleTask extends AsyncTask<String, Void, String>
 	{
 		@Override
@@ -303,7 +298,6 @@ public class ProfileActivity extends ActionBarActivity
 					setNotifications(); //for group / event
 				
 				} 
-				//unsuccessful
 				else
 				{
 					// failed
@@ -315,7 +309,6 @@ public class ProfileActivity extends ActionBarActivity
 				Log.d("atherjsoninuserpost", "here");
 				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
 			}
-			//do next thing here
 		}
 	}
 	
@@ -326,9 +319,7 @@ public class ProfileActivity extends ActionBarActivity
 		{
 			profileButton1.setText("Members\n(" + group.getNumUsers() + ")");
 			if (ROLE.equals("C"))
-				editProfileButton.setVisibility(View.VISIBLE);
-			
-		
+				editProfileButton.setVisibility(View.VISIBLE);		
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
 		{
@@ -426,7 +417,6 @@ public class ProfileActivity extends ActionBarActivity
 			}
 			break;
 		case R.id.profileButton2:
-			//groups
 			if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
 			{
 				intent.putExtra("CONTENT", "GROUPS_CURRENT");
@@ -434,7 +424,7 @@ public class ProfileActivity extends ActionBarActivity
 			}
 			else if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
 			{
-				//join the group
+				//join the public group
 				new JoinPublicTask().execute("http://68.59.162.183/"
 						+ "android_connect/join_public_group.php", user.getEmail(), "M", Integer.toString(group.getID()));
 					System.out.println("NOW ADDING TO  GROUP");	
@@ -442,7 +432,7 @@ public class ProfileActivity extends ActionBarActivity
 			}
 			else
 			{
-				System.out.println("ABOUT TO START JOIN EVENT");
+				//join the public event
 				new JoinPublicTask().execute("http://68.59.162.183/"
 						+ "android_connect/join_public_event.php", user.getEmail(), "M", Integer.toString(event.getID()));
 					noIntent = true;

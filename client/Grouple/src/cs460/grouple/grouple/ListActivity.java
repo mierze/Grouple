@@ -79,14 +79,6 @@ public class ListActivity extends ActionBarActivity
 	private ArrayList<Group> groups;
 	private ArrayList<Event> events;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState)
-	{
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_list);
-		load();
-	}
-
 	/* loading actionbar */
 	public void initActionBar(String actionBarTitle)
 	{
@@ -127,6 +119,12 @@ public class ListActivity extends ActionBarActivity
 			{
 				addNew.setText("Add New Friend");
 				addNew.setVisibility(View.VISIBLE);
+				View svLayout = findViewById(R.id.scrollViewLayout);
+			    if (svLayout.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+			        ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) svLayout.getLayoutParams();
+			        p.setMargins(0, 0, 0, 60);
+			        svLayout.requestLayout();
+			    }
 				actionBarTitle = user.getFirstName() + "'s Friends";
 			}
 			else if (CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()))
@@ -177,136 +175,12 @@ public class ListActivity extends ActionBarActivity
 				actionBarTitle = user.getFirstName() + "'s Past Events";
 			populateEvents();
 		}
-
+		//calling next functions to execute
 		initActionBar(actionBarTitle);
 		initKillswitchListener();
 	}
 	
-	
-	private void setRole()
-	{
-		ArrayList<User> users = new ArrayList<User>();
-		if (CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()))
-		{
-			users = event.getUsers();
-			addNew.setText("Invite Groups");//TODO: Mod checks
-		}
-		else
-		{
-			users = group.getUsers();
-			addNew.setText("Invite Friends");
-		}
-		
-		//checking if user is in group/event
-		boolean inEntity = false;
-		for (User u : users)
-			if (u.getEmail().equals(user.getEmail()))
-				inEntity = true;
-		
-		if (inEntity)
-		{
-			System.out.println("NOW IN SET ROLE");
-			if (CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()))
-				new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_group.php", Integer.toString(group.getID()));
-			else
-				new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_event.php", Integer.toString(event.getID()));
-		}
-	}
-		
-
-	private class getRoleTask extends AsyncTask<String, Void, String>
-	{
-		@Override
-		protected String doInBackground(String... urls)
-		{
-			String type = (CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString())) ? "gid" : "eid";
-			String email = user.getEmail();
-			String id = urls[1];
-			
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
-			nameValuePairs.add(new BasicNameValuePair("email", email));
-			nameValuePairs.add(new BasicNameValuePair(type, id));
-			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
-		}
-
-		@Override
-		protected void onPostExecute(String result)
-		{
-			try
-			{
-				JSONObject jsonObject = new JSONObject(result);
-				 
-				//json fetch was successful
-				if (jsonObject.getString("success").toString().equals("1"))
-				{
-					
-					ROLE = jsonObject.getString("role").toString();
-					System.out.println("ROLE IS BEING SET TO " + ROLE);
-					if (!ROLE.equals("M"))
-						if (CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()))
-						{
-							if (!event.getEventState().equals("Ended"))
-								addNew.setVisibility(View.VISIBLE);
-						}
-						else
-							addNew.setVisibility(View.VISIBLE);
-				//	setControls(); //for group / event
-				
-				} 
-				//unsuccessful
-				else
-				{
-					// failed
-					Log.d("FETCH ROLE FAILED", "FAILED");
-				}
-			} 
-			catch (Exception e)
-			{
-				Log.d("atherjsoninuserpost", "here");
-				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
-			}
-			//do next thing here
-		}
-	}
-	
-	
-	
-	@Override
-	protected void onDestroy()
-	{
-		// TODO Auto-generated method stub
-		unregisterReceiver(broadcastReceiver);
-		super.onDestroy();
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.navigation_actions, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item)
-	{
-		int id = item.getItemId();
-		if (id == R.id.action_logout)
-		{
-			GLOBAL.destroySession();
-			Intent login = new Intent(this, LoginActivity.class);
-			startActivity(login);
-			Intent intent = new Intent("CLOSE_ALL");
-			this.sendBroadcast(intent);
-			return true;
-		}
-		if (id == R.id.action_home)
-		{
-			Intent intent = new Intent(this, HomeActivity.class);
-			startActivity(intent);
-		}
-		return super.onOptionsItemSelected(item);
-	}
+	//populates a list of groups
 	private void populateGroups()
 	{
 		String sadGuyText = "";
@@ -314,8 +188,7 @@ public class ListActivity extends ActionBarActivity
 		Button nameButton;
 		View row = null;
 		int index;
-		int id;
-		
+		int id;		
 		
 		if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
 		{
@@ -369,7 +242,7 @@ public class ListActivity extends ActionBarActivity
 		}	
 	}
 	
-	//METHOD FOR POPULATING A LIST OF USERS
+	//populates a list of users
 	private void populateUsers()
 	{	
 		String sadGuyText = "";
@@ -454,16 +327,7 @@ public class ListActivity extends ActionBarActivity
 
 	}
 	
-	@Override
-	protected void onResume()
-	{
-		super.onResume();
-		listLayout = ((LinearLayout)findViewById(R.id.listLayout));
-		listLayout.removeAllViews();
-		load();
-	}
-	
-	//SOON TO BE POPULATE EVENTS
+	//populates a list of events
 	private void populateEvents()
 	{
 		View row = null;
@@ -552,58 +416,161 @@ public class ListActivity extends ActionBarActivity
 		}	
 	}
 			
-	/*
-	 * onClick method for accept and declines
-	 */
-	public void onClick(View view)
+	/* based on content type, gets the corresponding role */
+	private void setRole()
 	{
-		GridLayout parent = (GridLayout)view.getParent();
-		Button nameText = (Button) parent
-				.findViewById(R.id.nameButtonAD);
-		if (nameText == null) System.out.println("HELL YEAH IT NULL");
-		switch (view.getId())
+		ArrayList<User> users = new ArrayList<User>();
+		if (CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()))
 		{
-		case R.id.declineButton:
-			if (CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString()))
-			{
-				bufferID = parent.getId();
-				new getAcceptDeclineTask().execute("http://68.59.162.183/android_connect/leave_group.php", user.getEmail(), Integer.toString(parent.getId()));
-			}
-			else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
-			{
-				PANDABUFFER = users.get(parent.getId()).getEmail();
-				new getAcceptDeclineTask().execute("http://68.59.162.183/android_connect/decline_friend_request.php", PANDABUFFER);
-			}
-			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()))
-			{
-				bufferID = parent.getId(); //PANDA
-				new getAcceptDeclineTask().execute("http://68.59.162.183/android_connect/leave_event.php", Integer.toString(bufferID));
-			}
-			break;
-		case R.id.acceptButton:
-			if (CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString()))
-			{
-				bufferID = parent.getId();
-				new getAcceptDeclineTask().execute("http://68.59.162.183/android_connect/accept_group_invite.php",user.getEmail(),Integer.toString(bufferID));
-			}
-			else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
-			{
-			
-				PANDABUFFER = users.get(parent.getId()).getEmail();
-				new getAcceptDeclineTask().execute("http://68.59.162.183/android_connect/accept_friend_request.php", PANDABUFFER);
-			}
-			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()))
-			{
-				bufferID = parent.getId();
-				System.out.println("Accepting event invite, eid: " + bufferID);
-				new getAcceptDeclineTask().execute("http://68.59.162.183/android_connect/accept_event_invite.php", Integer.toString(bufferID));
-			}
-			break;
+			users = event.getUsers();
+			addNew.setText("Invite Groups");//TODO: Mod checks
+		}
+		else
+		{
+			users = group.getUsers();
+			addNew.setText("Invite Friends");
+		}
+		
+		//checking if user is in group/event
+		boolean inEntity = false;
+		for (User u : users)
+			if (u.getEmail().equals(user.getEmail()))
+				inEntity = true;
+		
+		if (inEntity)
+		{
+			System.out.println("NOW IN SET ROLE");
+			if (CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()))
+				new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_group.php", Integer.toString(group.getID()));
+			else
+				new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_event.php", Integer.toString(event.getID()));
 		}
 	}
 
+	
+	/* Default methods */
+	@Override
+	protected void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_list);
+		load();
+	}
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
+		listLayout = ((LinearLayout)findViewById(R.id.listLayout));
+		listLayout.removeAllViews();
+		load();
+	}	
+	@Override
+	protected void onDestroy()
+	{
+		// TODO Auto-generated method stub
+		unregisterReceiver(broadcastReceiver);
+		super.onDestroy();
+	}
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.navigation_actions, menu);
+		return true;
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		int id = item.getItemId();
+		if (id == R.id.action_logout)
+		{
+			GLOBAL.destroySession();
+			Intent login = new Intent(this, LoginActivity.class);
+			startActivity(login);
+			Intent intent = new Intent("CLOSE_ALL");
+			this.sendBroadcast(intent);
+			return true;
+		}
+		if (id == R.id.action_home)
+		{
+			Intent intent = new Intent(this, HomeActivity.class);
+			startActivity(intent);
+		}
+		return super.onOptionsItemSelected(item);
+	}
 
-	private class getAcceptDeclineTask extends AsyncTask<String, Void, String>
+	/* Gets the role of the current user in a group / event */
+	private class getRoleTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected String doInBackground(String... urls)
+		{
+			String type = (CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString())) ? "gid" : "eid";
+			String email = user.getEmail();
+			String id = urls[1];
+			
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+			nameValuePairs.add(new BasicNameValuePair("email", email));
+			nameValuePairs.add(new BasicNameValuePair(type, id));
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+		}
+
+		@Override
+		protected void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+				 
+				//json fetch was successful
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					ROLE = jsonObject.getString("role").toString();
+					System.out.println("ROLE IS BEING SET TO " + ROLE);
+					if (!ROLE.equals("M"))
+						if (CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()))
+						{
+							if (!event.getEventState().equals("Ended"))
+							{
+								addNew.setVisibility(View.VISIBLE);
+								//TODO PANDA refactor this out, if it works
+								View svLayout = findViewById(R.id.scrollViewLayout);
+							    if (svLayout.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+							        ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) svLayout.getLayoutParams();
+							        p.setMargins(0, 0, 0, 60);
+							        svLayout.requestLayout();
+							    }
+							}
+						}
+						else
+						{
+							addNew.setVisibility(View.VISIBLE);
+							View svLayout = findViewById(R.id.scrollViewLayout);
+						    if (svLayout.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+						        ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) svLayout.getLayoutParams();
+						        p.setMargins(0, 0, 0, 60);
+						        svLayout.requestLayout();
+						    }
+						}
+				//	setControls(); //for group / event
+				
+				} 
+				//unsuccessful
+				else
+				{
+					// failed
+					Log.d("FETCH ROLE FAILED", "FAILED");
+				}
+			} 
+			catch (Exception e)
+			{
+				Log.d("atherjsoninuserpost", "here");
+				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+			}
+			//do next thing here
+		}
+	}
+	private class performActionTask extends AsyncTask<String, Void, String>
 	{
 		@Override
 		protected String doInBackground(String... urls)
@@ -627,8 +594,6 @@ public class ListActivity extends ActionBarActivity
 			}
 			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
 			{
-				//code for this
-System.out.println("WHERE WE NEED");
 				//possibly check that all gorup invtes / events follow suit
 				nameValuePairs.add(new BasicNameValuePair("email", user.getEmail()));
 				nameValuePairs.add(new BasicNameValuePair("eid", urls[1]));
@@ -719,7 +684,6 @@ System.out.println("WHERE WE NEED");
 						populateGroups();
 					else 
 						populateEvents();
-					System.out.println("NOW IN ACCEPT DECLINE ONPOST5");
 				} 
 				else
 				{
@@ -733,182 +697,212 @@ System.out.println("WHERE WE NEED");
 		}
 	}
 
-	// Handles removing a friend when the remove friend button is pushed.
-		public void removeButton(View view)
-		{			
-			if (CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()))
-			{
-				//nothing for now
-			}
-			else if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
-			{
-				//Get the id.
-				bufferID = view.getId();
-
-				new AlertDialog.Builder(this)
-						.setMessage("Are you sure you want to leave this group?")
-						.setCancelable(true)
-						.setPositiveButton("Yes", new DialogInterface.OnClickListener()
-						{
-							@Override
-							public void onClick(DialogInterface dialog, int id)
-							{
-								new getAcceptDeclineTask().execute("http://68.59.162.183/android_connect/leave_group.php", user.getEmail(), Integer.toString(bufferID));
-							}
-						}).setNegativeButton("Cancel", null).show();
-			}
-			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
-			{	
-				//Get the id.
-				bufferID = view.getId();
-				System.out.println("ID IS SET TO" + bufferID);
-				new AlertDialog.Builder(this)
-						.setMessage("Are you sure you want to leave this event?")
-						.setCancelable(true)
-						.setPositiveButton("Yes", new DialogInterface.OnClickListener()
-						{
-							@Override
-							public void onClick(DialogInterface dialog, int id)
-							{
-								new getAcceptDeclineTask().execute("http://68.59.162.183/android_connect/leave_event.php", Integer.toString(bufferID));
-							}
-						}).setNegativeButton("Cancel", null).show();
-			}
-			else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
-			{
-				final int index = view.getId(); //position in friendArray
-				final String friendEmail = users.get(index).getEmail(); //friend to remove
-				PANDABUFFER = friendEmail;//PANDA TODO
-
-				new AlertDialog.Builder(this)
-						.setMessage("Are you sure you want to remove that friend?")
-						.setCancelable(true)
-						.setPositiveButton("Yes", new DialogInterface.OnClickListener()
-						{
-							@Override
-							public void onClick(DialogInterface dialog, int id)
-							{
-
-								new getAcceptDeclineTask()
-										.execute(
-												"http://68.59.162.183/android_connect/delete_friend.php",
-												friendEmail);
-								
-							}
-						}).setNegativeButton("Cancel", null).show();
-			}
-		}
-
-		public void startInviteActivity(View view)
+	/*
+	 * onClick methods
+	 */
+	public void onClick(View view)
+	{
+		GridLayout parent = (GridLayout)view.getParent();
+		Button nameText = (Button) parent
+				.findViewById(R.id.nameButtonAD);
+		if (nameText == null) System.out.println("HELL YEAH IT NULL");
+		switch (view.getId())
 		{
-			Intent intent = null;
-			if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
+		case R.id.declineButton:
+			if (CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString()))
 			{
-				intent = new Intent(this, FriendAddActivity.class);
+				bufferID = parent.getId();
+				new performActionTask().execute("http://68.59.162.183/android_connect/leave_group.php", user.getEmail(), Integer.toString(parent.getId()));
 			}
-			else if (CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()))
+			else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
 			{
-				intent = new Intent(this, InviteActivity.class);
-				group.fetchMembers();
-				GLOBAL.getCurrentUser().fetchFriends();
+				PANDABUFFER = users.get(parent.getId()).getEmail();
+				new performActionTask().execute("http://68.59.162.183/android_connect/decline_friend_request.php", PANDABUFFER);
 			}
-			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()))
+			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()))
 			{
-				intent = new Intent(this, EventAddGroupsActivity.class);
-				intent.putExtra("EID", Integer.toString(event.getID()));
-				System.out.println("Setting EID to " + event.getID());
-				GLOBAL.getCurrentUser().fetchGroups();
+				bufferID = parent.getId(); //PANDA
+				new performActionTask().execute("http://68.59.162.183/android_connect/leave_event.php", Integer.toString(bufferID));
 			}
-			if (user != null)
-				intent.putExtra("EMAIL", user.getEmail());
-			if (event != null)
-				intent.putExtra("EID", event.getID());
-			if (group != null){
-				intent.putExtra("GID", group.getID());
-				GLOBAL.setGroupBuffer(group);
+			break;
+		case R.id.acceptButton:
+			if (CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString()))
+			{
+				bufferID = parent.getId();
+				new performActionTask().execute("http://68.59.162.183/android_connect/accept_group_invite.php",user.getEmail(),Integer.toString(bufferID));
 			}
-			startActivity(intent);	
-		}
-
-		// When you click on a friend, this loads up the friend's profile.
-		public void startProfileActivity(View view)
-				throws InterruptedException
-		{
-			int id = view.getId();
+			else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
+			{
 			
-			Intent intent = new Intent(this, ProfileActivity.class);
-			if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()) || CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString()) )
-			{
-				System.out.println("Loading group gid: " + id);
-				intent.putExtra("GID", id);
-				intent.putExtra("EMAIL", user.getEmail());
-				intent.putExtra("CONTENT", "GROUP");
-				Group g = new Group(id);
-				g.fetchGroupInfo();
-				g.fetchMembers();
-				GLOBAL.setGroupBuffer(g);
+				PANDABUFFER = users.get(parent.getId()).getEmail();
+				new performActionTask().execute("http://68.59.162.183/android_connect/accept_friend_request.php", PANDABUFFER);
 			}
-			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()))
+			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()))
 			{
-				System.out.println("Loading event, eid: " + id);
-				intent.putExtra("EID", id);
-				intent.putExtra("EMAIL", user.getEmail());
-				intent.putExtra("CONTENT", "EVENT");
-				Event e = new Event(id);
-				e.fetchEventInfo();
-				e.fetchParticipants();
-				GLOBAL.setEventBuffer(e);
-				//TODO use the event object instead eventually
+				bufferID = parent.getId();
+				System.out.println("Accepting event invite, eid: " + bufferID);
+				new performActionTask().execute("http://68.59.162.183/android_connect/accept_event_invite.php", Integer.toString(bufferID));
 			}
-			else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()) || CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()) || CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
-			{
-				String friendEmail;
-				System.out.println("Loading user profile, id: " + id);
-				if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
-				{
-					friendEmail = users.get(id).getEmail();
-					User u = new User(friendEmail);
-					u.fetchEventsUpcoming();
-					u.fetchFriends();
-					u.fetchGroups();
-					u.fetchUserInfo();
-					if (!GLOBAL.isCurrentUser(friendEmail))
-						GLOBAL.setUserBuffer(u);
-					else
-						GLOBAL.setCurrentUser(u); //reloading user
-				}
-				else
-				{
-					friendEmail = users.get(id).getEmail();
-					users.get(id).fetchUserInfo();
-					users.get(id).fetchGroups();
-					users.get(id).fetchEventsUpcoming();
-					users.get(id).fetchFriends();
-					if (!GLOBAL.isCurrentUser(friendEmail))
-						GLOBAL.setUserBuffer(users.get(id));
-					else
-						GLOBAL.setCurrentUser(users.get(id)); //reloading user
-				}
-
-	
-				
-				System.out.println("Friend email is " +  friendEmail);
-				
-				
-				intent.putExtra("EMAIL", friendEmail);
-				System.out.println("CURRENTLY SETTING CONTENT");
-				intent.putExtra("CONTENT", "USER");	
-			}
-			startActivity(intent);
+			break;
 		}
+	}
+	// Handles removing a friend when the remove friend button is pushed.
+	public void removeButton(View view)
+	{			
+		if (CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()))
+		{
+			//nothing for now
+		}
+		else if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
+		{
+			//Get the id.
+			bufferID = view.getId();
 
+			new AlertDialog.Builder(this)
+					.setMessage("Are you sure you want to leave this group?")
+					.setCancelable(true)
+					.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+					{
+						@Override
+						public void onClick(DialogInterface dialog, int id)
+						{
+							new performActionTask().execute("http://68.59.162.183/android_connect/leave_group.php", user.getEmail(), Integer.toString(bufferID));
+						}
+					}).setNegativeButton("Cancel", null).show();
+		}
+		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
+		{	
+			//Get the id.
+			bufferID = view.getId();
+			System.out.println("ID IS SET TO" + bufferID);
+			new AlertDialog.Builder(this)
+					.setMessage("Are you sure you want to leave this event?")
+					.setCancelable(true)
+					.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+					{
+						@Override
+						public void onClick(DialogInterface dialog, int id)
+						{
+							new performActionTask().execute("http://68.59.162.183/android_connect/leave_event.php", Integer.toString(bufferID));
+						}
+					}).setNegativeButton("Cancel", null).show();
+		}
+		else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
+		{
+			final int index = view.getId(); //position in friendArray
+			final String friendEmail = users.get(index).getEmail(); //friend to remove
+			PANDABUFFER = friendEmail;//PANDA TODO
+
+			new AlertDialog.Builder(this)
+				.setMessage("Are you sure you want to remove that friend?")
+				.setCancelable(true)
+				.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+				{
+					@Override
+					public void onClick(DialogInterface dialog, int id)
+					{
+						new performActionTask().execute("http://68.59.162.183/android_connect/delete_friend.php", friendEmail);	
+					}
+				}).setNegativeButton("Cancel", null).show();
+		}
+	}
+	//Starts an activity to add new friends/group members/invite groups to events
+	public void startInviteActivity(View view)
+	{
+		Intent intent = null;
+		if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
+		{
+			intent = new Intent(this, FriendAddActivity.class);
+		}
+		else if (CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()))
+		{
+			intent = new Intent(this, InviteActivity.class);
+			group.fetchMembers();
+			GLOBAL.getCurrentUser().fetchFriends();
+		}
+		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()))
+		{
+			intent = new Intent(this, EventAddGroupsActivity.class);
+			intent.putExtra("EID", Integer.toString(event.getID()));
+			System.out.println("Setting EID to " + event.getID());
+			GLOBAL.getCurrentUser().fetchGroups();
+		}
+		if (user != null)
+			intent.putExtra("EMAIL", user.getEmail());
+		if (event != null)
+			intent.putExtra("EID", event.getID());
+		if (group != null){
+			intent.putExtra("GID", group.getID());
+			GLOBAL.setGroupBuffer(group);
+		}
+		startActivity(intent);	
+	}
+	//Starts a USER/GROUP/EVENT profile
+	public void startProfileActivity(View view)
+			throws InterruptedException
+	{
+		int id = view.getId();		
+		Intent intent = new Intent(this, ProfileActivity.class);
+		if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()) || CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString()) )
+		{
+			System.out.println("Loading group gid: " + id);
+			intent.putExtra("GID", id);
+			intent.putExtra("EMAIL", user.getEmail());
+			intent.putExtra("CONTENT", "GROUP");
+			Group g = new Group(id);
+			g.fetchGroupInfo();
+			g.fetchMembers();
+			GLOBAL.setGroupBuffer(g);
+		}
+		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()))
+		{
+			System.out.println("Loading event, eid: " + id);
+			intent.putExtra("EID", id);
+			intent.putExtra("EMAIL", user.getEmail());
+			intent.putExtra("CONTENT", "EVENT");
+			Event e = new Event(id);
+			e.fetchEventInfo();
+			e.fetchParticipants();
+			GLOBAL.setEventBuffer(e);
+		}
+		else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()) || CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()) || CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
+		{
+			String friendEmail;
+			if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
+			{
+				friendEmail = users.get(id).getEmail();
+				User u = new User(friendEmail);
+				u.fetchEventsUpcoming();
+				u.fetchFriends();
+				u.fetchGroups();
+				u.fetchUserInfo();
+				if (!GLOBAL.isCurrentUser(friendEmail))
+					GLOBAL.setUserBuffer(u);
+				else
+					GLOBAL.setCurrentUser(u); //reloading user
+			}
+			else
+			{
+				friendEmail = users.get(id).getEmail();
+				users.get(id).fetchUserInfo();
+				users.get(id).fetchGroups();
+				users.get(id).fetchEventsUpcoming();
+				users.get(id).fetchFriends();
+				if (!GLOBAL.isCurrentUser(friendEmail))
+					GLOBAL.setUserBuffer(users.get(id));
+				else
+					GLOBAL.setCurrentUser(users.get(id)); //reloading user
+			}
+			intent.putExtra("EMAIL", friendEmail);
+			intent.putExtra("CONTENT", "USER");	
+		}
+		startActivity(intent);
+	}
+	//Overrides the default system back button
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent e)  {
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
 	    	//refresh pertinent info
-			/*FRIENDS_CURRENT, FRIENDS_REQUESTS,
-			GROUPS_CURRENT, GROUPS_INVITES, GROUPS_MEMBERS,
-		    EVENTS_UPCOMING, EVENTS_PENDING, EVENTS_PAST, EVENTS_ATTENDING, EVENTS_INVITES;    */
 	    	if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()) || CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
 	    	{
 	    		user.fetchFriends();
@@ -965,9 +959,7 @@ System.out.println("WHERE WE NEED");
 	    	{
 	    		//EVENT PROFILE
 	    		event.fetchParticipants();
-	    	}
-	    	
-	    	
+	    	}	    	
 	    	//SETTING GLOBALS
 	    	if (user != null)
 	    		if (GLOBAL.isCurrentUser(user.getEmail()))
@@ -983,8 +975,8 @@ System.out.println("WHERE WE NEED");
 	    	finish();
 	    }
 	    return true;
-	   }
-
+	}
+	//to kill application
 	public void initKillswitchListener()
 	{
 		// START KILL SWITCH LISTENER
@@ -1002,7 +994,6 @@ System.out.println("WHERE WE NEED");
 					// System.exit(1);
 					finish();
 				}
-
 			}
 		};
 		registerReceiver(broadcastReceiver, intentFilter);

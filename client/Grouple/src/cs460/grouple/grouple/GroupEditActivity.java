@@ -135,6 +135,12 @@ public class GroupEditActivity extends ActionBarActivity implements
 		// Add the info to the textviews for editing.
 		nameTextView.setText(group.getName());
 		aboutTextView.setText(group.getAbout());
+		RadioButton publicButton = (RadioButton) findViewById(R.id.publicButton);
+		RadioButton privateButton = (RadioButton) findViewById(R.id.privateButton);
+		if (group.getPub() == 1)
+			publicButton.setChecked(true);
+		else
+			privateButton.setChecked(true);
 		iv.setImageBitmap(group.getImage());
 	}
 
@@ -185,6 +191,7 @@ public class GroupEditActivity extends ActionBarActivity implements
 		case R.id.publicButton:
 			if (publicButton.isChecked())
 			{
+				System.out.println("Case public button and is checked.");
 				privateButton.setChecked(false);
 			}
 			
@@ -193,6 +200,7 @@ public class GroupEditActivity extends ActionBarActivity implements
 			
 			if (privateButton.isChecked())
 			{
+				System.out.println("Case private button and is checked.");
 				publicButton.setChecked(false);
 			}
 			break;

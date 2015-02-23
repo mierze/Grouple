@@ -31,7 +31,7 @@ public abstract class Entity
 	private String about; //about user, group, event
 	private Bitmap image; //all entities have images
 	private String inviter;
-	private int pub;//public 1=yes, 0=no(private)
+	private int pub; //public 1=yes, 0=no(private)
 
 	/*
 	 * Constructor for our parent entity of users, groups, events...
