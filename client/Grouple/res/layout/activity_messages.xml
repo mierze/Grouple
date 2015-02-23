@@ -1,19 +1,78 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/messageContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="cs460.grouple.grouple.MessagesActivity" >
+    android:background="@color/background_color"
+    android:padding="0dp" >
+    
+   	<LinearLayout
+	    android:id="@+id/scrollViewLayout"
+	    android:layout_width="fill_parent"
+	    android:layout_marginBottom="0dp"
+	    android:layout_height="fill_parent"
+	  	android:padding="0dp"
+	    android:orientation="vertical" >
+	    
+	   	<ScrollView
+	       	android:id="@+id/listScrollView"
+	       	android:layout_width="fill_parent"
+	       	android:layout_height="wrap_content"
+	       	android:layout_margin="0dp"
+	   		android:layout_marginBottom="55dp"
+	       	android:padding="0dp" >
+	
+	       <LinearLayout
+	           	android:id="@+id/listLayout"
+	          	android:layout_width="fill_parent"
+	          	android:layout_height="wrap_content"
+	        	android:paddingBottom="60dp"
+	
+	           android:orientation="vertical">
+	           
+	        <TextView
+		   	    android:id="@+id/messageTestText"
+		   	    android:layout_width="match_parent"
+		   	    android:text="DEFAULT TEXT(MODIFY THIS TO TEST)"
+		   	    android:layout_height="wrap_content"
+		   	    android:ems="10" >
 
-       <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_gravity="center"
-        android:textSize="16sp"
-        android:text="Sorry, this feature has not yet been implemented. \n:(" />
+	   		</TextView>
+	           </LinearLayout>
+	   	</ScrollView>
+
+   	</LinearLayout>
+   
+   	<LinearLayout
+   	    android:layout_width="fill_parent"
+   	    android:layout_height="wrap_content"
+   	    android:layout_alignParentBottom="true"
+   	    android:layout_margin="5dp"
+   	    android:orientation="horizontal"
+   	    android:padding="0dp" >
+
+   		<EditText
+   		    android:id="@+id/messageEditText"
+   		    android:layout_width="fill_parent"
+   		    android:layout_height="match_parent"
+   		    android:background="@drawable/border"
+   		    android:layout_marginRight="5dp"
+   		    android:hint="Enter a message"
+   		    android:layout_weight="1"
+   		    android:ems="10" />
+
+   		<Button
+   		    android:id="@+id/sendButton"
+   		    android:layout_width="fill_parent"
+   		    android:layout_height="match_parent"
+   		    android:background="@drawable/button_border"
+   		    android:onClick="startInviteActivity"
+   		    android:text="Send"
+   		    		    android:layout_weight="2"
+   		    android:textColor="@color/button_text_color"
+   		    android:textSize="20sp" />
+
+</LinearLayout>
+
 
 </RelativeLayout>

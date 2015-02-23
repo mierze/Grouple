@@ -295,25 +295,17 @@ public class ManageMembersActivity extends ActionBarActivity {
 						
 							View parent = (View)view.getParent();
 							Button friendNameButton = (Button) parent.findViewById(R.id.friendNameButtonNoAccess);
-							//friendNameButton.setTextColor(getResources().getColor(R.color.red));
 							toRemove.put(view.getId(), toUpdate.get(view.getId()));
-							//ADD TO DELETE ARRAY
 							//REMOVING THOSE CHECKED OFF FOR DELETION
 							toUpdate.remove(view.getId());
-						//	toUpdateRole.remove(view.getId());
-	
 							System.out.println("Added size: "+toUpdate.size());
 							System.out.println("Role size: "+toUpdateRole.size());	
 						}
 						else if (!cb.isChecked())
 						{
 							toUpdate.put(view.getId(), toRemove.get(view.getId()));
-							//toUpdateRole
-							//ADD TO DELETE ARRAY
 							//REMOVING THOSE CHECKED OFF FOR DELETION
-							toRemove.remove(view.getId());
-							//toUpdateRole.remove(view.getId());
-	
+							toRemove.remove(view.getId());	
 							System.out.println("Added size: "+toUpdate.size());
 							System.out.println("Role size: "+toUpdateRole.size());	
 						}
@@ -329,12 +321,6 @@ public class ManageMembersActivity extends ActionBarActivity {
 				pickFriendsLayout.addView(rowView);	
 				index++;
 			}
-			View row = li.inflate(R.layout.list_row_nobutton, null);
-			Button nameButton = (Button)row.findViewById(R.id.nameButtonLI);
-			nameButton.setText("Click the current roles to toggle.\nCheck the boxes to remove users.");
-			nameButton.setGravity(Gravity.CENTER);
-			nameButton.setOnClickListener(null);
-			pickFriendsLayout.addView(row);
 		}
 		else
 		{		

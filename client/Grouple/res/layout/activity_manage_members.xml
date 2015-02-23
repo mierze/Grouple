@@ -3,25 +3,59 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="0dp"
+    android:background="@color/layout_background_color"
     tools:context="cs460.grouple.grouple.ManageMembersActivity" >
 
 
-    
-    <ScrollView
-        android:id="@+id/scrollViewManageMembers"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="2"
-    	android:background="@color/layout_background_color"
-        android:padding="0dp" >
+    <LinearLayout
+	    android:id="@+id/scrollViewLayout"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_above="@+id/friendGridLayout"
+	   android:layout_marginBottom="10dp" >
+	    <ScrollView
+	        android:id="@+id/scrollViewManageMembers"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="2"
+	    	android:background="@color/layout_background_color"
+	        android:padding="0dp" >
+	
+	        <LinearLayout
+	            android:id="@+id/manageMembersLayout"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_marginBottom="60dp"
+	            android:orientation="vertical" />
+   	 	</ScrollView>
 
-        <LinearLayout
-            android:id="@+id/manageMembersLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
-    </ScrollView>
+    </LinearLayout>
+    <GridLayout
+	    android:id="@+id/friendGridLayout"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_above="@+id/confirmButton"
+	    android:background="@drawable/top_bottom_border"
+	    android:columnCount="2"
+	    android:rowCount="1" >
 
+  	<TextView
+        android:id="@+id/nameButtonLI"
+        android:layout_column="0"
+        android:layout_row="0"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:fontFamily="sans-serif-condensed"
+        android:text="Click the current roles to toggle.\nCheck the boxes to remove users."
+        android:textColor="@color/text_color"
+        android:layout_height="50dp"
+        android:layout_width="fill_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginRight="10dp" 
+        android:onClick="startProfileActivity"
+        />
+</GridLayout>
     <Button
         android:id="@+id/confirmButton"
         android:layout_width="match_parent"

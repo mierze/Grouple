@@ -65,7 +65,7 @@ import android.widget.Toast;
  * EditProfileActivity allows user to make changes to his/her profile.
  */
 public class ProfileEditActivity extends ActionBarActivity implements
-		View.OnClickListener
+		View.OnClickListener 
 {
 	// Set up fields. Most are just for the camera.
 	private Button b;
@@ -76,7 +76,8 @@ public class ProfileEditActivity extends ActionBarActivity implements
 	private User user;
 	private BroadcastReceiver broadcastReceiver;
 	private Global GLOBAL;
-	TextView birthdateTextView;
+	private TextView birthdateTextView;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{

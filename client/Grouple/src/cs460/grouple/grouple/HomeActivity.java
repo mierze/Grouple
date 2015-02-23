@@ -26,9 +26,9 @@ import android.widget.TextView;
  */
 public class HomeActivity extends ActionBarActivity
 {
-	User user; //current user
-	BroadcastReceiver broadcastReceiver;
-	static Global GLOBAL;
+	private User user; //current user
+	private BroadcastReceiver broadcastReceiver;
+	private static Global GLOBAL;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)

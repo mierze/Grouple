@@ -334,7 +334,7 @@ public class ProfileActivity extends ActionBarActivity
 		else if (CONTENT.equals(CONTENT_TYPE.EVENT.toString()))
 		{
 			profileButton1.setText("Attending (" + event.getNumUsers() + ")");	
-			if (ROLE.equals("C"))
+			if (ROLE.equals("C") && !event.getEventState().equals("Ended"))
 				editProfileButton.setVisibility(View.VISIBLE);
 		}	
 	}
