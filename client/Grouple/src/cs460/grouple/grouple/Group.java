@@ -202,10 +202,10 @@ public class Group extends Entity
 					
 					//get that image
 					
-					String creator = (String) jsonArray.get(3);
+					String creator = (String) jsonArray.get(2);
 					setEmail(creator);
 					
-					int pub = (Integer) jsonArray.get(4);
+					int pub = (Integer) jsonArray.get(3);
 					setPub(pub); 
 					
 					

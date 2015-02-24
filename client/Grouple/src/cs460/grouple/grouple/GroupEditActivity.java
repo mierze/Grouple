@@ -137,6 +137,7 @@ public class GroupEditActivity extends ActionBarActivity implements
 		aboutTextView.setText(group.getAbout());
 		RadioButton publicButton = (RadioButton) findViewById(R.id.publicButton);
 		RadioButton privateButton = (RadioButton) findViewById(R.id.privateButton);
+		System.out.println("group.getpub() value is: "+group.getPub());
 		if (group.getPub() == 1)
 			publicButton.setChecked(true);
 		else
@@ -244,16 +245,19 @@ public class GroupEditActivity extends ActionBarActivity implements
 					publicStatus = 0;
 				}
 				
-			
 				MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 
 				builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
 
 				byte[] data;
+				
 
+				System.out.println("about to process photo...");
+				
 				// process photo if set and add it to builder
 				if (bmp != null)
 				{
+					System.out.println("Photo is being added");
 					ByteArrayOutputStream bos = new ByteArrayOutputStream();
 					bmp.compress(CompressFormat.JPEG, 100, bos);
 					data = bos.toByteArray();
@@ -263,6 +267,8 @@ public class GroupEditActivity extends ActionBarActivity implements
 					bab = null;
 					bos.close();
 				}
+				
+				System.out.println("Finished with photo. Moving on to remaining fields...");
 
 				// add remaining fields to builder (g_name, about, public, g_id), then execute
 				builder.addTextBody("g_name", nameEditText.getText().toString(), ContentType.TEXT_PLAIN);
@@ -270,6 +276,9 @@ public class GroupEditActivity extends ActionBarActivity implements
 				builder.addTextBody("public", Integer.toString(publicStatus), ContentType.TEXT_PLAIN);
 				builder.addTextBody("g_id", Integer.toString(group.getID()), ContentType.TEXT_PLAIN);
 	
+				
+				System.out.println("Done building.");
+				
 				httpPost.setEntity(builder.build());
 
 				HttpResponse response = httpClient.execute(httpPost);
@@ -309,7 +318,8 @@ public class GroupEditActivity extends ActionBarActivity implements
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
-				if (jsonObject.getString("success").toString().equals("1"))
+				//success: group profile was either successfully updated in database or no changes were necesssary
+				if (jsonObject.getString("success").toString().equals("1") || jsonObject.getString("success").toString().equals("2"))
 				{
 					// Success			
 					Context context = getApplicationContext();
