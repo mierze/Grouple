@@ -530,7 +530,8 @@ public class EventEditActivity extends ActionBarActivity implements
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
-				if (jsonObject.getString("success").toString().equals("1"))
+				//success: event profile was either successfully updated in database, or no changes were necesssary
+				if (jsonObject.getString("success").toString().equals("1") || jsonObject.getString("success").toString().equals("2"))
 				{
 					// Success			
 					Context context = getApplicationContext();
