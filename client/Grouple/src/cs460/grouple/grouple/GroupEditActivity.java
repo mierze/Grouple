@@ -91,7 +91,6 @@ public class GroupEditActivity extends ActionBarActivity implements
 		TextView errorTextView = (TextView) findViewById(R.id.errorTextViewEPA);
 		errorTextView.setVisibility(1);
 
-		Bundle extras = getIntent().getExtras();
 		group = GLOBAL.getGroupBuffer();
 		
 			

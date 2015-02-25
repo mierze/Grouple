@@ -189,6 +189,10 @@
             android:name=".ManageMembersActivity"
             android:label="@string/title_activity_manage_members" >
         </activity>
+        <activity
+            android:name=".ManageParticipantsActivity"
+            android:label="@string/title_activity_manage_attending_event" >
+        </activity>
     </application>
 
 </manifest>

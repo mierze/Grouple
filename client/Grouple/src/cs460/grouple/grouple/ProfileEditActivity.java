@@ -70,7 +70,7 @@ public class ProfileEditActivity extends ActionBarActivity implements
 	// Set up fields. Most are just for the camera.
 	private Button b;
 	private ImageView iv;
-	private final static int CAMERA_DATA = 0;
+
 	private Bitmap bmp;
 	private Intent i;
 	private User user;

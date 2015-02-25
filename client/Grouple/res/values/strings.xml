@@ -60,6 +60,7 @@
     <color name="header_text_color">#22252A</color>
     <color name="border_color">#55B1D5</color>
     <color name="button_background_color">#F18C39</color>
+    <color name="message_background_color">#55B1D5</color>
     <color name="white">#F5F3E5</color>
     <color name="light_blue">#55B1D5</color>
     <color name="light_green">#7BE055</color>
@@ -97,5 +98,6 @@
     <string name="title_activity_event_add_groups">EventAddGroupsActivity</string>
     <string name="title_activity_event_edit">EventEditActivity</string>
     <string name="title_activity_manage_members">ManageMembersActivity</string>
+    <string name="title_activity_manage_attending_event">ManageAttendingEvent</string>
 
 </resources>

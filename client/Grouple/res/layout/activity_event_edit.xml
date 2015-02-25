@@ -169,6 +169,16 @@
 			android:visibility="invisible"
 			android:textAppearance="?android:attr/textAppearanceSmall" />
 	    	
+	  	<Button
+	        android:id="@+id/manageEventButton"
+			android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:background="@drawable/button_border"
+	        android:onClick="onClick"
+	        android:layout_weight="1"
+	        android:layout_marginBottom="5dp"
+	        android:text="Manage Participants"
+	        android:textColor="@color/button_text_color" />
 	    <Button
 	        android:id="@+id/submitButtonEEA"
 			android:layout_width="fill_parent"

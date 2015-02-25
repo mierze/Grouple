@@ -597,6 +597,12 @@ public class EventEditActivity extends ActionBarActivity implements
 			builder.show();
 			
 			break;
+		case R.id.manageEventButton:
+			Intent intent = new Intent(this, ManageParticipantsActivity.class);
+			intent.putExtra("EMAIL", GLOBAL.getCurrentUser().getEmail());
+			intent.putExtra("EID", event.getID());
+			startActivity(intent);
+			break;
 		}
 	}
 

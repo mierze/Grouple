@@ -3,14 +3,16 @@
     android:id="@+id/messageContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_color"
+    android:background="@color/layout_background_color"
     android:padding="0dp" >
     
    	<LinearLayout
 	    android:id="@+id/scrollViewLayout"
 	    android:layout_width="fill_parent"
 	    android:layout_marginBottom="0dp"
+	   	android:layout_above="@+id/messageInnerlayout"
 	    android:layout_height="fill_parent"
+	    android:layout_gravity="top"
 	  	android:padding="0dp"
 	    android:orientation="vertical" >
 	    
@@ -23,27 +25,18 @@
 	       	android:padding="0dp" >
 	
 	       <LinearLayout
-	           	android:id="@+id/listLayout"
+	           	android:id="@+id/messageLayout"
 	          	android:layout_width="fill_parent"
 	          	android:layout_height="wrap_content"
-	        	android:paddingBottom="60dp"
 	
 	           android:orientation="vertical">
-	           
-	        <TextView
-		   	    android:id="@+id/messageTestText"
-		   	    android:layout_width="match_parent"
-		   	    android:text="DEFAULT TEXT(MODIFY THIS TO TEST)"
-		   	    android:layout_height="wrap_content"
-		   	    android:ems="10" >
-
-	   		</TextView>
 	           </LinearLayout>
 	   	</ScrollView>
 
    	</LinearLayout>
    
    	<LinearLayout
+   	    android:id="@+id/messageInnerlayout"
    	    android:layout_width="fill_parent"
    	    android:layout_height="wrap_content"
    	    android:layout_alignParentBottom="true"
@@ -66,7 +59,7 @@
    		    android:layout_width="fill_parent"
    		    android:layout_height="match_parent"
    		    android:background="@drawable/button_border"
-   		    android:onClick="startInviteActivity"
+   		    android:onClick="onClick"
    		    android:text="Send"
    		    		    android:layout_weight="2"
    		    android:textColor="@color/button_text_color"

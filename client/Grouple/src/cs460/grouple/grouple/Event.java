@@ -285,6 +285,7 @@ public class Event extends Entity
 				JSONObject jsonObject = new JSONObject(result);
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
+					if (getUsers() != null) getUsers().clear();
 					//gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("eattending");
 					
