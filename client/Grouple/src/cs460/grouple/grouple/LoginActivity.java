@@ -120,7 +120,6 @@ public class LoginActivity extends Activity
 		@Override
 		protected String doInBackground(String... urls)
 		{
-			System.out.println("in doInBackground");
 			return GLOBAL.readJSONFeed(urls[0], null);
 		}
 

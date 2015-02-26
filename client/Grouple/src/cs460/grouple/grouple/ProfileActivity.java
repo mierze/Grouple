@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import cs460.grouple.grouple.User.getUserInfoTask;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -28,6 +29,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -55,6 +57,7 @@ public class ProfileActivity extends ActionBarActivity
 	private Button profileButton2;
 	private Button profileButton3;
 	private Button editProfileButton;
+	private Dialog loadDialog;
 	
 	@Override
 	protected void onStart()
@@ -76,6 +79,13 @@ public class ProfileActivity extends ActionBarActivity
 	{
 		super.onResume();
 		load();
+	}
+	
+	@Override
+	protected void onStop()
+	{
+		super.onStop();
+		loadDialog.hide();
 	}
 	
 	public void initActionBar(String title)
@@ -105,6 +115,22 @@ public class ProfileActivity extends ActionBarActivity
 		profileButton2.setVisibility(View.GONE);
 		profileButton3.setVisibility(View.GONE);
 		editProfileButton.setVisibility(View.GONE);		
+		
+		//LOAD DIALOG INITIALIZING
+		if ((loadDialog == null) || (!loadDialog.isShowing())) 
+		{
+	        loadDialog= new Dialog(this);
+	        loadDialog.getWindow().getCurrentFocus();
+	        loadDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+	        loadDialog.setContentView(R.layout.load);
+	        loadDialog.setCancelable(false);
+	        loadDialog.setOwnerActivity(this);
+	        loadDialog.getWindow().setDimAmount(0.7f);
+	      //  WindowManager.LayoutParams lp = dialog.getWindow().getAttributes();  
+	       // lp.dimAmount=0.0f; // Dim level. 0.0 - no dim, 1.0 - completely opaque
+	       // dialog.getWindow().setAttributes(lp);
+		}
+		
 		
 		if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
 		{
@@ -388,6 +414,8 @@ public class ProfileActivity extends ActionBarActivity
 
 	public void onClick(View view)
 	{
+		//killBackgroundProcesses();
+		loadDialog.show();
 		boolean noIntent = false;
 		Intent intent = new Intent(this, ListActivity.class);
 		switch (view.getId())
@@ -476,6 +504,7 @@ public class ProfileActivity extends ActionBarActivity
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent e)  {
+		loadDialog.show();
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
 	    	//do nothing
 	    	if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
@@ -517,9 +546,7 @@ public class ProfileActivity extends ActionBarActivity
 	 * address to retrieve the users name, age, and bio.
 	 */
 	public void populateProfile()
-	{
-
-		
+	{	
 		TextView aboutTitle = (TextView) findViewById(R.id.aboutTitlePA);
 		TextView info = (TextView) findViewById(R.id.profileInfoTextView);
 		TextView about = (TextView) findViewById(R.id.profileAboutTextView);
@@ -577,7 +604,6 @@ public class ProfileActivity extends ActionBarActivity
 					// System.exit(1);
 					finish();
 				}
-
 			}
 		};
 		registerReceiver(broadcastReceiver, intentFilter);
@@ -631,6 +657,7 @@ public class ProfileActivity extends ActionBarActivity
 					}
 					load();
 					//all working correctly, continue to next user or finish.
+					loadDialog.hide();
 					
 				} 
 				else if (jsonObject.getString("success").toString().equals("0"))

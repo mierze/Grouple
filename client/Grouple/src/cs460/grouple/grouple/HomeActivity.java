@@ -5,6 +5,7 @@ import java.util.concurrent.TimeoutException;
 
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -191,7 +193,22 @@ public class HomeActivity extends ActionBarActivity
 	{
 		//originally setting intent to null
 		Intent intent = null;
+		Dialog loadDialog = null;
+		if ((loadDialog== null) || (!loadDialog.isShowing())) {
+	        loadDialog= new Dialog(this);
+	        loadDialog.getWindow().getCurrentFocus();
+	        loadDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+	        loadDialog.setContentView(R.layout.load);
+	        loadDialog.setCancelable(false);
+	        loadDialog.setOwnerActivity(this);
+	        loadDialog.getWindow().setDimAmount(0.7f);
+	      //  WindowManager.LayoutParams lp = dialog.getWindow().getAttributes();  
+	       // lp.dimAmount=0.0f; // Dim level. 0.0 - no dim, 1.0 - completely opaque
+	       // dialog.getWindow().setAttributes(lp);
 
+	        loadDialog.show();
+	        
+	    } 
 		switch (view.getId())
 		{
 		case R.id.friendsButtonHA:

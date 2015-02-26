@@ -19,6 +19,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -36,13 +37,14 @@ public class MessagesActivity extends ActionBarActivity
 	{
 		GLOBAL = ((Global) getApplicationContext());
 		super.onCreate(savedInstanceState);
+		user = GLOBAL.getCurrentUser();
 		setContentView(R.layout.activity_messages);
 		/* Action bar */
 		ActionBar ab = getSupportActionBar();
 		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
 		ab.setCustomView(R.layout.actionbar);
 		ab.setDisplayHomeAsUpEnabled(false);
-
+populateChats();
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
 
 		actionbarTitle.setText("Brett Mierzejewski");
@@ -83,6 +85,36 @@ public class MessagesActivity extends ActionBarActivity
 		return super.onOptionsItemSelected(item);
 	}
 
+	
+	
+	private void populateChats()
+	{
+		//populate all of the chats between peers, groups and events that are most active
+		//layout to inflate into
+		LinearLayout messageLayout = (LinearLayout) findViewById(R.id.messageLayout);
+		//layout inflater
+		LayoutInflater li = getLayoutInflater();
+		TextView messageBody, messageDate ;
+		View row = null;
+		String message = "";
+		
+		//messages consist of some things (messagebody, date, sender, receiver)
+		
+		//loop through messages (newest first), maybe a map String String with messagebody, date
+		
+	
+				row =  li.inflate(R.layout.contact_row, null); //inflate this message row
+		
+			messageBody = (TextView) row.findViewById(R.id.messageBody);
+			messageDate = (TextView) row.findViewById(R.id.messageDate);
+		ImageView 	contactImage = (ImageView) row.findViewById(R.id.contactImage);
+		contactImage.setImageBitmap(user.getImage());
+			
+			//set these values to what you want
+			
+			//add row into scrollable layout
+			messageLayout.addView(row);
+	}
 	//use this method to display the messages between 2 users. 
 	//you will still need to get those messages in a mapping or arraylist of some sort
 	private void populateMessages()
