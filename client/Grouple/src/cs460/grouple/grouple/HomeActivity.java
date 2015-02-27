@@ -66,7 +66,7 @@ public class HomeActivity extends ActionBarActivity
 		//grabbing the user with the given email in the extras
 		user = GLOBAL.getCurrentUser();
 		
-		if ((loadDialog== null) || (!loadDialog.isShowing())) {
+
 	        loadDialog= new Dialog(this);
 	        loadDialog.getWindow().getCurrentFocus();
 	        loadDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -74,7 +74,7 @@ public class HomeActivity extends ActionBarActivity
 	        loadDialog.setCancelable(false);
 	        loadDialog.setOwnerActivity(this);
 	        loadDialog.getWindow().setDimAmount(0.7f);
-		}
+		
 		
 		//set notifications
 		setNotifications();

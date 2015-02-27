@@ -32,6 +32,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -265,6 +266,7 @@ public class ProfileActivity extends ActionBarActivity
 							iv.setImageBitmap(user.getImage());
 						else
 							iv.setImageResource(R.drawable.user_icon);
+						
 					}
 					else if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
 					{
@@ -285,6 +287,7 @@ public class ProfileActivity extends ActionBarActivity
 							iv.setImageResource(R.drawable.events_icon);		
 					}
 					System.out.println("ROLE IS BEING SET TO " + ROLE);
+					iv.setScaleType(ScaleType.CENTER_CROP);
 					setNotifications(); //for group / event	
 				} 
 				else
