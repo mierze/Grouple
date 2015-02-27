@@ -3,6 +3,7 @@ package cs460.grouple.grouple;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -27,9 +29,10 @@ import android.widget.TextView;
  */
 public class FriendsActivity extends ActionBarActivity
 {
-	BroadcastReceiver broadcastReceiver;
+	private BroadcastReceiver broadcastReceiver;
 	private User user; //the current user
 	private Global GLOBAL;// = 
+	private Dialog loadDialog = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -42,9 +45,18 @@ public class FriendsActivity extends ActionBarActivity
 		initKillswitchListener();
 	}
 
+	protected void onStop() 
+	{ 
+		super.onStop();
+		 
+		loadDialog.hide();
+	}
+	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)  {
+		
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
+	    	loadDialog.show();
 	    	user.fetchEventsInvites();
 	    	user.fetchFriendRequests();
 	    	user.fetchGroupInvites();
@@ -77,7 +89,16 @@ public class FriendsActivity extends ActionBarActivity
 		//grabbing the user with the given email in the extras
 	
 		user = GLOBAL.getCurrentUser();////loadUser(extras.getString("email"));
-		
+
+		if ((loadDialog== null) || (!loadDialog.isShowing())) {
+	        loadDialog= new Dialog(this);
+	        loadDialog.getWindow().getCurrentFocus();
+	        loadDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+	        loadDialog.setContentView(R.layout.load);
+	        loadDialog.setCancelable(false);
+	        loadDialog.setOwnerActivity(this);
+	        loadDialog.getWindow().setDimAmount(0.7f);
+		}
 		setNotifications();
 		initActionBar();
 		initKillswitchListener();
@@ -150,6 +171,7 @@ public class FriendsActivity extends ActionBarActivity
 	 */
 	public void startFriendAddActivity(View view)
 	{
+		loadDialog.show();
 		Intent intent = new Intent(this, FriendAddActivity.class);
 		intent.putExtra("EMAIL", user.getEmail());
 		startActivity(intent);
@@ -157,6 +179,7 @@ public class FriendsActivity extends ActionBarActivity
 
 	public void startFriendsCurrentActivity(View view)
 	{
+		loadDialog.show();
 		final String CONTENT = "FRIENDS_CURRENT";
 		Intent intent = new Intent(this, ListActivity.class);
 		intent.putExtra("EMAIL", user.getEmail());
@@ -166,6 +189,7 @@ public class FriendsActivity extends ActionBarActivity
 
 	public void startFriendRequestsActivity(View view)
 	{
+		loadDialog.show();
 		final String CONTENT = "FRIENDS_REQUESTS";
 		Intent intent = new Intent(this, ListActivity.class);
 		intent.putExtra("CONTENT", CONTENT);

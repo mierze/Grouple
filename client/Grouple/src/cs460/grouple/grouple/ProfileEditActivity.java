@@ -127,6 +127,57 @@ public class ProfileEditActivity extends ActionBarActivity implements
 		super.onDestroy();
 	}
 	
+
+	/* TASK FOR GRABBING IMAGE OF EVENT/USER/GROUP */
+	private class getImageTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected String doInBackground(String... urls)
+		{
+			String type;
+			String id;
+	
+				type = "email";
+				id = user.getEmail();
+			
+			
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair(type, id));
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+		}
+
+		@Override
+		protected void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+				 
+				//json fetch was successful
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					if (iv == null)
+						iv = (ImageView) findViewById(R.id.profileImageUPA);
+					String image = jsonObject.getString("image").toString();
+					user.setImage(image);
+					iv.setImageBitmap(user.getImage());
+	
+				} 
+				else
+				{
+					// failed
+					Log.d("FETCH ROLE FAILED", "FAILED");
+				}
+			} 
+			catch (Exception e)
+			{
+				Log.d("atherjsoninuserpost", "here");
+				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+			}
+			//do next thing here
+		}
+	}
+	
 	
 	/*
 	 * Get profile executes get_profile.php. It uses the current users email
@@ -149,7 +200,10 @@ public class ProfileEditActivity extends ActionBarActivity implements
 		birthdateTextView.setText(user.getAge());
 		bioTextView.setText(user.getAbout());
 		locationTextView.setText(user.getLocation());
-		iv.setImageBitmap(user.getImage());
+		if (user.getImage() == null)
+			new getImageTask();
+		else
+			iv.setImageBitmap(user.getImage());
 	}
 
 	@Override

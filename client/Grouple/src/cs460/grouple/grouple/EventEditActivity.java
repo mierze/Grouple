@@ -149,6 +149,57 @@ public class EventEditActivity extends ActionBarActivity implements
 	}
 
 
+	/* TASK FOR GRABBING IMAGE OF EVENT/USER/GROUP */
+	private class getImageTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected String doInBackground(String... urls)
+		{
+			String type;
+			String id;
+	
+				type = "eid";
+				id = Integer.toString(event.getID());
+			
+			
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair(type, id));
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+		}
+
+		@Override
+		protected void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+				 
+				//json fetch was successful
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					if (iv == null)
+						iv = (ImageView) findViewById(R.id.eventPhoto);
+					String image = jsonObject.getString("image").toString();
+					event.setImage(image);
+					iv.setImageBitmap(event.getImage());
+	
+				} 
+				else
+				{
+					// failed
+					Log.d("FETCH ROLE FAILED", "FAILED");
+				}
+			} 
+			catch (Exception e)
+			{
+				Log.d("atherjsoninuserpost", "here");
+				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+			}
+			//do next thing here
+		}
+	}
+	
+	
 	/*
 	 * Get profile executes get_groupprofile.php. It uses the current groups gid
 	 * to retrieve the groups name, about, and other info.
@@ -176,7 +227,10 @@ public class EventEditActivity extends ActionBarActivity implements
 		categoryEditText.setText(event.getCategory());
 		aboutEditText.setText(event.getAbout());
 		locationEditText.setText(event.getLocation());
-		iv.setImageBitmap(event.getImage());
+		if (event.getImage() == null)
+			new getImageTask();
+		else
+			iv.setImageBitmap(event.getImage());
 		minEditText.setText(String.valueOf(event.getMinPart()));
 		if (event.getMaxPart() > 0)
 			maxEditText.setText(String.valueOf(event.getMaxPart()));

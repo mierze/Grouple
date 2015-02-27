@@ -5,6 +5,7 @@ import java.util.concurrent.TimeoutException;
 
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -29,7 +31,8 @@ public class GroupsActivity extends ActionBarActivity
 {
 	private BroadcastReceiver broadcastReceiver;
 	private User user;
-	private static Global GLOBAL;
+	private Dialog loadDialog = null;
+	private Global GLOBAL;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -75,7 +78,15 @@ public class GroupsActivity extends ActionBarActivity
 		GLOBAL = ((Global) getApplicationContext());
 	
 		user = GLOBAL.getCurrentUser();//loadUser(global.getCurrentUser().getEmail());
-					
+		if ((loadDialog== null) || (!loadDialog.isShowing())) {
+	        loadDialog= new Dialog(this);
+	        loadDialog.getWindow().getCurrentFocus();
+	        loadDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+	        loadDialog.setContentView(R.layout.load);
+	        loadDialog.setCancelable(false);
+	        loadDialog.setOwnerActivity(this);
+	        loadDialog.getWindow().setDimAmount(0.7f);
+		}
 		setNotifications();
 
 		initActionBar();
@@ -139,10 +150,18 @@ public class GroupsActivity extends ActionBarActivity
 		return super.onOptionsItemSelected(item);
 	}
 
+	protected void onStop() 
+	{ 
+		super.onStop();
+		 
+		loadDialog.hide();
+	}
+	
 	/* Start activity methods for group sub-activities */
 	//TODO : MAKE THESE ONCLICK
 	public void startGroupCreateActivity(View view)
 	{
+		loadDialog.show();
 		user.fetchFriends();
 		GLOBAL.setCurrentUser(user);
 		Intent intent = new Intent(this, GroupCreateActivity.class);
@@ -152,6 +171,7 @@ public class GroupsActivity extends ActionBarActivity
 
 	public void startGroupInvitesActivity(View view)
 	{
+		loadDialog.show();
 		final String CONTENT = "GROUPS_INVITES";
 		user.fetchGroupInvites();
 		GLOBAL.setCurrentUser(user);//update
@@ -163,6 +183,7 @@ public class GroupsActivity extends ActionBarActivity
 
 	public void startGroupsCurrentActivity(View view)
 	{
+		loadDialog.show();
 		final String CONTENT = "GROUPS_CURRENT";
 		user.fetchGroups();
 		GLOBAL.setCurrentUser(user);//update

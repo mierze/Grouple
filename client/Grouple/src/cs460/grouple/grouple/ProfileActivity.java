@@ -261,18 +261,28 @@ public class ProfileActivity extends ActionBarActivity
 					if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
 					{
 						user.setImage(image);
-						iv.setImageBitmap(user.getImage());
+						if (user.getImage() != null)
+							iv.setImageBitmap(user.getImage());
+						else
+							iv.setImageResource(R.drawable.user_icon);
 					}
 					else if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
 					{
+						
 						group.setImage(image);
-						iv.setImageBitmap(group.getImage());
+						if (group.getImage() != null)
+							iv.setImageBitmap(group.getImage());
+						else
+							iv.setImageResource(R.drawable.groups_icon);
 					}
 					else
 					{
 						//event
 						event.setImage(image);
-						iv.setImageBitmap(event.getImage());
+						if (event.getImage() != null)
+							iv.setImageBitmap(event.getImage());
+						else
+							iv.setImageResource(R.drawable.events_icon);		
 					}
 					System.out.println("ROLE IS BEING SET TO " + ROLE);
 					setNotifications(); //for group / event	

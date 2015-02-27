@@ -2,6 +2,7 @@ package cs460.grouple.grouple;
 
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -27,6 +29,7 @@ public class EventsActivity extends ActionBarActivity
 	private BroadcastReceiver broadcastReceiver;
 	private User user;
 	private Global GLOBAL;
+	private Dialog loadDialog = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -40,6 +43,19 @@ public class EventsActivity extends ActionBarActivity
 	{
 		GLOBAL = (Global) getApplicationContext();
 		user = GLOBAL.getCurrentUser();
+		if ((loadDialog == null) || (!loadDialog.isShowing())) 
+		{
+	        loadDialog= new Dialog(this);
+	        loadDialog.getWindow().getCurrentFocus();
+	        loadDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+	        loadDialog.setContentView(R.layout.load);
+	        loadDialog.setCancelable(false);
+	        loadDialog.setOwnerActivity(this);
+	        loadDialog.getWindow().setDimAmount(0.7f);
+	      //  WindowManager.LayoutParams lp = dialog.getWindow().getAttributes();  
+	       // lp.dimAmount=0.0f; // Dim level. 0.0 - no dim, 1.0 - completely opaque
+	       // dialog.getWindow().setAttributes(lp);
+		}
 		setNotifications();
 		initActionBar();
 		initKillswitchListener();
@@ -68,6 +84,7 @@ public class EventsActivity extends ActionBarActivity
 	
 	public void onClick(View view)
 	{
+		loadDialog.show();
 		Intent intent =  new Intent(this, ListActivity.class);
 		switch (view.getId())
 		{
@@ -95,6 +112,14 @@ public class EventsActivity extends ActionBarActivity
 		GLOBAL.setCurrentUser(user);
 		intent.putExtra("EMAIL", user.getEmail());
 		startActivity(intent);
+	}
+	
+	
+	@Override
+	protected void onStop()
+	{
+		super.onStop();
+		loadDialog.hide();
 	}
 	
 	@Override

@@ -24,6 +24,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import cs460.grouple.grouple.ProfileActivity.CONTENT_TYPE;
 import android.support.v7.app.ActionBarActivity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -141,7 +143,10 @@ public class GroupEditActivity extends ActionBarActivity implements
 			publicButton.setChecked(true);
 		else
 			privateButton.setChecked(true);
-		iv.setImageBitmap(group.getImage());
+		if (group.getImage() == null)
+			new getImageTask();
+		else
+			iv.setImageBitmap(group.getImage());
 	}
 
 	public void manageGroup(View view)
@@ -206,6 +211,59 @@ public class GroupEditActivity extends ActionBarActivity implements
 			break;
 		}
 	}
+	
+
+	/* TASK FOR GRABBING IMAGE OF EVENT/USER/GROUP */
+	private class getImageTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected String doInBackground(String... urls)
+		{
+			String type;
+			String id;
+	
+				type = "gid";
+				id = Integer.toString(group.getID());
+			
+			
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair(type, id));
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+		}
+
+		@Override
+		protected void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+				 
+				//json fetch was successful
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					if (iv == null)
+						iv = (ImageView) findViewById(R.id.groupPhoto);
+					String image = jsonObject.getString("image").toString();
+					group.setImage(image);
+					iv.setImageBitmap(group.getImage());
+	
+				} 
+				else
+				{
+					// failed
+					Log.d("FETCH ROLE FAILED", "FAILED");
+				}
+			} 
+			catch (Exception e)
+			{
+				Log.d("atherjsoninuserpost", "here");
+				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+			}
+			//do next thing here
+		}
+	}
+	
+	
 	/*
 	 * Set profile executes update_profile.php. It uses the current users email
 	 * address to update the users name, age, and bio.

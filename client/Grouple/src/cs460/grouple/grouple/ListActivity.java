@@ -850,7 +850,7 @@ public class ListActivity extends ActionBarActivity
 								View svLayout = findViewById(R.id.scrollViewLayout);
 							    if (svLayout.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
 							        ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) svLayout.getLayoutParams();
-							        p.setMargins(0, 0, 0, 60);
+							        p.setMargins(0, 0, 0, 100);
 							        svLayout.requestLayout();
 							    }
 							}
@@ -861,7 +861,7 @@ public class ListActivity extends ActionBarActivity
 							View svLayout = findViewById(R.id.scrollViewLayout);
 						    if (svLayout.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
 						        ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) svLayout.getLayoutParams();
-						        p.setMargins(0, 0, 0, 60);
+						        p.setMargins(0, 0, 0, 100);
 						        svLayout.requestLayout();
 						    }
 						}
