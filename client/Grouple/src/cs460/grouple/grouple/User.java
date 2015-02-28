@@ -4,7 +4,11 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.KeyPair;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +60,8 @@ public class User extends Entity
 {
 	//birthday?
 	private String location;
-	private String age;
+	private int age;
+	private String birthday;
 	private ArrayList<Group> groups; 
 	private ArrayList<User> friendRequests; //friendRequest emails->names
 	private ArrayList<Group> groupInvites; //group invite ids
@@ -171,9 +176,39 @@ public class User extends Entity
 	{
 		this.location = location;
 	}
-	public void setAge(String age)
+	public void setBirthday(String birthday)
 	{
-		this.age = age;
+		this.birthday = birthday;
+		if (!birthday.equals(""))
+		{
+			SimpleDateFormat raw = new SimpleDateFormat("yyyy-M-d");
+			Date birthDate = null;
+			try {
+				birthDate = raw.parse(birthday);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			int ageInt;
+			Calendar dob = Calendar.getInstance();  
+			dob.setTime(birthDate);  
+			Calendar today = Calendar.getInstance();  
+			if ((today.get(Calendar.MONTH) < dob.get(Calendar.MONTH)) || (today.get(Calendar.MONTH) == dob.get(Calendar.MONTH) && today.get(Calendar.DAY_OF_MONTH) <= dob.get(Calendar.DAY_OF_MONTH)))
+			{
+				//year --
+				System.out.println("SETTING AGE IN THE IF");
+				ageInt = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);  
+			}
+			else
+			{
+				System.out.println("IN ELSE RIGHT NOW");
+				ageInt = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR) - 1;  
+			}
+			this.age = ageInt;
+		}
+		else
+			this.age = -1;
+		
 	}
 	public void addToFriendRequests(User u)
 	{
@@ -286,7 +321,11 @@ public class User extends Entity
 	{
 		return location;
 	}
-	public String getAge()
+	public String getBirthday()
+	{
+		return birthday;
+	}
+	public int getAge()
 	{
 		return age;
 	}
@@ -470,11 +509,11 @@ public class User extends Entity
 					Object age = jsonArray.get(2);
 					if(age.toString().equals("null"))
 					{
-						setAge("");
+						setBirthday("");
 					}
 					else
 					{
-						setAge(age.toString());//panda
+						setBirthday(age.toString());//panda
 					}
 					Log.d("getUserInfoOnPost", "age: " + age);
 					//Log.d("getUserInfoOnPost", "after set age");

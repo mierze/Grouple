@@ -1,6 +1,9 @@
 package cs460.grouple.grouple;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -585,11 +588,14 @@ public class ProfileActivity extends ActionBarActivity
 			if (location == null)
 				location = "";
 
-			String age = user.getAge();
-			if (age.equalsIgnoreCase(""))
+			int age = user.getAge();
+			
+			if (age == -1)
 				infoT = location;
 			else
-				infoT = "Birthdate: "+age + "\n" + location;
+			{
+				infoT = age + " yrs young\n" + location;
+			}
 			//iv.setImageBitmap(user.getImage());
 			info.setText(infoT);
 			about.setText(user.getAbout());

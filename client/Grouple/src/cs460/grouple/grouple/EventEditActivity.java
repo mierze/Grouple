@@ -338,7 +338,7 @@ public class EventEditActivity extends ActionBarActivity implements
 		      
 				if(!(startDate.compareTo("") == 0) && !(endDate.compareTo("") == 0))
 				{
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d hh:mm");
 					//SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM DD, h:mma");
 					try {
 						
@@ -350,8 +350,8 @@ public class EventEditActivity extends ActionBarActivity implements
 					}
 				
 					System.out.println("Dates: " + start + " nn " + end);
-					startDate = sdf.format(start);
-					endDate = sdf.format(end);
+					//startDate = sdf.format(start);
+					//endDate = sdf.format(end);
 
 					if(start.compareTo(end)>0){
 						System.out.println("Start is after End");
@@ -414,7 +414,7 @@ public class EventEditActivity extends ActionBarActivity implements
 				}
 				//otherwise, display confirmation box to proceed
 				else
-				{
+				{ 
 					new SetProfileTask().execute("http://68.59.162.183/"
 					+ "android_connect/update_event.php");
 				}
@@ -530,6 +530,7 @@ public class EventEditActivity extends ActionBarActivity implements
 				builder.addTextBody("e_name", nameEditText.getText().toString(), ContentType.TEXT_PLAIN);
 				builder.addTextBody("about", aboutEditText.getText().toString(), ContentType.TEXT_PLAIN);
 				builder.addTextBody("e_id", Integer.toString(event.getID()), ContentType.TEXT_PLAIN);
+				System.out.println("About to add start date as " + startDate);
 				builder.addTextBody("start_date", startDate, ContentType.TEXT_PLAIN);
 				builder.addTextBody("end_date", endDate, ContentType.TEXT_PLAIN);
 				builder.addTextBody("category", categoryEditText.getText().toString(), ContentType.TEXT_PLAIN);
