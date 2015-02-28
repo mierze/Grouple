@@ -81,6 +81,7 @@ public class ListActivity extends ActionBarActivity
 	private ArrayList<Group> groups;
 	private ArrayList<Event> events;
 	private Dialog loadDialog =  null;
+	private getRoleTask getRoleTask;
 
 	/* loading actionbar */
 	public void initActionBar(String actionBarTitle)
@@ -460,9 +461,9 @@ public class ListActivity extends ActionBarActivity
 		{
 			System.out.println("NOW IN SET ROLE");
 			if (CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()))
-				new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_group.php", Integer.toString(group.getID()));
+				getRoleTask = (getRoleTask) new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_group.php", Integer.toString(group.getID()));
 			else
-				new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_event.php", Integer.toString(event.getID()));
+				getRoleTask = (getRoleTask) new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_event.php", Integer.toString(event.getID()));
 		}
 	}
 
@@ -630,6 +631,12 @@ public class ListActivity extends ActionBarActivity
 	public void startInviteActivity(View view)
 	{
 		loadDialog.show();
+		if (getRoleTask != null)
+		{
+			System.out.println("NOW CANCELING OPUR ROLE TASK");
+			getRoleTask.cancel(true);
+		}
+		
 		Intent intent = null;
 		if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
 		{

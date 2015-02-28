@@ -79,8 +79,8 @@ public class EventEditActivity extends ActionBarActivity implements
 	private Event event;
 	private BroadcastReceiver broadcastReceiver;
 	private Global GLOBAL;
-	private String startText;
-	private String endText;
+	private String startDate;
+	private String endDate;
 	private EditText nameEditText;
 	private EditText categoryEditText;
 	private EditText aboutEditText;
@@ -234,8 +234,11 @@ public class EventEditActivity extends ActionBarActivity implements
 		minEditText.setText(String.valueOf(event.getMinPart()));
 		if (event.getMaxPart() > 0)
 			maxEditText.setText(String.valueOf(event.getMaxPart()));
-		startEditText.setText(toRawDate(event.getStartText()));
-		endEditText.setText(toRawDate(event.getEndText()));
+		startEditText.setText(event.getStartText());
+		startDate = event.getStartDate();
+		endEditText.setText(event.getEndText());
+		endDate = event.getEndDate();
+		
 	}
 
 	private String toRawDate(String date)
@@ -259,15 +262,13 @@ public class EventEditActivity extends ActionBarActivity implements
 	{
 		System.out.println("\n\nDATE IS FIRST: " + dateString);
 		String date = "";
-        SimpleDateFormat raw = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM dd, h:mma");
+        SimpleDateFormat raw = new SimpleDateFormat("yyyy-M-d h:mm");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM d, h:mma");
         try
         {
     		Date parsedDate = (Date) raw.parse(dateString);
     		date = dateFormat.format(parsedDate); 
-    		//date = raw.format(parsedDate);   
-    		System.out.println("\nDATE IN RAW TRANSLATION: " + raw.format(parsedDate));
-    		System.out.println("\nDATE IN FINAL: " + dateFormat.format(parsedDate) + "\n\n");
+
         }
         catch (ParseException ex)
         {
@@ -322,8 +323,6 @@ public class EventEditActivity extends ActionBarActivity implements
 		//Checking user inputs on event name, category, start date, end date, and min_part
 				String location = locationEditText.getText().toString();
 				String eventname = nameEditText.getText().toString();
-				String startDate = startEditText.getText().toString();
-				String endDate = endEditText.getText().toString();
 				startDate.concat(":00");
 				endDate.concat(":00");
 				System.out.println("startdate to be used is: "+startDate);
@@ -351,8 +350,8 @@ public class EventEditActivity extends ActionBarActivity implements
 					}
 				
 					System.out.println("Dates: " + start + " nn " + end);
-					startText = sdf.format(start);
-					endText = sdf.format(end);
+					startDate = sdf.format(start);
+					endDate = sdf.format(end);
 
 					if(start.compareTo(end)>0){
 						System.out.println("Start is after End");
@@ -531,8 +530,8 @@ public class EventEditActivity extends ActionBarActivity implements
 				builder.addTextBody("e_name", nameEditText.getText().toString(), ContentType.TEXT_PLAIN);
 				builder.addTextBody("about", aboutEditText.getText().toString(), ContentType.TEXT_PLAIN);
 				builder.addTextBody("e_id", Integer.toString(event.getID()), ContentType.TEXT_PLAIN);
-				builder.addTextBody("start_date", startText, ContentType.TEXT_PLAIN);
-				builder.addTextBody("end_date", endText, ContentType.TEXT_PLAIN);
+				builder.addTextBody("start_date", startDate, ContentType.TEXT_PLAIN);
+				builder.addTextBody("end_date", endDate, ContentType.TEXT_PLAIN);
 				builder.addTextBody("category", categoryEditText.getText().toString(), ContentType.TEXT_PLAIN);
 				builder.addTextBody("min_part", minEditText.getText().toString(), ContentType.TEXT_PLAIN);
 				builder.addTextBody("max_part", maxEditText.getText().toString(), ContentType.TEXT_PLAIN);
@@ -723,7 +722,8 @@ public class EventEditActivity extends ActionBarActivity implements
 		   if (view.isShown()) 
 		   {
 			   int tmpMonth = month+1;
-			   startEditText.setText(year+"-"+tmpMonth+"-"+day);
+			   startDate = year + "-" + tmpMonth + "-" + day;
+			   startEditText.setText(tmpMonth + "/" + day);
 			   new TimePickerDialog(EventEditActivity.this, myStartTimeListener, hour, minute, false).show();
 		   }
 	   }
@@ -738,7 +738,9 @@ public class EventEditActivity extends ActionBarActivity implements
 		{
 			if (view.isShown()) 
 			{
-				startEditText.append(" "+hourOfDay+":"+minute);
+				startDate += " " + hourOfDay + ":" + minute;
+				startEditText.setText(fromRawDate(startDate));
+				
 			}
 		}
 	};
@@ -753,7 +755,8 @@ public class EventEditActivity extends ActionBarActivity implements
 		   if (view.isShown()) 
 		   {
 			   int tmpMonth = month+1;
-			   endEditText.setText(year+"-"+tmpMonth+"-"+day);
+			   endDate = year + "-" + tmpMonth + "-" + day;
+			   endEditText.setText(tmpMonth + "/" + day);
 			   new TimePickerDialog(EventEditActivity.this, myEndTimeListener, hour, minute, false).show();
 		   }
 	   }
@@ -768,7 +771,8 @@ public class EventEditActivity extends ActionBarActivity implements
 		{
 			if (view.isShown()) 
 			{
-				endEditText.append(" "+hourOfDay+":"+minute);
+				endDate += " "+hourOfDay+":"+minute;
+				endEditText.setText(fromRawDate(endDate));
 			}
 		}
 	};
