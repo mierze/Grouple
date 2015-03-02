@@ -22,6 +22,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -37,6 +39,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -119,6 +122,10 @@ public class ListActivity extends ActionBarActivity
 	        ImageView loadImage = (ImageView) v.findViewById(R.id.loadIconImageView);
 	        loadImage.startAnimation( 
 	        	    AnimationUtils.loadAnimation(this, R.anim.rotate));
+	        final Window window = loadDialog.getWindow();
+	        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+	       // window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+	        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 	        loadDialog.setContentView(R.layout.load);
 	        loadDialog.setCancelable(false);
 	        loadDialog.setOwnerActivity(this);

@@ -21,6 +21,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -30,6 +32,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
@@ -120,16 +123,21 @@ public class ProfileActivity extends ActionBarActivity
 		//LOAD DIALOG INITIALIZING
 		if ((loadDialog == null) || (!loadDialog.isShowing())) 
 		{
-	        loadDialog= new Dialog(this);
+			loadDialog= new Dialog(this);
 	        loadDialog.getWindow().getCurrentFocus();
 	        loadDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+	       // View v = li.inflate(R.layout.load, null);
+	       // ImageView loadImage = (ImageView) v.findViewById(R.id.loadIconImageView);
+	       // loadImage.startAnimation( 
+	        	 //   AnimationUtils.loadAnimation(this, R.anim.rotate));
+	        final Window window = loadDialog.getWindow();
+	        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+	       // window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+	        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 	        loadDialog.setContentView(R.layout.load);
 	        loadDialog.setCancelable(false);
 	        loadDialog.setOwnerActivity(this);
 	        loadDialog.getWindow().setDimAmount(0.7f);
-	      //  WindowManager.LayoutParams lp = dialog.getWindow().getAttributes();  
-	       // lp.dimAmount=0.0f; // Dim level. 0.0 - no dim, 1.0 - completely opaque
-	       // dialog.getWindow().setAttributes(lp);
 		}
 		
 		
@@ -577,11 +585,11 @@ public class ProfileActivity extends ActionBarActivity
 			if (location == null)
 				location = "";
 
-			String age = user.getAge();
-			if (age.equalsIgnoreCase(""))
+			int age = user.getAge();
+			if (age == -1)
 				infoT = location;
 			else
-				infoT = "Birthdate: "+age + "\n" + location;
+				infoT = age + "yrs young\n" + location;
 			//iv.setImageBitmap(user.getImage());
 			info.setText(infoT);
 			about.setText(user.getAbout());
@@ -591,7 +599,7 @@ public class ProfileActivity extends ActionBarActivity
 			aboutTitle.setText("About Event:");
 			about.setText(event.getAbout());
 			//iv.setImageBitmap(event.getImage());
-			String infoText = "Category: " + event.getCategory() + "\n" + event.getLocation() + "\n" + event.getStartDate();
+			String infoText = "Category: " + event.getCategory() + "\n" + event.getLocation() + "\n" + event.getStartText();
 			if (event.getMaxPart() > 0)
 				infoText += "\n(" + event.getNumUsers() + " confirmed / " + event.getMinPart() + " required)" + "\nMax Participants: " + event.getMaxPart();
 			else

@@ -11,6 +11,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -19,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -79,9 +82,17 @@ public class GroupsActivity extends ActionBarActivity
 	
 		user = GLOBAL.getCurrentUser();//loadUser(global.getCurrentUser().getEmail());
 		if ((loadDialog== null) || (!loadDialog.isShowing())) {
-	        loadDialog= new Dialog(this);
+			loadDialog= new Dialog(this);
 	        loadDialog.getWindow().getCurrentFocus();
 	        loadDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+	       // View v = li.inflate(R.layout.load, null);
+	       // ImageView loadImage = (ImageView) v.findViewById(R.id.loadIconImageView);
+	       // loadImage.startAnimation( 
+	        	 //   AnimationUtils.loadAnimation(this, R.anim.rotate));
+	        final Window window = loadDialog.getWindow();
+	        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+	       // window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+	        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 	        loadDialog.setContentView(R.layout.load);
 	        loadDialog.setCancelable(false);
 	        loadDialog.setOwnerActivity(this);

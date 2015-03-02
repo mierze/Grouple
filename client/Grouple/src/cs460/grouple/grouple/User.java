@@ -4,14 +4,17 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.KeyPair;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -46,110 +49,114 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Log;
 
-
 public class User extends Entity
 {
-	//birthday?
+	// birthday?
 	private String location;
-	private String age;
-	private ArrayList<Group> groups; 
-	private ArrayList<User> friendRequests; //friendRequest emails->names
-	private ArrayList<Group> groupInvites; //group invite ids
+	private int age;
+	private String birthday;
+	private ArrayList<Group> groups;
+	private ArrayList<User> friendRequests; // friendRequest emails->names
+	private ArrayList<Group> groupInvites; // group invite ids
 	private ArrayList<Event> eventsUpcoming;
 	private ArrayList<Event> eventsPast;
 	private ArrayList<Event> eventsInvites;
-	//TESTING
+	// TESTING
 	private ArrayList<Event> eventsPending;
-	
+
 	/*
 	 * Constructor for User class
 	 */
-	public User(String email) 
+	public User(String email)
 	{
 		setEmail(email);
 		System.out.println("Initializing new user.");
 	}
-	
-	//testing
+
+	// testing
 	public void removeGroup(int id)
 	{
 		if (groups != null)
-		for (Group g : groups)
-			if (g.getID() == id)
-			{
-				System.out.println("WE FOUND A MATCH");
-				groups.remove(groups.indexOf(g));
-				System.out.println("REMOVE SEEMS SUCCS");
-				break;
-			}
+			for (Group g : groups)
+				if (g.getID() == id)
+				{
+					System.out.println("WE FOUND A MATCH");
+					groups.remove(groups.indexOf(g));
+					System.out.println("REMOVE SEEMS SUCCS");
+					break;
+				}
 	}
-	//testing
+
+	// testing
 	public void removeGroupInvite(int id)
 	{
 		if (groupInvites != null)
-		for (Group g : groupInvites)
-			if (g.getID() == id)
-			{
-				System.out.println("WE FOUND A MATCH");
-				groupInvites.remove(groupInvites.indexOf(g));
-				System.out.println("REMOVE SEEMS SUCCS");
-				break;
-			}
+			for (Group g : groupInvites)
+				if (g.getID() == id)
+				{
+					System.out.println("WE FOUND A MATCH");
+					groupInvites.remove(groupInvites.indexOf(g));
+					System.out.println("REMOVE SEEMS SUCCS");
+					break;
+				}
 	}
+
 	public void removeEventUpcoming(int id)
 	{
 		if (eventsUpcoming != null)
-		for (Event e : eventsUpcoming)
-			if (e.getID() == id)
-			{
-				System.out.println("WE FOUND A MATCH");
-				eventsUpcoming.remove(eventsUpcoming.indexOf(e));
-				System.out.println("REMOVE SEEMS SUCCS");
-				break;
-			}
+			for (Event e : eventsUpcoming)
+				if (e.getID() == id)
+				{
+					System.out.println("WE FOUND A MATCH");
+					eventsUpcoming.remove(eventsUpcoming.indexOf(e));
+					System.out.println("REMOVE SEEMS SUCCS");
+					break;
+				}
 	}
+
 	public void removeEventPending(int id)
-	{	
+	{
 		if (eventsPending != null)
-		for (Event e : eventsPending)
-			if (e.getID() == id)
-			{
-				System.out.println("WE FOUND A MATCH");
-				eventsPending.remove(eventsPending.indexOf(e));
-				System.out.println("REMOVE SEEMS SUCCS");
-				break;
-			}
+			for (Event e : eventsPending)
+				if (e.getID() == id)
+				{
+					System.out.println("WE FOUND A MATCH");
+					eventsPending.remove(eventsPending.indexOf(e));
+					System.out.println("REMOVE SEEMS SUCCS");
+					break;
+				}
 	}
+
 	public void removeEventInvite(int id)
 	{
 		if (eventsInvites != null)
-		for (Event e : eventsInvites)
-			if (e.getID() == id)
-			{
-				System.out.println("WE FOUND A MATCH");
-				eventsInvites.remove(eventsInvites.indexOf(e));
-				System.out.println("REMOVE SEEMS SUCCS");
-				break;
-			}
+			for (Event e : eventsInvites)
+				if (e.getID() == id)
+				{
+					System.out.println("WE FOUND A MATCH");
+					eventsInvites.remove(eventsInvites.indexOf(e));
+					System.out.println("REMOVE SEEMS SUCCS");
+					break;
+				}
 	}
+
 	public void removeEventPast(int id)
 	{
 		if (eventsPast != null)
-		for (Event e : eventsPast)
-			if (e.getID() == id)
-			{
-				System.out.println("WE FOUND A MATCH");
-				eventsPast.remove(eventsPast.indexOf(e));
-				System.out.println("REMOVE SEEMS SUCCS");
-				break;
-			}
+			for (Event e : eventsPast)
+				if (e.getID() == id)
+				{
+					System.out.println("WE FOUND A MATCH");
+					eventsPast.remove(eventsPast.indexOf(e));
+					System.out.println("REMOVE SEEMS SUCCS");
+					break;
+				}
 	}
-	
+
 	public void removeFriendRequest(String email)
 	{
 		if (friendRequests != null)
@@ -162,8 +169,7 @@ public class User extends Entity
 					break;
 				}
 	}
-	
-	
+
 	/*
 	 * Setters for user class below
 	 */
@@ -171,10 +177,44 @@ public class User extends Entity
 	{
 		this.location = location;
 	}
-	public void setAge(String age)
+
+	public void setBirthday(String birthday)
 	{
-		this.age = age;
+		this.birthday = birthday;
+		if (!birthday.equals(""))
+		{
+			SimpleDateFormat raw = new SimpleDateFormat("yyyy-M-d");
+			Date birthDate = null;
+			try
+			{
+				birthDate = raw.parse(birthday);
+			} catch (ParseException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			int ageInt;
+			Calendar dob = Calendar.getInstance();
+			dob.setTime(birthDate);
+			Calendar today = Calendar.getInstance();
+			if ((today.get(Calendar.MONTH) < dob.get(Calendar.MONTH))
+					|| (today.get(Calendar.MONTH) == dob.get(Calendar.MONTH) && today
+							.get(Calendar.DAY_OF_MONTH) <= dob
+							.get(Calendar.DAY_OF_MONTH)))
+			{
+				// year --
+				System.out.println("SETTING AGE IN THE IF");
+				ageInt = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
+			} else
+			{
+				System.out.println("IN ELSE RIGHT NOW");
+				ageInt = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR) - 1;
+			}
+			this.age = ageInt;
+		} else
+			this.age = -1;
 	}
+
 	public void addToFriendRequests(User u)
 	{
 		boolean inFriendRequests = false;
@@ -185,9 +225,10 @@ public class User extends Entity
 		for (User t : friendRequests)
 			if (t.getEmail().equals(u.getEmail()))
 				inFriendRequests = true;
-		if (!inFriendRequests) //TODO: this?
+		if (!inFriendRequests) // TODO: this?
 			friendRequests.add(u);
 	}
+
 	public void addToGroups(Group g)
 	{
 		boolean inGroups = false;
@@ -201,6 +242,7 @@ public class User extends Entity
 		if (!inGroups)
 			groups.add(g);
 	}
+
 	public void addToGroupInvites(Group g)
 	{
 		boolean inGroupInvites = false;
@@ -214,6 +256,7 @@ public class User extends Entity
 		if (!inGroupInvites)
 			groupInvites.add(g);
 	}
+
 	public void addToEventsPending(Event e)
 	{
 		boolean inEventsPending = false;
@@ -227,6 +270,7 @@ public class User extends Entity
 		if (!inEventsPending)
 			eventsPending.add(e);
 	}
+
 	public void addToEventsInvites(Event e)
 	{
 		boolean inEventsInvites = false;
@@ -240,26 +284,28 @@ public class User extends Entity
 		if (!inEventsInvites)
 			eventsInvites.add(e);
 	}
+
 	public void addToEventsUpcoming(Event e)
 	{
 		boolean inEventsUpcoming = false;
 		if (eventsUpcoming == null)
 		{
 			eventsUpcoming = new ArrayList<Event>();
-		}		
+		}
 		for (Event t : eventsUpcoming)
 			if (t.getID() == e.getID())
 				inEventsUpcoming = true;
 		if (!inEventsUpcoming)
 			eventsUpcoming.add(e);
 	}
+
 	public void addToEventsPast(Event e)
 	{
 		boolean inEventsPast = false;
 		if (eventsPast == null)
 		{
 			eventsPast = new ArrayList<Event>();
-		}		
+		}
 		for (Event t : eventsPast)
 			if (t.getID() == e.getID())
 				inEventsPast = true;
@@ -267,29 +313,36 @@ public class User extends Entity
 			eventsPast.add(e);
 	}
 
-	
 	/*
 	 * Getters for user class below
 	 */
-
 	public String getFirstName()
 	{
-		String [] n = getName().split(" ");
+		String[] n = getName().split(" ");
 		return n[0];
 	}
+
 	public String getLastName()
 	{
-		String [] n = getName().split(" ");
+		String[] n = getName().split(" ");
 		return n[1];
 	}
+
 	public String getLocation()
 	{
 		return location;
 	}
-	public String getAge()
+
+	public String getBirthday()
+	{
+		return birthday;
+	}
+
+	public int getAge()
 	{
 		return age;
 	}
+
 	public int getNumGroups()
 	{
 		if (groups != null)
@@ -297,6 +350,7 @@ public class User extends Entity
 		else
 			return 0;
 	}
+
 	public int getNumFriendRequests()
 	{
 		if (friendRequests != null)
@@ -304,6 +358,7 @@ public class User extends Entity
 		else
 			return 0;
 	}
+
 	public int getNumGroupInvites()
 	{
 		if (groupInvites != null)
@@ -311,6 +366,7 @@ public class User extends Entity
 		else
 			return 0;
 	}
+
 	public int getNumEventsPending()
 	{
 		if (eventsPending != null)
@@ -318,6 +374,7 @@ public class User extends Entity
 		else
 			return 0;
 	}
+
 	public int getNumEventsPast()
 	{
 		if (eventsPast != null)
@@ -325,6 +382,7 @@ public class User extends Entity
 		else
 			return 0;
 	}
+
 	public int getNumEventsInvites()
 	{
 		if (eventsInvites != null)
@@ -332,6 +390,7 @@ public class User extends Entity
 		else
 			return 0;
 	}
+
 	public int getNumEventsUpcoming()
 	{
 		if (eventsUpcoming != null)
@@ -339,38 +398,42 @@ public class User extends Entity
 		else
 			return 0;
 	}
+
 	public ArrayList<User> getFriendRequests()
 	{
 		return friendRequests;
 	}
+
 	public ArrayList<Group> getGroups()
 	{
 		return groups;
 	}
+
 	public ArrayList<Group> getGroupInvites()
 	{
 		return groupInvites;
 	}
+
 	public ArrayList<Event> getEventsPending()
 	{
 		return eventsPending;
 	}
+
 	public ArrayList<Event> getEventsUpcoming()
 	{
 		return eventsUpcoming;
 	}
+
 	public ArrayList<Event> getEventsInvites()
 	{
 		return eventsInvites;
 	}
+
 	public ArrayList<Event> getEventsPast()
 	{
 		return eventsPast;
 	}
-	
-	
-	
-	
+
 	/**
 	 * 
 	 * fetches the user name, bio, and everything
@@ -378,11 +441,8 @@ public class User extends Entity
 	 */
 	public int fetchUserInfo()
 	{
-		
 		AsyncTask<String, Void, String> task = new getUserInfoTask()
-		.execute("http://68.59.162.183/android_connect/get_user_info.php");
-		
-
+				.execute("http://68.59.162.183/android_connect/get_user_info.php");
 		try
 		{
 			task.get(10000, TimeUnit.MILLISECONDS);
@@ -399,11 +459,9 @@ public class User extends Entity
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		//while (task.getStatus() != Status.FINISHED);
+		// while (task.getStatus() != Status.FINISHED);
 		return 1;
 	}
-		
 
 	class getUserInfoTask extends AsyncTask<String, Void, String>
 	{
@@ -421,99 +479,88 @@ public class User extends Entity
 		{
 			try
 			{
-				//getting json object from the result string
+				// getting json object from the result string
 				JSONObject jsonObject = new JSONObject(result);
-				//gotta make a json array
-				//JSONArray jsonArray = jsonObject.getJSONArray("userInfo");
-				
+				// gotta make a json array
+				// JSONArray jsonArray = jsonObject.getJSONArray("userInfo");
 				System.out.println("USER INFO on post TRY");
-				//json fetch was successful
+				// json fetch was successful
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					System.out.println("in succuess USER INFO");
 					JSONArray jsonArray = jsonObject.getJSONArray("userInfo");
 					System.out.println("in succuess USER INFO1");
 					Log.d("getUserInfoOnPost", "success1");
-
-					//at each iteration set to hashmap friendEmail -> 'first last'
+					// at each iteration set to hashmap friendEmail -> 'first
+					// last'
 					String fName = (String) jsonArray.get(0);
-					
-					//set name
+					// set name
 					String lName = (String) jsonArray.get(1);
 					setName(fName + " " + lName);
-					
-					//it must do this null check for brand new users who have never updated these optional fields, since database defaults them to NULL.
-					//set bio
+					// it must do this null check for brand new users who have
+					// never updated these optional fields, since database
+					// defaults them to NULL.
+					// set bio
 					Object about = jsonArray.get(3);
-					if(about.toString().equals("null"))
+					if (about.toString().equals("null"))
 					{
 						setAbout("");
-					}
-					else
+					} else
 					{
 						setAbout(about.toString());
 					}
-					
-					//set location
+					// set location
 					Object location = jsonArray.get(4);
-					if(location.toString().equals("null"))
+					if (location.toString().equals("null"))
 					{
 						setLocation("");
-					}
-					else
+					} else
 					{
 						setLocation(location.toString());
 					}
-					
-					//set birthday (not yet implemented)
-					//for now do age
+					// set birthday (not yet implemented)
+					// for now do age
 					Object age = jsonArray.get(2);
-					if(age.toString().equals("null"))
+					if (age.toString().equals("null"))
 					{
-						setAge("");
-					}
-					else
+						setBirthday("");
+					} else
 					{
-						setAge(age.toString());//panda
+						setBirthday(age.toString());// panda
 					}
 					Log.d("getUserInfoOnPost", "age: " + age);
-					//Log.d("getUserInfoOnPost", "after set age");
-					//String fName = jsonObject.getString("fName").toString();
-					//setBirthday(fName); 
-					
-					//get that image niggi
-					//String image = (String) jsonArray.get(5);
-					//setImage(image);
-				
-				} 
-				//unsuccessful
+					// Log.d("getUserInfoOnPost", "after set age");
+					// String fName = jsonObject.getString("fName").toString();
+					// setBirthday(fName);
+					// get that image niggi
+					// String image = (String) jsonArray.get(5);
+					// setImage(image);
+				}
+				// unsuccessful
 				else
 				{
 					// failed
 					Log.d("UserFetchInfoOnPost", "FAILED");
 				}
-			} 
-			catch (Exception e)
+			} catch (Exception e)
 			{
 				Log.d("atherjsoninuserpost", "here");
 				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
 			}
-			//do next thing here
+			// do next thing here
 		}
 	}
 
 	/*
 	 * 
 	 * will be fetching the friends key->val stuff here
-	 * 
 	 */
 	// Get numFriends, TODO: work on returning the integer
-	public int fetchFriends() 
+	public int fetchFriends()
 	{
 		AsyncTask<String, Void, String> task = new getFriendsTask()
 				.execute("http://68.59.162.183/android_connect/get_friends.php?email="
 						+ getEmail());
-		
 		try
 		{
 			task.get(10000, TimeUnit.MILLISECONDS);
@@ -530,8 +577,7 @@ public class User extends Entity
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		//while (task.getStatus() != Status.FINISHED);
+		// while (task.getStatus() != Status.FINISHED);
 		return 1;
 	}
 
@@ -542,7 +588,7 @@ public class User extends Entity
 		{
 			return readJSONFeed(urls[0], null);
 		}
-		
+
 		@Override
 		protected void onPostExecute(String result)
 		{
@@ -551,27 +597,29 @@ public class User extends Entity
 				JSONObject jsonObject = new JSONObject(result);
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					//gotta make a json array
+					// gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("friends");
-					//success so clear previous
-					//	getUsers().clear();
-					//looping thru array
+					// success so clear previous
+					// getUsers().clear();
+					// looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
-						//at each iteration set to hashmap friendEmail -> 'first last'
+						// at each iteration set to hashmap friendEmail ->
+						// 'first last'
 						JSONObject o = (JSONObject) jsonArray.get(i);
-						//function adds friend to the friends map
+						// function adds friend to the friends map
 						User u = new User(o.getString("email"));
-						u.setName(o.getString("first") + " " + o.getString("last"));
+						u.setName(o.getString("first") + " "
+								+ o.getString("last"));
 						addToUsers(u);
 					}
 				}
-				
 				// user has no friends
 				if (jsonObject.getString("success").toString().equals("2"))
 				{
 					Log.d("fetchFriends", "failed = 2 return");
-					//setNumFriends(0); //PANDA need to set the user class not global
+					// setNumFriends(0); //PANDA need to set the user class not
+					// global
 				}
 			} catch (Exception e)
 			{
@@ -579,24 +627,22 @@ public class User extends Entity
 				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
 			}
 		}
-	}	
-	
-	
+	}
+
 	public void setFriendRequests(ArrayList<User> friendRequests)
 	{
 		this.friendRequests = friendRequests;
 	}
+
 	/*
 	 * Should be getting the friendRequest key->vals here
 	 */
 	public int fetchFriendRequests()
 	{
-		//friendRequests = null;//reset
+		// friendRequests = null;//reset
 		AsyncTask<String, Void, String> task = new getFriendRequestsTask();
-		
 		task.execute("http://68.59.162.183/android_connect/get_friend_requests.php?receiver="
 				+ getEmail());
-
 		try
 		{
 			task.get(10000, TimeUnit.MILLISECONDS);
@@ -613,10 +659,7 @@ public class User extends Entity
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		System.out.println(task.getStatus());
-
-		
 		return 1;
 	}
 
@@ -636,22 +679,26 @@ public class User extends Entity
 				JSONObject jsonObject = new JSONObject(result);
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					//gotta make a json array
-					JSONArray jsonArray = jsonObject.getJSONArray("friendRequests");
-					//looping thru array
+					// gotta make a json array
+					JSONArray jsonArray = jsonObject
+							.getJSONArray("friendRequests");
+					// looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
-						//at each iteration set to hashmap friendEmail -> 'first last'
+						// at each iteration set to hashmap friendEmail ->
+						// 'first last'
 						JSONObject o = (JSONObject) jsonArray.get(i);
-						//function adds friend to the friends map=
-						Log.d("fetchFriendRequestsPost", "array length: " + jsonArray.length() + ", email: " + o.getString("email"));
+						// function adds friend to the friends map=
+						Log.d("fetchFriendRequestsPost",
+								"array length: " + jsonArray.length()
+										+ ", email: " + o.getString("email"));
 						addToFriendRequests(new User(o.getString("email")));
 					}
 				}
 				// user has no friend requests
 				if (jsonObject.getString("success").toString().equals("2"))
 				{
-					//no friend requests
+					// no friend requests
 				}
 			} catch (Exception e)
 			{
@@ -659,17 +706,15 @@ public class User extends Entity
 			}
 		}
 	}
-	
-	
-	
+
 	/*
 	 * should be getting the groups key->vals here
 	 */
 	public int fetchGroups()
 	{
 		AsyncTask<String, Void, String> task = new getGroupsTask()
-		.execute("http://68.59.162.183/android_connect/get_groups.php?email="
-				+ getEmail());
+				.execute("http://68.59.162.183/android_connect/get_groups.php?email="
+						+ getEmail());
 		try
 		{
 			task.get(10000, TimeUnit.MILLISECONDS);
@@ -686,10 +731,7 @@ public class User extends Entity
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-	
-		//while (task.getStatus() != Status.FINISHED);
-		
+		// while (task.getStatus() != Status.FINISHED);
 		return 1;
 	}
 
@@ -704,36 +746,35 @@ public class User extends Entity
 		@Override
 		protected void onPostExecute(String result)
 		{
-
 			try
 			{
-
-				//need to get gid, gname for each and put them in hashmap
+				// need to get gid, gname for each and put them in hashmap
 				JSONObject jsonObject = new JSONObject(result);
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					//gotta make a json array
+					// gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("groups");
-					
-					
-					//looping thru array
+					// looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
-						//at each iteration set to hashmap friendEmail -> 'first last'
+						// at each iteration set to hashmap friendEmail ->
+						// 'first last'
 						JSONObject o = (JSONObject) jsonArray.get(i);
-						//function adds friend to the friends map
-						System.out.println("HERE WE ARE ABOUT TO ADD A GROUP TO THE GROUPS TABLE");
-						Group g = new Group(Integer.parseInt(o.getString("gid")));
+						// function adds friend to the friends map
+						System.out
+								.println("HERE WE ARE ABOUT TO ADD A GROUP TO THE GROUPS TABLE");
+						Group g = new Group(
+								Integer.parseInt(o.getString("gid")));
 						g.setName(o.getString("gname"));
 						addToGroups(g);
 					}
-
 				}
 				// user has no friends
 				if (jsonObject.getString("success").toString().equals("2"))
 				{
 					Log.d("getGroups", "ERROR WITH JSON");
-					//setNumFriends(0); //PANDA need to set the user class not global
+					// setNumFriends(0); //PANDA need to set the user class not
+					// global
 				}
 			} catch (Exception e)
 			{
@@ -745,7 +786,6 @@ public class User extends Entity
 	/*
 	 * 
 	 * should be getting the groupInvites key->vals here
-	 * 
 	 */
 	// Get numFriends, TODO: work on returning the integer
 	public int fetchGroupInvites()
@@ -769,8 +809,7 @@ public class User extends Entity
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		//while (task.getStatus() != Status.FINISHED);
+		// while (task.getStatus() != Status.FINISHED);
 		return 1;
 	}
 
@@ -790,27 +829,27 @@ public class User extends Entity
 				JSONObject jsonObject = new JSONObject(result);
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					//gotta make a json array
+					// gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("invites");
-					
-					//looping thru array
+					// looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
-						//at each iteration set to hashmap friendEmail -> 'first last'
+						// at each iteration set to hashmap friendEmail ->
+						// 'first last'
 						JSONObject o = (JSONObject) jsonArray.get(i);
-						//function adds friend to the friends map
-						Group g = new Group(Integer.parseInt(o.getString("gid")));
+						// function adds friend to the friends map
+						Group g = new Group(
+								Integer.parseInt(o.getString("gid")));
 						g.setName(o.getString("gname"));
 						g.setInviter(o.getString("sender"));
 						addToGroupInvites(g);
 					}
-
 				}
-				
 				// user has no group invites
 				if (jsonObject.getString("success").toString().equals("2"))
 				{
-					//setNumFriends(0); //PANDA need to set the user class not global
+					// setNumFriends(0); //PANDA need to set the user class not
+					// global
 				}
 			} catch (Exception e)
 			{
@@ -818,12 +857,10 @@ public class User extends Entity
 			}
 		}
 	}
-	
 
 	/*
 	 * 
 	 * should be getting the groupInvites key->vals here
-	 * 
 	 */
 	// Get numFriends, TODO: work on returning the integer
 	public int fetchEventsPending()
@@ -847,8 +884,7 @@ public class User extends Entity
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		//while (task.getStatus() != Status.FINISHED);
+		// while (task.getStatus() != Status.FINISHED);
 		return 1;
 	}
 
@@ -868,29 +904,31 @@ public class User extends Entity
 				JSONObject jsonObject = new JSONObject(result);
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					//gotta make a json array
-					JSONArray jsonArray = jsonObject.getJSONArray("eventsPending");
-					//looping thru array
+					// gotta make a json array
+					JSONArray jsonArray = jsonObject
+							.getJSONArray("eventsPending");
+					// looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
-						//at each iteration set to hashmap friendEmail -> 'first last'
+						// at each iteration set to hashmap friendEmail ->
+						// 'first last'
 						JSONObject o = (JSONObject) jsonArray.get(i);
-						//function adds friend to the friends map
-						Event e = new Event(Integer.parseInt(o.getString("eid")));
+						// function adds friend to the friends map
+						Event e = new Event(
+								Integer.parseInt(o.getString("eid")));
 						e.setName(o.getString("name"));
-						e.setInviter(o.getString("sender"));	
+						e.setInviter(o.getString("sender"));
 						e.setMinPart(Integer.parseInt(o.getString("minpart")));
 						e.setMaxPart(Integer.parseInt(o.getString("maxpart")));
 						e.fetchParticipants();
 						addToEventsPending(e);
-						//set min max
+						// set min max
 					}
 				}
-				
 				// user has no group invites
 				if (jsonObject.getString("success").toString().equals("2"))
 				{
-					//no group invites
+					// no group invites
 				}
 			} catch (Exception e)
 			{
@@ -898,11 +936,10 @@ public class User extends Entity
 			}
 		}
 	}
-	
+
 	/*
 	 * 
 	 * should be getting the groupInvites key->vals here
-	 * 
 	 */
 	// Get numFriends, TODO: work on returning the integer
 	public int fetchEventsPast()
@@ -926,8 +963,7 @@ public class User extends Entity
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		//while (task.getStatus() != Status.FINISHED);
+		// while (task.getStatus() != Status.FINISHED);
 		return 1;
 	}
 
@@ -947,29 +983,30 @@ public class User extends Entity
 				JSONObject jsonObject = new JSONObject(result);
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					//gotta make a json array
+					// gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("eventsPast");
-					//looping thru array
+					// looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
-						//at each iteration set to hashmap friendEmail -> 'first last'
+						// at each iteration set to hashmap friendEmail ->
+						// 'first last'
 						JSONObject o = (JSONObject) jsonArray.get(i);
-						//function adds friend to the friends map
-						Event e = new Event(Integer.parseInt(o.getString("eid")));
+						// function adds friend to the friends map
+						Event e = new Event(
+								Integer.parseInt(o.getString("eid")));
 						e.setName(o.getString("name"));
-						e.setInviter(o.getString("sender"));	
+						e.setInviter(o.getString("sender"));
 						e.setMinPart(Integer.parseInt(o.getString("minpart")));
 						e.setMaxPart(Integer.parseInt(o.getString("maxpart")));
 						e.fetchParticipants();
 						addToEventsPast(e);
-						//set min max
+						// set min max
 					}
 				}
-				
 				// user has no group invites
 				if (jsonObject.getString("success").toString().equals("2"))
 				{
-					//no group invites
+					// no group invites
 				}
 			} catch (Exception e)
 			{
@@ -977,7 +1014,7 @@ public class User extends Entity
 			}
 		}
 	}
-	
+
 	public int fetchEventsInvites()
 	{
 		AsyncTask<String, Void, String> task = new getEventsInvitesTask()
@@ -999,8 +1036,7 @@ public class User extends Entity
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		//while (task.getStatus() != Status.FINISHED);
+		// while (task.getStatus() != Status.FINISHED);
 		return 1;
 	}
 
@@ -1020,14 +1056,17 @@ public class User extends Entity
 				JSONObject jsonObject = new JSONObject(result);
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					//gotta make a json array
-					JSONArray jsonArray = jsonObject.getJSONArray("eventsInvites");
-					//looping thru array
+					// gotta make a json array
+					JSONArray jsonArray = jsonObject
+							.getJSONArray("eventsInvites");
+					// looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
-						//at each iteration set to hashmap friendEmail -> 'first last'
+						// at each iteration set to hashmap friendEmail ->
+						// 'first last'
 						JSONObject o = (JSONObject) jsonArray.get(i);
-						Event e = new Event(Integer.parseInt(o.getString("eid")));
+						Event e = new Event(
+								Integer.parseInt(o.getString("eid")));
 						e.setName(o.getString("name"));
 						e.setInviter(o.getString("sender"));
 						e.setMinPart(Integer.parseInt(o.getString("minpart")));
@@ -1036,11 +1075,10 @@ public class User extends Entity
 						addToEventsInvites(e);
 					}
 				}
-				
 				// user has no group invites
 				if (jsonObject.getString("success").toString().equals("2"))
 				{
-					//no group invites
+					// no group invites
 				}
 			} catch (Exception e)
 			{
@@ -1048,11 +1086,10 @@ public class User extends Entity
 			}
 		}
 	}
-	
+
 	/*
 	 * 
 	 * should be getting the groupInvites key->vals here
-	 * 
 	 */
 	// Get numFriends, TODO: work on returning the integer
 	public int fetchEventsUpcoming()
@@ -1076,8 +1113,7 @@ public class User extends Entity
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		//while (task.getStatus() != Status.FINISHED);
+		// while (task.getStatus() != Status.FINISHED);
 		return 1;
 	}
 
@@ -1097,25 +1133,27 @@ public class User extends Entity
 				JSONObject jsonObject = new JSONObject(result);
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					//gotta make a json array
-					JSONArray jsonArray = jsonObject.getJSONArray("eventsUpcoming");
-					//looping thru array
+					// gotta make a json array
+					JSONArray jsonArray = jsonObject
+							.getJSONArray("eventsUpcoming");
+					// looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
-						//at each iteration set to hashmap friendEmail -> 'first last'
+						// at each iteration set to hashmap friendEmail ->
+						// 'first last'
 						JSONObject o = (JSONObject) jsonArray.get(i);
-						//function adds friend to the friends map
-						Event e = new Event(Integer.parseInt(o.getString("eid")));
+						// function adds friend to the friends map
+						Event e = new Event(
+								Integer.parseInt(o.getString("eid")));
 						e.setName(o.getString("name"));
 						addToEventsUpcoming(e);
 					}
-
 				}
-				
 				// user has no group invites
 				if (jsonObject.getString("success").toString().equals("2"))
 				{
-					//setNumFriends(0); //PANDA need to set the user class not global
+					// setNumFriends(0); //PANDA need to set the user class not
+					// global
 				}
 			} catch (Exception e)
 			{
@@ -1123,6 +1161,4 @@ public class User extends Entity
 			}
 		}
 	}
-	
-	
 }
