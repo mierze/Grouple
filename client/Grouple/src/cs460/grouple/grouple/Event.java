@@ -72,14 +72,14 @@ public class Event extends Entity
 	}
 	public void setStartDate(String startDate)
 	{
-		this.startDate = startDate;
+		startText = startDate;
 		//string is format from json, parsedate converts
-		startText = parseDate(startDate);
+		this.startDate = parseDate(startDate);
 	}
 	public void setEndDate(String endDate)
 	{
-		this.endDate = endDate;
-		endText = parseDate(endDate);
+		endText = endDate;
+		this.endDate = parseDate(endDate);
 	}
 	private String parseDate(String dateString)
 	{

@@ -37,10 +37,12 @@ import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -81,7 +83,6 @@ public class ListActivity extends ActionBarActivity
 	private ArrayList<Group> groups;
 	private ArrayList<Event> events;
 	private Dialog loadDialog =  null;
-	private getRoleTask getRoleTask;
 
 	/* loading actionbar */
 	public void initActionBar(String actionBarTitle)
@@ -114,6 +115,10 @@ public class ListActivity extends ActionBarActivity
 	        loadDialog= new Dialog(this);
 	        loadDialog.getWindow().getCurrentFocus();
 	        loadDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+	        View v = li.inflate(R.layout.load, null);
+	        ImageView loadImage = (ImageView) v.findViewById(R.id.loadIconImageView);
+	        loadImage.startAnimation( 
+	        	    AnimationUtils.loadAnimation(this, R.anim.rotate));
 	        loadDialog.setContentView(R.layout.load);
 	        loadDialog.setCancelable(false);
 	        loadDialog.setOwnerActivity(this);
@@ -461,9 +466,9 @@ public class ListActivity extends ActionBarActivity
 		{
 			System.out.println("NOW IN SET ROLE");
 			if (CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()))
-				getRoleTask = (getRoleTask) new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_group.php", Integer.toString(group.getID()));
+				new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_group.php", Integer.toString(group.getID()));
 			else
-				getRoleTask = (getRoleTask) new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_event.php", Integer.toString(event.getID()));
+				new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_event.php", Integer.toString(event.getID()));
 		}
 	}
 
@@ -631,12 +636,6 @@ public class ListActivity extends ActionBarActivity
 	public void startInviteActivity(View view)
 	{
 		loadDialog.show();
-		if (getRoleTask != null)
-		{
-			System.out.println("NOW CANCELING OPUR ROLE TASK");
-			getRoleTask.cancel(true);
-		}
-		
 		Intent intent = null;
 		if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
 		{
@@ -670,6 +669,7 @@ public class ListActivity extends ActionBarActivity
 			throws InterruptedException
 	{
 		loadDialog.show();
+		Thread.sleep(2000);//sleeping to test look of load icon animation
 		System.out.println("Just started dialog!");
 		int id = view.getId();		
 		Intent intent = new Intent(this, ProfileActivity.class);

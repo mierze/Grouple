@@ -1,9 +1,6 @@
 package cs460.grouple.grouple;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -62,8 +59,6 @@ public class ProfileActivity extends ActionBarActivity
 	private Button profileButton3;
 	private Button editProfileButton;
 	private Dialog loadDialog;
-	private getImageTask getImageTask;
-	private getRoleTask getRoleTask;
 	
 	@Override
 	protected void onStart()
@@ -170,7 +165,7 @@ public class ProfileActivity extends ActionBarActivity
 			}
 			setRole();
 		}
-		getImageTask = (getImageTask) new getImageTask().execute("http://68.59.162.183/android_connect/get_profile_image.php");
+		new getImageTask().execute("http://68.59.162.183/android_connect/get_profile_image.php");
 		populateProfile(); //populates a group / user profile
 		
 		// initializing the action bar and killswitch listener
@@ -220,9 +215,9 @@ public class ProfileActivity extends ActionBarActivity
 		{
 			// and check for not past
 			if (CONTENT.equals(CONTENT_TYPE.EVENT.toString()))
-				getRoleTask = (getRoleTask) new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_event.php", Integer.toString(event.getID()));
+				new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_event.php", Integer.toString(event.getID()));
 			else
-				getRoleTask = (getRoleTask) new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_group.php", Integer.toString(group.getID()));
+				new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_group.php", Integer.toString(group.getID()));
 		}
 	}
 
@@ -517,13 +512,7 @@ public class ProfileActivity extends ActionBarActivity
 			intent.putExtra("EID", Integer.toString(event.getID()));
 		iv = null;
 		if (!noIntent) //TODO, move buttons elsewhere that dont start list
-		{
 			startActivity(intent);
-			if (getRoleTask != null)
-				getRoleTask.cancel(true);
-			if (getImageTask != null)
-				getImageTask.cancel(true);
-		}
 	}
 
 	@Override
@@ -588,14 +577,11 @@ public class ProfileActivity extends ActionBarActivity
 			if (location == null)
 				location = "";
 
-			int age = user.getAge();
-			
-			if (age == -1)
+			String age = user.getAge();
+			if (age.equalsIgnoreCase(""))
 				infoT = location;
 			else
-			{
-				infoT = age + " yrs young\n" + location;
-			}
+				infoT = "Birthdate: "+age + "\n" + location;
 			//iv.setImageBitmap(user.getImage());
 			info.setText(infoT);
 			about.setText(user.getAbout());
@@ -605,7 +591,7 @@ public class ProfileActivity extends ActionBarActivity
 			aboutTitle.setText("About Event:");
 			about.setText(event.getAbout());
 			//iv.setImageBitmap(event.getImage());
-			String infoText = "Category: " + event.getCategory() + "\n" + event.getLocation() + "\n" + event.getStartText();
+			String infoText = "Category: " + event.getCategory() + "\n" + event.getLocation() + "\n" + event.getStartDate();
 			if (event.getMaxPart() > 0)
 				infoText += "\n(" + event.getNumUsers() + " confirmed / " + event.getMinPart() + " required)" + "\nMax Participants: " + event.getMaxPart();
 			else
