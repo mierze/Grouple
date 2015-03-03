@@ -18,9 +18,6 @@ import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-/*
- * SettingsActivity has not been implemented yet.
- */
 public class SettingsActivity extends ActionBarActivity
 {
 	private BroadcastReceiver broadcastReceiver;
@@ -43,6 +40,55 @@ public class SettingsActivity extends ActionBarActivity
 
 		actionbarTitle.setText("Settings");
 	}
+	
+	public void friendSwitch(View view)
+	{
+		
+	}
+	
+	public void groupSwitch(View view)
+	{
+		
+	}
+	
+	public void eventSwitch(View view)
+	{
+		
+	}
+	
+	public void proposeSwitch(View view)
+	{
+		
+	}
+	
+	public void changePasswordButton(View view)
+	{
+		
+	}
+	
+	public void changeEmailButton(View view)
+	{
+		
+	}
+	
+	public void deleteAccountButton(View view)
+	{
+		
+	}
+		
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
