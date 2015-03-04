@@ -41,6 +41,7 @@ public class HomeActivity extends ActionBarActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_home);
+		//Register with the GCM servers and store it in the db.
 		
 		load();
 		

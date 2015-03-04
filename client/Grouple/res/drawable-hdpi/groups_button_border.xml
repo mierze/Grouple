@@ -1,7 +1,9 @@
 
 
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:drawable="@drawable/groups_icon">
+    <item android:drawable="@drawable/groups_iconnew">
+        </item>
+        <item>
 <shape android:shape="rectangle" android:padding="10dp">
     <solid android:color="@color/button_background_color" />
     <stroke android:width="2dip" android:color="@color/button_border_color" />

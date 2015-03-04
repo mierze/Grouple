@@ -273,7 +273,7 @@ public class ProfileActivity extends ActionBarActivity
 						if (user.getImage() != null)
 							iv.setImageBitmap(user.getImage());
 						else
-							iv.setImageResource(R.drawable.user_icon);
+							iv.setImageResource(R.drawable.user_image_default);
 						
 					}
 					else if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
@@ -283,7 +283,7 @@ public class ProfileActivity extends ActionBarActivity
 						if (group.getImage() != null)
 							iv.setImageBitmap(group.getImage());
 						else
-							iv.setImageResource(R.drawable.groups_icon);
+							iv.setImageResource(R.drawable.group_image_default);
 					}
 					else
 					{
@@ -292,7 +292,7 @@ public class ProfileActivity extends ActionBarActivity
 						if (event.getImage() != null)
 							iv.setImageBitmap(event.getImage());
 						else
-							iv.setImageResource(R.drawable.events_icon);		
+							iv.setImageResource(R.drawable.event_image_default);		
 					}
 					System.out.println("ROLE IS BEING SET TO " + ROLE);
 					iv.setScaleType(ScaleType.CENTER_CROP);
@@ -496,7 +496,10 @@ public class ProfileActivity extends ActionBarActivity
 			if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
 				intent = new Intent(this, GroupEditActivity.class);
 			else if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
+			{
 				intent = new Intent(this, ProfileEditActivity.class);
+				System.out.println("Setting the intent");
+			}
 			else
 				intent = new Intent(this, EventEditActivity.class);
 			break;
@@ -520,7 +523,10 @@ public class ProfileActivity extends ActionBarActivity
 			intent.putExtra("EID", Integer.toString(event.getID()));
 		iv = null;
 		if (!noIntent) //TODO, move buttons elsewhere that dont start list
+		{
 			startActivity(intent);
+				System.out.println("Now did intent");
+		}
 	}
 
 	@Override

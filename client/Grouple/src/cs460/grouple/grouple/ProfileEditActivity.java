@@ -98,7 +98,7 @@ public class ProfileEditActivity extends ActionBarActivity implements
 		Bundle extras = getIntent().getExtras();
 		user = GLOBAL.getCurrentUser();
 	
-		
+		System.out.println("In edit ACTIVITY NOW: loading");
 		if (user != null)
 			getProfile();
 

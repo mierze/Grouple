@@ -42,7 +42,7 @@
  	        android:gravity="bottom|center_horizontal"
  	        android:onClick="navigate"
  	        android:text="Profile"
- 	        android:textColor="@color/header_text_color"
+ 	        android:textColor="@color/text_color"
  	        android:textSize="16sp" />
  	    
  		<Button
@@ -57,7 +57,7 @@
  	        android:gravity="bottom|center_horizontal"
  	        android:onClick="navigate"
  	        android:text="Messages"
- 	        android:textColor="@color/header_text_color"
+ 	        android:textColor="@color/text_color"
  	        android:textSize="16sp" />
 
  	    <Button
@@ -72,7 +72,7 @@
  	        android:gravity="bottom|center_horizontal"
  	        android:onClick="navigate"
  	        android:text="Settings"
- 	        android:textColor="@color/header_text_color"
+ 	        android:textColor="@color/text_color"
  	        android:textSize="16sp" />
 
  	</LinearLayout>
@@ -96,7 +96,7 @@
    	        android:gravity="bottom|center_horizontal"
    	        android:onClick="navigate"
    	        android:text="Friends"
-   	        android:textColor="@color/header_text_color"
+   	        android:textColor="@color/text_color"
    	        android:textStyle="bold"
    	       	android:fontFamily="sans-serif"
    	        android:textSize="16sp" />
@@ -115,7 +115,7 @@
   	        android:onClick="navigate"
   	     	android:paddingBottom="10dp"
   	        android:text="Groups"
-  	        android:textColor="@color/header_text_color"
+  	        android:textColor="@color/text_color"
   	        android:textSize="16sp" />
 
 
@@ -143,7 +143,7 @@
   	        android:gravity="bottom|center_horizontal"
   	        android:onClick="navigate"
   	        android:text="Events"
-  	        android:textColor="@color/header_text_color"
+  	        android:textColor="@color/text_color"
   	        android:paddingBottom="10dp"
   	        android:textSize="16sp" />
 
