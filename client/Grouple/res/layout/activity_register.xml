@@ -3,18 +3,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_color"
-    android:padding="5dp" >
+    android:padding="20dp" 
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp">
 
     <EditText
         android:id="@+id/emailEditTextRA"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-                android:background="@drawable/border"
+        android:background="@drawable/border"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="3dp"
-        		android:fontFamily="sans-serif"
-        
-        		                android:textColorHint="@color/hint_text_color"
+        android:fontFamily="sans-serif"
+        android:textColorHint="@color/hint_text_color"
 		android:textColor="@color/text_color"
         android:layout_marginTop="70dp"
         android:ems="10"
@@ -148,7 +149,7 @@
         android:layout_alignParentTop="true"
         android:fontFamily="sans-serif-condensed"
         android:text="@string/registerTextView"
-        android:textColor="@color/text_color"
+        android:textColor="@color/header_text_color"
         android:textSize="50sp" />
 
 </RelativeLayout>

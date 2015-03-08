@@ -4,47 +4,74 @@
     android:layout_width="match_parent"
          android:background="@drawable/top_bottom_border"
 	android:layout_margin="5dp"
-    android:layout_height="wrap_content"
+    android:layout_height="80dp"
 
 
     android:orientation="horizontal"
 > 
+    <LinearLayout 
+    android:id="@+id/messageInnerLayout1"
+    android:layout_width="120dp"
+    android:layout_weight="1"
+    android:padding="0dp"
+    
+    android:gravity="left"
+    android:layout_gravity="left"
+    android:layout_height="match_parent"
+    android:orientation="vertical"> 
 
+        
+          
             	    <ImageView
 	        android:id="@+id/contactImage"
 	        android:contentDescription="Profile photo."
-	        android:layout_weight="1"
-	        android:layout_width="100dp"
+	        android:layout_width="fill_parent"
 	        android:layout_margin="0dp"
 	        android:padding="0dp"
+	        android:gravity="left"
+	        
 	        android:layout_height="match_parent"
 	        android:background="@drawable/border"
 	        android:layout_gravity="left"
 	        android:src="@drawable/abc_ab_bottom_solid_dark_holo" />
+            	    
+
+            	    
+            	    </LinearLayout>
     <LinearLayout 
-    android:id="@+id/messageInnerLayout"
-    android:layout_width="wrap_content"
+    android:id="@+id/messageInnerLayout2"
+    android:layout_width="fill_parent"
     android:layout_weight="2"
     android:gravity="left"
     android:layout_gravity="left"
-        android:padding="15dp"
+        android:padding="5dp"
     android:layout_height="match_parent"
     android:orientation="vertical"> 
+    
+                  <TextView
+	  		    android:id="@+id/contactName"
+	  		    android:layout_width="fill_parent"
+	  		    android:layout_height="wrap_content"
+	  			android:textColor="@color/text_color"
+	  		    android:textSize="14sp"
+	  		    android:layout_marginBottom="3dp"
+	  		    android:fontFamily="sans-serif"
+	  		    android:gravity="top|left"
+	  		    android:text="Todd Feipel"
+	  		    android:textStyle="bold" />
   	
-        
-
 	  	<TextView
-	        android:id="@+id/messageBody"
-	        android:gravity="top|right"
-	        android:textColor="@color/text_color"
-	        android:layout_weight="2"
-	        android:layout_gravity="right"
-	        android:fontFamily="sans-serif"
-			android:text="This is a sample message"
-	        android:layout_height="wrap_content"
-	        android:layout_width="wrap_content"
-	        android:layout_marginBottom="10dp"
-	        />
+	  	    android:id="@+id/messageBody"
+	  	    android:layout_width="wrap_content"
+	  	    android:layout_height="35dp"
+	  	    android:layout_gravity="left"
+	  
+	  	    android:layout_marginBottom="2dp"
+	  	    android:fontFamily="sans-serif-light"
+	  	    android:gravity="left"
+	  	    android:maxLines="2"
+	  	    android:text="This isksdj adfkjalkjdsfj aljdflkajfl lajdfslaj flajdl;fj;"
+	  	    android:textColor="@color/text_color" />
 	  	
 	  		<TextView
 	  		    android:id="@+id/messageDate"
@@ -52,9 +79,9 @@
 	  		    android:layout_height="wrap_content"
 	  			android:textColor="@color/text_color"
 	  		    android:textSize="12sp"
-	  		    android:layout_marginRight="5dp"
 	  		    android:fontFamily="sans-serif-light"
 	  		    android:gravity="bottom|right"
+	  		    android:layout_gravity="bottom|right"
 	  		    android:text="9:00 pm"
 	  		    android:textStyle="italic" />
   		</LinearLayout>
