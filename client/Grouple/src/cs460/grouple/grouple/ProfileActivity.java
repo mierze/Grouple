@@ -15,9 +15,11 @@ import org.json.JSONObject;
 import cs460.grouple.grouple.User.getUserInfoTask;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -28,9 +30,11 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -181,6 +185,32 @@ public class ProfileActivity extends ActionBarActivity
 		
 	}
 
+	public void loadImage(View view) {
+
+        ImageView tempImageView = (ImageView) view;
+
+
+        AlertDialog.Builder imageDialog = new AlertDialog.Builder(this);
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
+
+        View layout = inflater.inflate(R.layout.image_dialog,
+                (ViewGroup) findViewById(R.id.layout_root));
+        ImageView image = (ImageView) layout.findViewById(R.id.fullimage);
+        image.setImageDrawable(tempImageView.getDrawable());
+        imageDialog.setView(layout);
+      //  imageDialog.setPositiveButton("Okay", new DialogInterface.OnClickListener(){
+
+            //public void onClick(DialogInterface dialog, int which) {
+           //     dialog.dismiss();
+         //   }
+
+       // });
+
+
+        imageDialog.create();
+        imageDialog.show();     
+    }
+	
 	private void setRole()
 	{
 		int pub;

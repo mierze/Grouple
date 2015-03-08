@@ -197,7 +197,7 @@ public class ProfileEditActivity extends ActionBarActivity implements
 		}
 		// Add the info to the textviews for editing.
 		nameTextView.setText(user.getName());
-		birthdateTextView.setText(user.getAge());
+		birthdateTextView.setText(user.getBirthday());
 		bioTextView.setText(user.getAbout());
 		locationTextView.setText(user.getLocation());
 		if (user.getImage() == null)
