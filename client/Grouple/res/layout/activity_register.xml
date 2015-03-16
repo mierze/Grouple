@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_color"
-    android:padding="20dp" 
+    android:padding="30dp" 
     android:paddingTop="10dp"
     android:paddingBottom="10dp">
 
@@ -24,19 +24,6 @@
 
         <requestFocus />
     </EditText>
-
-    <Button
-        android:id="@+id/loginButtonRA"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_alignParentBottom="true"
-		android:background="@drawable/button_border"
-		android:fontFamily="sans-serif-condensed"
-		android:textColor="@color/button_text_color"
-
-        android:onClick="loginButton"
-        android:text="@string/loginButton"
-        android:textSize="20sp" />
 
     <EditText
         android:id="@+id/passwordEditTextRA"
@@ -102,23 +89,12 @@
         android:hint="@string/lNameEditText"
 		android:inputType="textCapSentences" />
 
-    <TextView
-        android:id="@+id/noFriendRequestsTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        		android:fontFamily="sans-serif-condensed"
-		android:textColor="@color/text_color"
-        android:layout_above="@+id/loginButtonRA"
-        android:layout_centerHorizontal="true"
-        android:text="Already have a Grouple account?"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
-
     <Button
         android:id="@+id/registerButtonRA"
         android:layout_width="match_parent"
         android:layout_height="50dp"
                 android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
         		android:fontFamily="sans-serif-condensed"
 		android:textColor="@color/button_text_color"
 		android:background="@drawable/button_border"
@@ -151,5 +127,31 @@
         android:text="@string/registerTextView"
         android:textColor="@color/header_text_color"
         android:textSize="50sp" />
+
+    <TextView
+        android:id="@+id/noFriendRequestsTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/errorMessageTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="14dp"
+        android:fontFamily="sans-serif-condensed"
+        android:text="Already have a Grouple account?"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/text_color" />
+
+    <Button
+        android:id="@+id/loginButtonRA"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignLeft="@+id/registerButtonRA"
+        android:layout_below="@+id/noFriendRequestsTextView"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/button_border"
+        android:fontFamily="sans-serif-condensed"
+        android:onClick="loginButton"
+        android:text="@string/loginButton"
+        android:textColor="@color/button_text_color"
+        android:textSize="20sp" />
 
 </RelativeLayout>

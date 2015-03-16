@@ -3,7 +3,9 @@
     android:id="@+id/eventCreateLayout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:padding="20dp"
+    android:padding="30dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
     android:background="@color/background_color"
     android:orientation="vertical" >
     
@@ -34,15 +36,11 @@
         android:text="@string/loginTextView"
         android:textColor="@color/header_text_color"
         android:textStyle="bold"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
         android:textSize="50sp" />
         
         <EditText 
         android:id="@+id/emailEditTextLA"
         android:layout_width="fill_parent"
-                android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="29dp"
        	android:layout_marginBottom="5dp"
@@ -62,8 +60,6 @@
     <EditText
         android:id="@+id/passwordEditTextLA"
         android:layout_width="fill_parent"
-                android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
         android:background="@drawable/border"
@@ -93,8 +89,6 @@
 		  <CheckBox
         android:id="@+id/rememberLoginCB"
         android:layout_width="wrap_content"
-                android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
         android:layout_height="wrap_content"
         android:textColor="@color/text_color"
      	android:layout_marginBottom="5dp"
@@ -107,8 +101,6 @@
     <Button
         android:id="@+id/loginButtonLA"
         android:layout_width="fill_parent"
-                android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:background="@drawable/button_border"
@@ -129,8 +121,6 @@
      <TextView
         android:id="@+id/addFriendMessageTextViewAFA"
         android:layout_width="fill_parent"
-                android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:layout_gravity="center"
@@ -145,8 +135,6 @@
     <Button
         android:id="@+id/registerButtonLA"
            android:layout_width="fill_parent"
-                android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
         android:background="@drawable/button_border"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
