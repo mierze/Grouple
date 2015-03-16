@@ -47,7 +47,7 @@
         android:layout_row="0"
         android:gravity="center"
         android:fontFamily="sans-serif-condensed"
-        android:text="Click to toggle roles. ([C]reator, [A]dmin, [M]ember)\nCheck the boxes to remove users."
+        android:text="Click to toggle roles. ([A]dmin, [P]romoter, [U]ser)\nCheck the boxes to remove users."
         android:textColor="@color/text_color"
         android:layout_height="50dp"
         android:layout_width="fill_parent"

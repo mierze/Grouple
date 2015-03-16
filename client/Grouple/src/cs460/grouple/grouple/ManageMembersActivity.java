@@ -242,12 +242,12 @@ public class ManageMembersActivity extends ActionBarActivity {
 				cb.setId(makeAdminButton.getId());
 				
 				makeAdminButton.setText(roles.get(index));
-				if (roles.get(index).equals("A"))
-					makeAdminButton.setTextColor(getResources().getColor(R.color.light_green));
-				else if (roles.get(index).equals("M"))
-					makeAdminButton.setTextColor(getResources().getColor(R.color.orange));
-				else if (roles.get(index).equals("C"))
+				if (roles.get(index).equals("P"))
+					makeAdminButton.setTextColor(getResources().getColor(R.color.purple));
+				else if (roles.get(index).equals("U"))
 					makeAdminButton.setTextColor(getResources().getColor(R.color.light_blue));
+				else if (roles.get(index).equals("A"))
+					makeAdminButton.setTextColor(getResources().getColor(R.color.light_green));
 					
 
 				//listener when clicking makeAdmin button
@@ -256,26 +256,26 @@ public class ManageMembersActivity extends ActionBarActivity {
 					@Override
 					public void onClick(View view) 
 					{
-						if (makeAdminButton.getText().toString().equals("M")) 
+						if (makeAdminButton.getText().toString().equals("U")) 
 						{
-							makeAdminButton.setText("A");
-							toUpdateRole.put(view.getId(), "A");
+							makeAdminButton.setText("P");
+							toUpdateRole.put(view.getId(), "P");
 							makeAdminButton.setTextColor(getResources().getColor(
-									R.color.light_green));
+									R.color.purple));
 						} 
 						else if (makeAdminButton.getText().toString().equals("A")) 
 						{
-							makeAdminButton.setText("C");
-							toUpdateRole.put(view.getId(), "C");
+							makeAdminButton.setText("U");
+							toUpdateRole.put(view.getId(), "U");
 							makeAdminButton.setTextColor(getResources().getColor(
 									R.color.light_blue));
 						}
 						else
 						{
-							makeAdminButton.setText("M");
-							toUpdateRole.put(view.getId(), "M");
+							makeAdminButton.setText("C");
+							toUpdateRole.put(view.getId(), "C");
 							makeAdminButton.setTextColor(getResources().getColor(
-									R.color.orange));
+									R.color.light_green));
 						}
 						System.out.println("Setting role for user: " + toUpdate.get(view.getId()) + " to: " + toUpdateRole.get(view.getId()));
 					}
@@ -342,23 +342,17 @@ public class ManageMembersActivity extends ActionBarActivity {
 		for (int i = 0 ; i < size ; i++)
 		{
 			System.out.println("adding friend #"+i+"/"+toUpdate.size());
-			
 			//get the user's email by matching indexes from added list with indexes from allFriendslist.
 			int key = toUpdate.keyAt(i);
-			
-			
 			//grab the email of friend to add
 			String friendsEmail = toUpdate.valueAt(key);
-		
 			//grab the role of friend to add
 			String friendsRole = toUpdateRole.valueAt(key);
-
 			System.out.println("adding member: "+friendsEmail+", role: "+friendsRole);
 		//	for (String email : toUpdate.valueAt)
 			//{
 			//	System.out.println("remove: " + entry.getValue() + "\n");
 			//}
-
 			//initiate add of user
 			//INSTEAD OF ADD MEMBERS WE WILL NEED TO UPDATE
 			System.out.println("http://68.59.162.183/android_connect/update_group_member.php, url1: " + friendsEmail + ", 2: no, 3: " + friendsRole +", 4: " + Integer.toString(g_id));
@@ -394,8 +388,7 @@ public class ManageMembersActivity extends ActionBarActivity {
 	{
 		@Override
 		protected String doInBackground(String... urls)
-		{
-			
+		{	
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("email", urls[1]));
 			nameValuePairs.add(new BasicNameValuePair("remove", urls[2]));
@@ -405,7 +398,6 @@ public class ManageMembersActivity extends ActionBarActivity {
 			//pass url and nameValuePairs off to GLOBAL to do the JSON call.  Code continues at onPostExecute when JSON returns.
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
-
 
 		@Override
 		protected void onPostExecute(String result)

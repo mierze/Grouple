@@ -82,6 +82,9 @@ public class EventCreateActivity extends ActionBarActivity
 	private EditText endDateEditText;
 	private EditText locationEditText;
 	private AlertDialog categoryDialog;
+	private AlertDialog toBringDialog;
+	private Button addToBringRowButton;
+	private View toBringLayout;
 	
 	
 	private DatePicker datePicker;
@@ -138,7 +141,46 @@ public class EventCreateActivity extends ActionBarActivity
 		unregisterReceiver(broadcastReceiver);
 		super.onDestroy();
 	}
+	
+	
+	//onClick for items to bring
+	public void toBringButton(View view)
+	{
+		
+		// Strings to Show In Dialog with Radio Buttons
+		            
+		// Creating and Building the Dialog 
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Add Items To Bring");
+		LayoutInflater inflater=EventCreateActivity.this.getLayoutInflater();
+        //this is what I did to added the layout to the alert dialog
+        this.toBringLayout=inflater.inflate(R.layout.tobring_dialog,null);       
+        final EditText input = (EditText)toBringLayout.findViewById(R.id.toBringItem1);
+        this.addToBringRowButton = (Button) toBringLayout.findViewById(R.id.toBringAddRowButton);
+        addToBringRowButton.setOnClickListener(new View.OnClickListener() {
 
+            public void onClick(View v) {
+            	System.out.println("TESTONG");
+                //etPhoneNumber.add(new EditText(ContactEdit.this));
+                try{
+                	
+                    LinearLayout layout = (LinearLayout) toBringLayout.findViewById(R.id.toBringInnerLayout);
+            		LayoutInflater inflater=EventCreateActivity.this.getLayoutInflater();
+                    //this is what I did to added the layout to the alert dialog
+                    View temp=inflater.inflate(R.layout.tobring_edittext,null);     
+
+                    layout.addView(temp);
+                }catch(Exception e){
+                    Log.d("ASDF", "Failed to create new edit text");
+                }
+            }
+        });
+        builder.setView(toBringLayout);
+      
+		toBringDialog = builder.create();
+		toBringDialog.show();
+	}
+	
 	//onClick for category button
 	public void selectCategoryButton(View view)
 	{
@@ -151,28 +193,29 @@ public class EventCreateActivity extends ActionBarActivity
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Select your category");
 		builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
-		public void onClick(DialogInterface dialog, int item) {
-		                   	                
-	    switch(item)
-		{
-			case 0:
-		    categoryEditText.setText(items[0]);
-		    break;
-		    case 1:
-		    categoryEditText.setText(items[1]);
-		    break;
-		    case 2:
-		    categoryEditText.setText(items[2]);
-		    break;
-		    case 3:
-		    categoryEditText.setText(items[3]);           
-		    break;
-		    case 4:
-		    categoryEditText.setText(items[4]);
-		    break;
-		}  
-	    categoryDialog.cancel();
-		}
+			public void onClick(DialogInterface dialog, int item)
+			{
+
+				switch (item)
+				{
+					case 0:
+						categoryEditText.setText(items[0]);
+						break;
+					case 1:
+						categoryEditText.setText(items[1]);
+						break;
+					case 2:
+						categoryEditText.setText(items[2]);
+						break;
+					case 3:
+						categoryEditText.setText(items[3]);
+						break;
+					case 4:
+						categoryEditText.setText(items[4]);
+						break;
+				}  
+				categoryDialog.cancel();
+			}
 		});
 		categoryDialog = builder.create();
 		categoryDialog.show();

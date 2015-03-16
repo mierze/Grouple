@@ -311,13 +311,21 @@ public class MessagesActivity extends ActionBarActivity
 		}
 	}
 
-    
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event)  {
+	    if (keyCode == KeyEvent.KEYCODE_BACK) {
+
+	    	finish(); //preventing back-loop
+	    }
+	    return true;
+	   }
+	
     
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.messages, menu);
+		getMenuInflater().inflate(R.menu.navigation_actions, menu);
 		return true;
 
 	}

@@ -1,0 +1,22 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_root" android:orientation="vertical"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:layout_margin="20dp"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:padding="0dp">
+
+        <EditText
+            android:id="@+id/toBringItem1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:inputType="textCapWords"
+            android:hint="Add an item"
+            android:maxLength="40"
+            android:maxLines="1"
+            android:minLines="1"
+            android:textColor="@color/text_color"
+            android:textColorHint="@color/hint_text_color" />
+
+</LinearLayout>

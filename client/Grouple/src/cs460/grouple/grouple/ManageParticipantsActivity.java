@@ -244,10 +244,10 @@ public class ManageParticipantsActivity extends ActionBarActivity {
 				makeAdminButton.setText(roles.get(index));
 				if (roles.get(index).equals("A"))
 					makeAdminButton.setTextColor(getResources().getColor(R.color.light_green));
-				else if (roles.get(index).equals("M"))
-					makeAdminButton.setTextColor(getResources().getColor(R.color.orange));
-				else if (roles.get(index).equals("C"))
+				else if (roles.get(index).equals("U"))
 					makeAdminButton.setTextColor(getResources().getColor(R.color.light_blue));
+				else if (roles.get(index).equals("P"))
+					makeAdminButton.setTextColor(getResources().getColor(R.color.purple));
 					
 
 				//listener when clicking makeAdmin button
@@ -256,26 +256,26 @@ public class ManageParticipantsActivity extends ActionBarActivity {
 					@Override
 					public void onClick(View view) 
 					{
-						if (makeAdminButton.getText().toString().equals("M")) 
+						if (makeAdminButton.getText().toString().equals("U")) 
+						{
+							makeAdminButton.setText("P");
+							toUpdateRole.put(view.getId(), "P");
+							makeAdminButton.setTextColor(getResources().getColor(
+									R.color.purple));
+						} 
+						else if (makeAdminButton.getText().toString().equals("P")) 
 						{
 							makeAdminButton.setText("A");
 							toUpdateRole.put(view.getId(), "A");
 							makeAdminButton.setTextColor(getResources().getColor(
 									R.color.light_green));
-						} 
-						else if (makeAdminButton.getText().toString().equals("A")) 
-						{
-							makeAdminButton.setText("C");
-							toUpdateRole.put(view.getId(), "C");
-							makeAdminButton.setTextColor(getResources().getColor(
-									R.color.light_blue));
 						}
 						else
 						{
-							makeAdminButton.setText("M");
-							toUpdateRole.put(view.getId(), "M");
+							makeAdminButton.setText("U");
+							toUpdateRole.put(view.getId(), "U");
 							makeAdminButton.setTextColor(getResources().getColor(
-									R.color.orange));
+									R.color.light_green));
 						}
 						System.out.println("Setting role for user: " + toUpdate.get(view.getId()) + " to: " + toUpdateRole.get(view.getId()));
 					}

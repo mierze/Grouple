@@ -77,7 +77,7 @@ public class ListActivity extends ActionBarActivity
 	private LinearLayout listLayout; //layout for list activity (scrollable layout to inflate into)
 	private Global GLOBAL;// = thinking making few static and do some null checks and regrabs
 	private LayoutInflater li;
-	private String ROLE = "M";//defaulting to lowest level
+	private String ROLE = "U";//defaulting to lowest level
 	private String PANDABUFFER = ""; //same
 	private int bufferID; //same as below: could alternatively have json return the values instead of saving here	
 	private Button addNew;
@@ -854,7 +854,7 @@ public class ListActivity extends ActionBarActivity
 				{
 					ROLE = jsonObject.getString("role").toString();
 					System.out.println("ROLE IS BEING SET TO " + ROLE);
-					if (!ROLE.equals("M"))
+					if (!ROLE.equals("U"))
 						if (CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()))
 						{
 							if (!event.getEventState().equals("Ended"))

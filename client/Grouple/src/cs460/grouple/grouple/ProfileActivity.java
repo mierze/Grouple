@@ -58,7 +58,7 @@ public class ProfileActivity extends ActionBarActivity
 	private Group group;
 	private Event event;
 	private Bundle EXTRAS;
-	private String ROLE = "M";//defaulting to lowest level
+	private String ROLE = "U";//defaulting to lowest level
 	private String CONTENT; //type of content to display in profile, passed in from other activities
 	private Global GLOBAL;
 	private Button profileButton1;
@@ -395,7 +395,7 @@ public class ProfileActivity extends ActionBarActivity
 		if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
 		{
 			profileButton1.setText("Members\n(" + group.getNumUsers() + ")");
-			if (ROLE.equals("C"))
+			if (ROLE.equals("A"))
 				editProfileButton.setVisibility(View.VISIBLE);		
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
@@ -411,7 +411,7 @@ public class ProfileActivity extends ActionBarActivity
 		else if (CONTENT.equals(CONTENT_TYPE.EVENT.toString()))
 		{
 			profileButton1.setText("Attending (" + event.getNumUsers() + ")");	
-			if (ROLE.equals("C") && !event.getEventState().equals("Ended"))
+			if (ROLE.equals("A") && !event.getEventState().equals("Ended"))
 				editProfileButton.setVisibility(View.VISIBLE);
 		}	
 	}
