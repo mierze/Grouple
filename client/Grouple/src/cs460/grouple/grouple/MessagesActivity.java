@@ -1,7 +1,10 @@
 package cs460.grouple.grouple;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -56,20 +59,21 @@ public class MessagesActivity extends ActionBarActivity
 {
 	private BroadcastReceiver broadcastReceiver;
 	private Global GLOBAL;
-	private static int alt = 1;
 	private User user; //will be null for now
 	
     public static final String EXTRA_MESSAGE = "message";
     public static final String PROPERTY_REG_ID = "registration_id";
     private static final String PROPERTY_APP_VERSION = "appVersion";
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
-    private String sender, receiver;
+    private String recipient;
     //Tag to search for when logging info.
     static final String TAG = "GCM";
     //Sender ID is the project number from API console. Needs to be secret.
-    String SENDER_ID = "957639483805";
-    ArrayList<String> messages = new ArrayList<String>();
-    ArrayList<String> dates = new ArrayList<String>();
+    String SENDER_ID = "957639483805"; 
+    private ArrayList<String> messages = new ArrayList<String>();
+    private ArrayList<String> dates = new ArrayList<String>();
+    private ArrayList<String> senders = new ArrayList<String>();
+    private ArrayList<String> receivers = new ArrayList<String>();
     
     GoogleCloudMessaging gcm;
     AtomicInteger msgId = new AtomicInteger();
@@ -96,8 +100,8 @@ public class MessagesActivity extends ActionBarActivity
 		/* Action bar */
 		ActionBar ab = getSupportActionBar();
 		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-		receiver = GLOBAL.getCurrentUser().getEmail();
-		sender = extras.getString("email"); 
+		
+		recipient = extras.getString("email"); 
 		ab.setCustomView(R.layout.actionbar);
 		ab.setDisplayHomeAsUpEnabled(false);
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
@@ -105,10 +109,8 @@ public class MessagesActivity extends ActionBarActivity
 		initKillswitchListener();
 		context = getApplicationContext();
 
-		System.out.println("LOADING UP THIS NIGGA " + extras.getString("email"));
-		
-		//Get the recipient id ig..
-		new getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php","mierze@gmail.com");
+		//Get the recipient 
+		new getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php", recipient);
 		fetchMessages();
         // Check device for Play Services APK. If check succeeds, proceed with GCM registration.
         if (checkPlayServices()) {
@@ -260,8 +262,8 @@ public class MessagesActivity extends ActionBarActivity
 		protected String doInBackground(String... urls)
 		{
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair("sender", sender));
-			nameValuePairs.add(new BasicNameValuePair("receiver", receiver));
+			nameValuePairs.add(new BasicNameValuePair("sender", recipient));
+			nameValuePairs.add(new BasicNameValuePair("receiver", user.getEmail()));
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
 
@@ -273,6 +275,7 @@ public class MessagesActivity extends ActionBarActivity
 				JSONObject jsonObject = new JSONObject(result);
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
+					System.out.println("WE HAD SUCCESS IN GET MESSAGES!");
 					// gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("messages");
 					// success so clear previous
@@ -286,7 +289,9 @@ public class MessagesActivity extends ActionBarActivity
 						// function adds friend to the friends map
 					
 						messages.add(o.getString("message"));
-						dates.add(o.getString("rec_date"));
+						senders.add(o.getString("sender"));
+						receivers.add(o.getString("receiver"));
+						dates.add(parseDate(o.getString("send_date")));
 						
 					}
 					populateMessages();
@@ -357,7 +362,7 @@ public class MessagesActivity extends ActionBarActivity
 		//loop through messages (newest first), maybe a map String String with messagebody, date
 		for (String m : messages)
 		{
-			if ("RECEIVER".equals(user.getEmail()/*our email*/))
+			if (receivers.get(messages.indexOf(m)).equals(user.getEmail()/*our email*/))
 				row =  li.inflate(R.layout.message_row, null); //inflate this message row
 			else
 				row =  li.inflate(R.layout.message_row_out, null); //inflate the sender message row
@@ -383,9 +388,10 @@ public class MessagesActivity extends ActionBarActivity
             //Get message from edit text
             EditText mymessage   = (EditText)findViewById(R.id.messageEditText);
             String msg = mymessage.getText().toString();
+          
             //PHP expects msg,sender,receiver.
             //new storeMessageTask().execute("http://68.59.162.183/android_connect/send_message.php",msg,"mierze@gmail.com","tfeipel@gmail.com");
-            new storeMessageTask().execute("http://68.59.162.183/android_connect/send_message.php",msg,"tfeipel@gmail.com","mierze@gmail.com");
+            new storeMessageTask().execute("http://68.59.162.183/android_connect/send_message.php",msg, user.getEmail(),recipient);
             new AsyncTask<Void, Void, String>() {
                 @Override
                 protected String doInBackground(Void... params) {
@@ -397,7 +403,16 @@ public class MessagesActivity extends ActionBarActivity
                         //Get message from edit text
                         EditText mymessage   = (EditText)findViewById(R.id.messageEditText);
                         msg = mymessage.getText().toString();
+    
                         messages.add(msg);
+                        receivers.add(recipient);
+                        senders.add(user.getEmail());
+                      
+                		SimpleDateFormat dateFormat = new SimpleDateFormat(
+                				"EEEE h:mma");
+                		
+                		String date = dateFormat.format(new Date());
+                		dates.add(date);
                         data.putString("my_message", msg);
                         data.putString("my_action", "cs460.grouple.grouple.ECHO_NOW");
                         //Clear edit text
@@ -406,19 +421,24 @@ public class MessagesActivity extends ActionBarActivity
                         //Todd's Reg ID
                         //String recipientRegId = "APA91bFdWkh9GiaNoLJvGyFpSK3HRQy8vtlmh3OPK8FekU4aWEhZn_hwvr7LmYu_s11dQnoPmj6hKuklISIh_A2Dhyjm_cNT-K4kh5-bYhPYpp-QGbqScbwE9YCnWqyXORN2gwY3fNQx-_ex7D6i-ONaT7peHcu3Hlzbc-60amu0pTu8SD9l7xI";
                         //Brett's Reg ID
-    
+                        
+                        //This is where we put the recipients regID.
                         data.putString("recipient",getRecipientRegID());
                         String id = Integer.toString(msgId.incrementAndGet());
-                         gcm.send(SENDER_ID + "@gcm.googleapis.com", id, data);
+                        gcm.send(SENDER_ID + "@gcm.googleapis.com", id, data);
                         msg = "Sent message";
                     } catch (IOException ex) {
                         msg = "Error :" + ex.getMessage();
                     }
+                  
                     return msg;
                 }
 
                 @Override
                 protected void onPostExecute(String msg) {
+                	
+                	EditText mymessage   = (EditText)findViewById(R.id.messageEditText);
+                	mymessage.setText("");
                     //add to an array of some sort
                 	//ideal to store if it is being received / sent, date, message body
                 	//assuming to start just 1 person to 1 person manually set up
@@ -432,31 +452,7 @@ public class MessagesActivity extends ActionBarActivity
             
         }
     }
-	/*public void onClick(View v)
-	{
-		switch (v.getId())
-		{
-		case R.id.sendButton:
-			
-			LinearLayout messageLayout = (LinearLayout) findViewById(R.id.messageLayout);
-			LayoutInflater li = getLayoutInflater();
-			
-			View row = null;
-			if (alt % 2 == 0)
-				row =  li.inflate(R.layout.message_row, null);
-			else
-				row =  li.inflate(R.layout.message_row_out, null);
-			
-			alt++;
 
-	
-			messageLayout.addView(row);
-			//code to call a task to send a message
-			break;
-		default:
-			break;
-		}
-	}*/
 	public void initKillswitchListener()
 	{
 		// START KILL SWITCH LISTENER
@@ -651,5 +647,27 @@ public class MessagesActivity extends ActionBarActivity
 			}
 		}
 	}
-
+    
+    private String parseDate(String dateString)
+	{
+		System.out.println("\n\nDATE IS FIRST: " + dateString);
+		String date = "";
+		SimpleDateFormat raw = new SimpleDateFormat("yyyy-M-d h:mm:ss");
+		SimpleDateFormat dateFormat = new SimpleDateFormat(
+				"EEEE h:mma");
+		try
+		{
+			Date parsedDate = (Date) raw.parse(dateString);
+			date = dateFormat.format(parsedDate);
+			// date = raw.format(parsedDate);
+			System.out.println("\nDATE IN RAW TRANSLATION: "
+					+ raw.format(parsedDate));
+			System.out.println("\nDATE IN FINAL: "
+					+ dateFormat.format(parsedDate) + "\n\n");
+		} catch (ParseException ex)
+		{
+			System.out.println("Exception " + ex);
+		}
+		return date;
+	}
 }
