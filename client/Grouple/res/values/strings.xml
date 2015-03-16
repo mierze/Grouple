@@ -64,7 +64,7 @@
     <color name="message_background_color">#55B1D5</color>
     <color name="white">#F5F3E5</color>
     <color name="purple">#7F5776</color>
-	<color name="light_blue">#5CC4E4</color>
+    <color name="light_blue">#5CC4E4</color>
     <color name="light_green">#8AC651</color>
     <color name="light_green_opacity">#A07BE055</color>
     <color name="red">#F17B3F</color>
@@ -101,5 +101,6 @@
     <string name="title_activity_event_edit">EventEditActivity</string>
     <string name="title_activity_manage_members">ManageMembersActivity</string>
     <string name="title_activity_manage_attending_event">ManageAttendingEvent</string>
+    <string name="title_activity_contact_list">ContactList</string>
 
 </resources>

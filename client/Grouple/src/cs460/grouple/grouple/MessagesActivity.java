@@ -3,16 +3,22 @@ package cs460.grouple.grouple;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+
+import cs460.grouple.grouple.User.getFriendsTask;
 
 
 import android.content.BroadcastReceiver;
@@ -57,6 +63,7 @@ public class MessagesActivity extends ActionBarActivity
     public static final String PROPERTY_REG_ID = "registration_id";
     private static final String PROPERTY_APP_VERSION = "appVersion";
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    private String sender, receiver;
     //Tag to search for when logging info.
     static final String TAG = "GCM";
     //Sender ID is the project number from API console. Needs to be secret.
@@ -82,23 +89,27 @@ public class MessagesActivity extends ActionBarActivity
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		GLOBAL = ((Global) getApplicationContext());
+		Bundle extras = getIntent().getExtras();
 		super.onCreate(savedInstanceState);
 		user = GLOBAL.getCurrentUser();
 		setContentView(R.layout.activity_messages);
 		/* Action bar */
 		ActionBar ab = getSupportActionBar();
 		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+		receiver = GLOBAL.getCurrentUser().getEmail();
+		sender = extras.getString("email"); 
 		ab.setCustomView(R.layout.actionbar);
 		ab.setDisplayHomeAsUpEnabled(false);
-		populateChats();
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
 		actionbarTitle.setText("Brett Mierzejewski");
 		initKillswitchListener();
 		context = getApplicationContext();
+
+		System.out.println("LOADING UP THIS NIGGA " + extras.getString("email"));
 		
 		//Get the recipient id ig..
 		new getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php","mierze@gmail.com");
-
+		fetchMessages();
         // Check device for Play Services APK. If check succeeds, proceed with GCM registration.
         if (checkPlayServices()) {
             gcm = GoogleCloudMessaging.getInstance(this);
@@ -111,7 +122,6 @@ public class MessagesActivity extends ActionBarActivity
             Log.i(TAG, "No valid Google Play Services APK found.");
         }
         
-        populateMessages();
 	}
 	
 	@Override
@@ -232,7 +242,72 @@ public class MessagesActivity extends ActionBarActivity
         }.execute(null, null, null);
     }
 
+    /*
+	 * 
+	 * will be fetching the friends key->val stuff here
+	 */
+	// Get numFriends, TODO: work on returning the integer
+	public int fetchMessages()
+	{
+		new getMessagesTask().execute("http://68.59.162.183/android_connect/get_messages.php");
+		
+		return 1;
+	}
 
+	class getMessagesTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected String doInBackground(String... urls)
+		{
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("sender", sender));
+			nameValuePairs.add(new BasicNameValuePair("receiver", receiver));
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+		}
+
+		@Override
+		protected void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					// gotta make a json array
+					JSONArray jsonArray = jsonObject.getJSONArray("messages");
+					// success so clear previous
+					// getUsers().clear();
+					// looping thru array
+					for (int i = 0; i < jsonArray.length(); i++)
+					{
+						// at each iteration set to hashmap friendEmail ->
+						// 'first last'
+						JSONObject o = (JSONObject) jsonArray.get(i);
+						// function adds friend to the friends map
+					
+						messages.add(o.getString("message"));
+						dates.add(o.getString("rec_date"));
+						
+					}
+					populateMessages();
+				}
+				// user has no friends
+				if (jsonObject.getString("success").toString().equals("2"))
+				{
+					Log.d("fetchFriends", "failed = 2 return");
+					// setNumFriends(0); //PANDA need to set the user class not
+					// global
+				}
+			} catch (Exception e)
+			{
+				Log.d("fetchFriends", "exception caught");
+				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+			}
+		}
+	}
+
+    
+    
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
@@ -267,37 +342,6 @@ public class MessagesActivity extends ActionBarActivity
 		return super.onOptionsItemSelected(item);
 	}
 
-	
-	
-	private void populateChats()
-	{
-		//populate all of the chats between peers, groups and events that are most active
-		//layout to inflate into
-		LinearLayout messageLayout = (LinearLayout) findViewById(R.id.messageLayout);
-		//layout inflater
-		LayoutInflater li = getLayoutInflater();
-		TextView messageBody, messageDate ;
-		View row = null;
-		String message = "";
-		
-		//messages consist of some things (messagebody, date, sender, receiver)
-		
-		//loop through messages (newest first), maybe a map String String with messagebody, date
-		
-	
-		row =  li.inflate(R.layout.contact_row, null); //inflate this message row
-		messageBody = (TextView) row.findViewById(R.id.messageBody);
-		messageDate = (TextView) row.findViewById(R.id.messageDate);
-		ImageView 	contactImage = (ImageView) row.findViewById(R.id.contactImage);
-		contactImage.setImageBitmap(user.getImage());
-			
-			//set these values to what you want
-			
-			//add row into scrollable layout
-			messageLayout.addView(row);
-	}
-	//use this method to display the messages between 2 users. 
-	//you will still need to get those messages in a mapping or arraylist of some sort
 	private void populateMessages()
 	{
 		//layout to inflate into
@@ -311,19 +355,24 @@ public class MessagesActivity extends ActionBarActivity
 		//messages consist of some things (messagebody, date, sender, receiver)
 		
 		//loop through messages (newest first), maybe a map String String with messagebody, date
-		
+		for (String m : messages)
+		{
 			if ("RECEIVER".equals(user.getEmail()/*our email*/))
 				row =  li.inflate(R.layout.message_row, null); //inflate this message row
 			else
 				row =  li.inflate(R.layout.message_row_out, null); //inflate the sender message row
 			
 			messageBody = (TextView) row.findViewById(R.id.messageBody);
+			messageBody.setText(m);
 			messageDate = (TextView) row.findViewById(R.id.messageDate);
+			messageDate.setText(dates.get(messages.indexOf(m)));
 			
 			//set these values to what you want
 			
 			//add row into scrollable layout
 			messageLayout.addView(row);
+		}
+			
 
 	}
 	
