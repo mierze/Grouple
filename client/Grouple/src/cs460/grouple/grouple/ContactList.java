@@ -65,12 +65,13 @@ public class ContactList extends ActionBarActivity
 	private int IMAGE_INDEX = 0;//holy shit
 	private User user; //will be null for now
 	
-	
+	private ArrayList<String> ids = new ArrayList<String>();
 	private ArrayList<String> emails = new ArrayList<String>();
 	private ArrayList<String> dates = new ArrayList<String>();
 	private ArrayList<String> names = new ArrayList<String>();
 	private ArrayList<String> messages = new ArrayList<String>();
 	private ArrayList<ImageView> images = new ArrayList<ImageView>();
+	private ArrayList<String> read = new ArrayList<String>();
 
 	
     public static final String EXTRA_MESSAGE = "message";
@@ -115,6 +116,7 @@ public class ContactList extends ActionBarActivity
 	@Override
     protected void onResume() {
         super.onResume();
+        fetchRecentContacts();
         // Check device for Play Services APK.
     }
 	
@@ -162,6 +164,7 @@ public class ContactList extends ActionBarActivity
 	{
 		Intent intent = new Intent(this, MessagesActivity.class);
 		intent.putExtra("EMAIL", emails.get(view.getId()));
+		intent.putExtra("NAME", names.get(view.getId()));
 		startActivity(intent);
 	}
 	
@@ -184,30 +187,37 @@ public class ContactList extends ActionBarActivity
 		//populate all of the chats between peers, groups and events that are most active
 		//layout to inflate into
 		LinearLayout messageLayout = (LinearLayout) findViewById(R.id.contactLayout);
+		messageLayout.removeAllViews();
 		//layout inflater
 		LayoutInflater li = getLayoutInflater();
 		TextView messageBody, messageDate, contactName;
 		View row = null;
 
 		//messages consist of some things (messagebody, date, sender, receiver)
-		for (String email : emails)
+		for (int index = emails.size()-1; index >= 0; index--)
 		{
 			//loop through messages, maybe a map String String with messagebody, date
 			row =  li.inflate(R.layout.contact_row, null); //inflate this message row
-			row.setId(emails.indexOf(email));
+			row.setId(index);
 			messageBody = (TextView) row.findViewById(R.id.messageBody);
 			messageDate = (TextView) row.findViewById(R.id.messageDate);
 			contactName = (TextView) row.findViewById(R.id.contactName);
-			messageDate.setText(parseDate(dates.get(emails.indexOf(email))));
+			messageDate.setText(parseDate(dates.get(index)));
 			
-			messageBody.setText(messages.get(emails.indexOf(email)));
+			messageBody.setText(messages.get(index));
 			images.add((ImageView)row.findViewById(R.id.contactImage));
-			new getImageTask().execute("http://68.59.162.183/android_connect/get_profile_image.php", emails.get(emails.indexOf(email)));
-			contactName.setText(names.get(emails.indexOf(email)));
-			System.out.println("For 'contactName': "+contactName.getText().toString()+", setting 'messageBody' to: "+messages.get(emails.indexOf(email)));
-			ImageView 	contactImage = (ImageView) row.findViewById(R.id.contactImage);
-			contactImage.setImageBitmap(user.getImage());
+			new getImageTask().execute("http://68.59.162.183/android_connect/get_profile_image.php", emails.get(index));
+			contactName.setText(names.get(index));
+			System.out.println("For 'contactName': "+contactName.getText().toString()+", setting 'messageBody' to: "+messages.get(index));
+			ImageView contactImage = (ImageView) row.findViewById(R.id.contactImage);
 
+			if (read.get(index) == null)
+			{
+				System.out.println("Should be changing color here");
+				messageBody.setTextColor(getResources().getColor(R.color.orange));
+			}
+			else
+				System.out.println("Should not be changing this");
 			//add row into scrollable layout
 			messageLayout.addView(row);
 			System.out.println("Done adding row with name: "+contactName.getText().toString());
@@ -313,6 +323,12 @@ public class ContactList extends ActionBarActivity
 	public int fetchRecentContacts()
 	{
 		System.out.println("calling");
+		emails.clear();
+		dates.clear();
+		names.clear();
+		messages.clear();
+		images.clear();
+		read.clear();
 		new getRecentContactsTask().execute("http://68.59.162.183/android_connect/testcontacts4.php");
 		
 		return 1;
@@ -363,7 +379,18 @@ public class ContactList extends ActionBarActivity
 							emails.add(otheremail);
 							dates.add(o.getString("senddate"));
 							messages.add(o.getString("message"));
+							if (o.getString("read_date").length() > 2)
+							{
+								System.out.println("ShHOULD BE NOT NULL " + o.getString("read_date"));
+								read.add(o.getString("read_date"));
+							}
+							else 
+							{
+								System.out.println("Should bNULL HERE");
+								read.add(null);
+							}
 							names.add(o.getString("first") + " " + o.getString("last"));
+							ids.add(o.getString("id"));
 						}
 						else if (dates.get(emails.indexOf(otheremail)).compareTo(o.getString("senddate")) < 0)
 						{
