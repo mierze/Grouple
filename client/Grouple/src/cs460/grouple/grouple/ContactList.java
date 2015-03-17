@@ -177,24 +177,27 @@ public class ContactList extends ActionBarActivity
 		View row = null;
 
 		//messages consist of some things (messagebody, date, sender, receiver)
-		for (String message : messages)
+		for (String email : emails)
 		{
-			//loop through messages (newest first), maybe a map String String with messagebody, date
+			//loop through messages, maybe a map String String with messagebody, date
 			row =  li.inflate(R.layout.contact_row, null); //inflate this message row
-			row.setId(messages.indexOf(message));
+			row.setId(emails.indexOf(email));
 			messageBody = (TextView) row.findViewById(R.id.messageBody);
 			messageDate = (TextView) row.findViewById(R.id.messageDate);
 			contactName = (TextView) row.findViewById(R.id.contactName);
-			messageDate.setText(parseDate(dates.get(messages.indexOf(message))));
-			messageBody.setText(message);
+			messageDate.setText(parseDate(dates.get(emails.indexOf(email))));
+			
+			messageBody.setText(messages.get(emails.indexOf(email)));
 			images.add((ImageView)row.findViewById(R.id.contactImage));
-			new getImageTask().execute("http://68.59.162.183/android_connect/get_profile_image.php", emails.get(messages.indexOf(message)));
-			contactName.setText(names.get(messages.indexOf(message)));
+			new getImageTask().execute("http://68.59.162.183/android_connect/get_profile_image.php", emails.get(emails.indexOf(email)));
+			contactName.setText(names.get(emails.indexOf(email)));
+			System.out.println("For 'contactName': "+contactName.getText().toString()+", setting 'messageBody' to: "+messages.get(emails.indexOf(email)));
 			ImageView 	contactImage = (ImageView) row.findViewById(R.id.contactImage);
 			contactImage.setImageBitmap(user.getImage());
 
 			//add row into scrollable layout
 			messageLayout.addView(row);
+			System.out.println("Done adding row with name: "+contactName.getText().toString());
 		}
 		
 	}
@@ -296,6 +299,7 @@ public class ContactList extends ActionBarActivity
 	// Get numFriends, TODO: work on returning the integer
 	public int fetchRecentContacts()
 	{
+		System.out.println("calling");
 		new getRecentContactsTask().execute("http://68.59.162.183/android_connect/testcontacts4.php");
 		
 		return 1;
@@ -325,6 +329,9 @@ public class ContactList extends ActionBarActivity
 					// success so clear previous
 					// getUsers().clear();
 					// looping thru array
+					
+					System.out.println("current size of emails:"+emails.size());
+					
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
 						// at each iteration set to hashmap friendEmail ->
@@ -333,9 +340,12 @@ public class ContactList extends ActionBarActivity
 						// function adds friend to the friends map					
 				
 						String otheremail = o.getString("sender").equals(user.getEmail()) ? o.getString("receiver") : o.getString("sender");
+						System.out.println("otheremail was set to: "+otheremail);
+						System.out.println("The current message to check is: "+o.getString("message"));
 						
 						if (!emails.contains(otheremail))
 						{
+							System.out.println("This otheremail has never been seen yet, so we will store the message");
 							System.out.println("IN THE IF BABY!!");
 							emails.add(otheremail);
 							dates.add(o.getString("senddate"));
@@ -344,11 +354,22 @@ public class ContactList extends ActionBarActivity
 						}
 						else if (dates.get(emails.indexOf(otheremail)).compareTo(o.getString("senddate")) < 0)
 						{
+							System.out.println("old message: "+messages.get(emails.indexOf(otheremail)));
+							System.out.println("old date: "+dates.get(emails.indexOf(otheremail)) +"is older than newer date: "+o.getString("senddate"));
 							System.out.println("IN ELSE IF");
 							int index = emails.indexOf(otheremail);
-							dates.add(index, o.getString("senddate"));
-							messages.add(index, o.getString("message"));
+							
+							//must use 'set' to replace old values at specified index.
+							dates.set(index, o.getString("senddate"));
+							messages.set(index, o.getString("message"));
+							
+							System.out.println("The old message has been replaced and is now:" +messages.get(index));
 						}		
+						else
+						{
+							System.out.println("IN THE ELSE");
+							System.out.println("no replace happened.  Message is still: "+messages.get(emails.indexOf(otheremail)));
+						}
 					}
 					populateRecentContacts();
 				}
