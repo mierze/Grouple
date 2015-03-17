@@ -58,7 +58,7 @@ public class HomeActivity extends ActionBarActivity
     //Tag to search for when logging info.
     static final String TAG = "GCM";
     //Sender ID is the project number from API console. Needs to be secret.
-    String SENDER_ID = "957639483805";
+    private String SENDER_ID = "957639483805";
     GoogleCloudMessaging gcm;
     AtomicInteger msgId = new AtomicInteger();
     Context context;

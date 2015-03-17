@@ -49,6 +49,7 @@ import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -89,26 +90,35 @@ public class MessagesActivity extends ActionBarActivity
 		this.recipientRegID = recipientRegID;
 	}
 
+	
+	//@Override
+	//protected void onNewIntent(Intent intent)
+	//{
+	//	Bundle extras = intent.getExtras();
+	//	recipient = extras.getString("EMAIL"); 
+	//}
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		GLOBAL = ((Global) getApplicationContext());
+		
 		Bundle extras = getIntent().getExtras();
 		super.onCreate(savedInstanceState);
+		
 		user = GLOBAL.getCurrentUser();
 		setContentView(R.layout.activity_messages);
 		/* Action bar */
 		ActionBar ab = getSupportActionBar();
 		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
 		gcm = GoogleCloudMessaging.getInstance(this);
-		recipient = extras.getString("email"); 
+		recipient = extras.getString("EMAIL"); 
 		ab.setCustomView(R.layout.actionbar);
 		ab.setDisplayHomeAsUpEnabled(false);
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
-		actionbarTitle.setText("Brett Mierzejewski");
+		actionbarTitle.setText("Messages");
 		initKillswitchListener();
 		context = getApplicationContext();
-
+		//onNewIntent(getIntent());
 		//Get the recipient 
 		new getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php", recipient);
 		fetchMessages(); 
@@ -268,6 +278,15 @@ public class MessagesActivity extends ActionBarActivity
 			//add row into scrollable layout
 			messageLayout.addView(row);
 		}
+		
+		final ScrollView scrollview = ((ScrollView) findViewById(R.id.messagesScrollView));
+		scrollview.post(new Runnable() {
+
+		        @Override
+		        public void run() {
+		            scrollview.fullScroll(ScrollView.FOCUS_DOWN);
+		        }
+		    });
 			
 
 	}

@@ -62,7 +62,7 @@ public class ListActivity extends ActionBarActivity
 	 */
 	enum CONTENT_TYPE 
 	{
-		FRIENDS_CURRENT, FRIENDS_REQUESTS, GROUPS_MEMBERS, EVENTS_ATTENDING,
+		FRIENDS_CURRENT, FRIENDS_REQUESTS, GROUPS_MEMBERS, EVENTS_ATTENDING, SELECT_FRIEND,
 		GROUPS_CURRENT, GROUPS_INVITES, 
 	    EVENTS_UPCOMING, EVENTS_PENDING, EVENTS_PAST, EVENTS_INVITES;    
 	}	
@@ -138,14 +138,17 @@ public class ListActivity extends ActionBarActivity
 		//GRABBING A USER
 		if (EXTRAS.getString("EMAIL") != null)
 			if (GLOBAL.isCurrentUser(EXTRAS.getString("EMAIL")))
+			{
+				System.out.println("MAKING USER THE CURRENT USER");
 				user = GLOBAL.getCurrentUser();
+			}
 			else if (GLOBAL.getUserBuffer() != null && GLOBAL.getUserBuffer().getEmail().equals(EXTRAS.getString("EMAIL")))
 				user = GLOBAL.getUserBuffer();
 
 		//CALL APPROPRIATE METHODS
 		//CONTENT_TYPE -> POPULATEUSERS
 		if (CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()) || CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()) 
-				||  CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()) || CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
+				||  CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()) || CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()) || CONTENT.equals((CONTENT_TYPE.SELECT_FRIEND.toString())))
 		{
 			if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
 			{
@@ -170,6 +173,11 @@ public class ListActivity extends ActionBarActivity
 		
 				System.out.println("Load 5 now setting action bar title to : " + user.getFirstName());
 				actionBarTitle = user.getFirstName() + "'s Friend Requests";
+			}
+			else if (CONTENT.equals(CONTENT_TYPE.SELECT_FRIEND.toString()))
+			{
+				System.out.println("Load 5 now setting action bar title to : " + user.getFirstName());
+				actionBarTitle = "Message Who?";
 			}
 			else //EVENTS_ATTENDING
 			{
@@ -305,6 +313,11 @@ public class ListActivity extends ActionBarActivity
 			users = user.getFriendRequests();
 			sadGuyText = "You do not have any friend requests.";
 		}
+		else if (CONTENT.equals(CONTENT_TYPE.SELECT_FRIEND.toString()))
+		{
+			users = user.getUsers();
+			sadGuyText = "No friends to message.";
+		}
 		else 
 		{
 			users = event.getUsers();
@@ -335,7 +348,7 @@ public class ListActivity extends ActionBarActivity
 					nameButton = (Button) row.findViewById(R.id.nameButtonAD);
 					nameText = email;
 				}
-				//FOR GROUP MEMBERS / CURRENT FRIENDS NON MOD
+				//FOR GROUP MEMBERS / CURRENT FRIENDS NON MOD / SELECT FRIEND
 				else
 				{
 					nameText = u.getName();
@@ -673,10 +686,8 @@ public class ListActivity extends ActionBarActivity
 	}
 	//Starts a USER/GROUP/EVENT profile
 	public void startProfileActivity(View view)
-			throws InterruptedException
 	{
 		loadDialog.show();
-		Thread.sleep(2000);//sleeping to test look of load icon animation
 		System.out.println("Just started dialog!");
 		int id = view.getId();		
 		Intent intent = new Intent(this, ProfileActivity.class);
@@ -718,6 +729,15 @@ public class ListActivity extends ActionBarActivity
 				else
 					GLOBAL.setCurrentUser(u); //reloading user
 			}
+			else if (CONTENT.equals(CONTENT_TYPE.SELECT_FRIEND.toString()))//SELECT FRIEND
+			{
+				friendEmail = users.get(id).getEmail();
+				users.get(id).fetchUserInfo();
+				users.get(id).fetchGroups();
+				users.get(id).fetchEventsUpcoming();
+				users.get(id).fetchFriends();
+				intent = new Intent(this, MessagesActivity.class);
+			}
 			else
 			{
 				friendEmail = users.get(id).getEmail();
@@ -730,9 +750,11 @@ public class ListActivity extends ActionBarActivity
 				else
 					GLOBAL.setCurrentUser(users.get(id)); //reloading user
 			}
+			
 			intent.putExtra("EMAIL", friendEmail);
 			intent.putExtra("CONTENT", "USER");	
 		}
+		
 		startActivity(intent);	
 	}
 	

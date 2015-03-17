@@ -22,6 +22,7 @@ import cs460.grouple.grouple.MessagesActivity.getMessagesTask;
 import cs460.grouple.grouple.ProfileActivity.CONTENT_TYPE;
 
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -70,8 +71,7 @@ public class ContactList extends ActionBarActivity
 	private ArrayList<String> names = new ArrayList<String>();
 	private ArrayList<String> messages = new ArrayList<String>();
 	private ArrayList<ImageView> images = new ArrayList<ImageView>();
-	
-	
+
 	
     public static final String EXTRA_MESSAGE = "message";
     public static final String PROPERTY_REG_ID = "registration_id";
@@ -143,7 +143,6 @@ public class ContactList extends ActionBarActivity
 		int id = item.getItemId();
 		if (id == R.id.action_logout)
 		{
-			
 			Intent login = new Intent(this, LoginActivity.class);
 			GLOBAL.destroySession();
 			startActivity(login);
@@ -162,8 +161,22 @@ public class ContactList extends ActionBarActivity
 	public void startMessages(View view)
 	{
 		Intent intent = new Intent(this, MessagesActivity.class);
-		intent.putExtra("email", emails.get(view.getId()));
+		intent.putExtra("EMAIL", emails.get(view.getId()));
 		startActivity(intent);
+	}
+	
+	
+	//onClick for items to bring
+	public void newMessageButton(View view)
+	{
+		//loadDialog.show();
+		final String CONTENT = "SELECT_FRIEND";
+		Intent intent = new Intent(this, ListActivity.class);
+		intent.putExtra("EMAIL", user.getEmail());
+		user.fetchFriends();
+		intent.putExtra("CONTENT", CONTENT);
+		startActivity(intent);
+		
 	}
 	
 	private void populateRecentContacts()

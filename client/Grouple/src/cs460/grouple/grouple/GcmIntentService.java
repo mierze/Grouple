@@ -39,7 +39,7 @@ public class GcmIntentService extends IntentService {
     public static final int NOTIFICATION_ID = 1;
     private NotificationManager mNotificationManager;
     NotificationCompat.Builder builder;
-
+    String from;
     public GcmIntentService() {
         super("GcmIntentService");
     }
@@ -49,7 +49,8 @@ public class GcmIntentService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         Bundle extras = intent.getExtras();
         String msg = extras.getString("msg");
-        //String from = extras.getString("sender");        
+        from = extras.getString("sender");   
+        //grab first last
         //Concatenate the msg to: Sender: message
        // msg = from+": "+msg;
         
@@ -97,13 +98,15 @@ public class GcmIntentService extends IntentService {
     // This is just one simple example of what you might choose to do with
     // a GCM message.
     private void sendNotification(String msg) {
+    	//TODO: take this message and send it to the MessageActivity, possibly call a function to populate the new message
     	Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
     	
         mNotificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
-
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, MessagesActivity.class), 0);
+        Intent notificationIntent = new Intent(getApplicationContext(), MessagesActivity.class);
+        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        notificationIntent.putExtra("EMAIL", from);
+        PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(),0,notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT);
 
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
         .setContentTitle("New Grouple Message")
