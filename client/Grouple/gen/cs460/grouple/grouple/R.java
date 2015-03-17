@@ -1214,13 +1214,13 @@ containing a value of this type.
         public static final int zOrderOnTop=0x7f010014;
     }
     public static final class bool {
-        public static final int abc_action_bar_embed_tabs_pre_jb=0x7f0a0000;
-        public static final int abc_action_bar_expanded_action_views_exclusive=0x7f0a0001;
+        public static final int abc_action_bar_embed_tabs_pre_jb=0x7f0b0000;
+        public static final int abc_action_bar_expanded_action_views_exclusive=0x7f0b0001;
         /**  Whether action menu items should be displayed in ALLCAPS or not.
          Defaults to true. If this is not appropriate for specific locales
          it should be disabled in that locale's resources. 
          */
-        public static final int abc_config_actionMenuItemAllCaps=0x7f0a0005;
+        public static final int abc_config_actionMenuItemAllCaps=0x7f0b0005;
         /**  Whether action menu items should obey the "withText" showAsAction
     flag. This may be set to false for situations where space is
     extremely limited. 
@@ -1228,72 +1228,72 @@ containing a value of this type.
          This may be set to false for situations where space is
          extremely limited. 
          */
-        public static final int abc_config_allowActionMenuItemTextWithIcon=0x7f0a0004;
-        public static final int abc_config_showMenuShortcutsWhenKeyboardPresent=0x7f0a0003;
-        public static final int abc_split_action_bar_is_narrow=0x7f0a0002;
+        public static final int abc_config_allowActionMenuItemTextWithIcon=0x7f0b0004;
+        public static final int abc_config_showMenuShortcutsWhenKeyboardPresent=0x7f0b0003;
+        public static final int abc_split_action_bar_is_narrow=0x7f0b0002;
     }
     public static final class color {
-        public static final int abc_search_url_text_holo=0x7f080031;
-        public static final int abc_search_url_text_normal=0x7f080017;
-        public static final int abc_search_url_text_pressed=0x7f080019;
-        public static final int abc_search_url_text_selected=0x7f080018;
-        public static final int actionbar_background_color=0x7f08001f;
-        public static final int background_color=0x7f08001d;
-        public static final int black=0x7f08002e;
-        public static final int border_color=0x7f080022;
-        public static final int button_background_color=0x7f080024;
-        public static final int button_border_color=0x7f080020;
-        public static final int button_text_color=0x7f08001c;
-        public static final int common_action_bar_splitter=0x7f080009;
+        public static final int abc_search_url_text_holo=0x7f090031;
+        public static final int abc_search_url_text_normal=0x7f090017;
+        public static final int abc_search_url_text_pressed=0x7f090019;
+        public static final int abc_search_url_text_selected=0x7f090018;
+        public static final int actionbar_background_color=0x7f09001f;
+        public static final int background_color=0x7f09001d;
+        public static final int black=0x7f09002e;
+        public static final int border_color=0x7f090022;
+        public static final int button_background_color=0x7f090024;
+        public static final int button_border_color=0x7f090020;
+        public static final int button_text_color=0x7f09001c;
+        public static final int common_action_bar_splitter=0x7f090009;
         /**  Sign-in Button Colors 
          */
-        public static final int common_signin_btn_dark_text_default=0x7f080000;
-        public static final int common_signin_btn_dark_text_disabled=0x7f080002;
-        public static final int common_signin_btn_dark_text_focused=0x7f080003;
-        public static final int common_signin_btn_dark_text_pressed=0x7f080001;
-        public static final int common_signin_btn_default_background=0x7f080008;
-        public static final int common_signin_btn_light_text_default=0x7f080004;
-        public static final int common_signin_btn_light_text_disabled=0x7f080006;
-        public static final int common_signin_btn_light_text_focused=0x7f080007;
-        public static final int common_signin_btn_light_text_pressed=0x7f080005;
-        public static final int common_signin_btn_text_dark=0x7f080032;
-        public static final int common_signin_btn_text_light=0x7f080033;
-        public static final int dark_green=0x7f08002f;
-        public static final int dark_green_opacity=0x7f080030;
-        public static final int header_text_color=0x7f080021;
-        public static final int hint_text_color=0x7f08001a;
-        public static final int image_background_color=0x7f080023;
-        public static final int layout_background_color=0x7f08001e;
-        public static final int light_blue=0x7f080028;
-        public static final int light_green=0x7f080029;
-        public static final int light_green_opacity=0x7f08002a;
-        public static final int message_background_color=0x7f080025;
-        public static final int orange=0x7f08002d;
-        public static final int purple=0x7f080027;
-        public static final int red=0x7f08002b;
-        public static final int text_color=0x7f08001b;
-        public static final int wallet_bright_foreground_disabled_holo_light=0x7f08000f;
+        public static final int common_signin_btn_dark_text_default=0x7f090000;
+        public static final int common_signin_btn_dark_text_disabled=0x7f090002;
+        public static final int common_signin_btn_dark_text_focused=0x7f090003;
+        public static final int common_signin_btn_dark_text_pressed=0x7f090001;
+        public static final int common_signin_btn_default_background=0x7f090008;
+        public static final int common_signin_btn_light_text_default=0x7f090004;
+        public static final int common_signin_btn_light_text_disabled=0x7f090006;
+        public static final int common_signin_btn_light_text_focused=0x7f090007;
+        public static final int common_signin_btn_light_text_pressed=0x7f090005;
+        public static final int common_signin_btn_text_dark=0x7f090032;
+        public static final int common_signin_btn_text_light=0x7f090033;
+        public static final int dark_green=0x7f09002f;
+        public static final int dark_green_opacity=0x7f090030;
+        public static final int header_text_color=0x7f090021;
+        public static final int hint_text_color=0x7f09001a;
+        public static final int image_background_color=0x7f090023;
+        public static final int layout_background_color=0x7f09001e;
+        public static final int light_blue=0x7f090028;
+        public static final int light_green=0x7f090029;
+        public static final int light_green_opacity=0x7f09002a;
+        public static final int message_background_color=0x7f090025;
+        public static final int orange=0x7f09002d;
+        public static final int purple=0x7f090027;
+        public static final int red=0x7f09002b;
+        public static final int text_color=0x7f09001b;
+        public static final int wallet_bright_foreground_disabled_holo_light=0x7f09000f;
         /** 
          Wallet colors to support consistent Wallet fragment holo dark UI in client application
          regardless of the theme and device type
     
          */
-        public static final int wallet_bright_foreground_holo_dark=0x7f08000a;
-        public static final int wallet_bright_foreground_holo_light=0x7f080010;
-        public static final int wallet_dim_foreground_disabled_holo_dark=0x7f08000c;
-        public static final int wallet_dim_foreground_holo_dark=0x7f08000b;
-        public static final int wallet_dim_foreground_inverse_disabled_holo_dark=0x7f08000e;
-        public static final int wallet_dim_foreground_inverse_holo_dark=0x7f08000d;
-        public static final int wallet_highlighted_text_holo_dark=0x7f080014;
-        public static final int wallet_highlighted_text_holo_light=0x7f080013;
-        public static final int wallet_hint_foreground_holo_dark=0x7f080012;
-        public static final int wallet_hint_foreground_holo_light=0x7f080011;
-        public static final int wallet_holo_blue_light=0x7f080015;
-        public static final int wallet_link_text_light=0x7f080016;
-        public static final int wallet_primary_text_holo_light=0x7f080034;
-        public static final int wallet_secondary_text_holo_dark=0x7f080035;
-        public static final int white=0x7f080026;
-        public static final int yellow=0x7f08002c;
+        public static final int wallet_bright_foreground_holo_dark=0x7f09000a;
+        public static final int wallet_bright_foreground_holo_light=0x7f090010;
+        public static final int wallet_dim_foreground_disabled_holo_dark=0x7f09000c;
+        public static final int wallet_dim_foreground_holo_dark=0x7f09000b;
+        public static final int wallet_dim_foreground_inverse_disabled_holo_dark=0x7f09000e;
+        public static final int wallet_dim_foreground_inverse_holo_dark=0x7f09000d;
+        public static final int wallet_highlighted_text_holo_dark=0x7f090014;
+        public static final int wallet_highlighted_text_holo_light=0x7f090013;
+        public static final int wallet_hint_foreground_holo_dark=0x7f090012;
+        public static final int wallet_hint_foreground_holo_light=0x7f090011;
+        public static final int wallet_holo_blue_light=0x7f090015;
+        public static final int wallet_link_text_light=0x7f090016;
+        public static final int wallet_primary_text_holo_light=0x7f090034;
+        public static final int wallet_secondary_text_holo_dark=0x7f090035;
+        public static final int white=0x7f090026;
+        public static final int yellow=0x7f09002c;
     }
     public static final class dimen {
         /**  Default height of an action bar. 
@@ -1302,83 +1302,83 @@ containing a value of this type.
  Default height of an action bar. 
  Default height of an action bar. 
          */
-        public static final int abc_action_bar_default_height=0x7f0b0002;
+        public static final int abc_action_bar_default_height=0x7f0c0002;
         /**  Vertical padding around action bar icons. 
  Vertical padding around action bar icons. 
  Vertical padding around action bar icons. 
  Vertical padding around action bar icons. 
  Vertical padding around action bar icons. 
          */
-        public static final int abc_action_bar_icon_vertical_padding=0x7f0b0003;
+        public static final int abc_action_bar_icon_vertical_padding=0x7f0c0003;
         /**  Size of the indeterminate Progress Bar 
  Size of the indeterminate Progress Bar 
          */
-        public static final int abc_action_bar_progress_bar_size=0x7f0b000a;
+        public static final int abc_action_bar_progress_bar_size=0x7f0c000a;
         /**  Maximum height for a stacked tab bar as part of an action bar 
          */
-        public static final int abc_action_bar_stacked_max_height=0x7f0b0009;
+        public static final int abc_action_bar_stacked_max_height=0x7f0c0009;
         /**  Maximum width for a stacked action bar tab. This prevents
          action bar tabs from becoming too wide on a wide screen when only
          a few are present. 
          */
-        public static final int abc_action_bar_stacked_tab_max_width=0x7f0b0001;
+        public static final int abc_action_bar_stacked_tab_max_width=0x7f0c0001;
         /**  Bottom margin for action bar subtitles 
  Bottom margin for action bar subtitles 
  Bottom margin for action bar subtitles 
  Bottom margin for action bar subtitles 
  Bottom margin for action bar subtitles 
          */
-        public static final int abc_action_bar_subtitle_bottom_margin=0x7f0b0007;
+        public static final int abc_action_bar_subtitle_bottom_margin=0x7f0c0007;
         /**  Text size for action bar subtitles 
  Text size for action bar subtitles 
  Text size for action bar subtitles 
  Text size for action bar subtitles 
  Text size for action bar subtitles 
          */
-        public static final int abc_action_bar_subtitle_text_size=0x7f0b0005;
+        public static final int abc_action_bar_subtitle_text_size=0x7f0c0005;
         /**  Top margin for action bar subtitles 
  Top margin for action bar subtitles 
  Top margin for action bar subtitles 
  Top margin for action bar subtitles 
  Top margin for action bar subtitles 
          */
-        public static final int abc_action_bar_subtitle_top_margin=0x7f0b0006;
+        public static final int abc_action_bar_subtitle_top_margin=0x7f0c0006;
         /**  Text size for action bar titles 
  Text size for action bar titles 
  Text size for action bar titles 
  Text size for action bar titles 
  Text size for action bar titles 
          */
-        public static final int abc_action_bar_title_text_size=0x7f0b0004;
+        public static final int abc_action_bar_title_text_size=0x7f0c0004;
         /**  Minimum width for an action button in the menu area of an action bar 
  Minimum width for an action button in the menu area of an action bar 
  Minimum width for an action button in the menu area of an action bar 
          */
-        public static final int abc_action_button_min_width=0x7f0b0008;
+        public static final int abc_action_button_min_width=0x7f0c0008;
         /**  The maximum width we would prefer dialogs to be.  0 if there is no
     maximum (let them grow as large as the screen).  Actual values are
     specified for -large and -xlarge configurations. 
  see comment in values/config.xml 
  see comment in values/config.xml 
          */
-        public static final int abc_config_prefDialogWidth=0x7f0b0000;
+        public static final int abc_config_prefDialogWidth=0x7f0c0000;
         /**  Width of the icon in a dropdown list 
          */
-        public static final int abc_dropdownitem_icon_width=0x7f0b0010;
+        public static final int abc_dropdownitem_icon_width=0x7f0c0010;
         /**  Text padding for dropdown items 
          */
-        public static final int abc_dropdownitem_text_padding_left=0x7f0b000e;
-        public static final int abc_dropdownitem_text_padding_right=0x7f0b000f;
-        public static final int abc_panel_menu_list_width=0x7f0b000b;
+        public static final int abc_dropdownitem_text_padding_left=0x7f0c000e;
+        public static final int abc_dropdownitem_text_padding_right=0x7f0c000f;
+        public static final int abc_panel_menu_list_width=0x7f0c000b;
         /**  Preferred width of the search view. 
          */
-        public static final int abc_search_view_preferred_width=0x7f0b000d;
+        public static final int abc_search_view_preferred_width=0x7f0c000d;
         /**  Minimum width of the search view text entry area. 
  Minimum width of the search view text entry area. 
  Minimum width of the search view text entry area. 
  Minimum width of the search view text entry area. 
          */
-        public static final int abc_search_view_text_min_width=0x7f0b000c;
+        public static final int abc_search_view_text_min_width=0x7f0c000c;
         /**  Default screen margins, per the Android Design guidelines. 
 
          Example customization of dimensions originally defined in res/values/dimens.xml
@@ -1386,8 +1386,8 @@ containing a value of this type.
          would include 7" and 10" devices in landscape (~960dp and ~1280dp respectively).
     
          */
-        public static final int activity_horizontal_margin=0x7f0b0015;
-        public static final int activity_vertical_margin=0x7f0b0016;
+        public static final int activity_horizontal_margin=0x7f0c0015;
+        public static final int activity_vertical_margin=0x7f0c0016;
         /**  The platform's desired fixed height for a dialog along the major axis
          (the screen is in portrait). This may be either a fraction or a dimension.
  The platform's desired fixed height for a dialog along the major axis
@@ -1395,7 +1395,7 @@ containing a value of this type.
  The platform's desired fixed height for a dialog along the major axis
          (the screen is in portrait). This may be either a fraction or a dimension.
          */
-        public static final int dialog_fixed_height_major=0x7f0b0013;
+        public static final int dialog_fixed_height_major=0x7f0c0013;
         /**  The platform's desired fixed height for a dialog along the minor axis
          (the screen is in landscape). This may be either a fraction or a dimension.
  The platform's desired fixed height for a dialog along the minor axis
@@ -1403,7 +1403,7 @@ containing a value of this type.
  The platform's desired fixed height for a dialog along the minor axis
          (the screen is in landscape). This may be either a fraction or a dimension.
          */
-        public static final int dialog_fixed_height_minor=0x7f0b0014;
+        public static final int dialog_fixed_height_minor=0x7f0c0014;
         /**  The platform's desired fixed width for a dialog along the major axis
          (the screen is in landscape). This may be either a fraction or a dimension.
  The platform's desired fixed width for a dialog along the major axis
@@ -1411,7 +1411,7 @@ containing a value of this type.
  The platform's desired fixed width for a dialog along the major axis
          (the screen is in landscape). This may be either a fraction or a dimension.
          */
-        public static final int dialog_fixed_width_major=0x7f0b0011;
+        public static final int dialog_fixed_width_major=0x7f0c0011;
         /**  The platform's desired fixed width for a dialog along the minor axis
          (the screen is in portrait). This may be either a fraction or a dimension.
  The platform's desired fixed width for a dialog along the minor axis
@@ -1419,7 +1419,7 @@ containing a value of this type.
  The platform's desired fixed width for a dialog along the minor axis
          (the screen is in portrait). This may be either a fraction or a dimension.
          */
-        public static final int dialog_fixed_width_minor=0x7f0b0012;
+        public static final int dialog_fixed_width_minor=0x7f0c0012;
     }
     public static final class drawable {
         public static final int abc_ab_bottom_solid_dark_holo=0x7f020000;
@@ -1582,271 +1582,271 @@ containing a value of this type.
         public static final int user_image_default=0x7f02009d;
     }
     public static final class id {
-        public static final int ChangeEmailButton=0x7f0c00e4;
-        public static final int ChangePasswordButton=0x7f0c00e5;
-        public static final int DeleteAccountButton=0x7f0c00e6;
-        public static final int TextView01=0x7f0c0072;
-        public static final int TextView02=0x7f0c0079;
-        public static final int TextView03=0x7f0c007b;
-        public static final int aboutEditTextEPA=0x7f0c0085;
-        public static final int aboutLabelTextViewEPA=0x7f0c0084;
-        public static final int aboutTitlePA=0x7f0c00cc;
-        public static final int acceptButton=0x7f0c00f3;
-        public static final int accountSettingsTextView=0x7f0c00e3;
-        public static final int action_bar=0x7f0c0031;
-        public static final int action_bar_activity_content=0x7f0c0001;
-        public static final int action_bar_container=0x7f0c0030;
-        public static final int action_bar_overlay_layout=0x7f0c0034;
-        public static final int action_bar_root=0x7f0c002f;
-        public static final int action_bar_subtitle=0x7f0c0038;
-        public static final int action_bar_title=0x7f0c0037;
-        public static final int action_context_bar=0x7f0c0032;
-        public static final int action_home=0x7f0c0107;
-        public static final int action_logout=0x7f0c0108;
-        public static final int action_menu_divider=0x7f0c0002;
-        public static final int action_menu_presenter=0x7f0c0003;
-        public static final int action_mode_close_button=0x7f0c0039;
-        public static final int action_settings=0x7f0c0106;
-        public static final int actionbarTitleTextView=0x7f0c0051;
-        public static final int activity_chooser_view_content=0x7f0c003a;
-        public static final int addFriendButtonAFA=0x7f0c0053;
-        public static final int addFriendButtonFA=0x7f0c0096;
-        public static final int addFriendContainer=0x7f0c0052;
-        public static final int addFriendLayout=0x7f0c0054;
-        public static final int addFriendMessageTextViewAFA=0x7f0c0055;
-        public static final int addNewButtonLiA=0x7f0c00b6;
-        public static final int addToEventBox=0x7f0c00f6;
-        public static final int addToGroupBox=0x7f0c00fa;
-        public static final int adjust_height=0x7f0c0006;
-        public static final int adjust_width=0x7f0c0007;
-        public static final int ageEditTextEPA=0x7f0c0064;
-        public static final int ageLabelTextViewEPA=0x7f0c0063;
-        public static final int always=0x7f0c0025;
-        public static final int beginning=0x7f0c002c;
-        public static final int bioEditTextEPA=0x7f0c0068;
-        public static final int bioLabelTextViewEPA=0x7f0c0067;
-        public static final int book_now=0x7f0c0016;
-        public static final int bottRowNavLayoutHA=0x7f0c00ae;
-        public static final int buyButton=0x7f0c0012;
-        public static final int buy_now=0x7f0c0017;
-        public static final int buy_with_google=0x7f0c0018;
-        public static final int category=0x7f0c0073;
-        public static final int categoryEditTextEPA=0x7f0c0083;
-        public static final int categoryLabelTextViewEPA=0x7f0c0082;
-        public static final int checkbox=0x7f0c0042;
-        public static final int classic=0x7f0c001a;
-        public static final int collapseActionView=0x7f0c0026;
-        public static final int confirmButton=0x7f0c006f;
-        public static final int contactImage=0x7f0c00e8;
-        public static final int contactLayout=0x7f0c005b;
-        public static final int contactName=0x7f0c00ea;
-        public static final int createGroupButton=0x7f0c00a7;
-        public static final int createIntroMessage=0x7f0c006c;
-        public static final int createbioMessage=0x7f0c0074;
-        public static final int currentFriendsButtonFA=0x7f0c0097;
-        public static final int datetimeLabelTextViewEPA=0x7f0c0086;
-        public static final int declineButton=0x7f0c00f2;
-        public static final int default_activity_button=0x7f0c003d;
-        public static final int dialog=0x7f0c002a;
-        public static final int disableHome=0x7f0c001f;
-        public static final int donate_with_google=0x7f0c0019;
-        public static final int dropdown=0x7f0c002b;
-        public static final int editEventPhotoButton=0x7f0c0081;
-        public static final int editGroupContainer=0x7f0c009f;
-        public static final int editGroupPhotoButton=0x7f0c00a1;
-        public static final int editProfileContainer=0x7f0c005c;
-        public static final int editProfilePhotoButton=0x7f0c0060;
-        public static final int edit_query=0x7f0c0045;
-        public static final int emailEditTextAFA=0x7f0c0056;
-        public static final int emailEditTextLA=0x7f0c00b8;
-        public static final int emailEditTextRA=0x7f0c00d3;
-        public static final int emailNotificationsTextView=0x7f0c00de;
-        public static final int end=0x7f0c002d;
-        public static final int endTimeButton=0x7f0c0078;
-        public static final int endTimeButtonEEA=0x7f0c0088;
-        public static final int errorMessageTextView=0x7f0c00d9;
-        public static final int errorTextViewEPA=0x7f0c0069;
-        public static final int eventAddGroupsLayout=0x7f0c006b;
-        public static final int eventBio=0x7f0c0075;
-        public static final int eventCreateButtonEA=0x7f0c0091;
-        public static final int eventCreateLayout=0x7f0c0070;
-        public static final int eventInvitesButtonEA=0x7f0c0093;
-        public static final int eventName=0x7f0c0071;
-        public static final int eventPhoto=0x7f0c0080;
-        public static final int eventSwitch=0x7f0c00e1;
-        public static final int eventsButtonHA=0x7f0c00b1;
-        public static final int eventsContainer=0x7f0c008f;
-        public static final int eventsPastButtonEA=0x7f0c0094;
-        public static final int eventsPendingButtonEA=0x7f0c0092;
-        public static final int eventsUpcomingButtonEA=0x7f0c0090;
-        public static final int expand_activities_button=0x7f0c003b;
-        public static final int expanded_menu=0x7f0c0041;
-        public static final int fNameEditText=0x7f0c00d6;
-        public static final int friendGridLayout=0x7f0c00c1;
-        public static final int friendGridLayoutNoAccess=0x7f0c00f7;
-        public static final int friendNameButtonNoAccess=0x7f0c00f8;
-        public static final int friendProfileInnerLayout2=0x7f0c00cd;
-        public static final int friendRequestGridLayout=0x7f0c00f0;
-        public static final int friendRequestsButtonFA=0x7f0c0098;
-        public static final int friendSwitch=0x7f0c00df;
-        public static final int friendsButtonHA=0x7f0c00af;
-        public static final int friendsContainer=0x7f0c0095;
-        public static final int fullimage=0x7f0c00ee;
-        public static final int grayscale=0x7f0c001b;
-        public static final int groupBio=0x7f0c009b;
-        public static final int groupCreateLayout=0x7f0c0099;
-        public static final int groupGridLayoutNoAccess=0x7f0c00f4;
-        public static final int groupName=0x7f0c009a;
-        public static final int groupNameButtonNoAccess=0x7f0c00f5;
-        public static final int groupPhoto=0x7f0c00a0;
-        public static final int groupSwitch=0x7f0c00e0;
-        public static final int groupsButtonHA=0x7f0c00b0;
-        public static final int groupsContainer=0x7f0c00a4;
-        public static final int holo_dark=0x7f0c000d;
-        public static final int holo_light=0x7f0c000e;
-        public static final int home=0x7f0c0000;
-        public static final int homeAsUp=0x7f0c0020;
-        public static final int homeLayout=0x7f0c00a8;
-        public static final int homeLogoImageViewHA=0x7f0c00a9;
-        public static final int hybrid=0x7f0c0009;
-        public static final int icon=0x7f0c003f;
-        public static final int ifRoom=0x7f0c0027;
-        public static final int image=0x7f0c003c;
-        public static final int lNameEditText=0x7f0c00d7;
-        public static final int layout_root=0x7f0c00ed;
-        public static final int linearLayoutNested1=0x7f0c009c;
-        public static final int linearLayoutNested_eventAddGroups=0x7f0c006e;
-        public static final int linearLayoutTitle=0x7f0c005e;
-        public static final int listContainer=0x7f0c00b4;
-        public static final int listLayout=0x7f0c00b5;
-        public static final int listMode=0x7f0c001d;
-        public static final int listScrollView=0x7f0c005a;
-        public static final int list_item=0x7f0c003e;
-        public static final int loadIconImageView=0x7f0c00ff;
-        public static final int loadLayout=0x7f0c00fe;
-        public static final int locationEditTextECA=0x7f0c007a;
-        public static final int locationEditTextEPA=0x7f0c0066;
-        public static final int locationLabelTextViewEPA=0x7f0c0065;
-        public static final int loginButtonLA=0x7f0c00bc;
-        public static final int loginButtonRA=0x7f0c00dc;
-        public static final int loginFailTextViewLA=0x7f0c00ba;
-        public static final int loginTextViewLA=0x7f0c00b7;
-        public static final int manageEventButton=0x7f0c008d;
-        public static final int manageGroupButton=0x7f0c00a3;
-        public static final int manageMembersLayout=0x7f0c00c0;
-        public static final int match_parent=0x7f0c0014;
-        public static final int maxPartButton=0x7f0c007e;
-        public static final int maxPartButtonEEA=0x7f0c008c;
-        public static final int messageBody=0x7f0c00eb;
-        public static final int messageContainer=0x7f0c0057;
-        public static final int messageDate=0x7f0c00ec;
-        public static final int messageEditText=0x7f0c00c4;
-        public static final int messageInnerLayout=0x7f0c0100;
-        public static final int messageInnerLayout1=0x7f0c00e7;
-        public static final int messageInnerLayout2=0x7f0c00e9;
-        public static final int messageInnerlayout=0x7f0c0059;
-        public static final int messageLayout=0x7f0c00c3;
-        public static final int messagesButtonHA=0x7f0c00ac;
-        public static final int middle=0x7f0c002e;
-        public static final int minPartButton=0x7f0c007d;
-        public static final int minPartButtonEEA=0x7f0c008b;
-        public static final int minmaxContainer=0x7f0c007c;
-        public static final int minmaxContainerEAA=0x7f0c008a;
-        public static final int monochrome=0x7f0c001c;
-        public static final int nameButtonAD=0x7f0c00f1;
-        public static final int nameButtonLI=0x7f0c00c2;
-        public static final int nameEditTextEPA=0x7f0c0062;
-        public static final int nameLabelTextViewEPA=0x7f0c0061;
-        public static final int never=0x7f0c0028;
-        public static final int noFriendRequestsTextView=0x7f0c00db;
-        public static final int none=0x7f0c0008;
-        public static final int normal=0x7f0c000a;
-        public static final int passwordEditTextLA=0x7f0c00b9;
-        public static final int passwordEditTextRA=0x7f0c00d4;
-        public static final int pendingGroupsButton=0x7f0c00a6;
-        public static final int pickFriendsLayout=0x7f0c00b3;
-        public static final int privateButton=0x7f0c009e;
-        public static final int production=0x7f0c000f;
-        public static final int profileAboutTextView=0x7f0c00ce;
-        public static final int profileButton1=0x7f0c00cf;
-        public static final int profileButton2=0x7f0c00d0;
-        public static final int profileButton3=0x7f0c00d1;
-        public static final int profileEditButton=0x7f0c00d2;
-        public static final int profileImageEPA=0x7f0c005f;
-        public static final int profileImageUPA=0x7f0c00c9;
-        public static final int profileInfoTextView=0x7f0c00cb;
-        public static final int progressBar=0x7f0c00bd;
-        public static final int progress_circular=0x7f0c0004;
-        public static final int progress_horizontal=0x7f0c0005;
-        public static final int publicButton=0x7f0c009d;
-        public static final int publicButtonContainer=0x7f0c0076;
-        public static final int publicLabelTextViewEPA=0x7f0c00a2;
-        public static final int radio=0x7f0c0044;
-        public static final int rePasswordEditTextRA=0x7f0c00d5;
-        public static final int registerButtonLA=0x7f0c00be;
-        public static final int registerButtonRA=0x7f0c00d8;
-        public static final int registerTextView=0x7f0c00da;
-        public static final int rememberLoginCB=0x7f0c00bb;
-        public static final int removeButtonLI=0x7f0c00ef;
-        public static final int removeFriendButtonNoAccess=0x7f0c00f9;
-        public static final int sadGuyGridLayout=0x7f0c00fb;
-        public static final int sadGuyImageView=0x7f0c00fc;
-        public static final int sadGuyTextView=0x7f0c00fd;
-        public static final int sandbox=0x7f0c0010;
-        public static final int satellite=0x7f0c000b;
-        public static final int scrollViewEntire=0x7f0c005d;
-        public static final int scrollViewLayout=0x7f0c0058;
-        public static final int scrollViewManageMembers=0x7f0c00bf;
-        public static final int scrollViewPickFriends=0x7f0c00b2;
-        public static final int scrollViewPickMembers=0x7f0c006d;
-        public static final int scrollViewToBring=0x7f0c0101;
-        public static final int search_badge=0x7f0c0047;
-        public static final int search_bar=0x7f0c0046;
-        public static final int search_button=0x7f0c0048;
-        public static final int search_close_btn=0x7f0c004d;
-        public static final int search_edit_frame=0x7f0c0049;
-        public static final int search_go_btn=0x7f0c004f;
-        public static final int search_mag_icon=0x7f0c004a;
-        public static final int search_plate=0x7f0c004b;
-        public static final int search_src_text=0x7f0c004c;
-        public static final int search_voice_btn=0x7f0c0050;
-        public static final int selectionDetails=0x7f0c0013;
-        public static final int sendButton=0x7f0c00c5;
-        public static final int settingsButtonHA=0x7f0c00ad;
-        public static final int settingsLayout=0x7f0c00dd;
-        public static final int shortcut=0x7f0c0043;
-        public static final int showCustom=0x7f0c0021;
-        public static final int showHome=0x7f0c0022;
-        public static final int showTitle=0x7f0c0023;
-        public static final int sizeLabelTextViewEPA=0x7f0c0089;
-        public static final int split_action_bar=0x7f0c0033;
-        public static final int startTimeButton=0x7f0c0077;
-        public static final int startTimeButtonEEA=0x7f0c0087;
-        public static final int strict_sandbox=0x7f0c0011;
-        public static final int submitButtonEEA=0x7f0c008e;
-        public static final int submitButtonEPA=0x7f0c006a;
-        public static final int submit_area=0x7f0c004e;
-        public static final int tabMode=0x7f0c001e;
-        public static final int terrain=0x7f0c000c;
-        public static final int title=0x7f0c0040;
-        public static final int toBringAddRowButton=0x7f0c0104;
-        public static final int toBringButton=0x7f0c007f;
-        public static final int toBringInnerLayout=0x7f0c0102;
-        public static final int toBringItem1=0x7f0c0103;
-        public static final int toBringSaveButton=0x7f0c0105;
-        public static final int topRowNavLayoutHA=0x7f0c00aa;
-        public static final int top_action_bar=0x7f0c0035;
-        public static final int up=0x7f0c0036;
-        public static final int upcomingSwitch=0x7f0c00e2;
-        public static final int useLogo=0x7f0c0024;
-        public static final int userButtonHA=0x7f0c00ab;
-        public static final int userProfileAgeLocationLayout=0x7f0c00ca;
-        public static final int userProfileContainer=0x7f0c00c6;
-        public static final int userProfileInnerLayout1=0x7f0c00c8;
-        public static final int userProfileOuterLayout=0x7f0c00c7;
-        public static final int withText=0x7f0c0029;
-        public static final int wrap_content=0x7f0c0015;
-        public static final int yourGroupsButton=0x7f0c00a5;
+        public static final int ChangeEmailButton=0x7f0800e4;
+        public static final int ChangePasswordButton=0x7f0800e5;
+        public static final int DeleteAccountButton=0x7f0800e6;
+        public static final int TextView01=0x7f080072;
+        public static final int TextView02=0x7f080079;
+        public static final int TextView03=0x7f08007b;
+        public static final int aboutEditTextEPA=0x7f080085;
+        public static final int aboutLabelTextViewEPA=0x7f080084;
+        public static final int aboutTitlePA=0x7f0800cc;
+        public static final int acceptButton=0x7f0800f3;
+        public static final int accountSettingsTextView=0x7f0800e3;
+        public static final int action_bar=0x7f080031;
+        public static final int action_bar_activity_content=0x7f08002a;
+        public static final int action_bar_container=0x7f080030;
+        public static final int action_bar_overlay_layout=0x7f080034;
+        public static final int action_bar_root=0x7f08002f;
+        public static final int action_bar_subtitle=0x7f080038;
+        public static final int action_bar_title=0x7f080037;
+        public static final int action_context_bar=0x7f080032;
+        public static final int action_home=0x7f080107;
+        public static final int action_logout=0x7f080108;
+        public static final int action_menu_divider=0x7f08002b;
+        public static final int action_menu_presenter=0x7f08002c;
+        public static final int action_mode_close_button=0x7f080039;
+        public static final int action_settings=0x7f080106;
+        public static final int actionbarTitleTextView=0x7f080051;
+        public static final int activity_chooser_view_content=0x7f08003a;
+        public static final int addFriendButtonAFA=0x7f080053;
+        public static final int addFriendButtonFA=0x7f080096;
+        public static final int addFriendContainer=0x7f080052;
+        public static final int addFriendLayout=0x7f080054;
+        public static final int addFriendMessageTextViewAFA=0x7f080055;
+        public static final int addNewButtonLiA=0x7f0800b6;
+        public static final int addToEventBox=0x7f0800f6;
+        public static final int addToGroupBox=0x7f0800fa;
+        public static final int adjust_height=0x7f080002;
+        public static final int adjust_width=0x7f080001;
+        public static final int ageEditTextEPA=0x7f080064;
+        public static final int ageLabelTextViewEPA=0x7f080063;
+        public static final int always=0x7f080021;
+        public static final int beginning=0x7f080026;
+        public static final int bioEditTextEPA=0x7f080068;
+        public static final int bioLabelTextViewEPA=0x7f080067;
+        public static final int book_now=0x7f080012;
+        public static final int bottRowNavLayoutHA=0x7f0800ae;
+        public static final int buyButton=0x7f08000c;
+        public static final int buy_now=0x7f080011;
+        public static final int buy_with_google=0x7f080010;
+        public static final int category=0x7f080073;
+        public static final int categoryEditTextEPA=0x7f080083;
+        public static final int categoryLabelTextViewEPA=0x7f080082;
+        public static final int checkbox=0x7f080042;
+        public static final int classic=0x7f080014;
+        public static final int collapseActionView=0x7f080023;
+        public static final int confirmButton=0x7f08006f;
+        public static final int contactImage=0x7f0800e8;
+        public static final int contactLayout=0x7f08005b;
+        public static final int contactName=0x7f0800ea;
+        public static final int createGroupButton=0x7f0800a7;
+        public static final int createIntroMessage=0x7f08006c;
+        public static final int createbioMessage=0x7f080074;
+        public static final int currentFriendsButtonFA=0x7f080097;
+        public static final int datetimeLabelTextViewEPA=0x7f080086;
+        public static final int declineButton=0x7f0800f2;
+        public static final int default_activity_button=0x7f08003d;
+        public static final int dialog=0x7f080024;
+        public static final int disableHome=0x7f08001e;
+        public static final int donate_with_google=0x7f080013;
+        public static final int dropdown=0x7f080025;
+        public static final int editEventPhotoButton=0x7f080081;
+        public static final int editGroupContainer=0x7f08009f;
+        public static final int editGroupPhotoButton=0x7f0800a1;
+        public static final int editProfileContainer=0x7f08005c;
+        public static final int editProfilePhotoButton=0x7f080060;
+        public static final int edit_query=0x7f080045;
+        public static final int emailEditTextAFA=0x7f080056;
+        public static final int emailEditTextLA=0x7f0800b8;
+        public static final int emailEditTextRA=0x7f0800d3;
+        public static final int emailNotificationsTextView=0x7f0800de;
+        public static final int end=0x7f080028;
+        public static final int endTimeButton=0x7f080078;
+        public static final int endTimeButtonEEA=0x7f080088;
+        public static final int errorMessageTextView=0x7f0800d9;
+        public static final int errorTextViewEPA=0x7f080069;
+        public static final int eventAddGroupsLayout=0x7f08006b;
+        public static final int eventBio=0x7f080075;
+        public static final int eventCreateButtonEA=0x7f080091;
+        public static final int eventCreateLayout=0x7f080070;
+        public static final int eventInvitesButtonEA=0x7f080093;
+        public static final int eventName=0x7f080071;
+        public static final int eventPhoto=0x7f080080;
+        public static final int eventSwitch=0x7f0800e1;
+        public static final int eventsButtonHA=0x7f0800b1;
+        public static final int eventsContainer=0x7f08008f;
+        public static final int eventsPastButtonEA=0x7f080094;
+        public static final int eventsPendingButtonEA=0x7f080092;
+        public static final int eventsUpcomingButtonEA=0x7f080090;
+        public static final int expand_activities_button=0x7f08003b;
+        public static final int expanded_menu=0x7f080041;
+        public static final int fNameEditText=0x7f0800d6;
+        public static final int friendGridLayout=0x7f0800c1;
+        public static final int friendGridLayoutNoAccess=0x7f0800f7;
+        public static final int friendNameButtonNoAccess=0x7f0800f8;
+        public static final int friendProfileInnerLayout2=0x7f0800cd;
+        public static final int friendRequestGridLayout=0x7f0800f0;
+        public static final int friendRequestsButtonFA=0x7f080098;
+        public static final int friendSwitch=0x7f0800df;
+        public static final int friendsButtonHA=0x7f0800af;
+        public static final int friendsContainer=0x7f080095;
+        public static final int fullimage=0x7f0800ee;
+        public static final int grayscale=0x7f080015;
+        public static final int groupBio=0x7f08009b;
+        public static final int groupCreateLayout=0x7f080099;
+        public static final int groupGridLayoutNoAccess=0x7f0800f4;
+        public static final int groupName=0x7f08009a;
+        public static final int groupNameButtonNoAccess=0x7f0800f5;
+        public static final int groupPhoto=0x7f0800a0;
+        public static final int groupSwitch=0x7f0800e0;
+        public static final int groupsButtonHA=0x7f0800b0;
+        public static final int groupsContainer=0x7f0800a4;
+        public static final int holo_dark=0x7f080007;
+        public static final int holo_light=0x7f080008;
+        public static final int home=0x7f080029;
+        public static final int homeAsUp=0x7f08001b;
+        public static final int homeLayout=0x7f0800a8;
+        public static final int homeLogoImageViewHA=0x7f0800a9;
+        public static final int hybrid=0x7f080006;
+        public static final int icon=0x7f08003f;
+        public static final int ifRoom=0x7f080020;
+        public static final int image=0x7f08003c;
+        public static final int lNameEditText=0x7f0800d7;
+        public static final int layout_root=0x7f0800ed;
+        public static final int linearLayoutNested1=0x7f08009c;
+        public static final int linearLayoutNested_eventAddGroups=0x7f08006e;
+        public static final int linearLayoutTitle=0x7f08005e;
+        public static final int listContainer=0x7f0800b4;
+        public static final int listLayout=0x7f0800b5;
+        public static final int listMode=0x7f080017;
+        public static final int listScrollView=0x7f08005a;
+        public static final int list_item=0x7f08003e;
+        public static final int loadIconImageView=0x7f0800ff;
+        public static final int loadLayout=0x7f0800fe;
+        public static final int locationEditTextECA=0x7f08007a;
+        public static final int locationEditTextEPA=0x7f080066;
+        public static final int locationLabelTextViewEPA=0x7f080065;
+        public static final int loginButtonLA=0x7f0800bc;
+        public static final int loginButtonRA=0x7f0800dc;
+        public static final int loginFailTextViewLA=0x7f0800ba;
+        public static final int loginTextViewLA=0x7f0800b7;
+        public static final int manageEventButton=0x7f08008d;
+        public static final int manageGroupButton=0x7f0800a3;
+        public static final int manageMembersLayout=0x7f0800c0;
+        public static final int match_parent=0x7f08000e;
+        public static final int maxPartButton=0x7f08007e;
+        public static final int maxPartButtonEEA=0x7f08008c;
+        public static final int messageBody=0x7f0800eb;
+        public static final int messageContainer=0x7f080057;
+        public static final int messageDate=0x7f0800ec;
+        public static final int messageEditText=0x7f0800c4;
+        public static final int messageInnerLayout=0x7f080100;
+        public static final int messageInnerLayout1=0x7f0800e7;
+        public static final int messageInnerLayout2=0x7f0800e9;
+        public static final int messageInnerlayout=0x7f080059;
+        public static final int messageLayout=0x7f0800c3;
+        public static final int messagesButtonHA=0x7f0800ac;
+        public static final int middle=0x7f080027;
+        public static final int minPartButton=0x7f08007d;
+        public static final int minPartButtonEEA=0x7f08008b;
+        public static final int minmaxContainer=0x7f08007c;
+        public static final int minmaxContainerEAA=0x7f08008a;
+        public static final int monochrome=0x7f080016;
+        public static final int nameButtonAD=0x7f0800f1;
+        public static final int nameButtonLI=0x7f0800c2;
+        public static final int nameEditTextEPA=0x7f080062;
+        public static final int nameLabelTextViewEPA=0x7f080061;
+        public static final int never=0x7f08001f;
+        public static final int noFriendRequestsTextView=0x7f0800db;
+        public static final int none=0x7f080000;
+        public static final int normal=0x7f080003;
+        public static final int passwordEditTextLA=0x7f0800b9;
+        public static final int passwordEditTextRA=0x7f0800d4;
+        public static final int pendingGroupsButton=0x7f0800a6;
+        public static final int pickFriendsLayout=0x7f0800b3;
+        public static final int privateButton=0x7f08009e;
+        public static final int production=0x7f080009;
+        public static final int profileAboutTextView=0x7f0800ce;
+        public static final int profileButton1=0x7f0800cf;
+        public static final int profileButton2=0x7f0800d0;
+        public static final int profileButton3=0x7f0800d1;
+        public static final int profileEditButton=0x7f0800d2;
+        public static final int profileImageEPA=0x7f08005f;
+        public static final int profileImageUPA=0x7f0800c9;
+        public static final int profileInfoTextView=0x7f0800cb;
+        public static final int progressBar=0x7f0800bd;
+        public static final int progress_circular=0x7f08002d;
+        public static final int progress_horizontal=0x7f08002e;
+        public static final int publicButton=0x7f08009d;
+        public static final int publicButtonContainer=0x7f080076;
+        public static final int publicLabelTextViewEPA=0x7f0800a2;
+        public static final int radio=0x7f080044;
+        public static final int rePasswordEditTextRA=0x7f0800d5;
+        public static final int registerButtonLA=0x7f0800be;
+        public static final int registerButtonRA=0x7f0800d8;
+        public static final int registerTextView=0x7f0800da;
+        public static final int rememberLoginCB=0x7f0800bb;
+        public static final int removeButtonLI=0x7f0800ef;
+        public static final int removeFriendButtonNoAccess=0x7f0800f9;
+        public static final int sadGuyGridLayout=0x7f0800fb;
+        public static final int sadGuyImageView=0x7f0800fc;
+        public static final int sadGuyTextView=0x7f0800fd;
+        public static final int sandbox=0x7f08000a;
+        public static final int satellite=0x7f080004;
+        public static final int scrollViewEntire=0x7f08005d;
+        public static final int scrollViewLayout=0x7f080058;
+        public static final int scrollViewManageMembers=0x7f0800bf;
+        public static final int scrollViewPickFriends=0x7f0800b2;
+        public static final int scrollViewPickMembers=0x7f08006d;
+        public static final int scrollViewToBring=0x7f080101;
+        public static final int search_badge=0x7f080047;
+        public static final int search_bar=0x7f080046;
+        public static final int search_button=0x7f080048;
+        public static final int search_close_btn=0x7f08004d;
+        public static final int search_edit_frame=0x7f080049;
+        public static final int search_go_btn=0x7f08004f;
+        public static final int search_mag_icon=0x7f08004a;
+        public static final int search_plate=0x7f08004b;
+        public static final int search_src_text=0x7f08004c;
+        public static final int search_voice_btn=0x7f080050;
+        public static final int selectionDetails=0x7f08000d;
+        public static final int sendButton=0x7f0800c5;
+        public static final int settingsButtonHA=0x7f0800ad;
+        public static final int settingsLayout=0x7f0800dd;
+        public static final int shortcut=0x7f080043;
+        public static final int showCustom=0x7f08001d;
+        public static final int showHome=0x7f08001a;
+        public static final int showTitle=0x7f08001c;
+        public static final int sizeLabelTextViewEPA=0x7f080089;
+        public static final int split_action_bar=0x7f080033;
+        public static final int startTimeButton=0x7f080077;
+        public static final int startTimeButtonEEA=0x7f080087;
+        public static final int strict_sandbox=0x7f08000b;
+        public static final int submitButtonEEA=0x7f08008e;
+        public static final int submitButtonEPA=0x7f08006a;
+        public static final int submit_area=0x7f08004e;
+        public static final int tabMode=0x7f080018;
+        public static final int terrain=0x7f080005;
+        public static final int title=0x7f080040;
+        public static final int toBringAddRowButton=0x7f080104;
+        public static final int toBringButton=0x7f08007f;
+        public static final int toBringInnerLayout=0x7f080102;
+        public static final int toBringItem1=0x7f080103;
+        public static final int toBringSaveButton=0x7f080105;
+        public static final int topRowNavLayoutHA=0x7f0800aa;
+        public static final int top_action_bar=0x7f080035;
+        public static final int up=0x7f080036;
+        public static final int upcomingSwitch=0x7f0800e2;
+        public static final int useLogo=0x7f080019;
+        public static final int userButtonHA=0x7f0800ab;
+        public static final int userProfileAgeLocationLayout=0x7f0800ca;
+        public static final int userProfileContainer=0x7f0800c6;
+        public static final int userProfileInnerLayout1=0x7f0800c8;
+        public static final int userProfileOuterLayout=0x7f0800c7;
+        public static final int withText=0x7f080022;
+        public static final int wrap_content=0x7f08000f;
+        public static final int yourGroupsButton=0x7f0800a5;
     }
     public static final class integer {
         /**  The maximum number of action buttons that should be permitted within
@@ -1871,8 +1871,8 @@ containing a value of this type.
          an action bar/action mode. This will be used to determine how many
          showAsAction="ifRoom" items can fit. "always" items can override this. 
          */
-        public static final int abc_max_action_buttons=0x7f090001;
-        public static final int google_play_services_version=0x7f090000;
+        public static final int abc_max_action_buttons=0x7f0a0001;
+        public static final int google_play_services_version=0x7f0a0000;
     }
     public static final class layout {
         public static final int abc_action_bar_decor=0x7f030000;
