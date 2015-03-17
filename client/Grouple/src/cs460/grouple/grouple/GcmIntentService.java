@@ -93,11 +93,25 @@ public class GcmIntentService extends IntentService {
         // Release the wake lock provided by the WakefulBroadcastReceiver.
         GcmBroadcastReceiver.completeWakefulIntent(intent);
     }
+    
+ // This function will create an intent. This intent must take as parameter the "unique_name" that you registered your activity with
+    private void updateMyActivity(Context context) {
+
+        Intent intent = new Intent("NEW_MESSAGE");
+
+        //put whatever data you want to send, if any
+        intent.putExtra("EMAIL", from);
+
+        //send broadcast
+        context.sendBroadcast(intent);
+    }
 
     // Put the message into a notification and post it.
     // This is just one simple example of what you might choose to do with
     // a GCM message.
-    private void sendNotification(String msg) {
+    private void sendNotification(String msg) 
+    {
+    	updateMyActivity(this);
     	//TODO: take this message and send it to the MessageActivity, possibly call a function to populate the new message
     	Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
     	

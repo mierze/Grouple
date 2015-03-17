@@ -90,6 +90,38 @@ public class MessagesActivity extends ActionBarActivity
 		this.recipientRegID = recipientRegID;
 	}
 
+	//register your activity onResume()
+
+
+	//Must unregister onPause()
+	@Override
+	protected void onPause() {
+	    super.onPause();
+	    context.unregisterReceiver(mMessageReceiver);
+	}
+
+
+	//This is the handler that will manager to process the broadcast intent
+	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+	    @Override
+	    public void onReceive(Context context, Intent intent) {
+
+	        // Extract data included in the Intent
+	        String fromEmail = intent.getStringExtra("EMAIL");
+	        if (fromEmail.equals(recipient))
+	        {
+	        	System.out.println("WE HAVE A MATCH OMGOMGOMG!");
+	            messages.clear();
+	            dates.clear();
+	            senders.clear();
+	            receivers.clear();
+	        	fetchMessages(); 
+	        }
+
+	        //do other stuff here
+	    }
+	};
+	
 	
 	//@Override
 	//protected void onNewIntent(Intent intent)
@@ -128,7 +160,7 @@ public class MessagesActivity extends ActionBarActivity
 	@Override
     protected void onResume() {
         super.onResume();
-      
+	    context .registerReceiver(mMessageReceiver, new IntentFilter("NEW_MESSAGE"));
     }
 	
     
@@ -247,23 +279,24 @@ public class MessagesActivity extends ActionBarActivity
 	{
 		//layout to inflate into
 		LinearLayout messageLayout = (LinearLayout) findViewById(R.id.messageLayout);
-		
 		//clear out any previous views already inflated
 		messageLayout.removeAllViews();
 		
 		//layout inflater
 		LayoutInflater li = getLayoutInflater();
 		
-		TextView messageBody, messageDate ;
+		TextView messageBody, messageDate;
 		View row = null;
 		String message = "";
 		
 		//messages consist of some things (messagebody, date, sender, receiver)
 		
+		int index = 0;
 		//loop through messages (newest first), maybe a map String String with messagebody, date
 		for (String m : messages)
 		{
-			if (receivers.get(messages.indexOf(m)).equals(user.getEmail()/*our email*/))
+			
+			if (receivers.get(index).equals(user.getEmail()/*our email*/))
 				row =  li.inflate(R.layout.message_row, null); //inflate this message row
 			else
 				row =  li.inflate(R.layout.message_row_out, null); //inflate the sender message row
@@ -271,12 +304,13 @@ public class MessagesActivity extends ActionBarActivity
 			messageBody = (TextView) row.findViewById(R.id.messageBody);
 			messageBody.setText(m);
 			messageDate = (TextView) row.findViewById(R.id.messageDate);
-			messageDate.setText(dates.get(messages.indexOf(m)));
+			messageDate.setText(dates.get(index));
 			
 			//set these values to what you want
 			
 			//add row into scrollable layout
 			messageLayout.addView(row);
+			index++;
 		}
 		
 		final ScrollView scrollview = ((ScrollView) findViewById(R.id.messagesScrollView));

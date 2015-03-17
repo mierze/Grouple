@@ -688,7 +688,7 @@ public class ListActivity extends ActionBarActivity
 	public void startProfileActivity(View view)
 	{
 		loadDialog.show();
-		System.out.println("Just started dialog!");
+		System.out.println("Just started dialog! CONTENT:" + CONTENT);
 		int id = view.getId();		
 		Intent intent = new Intent(this, ProfileActivity.class);
 		if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()) || CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString()) )
@@ -713,7 +713,7 @@ public class ListActivity extends ActionBarActivity
 			e.fetchParticipants();
 			GLOBAL.setEventBuffer(e);
 		}
-		else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()) || CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()) || CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
+		else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()) || CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()) || CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()) || CONTENT.equals(CONTENT_TYPE.SELECT_FRIEND.toString()))
 		{
 			String friendEmail;
 			if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
@@ -731,11 +731,12 @@ public class ListActivity extends ActionBarActivity
 			}
 			else if (CONTENT.equals(CONTENT_TYPE.SELECT_FRIEND.toString()))//SELECT FRIEND
 			{
+				System.out.println("SHOULD BE CHANGING INTENT HERE");
 				friendEmail = users.get(id).getEmail();
-				users.get(id).fetchUserInfo();
-				users.get(id).fetchGroups();
-				users.get(id).fetchEventsUpcoming();
-				users.get(id).fetchFriends();
+				//users.get(id).fetchUserInfo();
+				//users.get(id).fetchGroups();
+				///users.get(id).fetchEventsUpcoming();
+				//users.get(id).fetchFriends();
 				intent = new Intent(this, MessagesActivity.class);
 			}
 			else
@@ -750,7 +751,7 @@ public class ListActivity extends ActionBarActivity
 				else
 					GLOBAL.setCurrentUser(users.get(id)); //reloading user
 			}
-			
+			System.out.println("ADDING EMAIL AS " + friendEmail);
 			intent.putExtra("EMAIL", friendEmail);
 			intent.putExtra("CONTENT", "USER");	
 		}
@@ -844,9 +845,6 @@ public class ListActivity extends ActionBarActivity
 	    }
 	    return true;
 	}
-	
-	
-	
 
 	/* Gets the role of the current user in a group / event */
 	private class getRoleTask extends AsyncTask<String, Void, String>
