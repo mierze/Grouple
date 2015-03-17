@@ -359,8 +359,13 @@ public class MessagesActivity extends ActionBarActivity
 	{
 		//layout to inflate into
 		LinearLayout messageLayout = (LinearLayout) findViewById(R.id.messageLayout);
+		
+		//clear out any previous views already inflated
+		messageLayout.removeAllViews();
+		
 		//layout inflater
 		LayoutInflater li = getLayoutInflater();
+		
 		TextView messageBody, messageDate ;
 		View row = null;
 		String message = "";
@@ -392,71 +397,78 @@ public class MessagesActivity extends ActionBarActivity
     // Send an upstream message.
     public void onClick(final View view) {
 
-        if (view == findViewById(R.id.sendButton)) {
+        if (view == findViewById(R.id.sendButton)) 
+        {
             //Get message from edit text
             EditText mymessage   = (EditText)findViewById(R.id.messageEditText);
             String msg = mymessage.getText().toString();
-          
-            //PHP expects msg,sender,receiver.
-            //new storeMessageTask().execute("http://68.59.162.183/android_connect/send_message.php",msg,"mierze@gmail.com","tfeipel@gmail.com");
-            new storeMessageTask().execute("http://68.59.162.183/android_connect/send_message.php",msg, user.getEmail(),recipient);
-            new AsyncTask<Void, Void, String>() {
-                @Override
-                protected String doInBackground(Void... params) {
-                    String msg = "";
+            
+            //make sure message field is not blank
+            if(!(msg.compareTo("") ==0))
+            {
+            	 //PHP expects msg,sender,receiver.
+                //new storeMessageTask().execute("http://68.59.162.183/android_connect/send_message.php",msg,"mierze@gmail.com","tfeipel@gmail.com");
+                new storeMessageTask().execute("http://68.59.162.183/android_connect/send_message.php",msg, user.getEmail(),recipient);
+                new AsyncTask<Void, Void, String>() {
+                    @Override
+                    protected String doInBackground(Void... params) {
+                        String msg = "";
 
-                    
-                    try {
-                        Bundle data = new Bundle();
-                        //Get message from edit text
-                        EditText mymessage   = (EditText)findViewById(R.id.messageEditText);
-                        msg = mymessage.getText().toString();
-    
-                        messages.add(msg);
-                        receivers.add(recipient);
-                        senders.add(user.getEmail());
-                      
-                		SimpleDateFormat dateFormat = new SimpleDateFormat(
-                				"EEEE h:mma");
-                		
-                		String date = dateFormat.format(new Date());
-                		dates.add(date);
-                        data.putString("my_message", msg);
-                        data.putString("my_action", "cs460.grouple.grouple.ECHO_NOW");
-                        //Clear edit text
-                       // mymessage.setText("");
-                        //Get friend's regID based off their email address from db
-                        //Todd's Reg ID
-                        //String recipientRegId = "APA91bFdWkh9GiaNoLJvGyFpSK3HRQy8vtlmh3OPK8FekU4aWEhZn_hwvr7LmYu_s11dQnoPmj6hKuklISIh_A2Dhyjm_cNT-K4kh5-bYhPYpp-QGbqScbwE9YCnWqyXORN2gwY3fNQx-_ex7D6i-ONaT7peHcu3Hlzbc-60amu0pTu8SD9l7xI";
-                        //Brett's Reg ID
                         
-                        //This is where we put the recipients regID.
-                        data.putString("recipient",getRecipientRegID());
-                        String id = Integer.toString(msgId.incrementAndGet());
-                        gcm.send(SENDER_ID + "@gcm.googleapis.com", id, data);
-                        msg = "Sent message";
-                    } catch (IOException ex) {
-                        msg = "Error :" + ex.getMessage();
+                        try {
+                            Bundle data = new Bundle();
+                            //Get message from edit text
+                            EditText mymessage   = (EditText)findViewById(R.id.messageEditText);
+                            msg = mymessage.getText().toString();
+        
+                            messages.add(msg);
+                            receivers.add(recipient);
+                            senders.add(user.getEmail());
+                          
+                    		SimpleDateFormat dateFormat = new SimpleDateFormat(
+                    				"EEEE h:mma");
+                    		
+                    		String date = dateFormat.format(new Date());
+                    		dates.add(date);
+                            data.putString("my_message", msg);
+                            data.putString("my_action", "cs460.grouple.grouple.ECHO_NOW");
+                            //Clear edit text
+                           // mymessage.setText("");
+                            //Get friend's regID based off their email address from db
+                            //Todd's Reg ID
+                            //String recipientRegId = "APA91bFdWkh9GiaNoLJvGyFpSK3HRQy8vtlmh3OPK8FekU4aWEhZn_hwvr7LmYu_s11dQnoPmj6hKuklISIh_A2Dhyjm_cNT-K4kh5-bYhPYpp-QGbqScbwE9YCnWqyXORN2gwY3fNQx-_ex7D6i-ONaT7peHcu3Hlzbc-60amu0pTu8SD9l7xI";
+                            //Brett's Reg ID
+                            
+                            //This is where we put the recipients regID.
+                            data.putString("recipient",getRecipientRegID());
+                            String id = Integer.toString(msgId.incrementAndGet());
+                            gcm.send(SENDER_ID + "@gcm.googleapis.com", id, data);
+                            msg = "Sent message";
+                        } catch (IOException ex) {
+                            msg = "Error :" + ex.getMessage();
+                        }
+                      
+                        return msg;
                     }
-                  
-                    return msg;
-                }
 
-                @Override
-                protected void onPostExecute(String msg) {
-                	
-                	EditText mymessage   = (EditText)findViewById(R.id.messageEditText);
-                	mymessage.setText("");
-                    //add to an array of some sort
-                	//ideal to store if it is being received / sent, date, message body
-                	//assuming to start just 1 person to 1 person manually set up
-                	//repopulate messages for now
-                	//GOAL, oncreate pull all messages from server for you and the user you want to see messages of
-                	//if new messages get beamed in add them to that array with their timestamp and all and repopulate the messages
-                	//also when you send a message, add it to the array and repopulate messages
-                	populateMessages();
-                }
-            }.execute(null, null, null);
+                    @Override
+                    protected void onPostExecute(String msg) {
+                    	
+                    	EditText mymessage   = (EditText)findViewById(R.id.messageEditText);
+                    	mymessage.setText("");
+                        //add to an array of some sort
+                    	//ideal to store if it is being received / sent, date, message body
+                    	//assuming to start just 1 person to 1 person manually set up
+                    	//repopulate messages for now
+                    	//GOAL, oncreate pull all messages from server for you and the user you want to see messages of
+                    	//if new messages get beamed in add them to that array with their timestamp and all and repopulate the messages
+                    	//also when you send a message, add it to the array and repopulate messages
+                    	populateMessages();
+                    }
+                }.execute(null, null, null);
+            }
+          
+           
             
         }
     }
