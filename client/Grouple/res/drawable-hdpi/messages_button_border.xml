@@ -1,12 +1,18 @@
 
 
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:drawable="@drawable/messages_icon">
+
+  
+        <item>
 <shape android:shape="rectangle" android:padding="10dp">
-    <solid android:color="@color/button_background_color" />
-    <stroke android:width="2dip" android:color="@color/button_border_color" />
+    <solid  android:color="@color/light_green" />
+    <stroke android:width="2dip" android:color="@color/black" />
+      <padding android:bottom="30dip" android:top="5dip" android:right="5dip" android:left="5dip" />
 
  </shape>
    </item>
+       <item android:drawable="@drawable/messages_icon"
+           android:paddingTop="5dp" 
+           android:layout_marginTop="10dp"/>
 
 </layer-list>

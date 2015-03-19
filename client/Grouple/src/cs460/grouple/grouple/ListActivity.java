@@ -737,7 +737,12 @@ public class ListActivity extends ActionBarActivity
 				//users.get(id).fetchGroups();
 				///users.get(id).fetchEventsUpcoming();
 				//users.get(id).fetchFriends();
+				
 				intent = new Intent(this, MessagesActivity.class);
+				GridLayout parent = (GridLayout)view.getParent();
+				Button nameText = (Button) parent
+						.findViewById(R.id.nameButtonLI);
+				intent.putExtra("NAME", nameText.getText().toString());
 			}
 			else
 			{
