@@ -147,7 +147,9 @@ public class MessagesActivity extends ActionBarActivity
 		ab.setCustomView(R.layout.actionbar);
 		ab.setDisplayHomeAsUpEnabled(false);
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
-		actionbarTitle.setText("Messages");
+		String name = extras.getString("NAME");
+		String first = name.split(" ")[0];
+		actionbarTitle.setText(name);
 		initKillswitchListener();
 		context = getApplicationContext();
 		//onNewIntent(getIntent());
@@ -297,9 +299,9 @@ public class MessagesActivity extends ActionBarActivity
 		{
 			
 			if (receivers.get(index).equals(user.getEmail()/*our email*/))
-				row =  li.inflate(R.layout.message_row, null); //inflate this message row
+				row =  li.inflate(R.layout.message_row_out, null); //inflate this message row
 			else
-				row =  li.inflate(R.layout.message_row_out, null); //inflate the sender message row
+				row =  li.inflate(R.layout.message_row, null); //inflate the sender message row
 			
 			messageBody = (TextView) row.findViewById(R.id.messageBody);
 			messageBody.setText(m);

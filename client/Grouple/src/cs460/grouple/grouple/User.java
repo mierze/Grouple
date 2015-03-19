@@ -180,7 +180,9 @@ public class User extends Entity
 
 	public void setBirthday(String birthday)
 	{
+		System.out.println(birthday);
 		this.birthday = birthday;
+		
 		if (!birthday.equals(""))
 		{
 			SimpleDateFormat raw = new SimpleDateFormat("yyyy-M-d");
@@ -211,8 +213,13 @@ public class User extends Entity
 				ageInt = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR) - 1;
 			}
 			this.age = ageInt;
-		} else
+		} 
+		else
+		{
+			System.out.println("SETTING AGE TO -1");
 			this.age = -1;
+		}
+			
 	}
 
 	public void addToFriendRequests(User u)
@@ -521,7 +528,7 @@ public class User extends Entity
 					// set birthday (not yet implemented)
 					// for now do age
 					Object age = jsonArray.get(2);
-					if (age.toString().equals("null"))
+					if (age.toString().equals("null") || age.toString().equals("0000-00-00"))
 					{
 						setBirthday("");
 					} else

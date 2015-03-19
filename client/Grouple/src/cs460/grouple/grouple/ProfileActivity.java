@@ -625,7 +625,7 @@ public class ProfileActivity extends ActionBarActivity
 			if (age == -1)
 				infoT = location;
 			else
-				infoT = age + "yrs young\n" + location;
+				infoT = age + " yrs young\n" + location;
 			//iv.setImageBitmap(user.getImage());
 			info.setText(infoT);
 			about.setText(user.getAbout());

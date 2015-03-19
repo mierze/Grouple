@@ -328,6 +328,7 @@ public class ContactList extends ActionBarActivity
 		names.clear();
 		messages.clear();
 		images.clear();
+		IMAGE_INDEX = 0;
 		read.clear();
 		new getRecentContactsTask().execute("http://68.59.162.183/android_connect/testcontacts4.php");
 		

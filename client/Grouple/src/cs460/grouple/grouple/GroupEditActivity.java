@@ -90,13 +90,7 @@ public class GroupEditActivity extends ActionBarActivity implements
 	{
 		GLOBAL = ((Global) getApplicationContext());
 		// Resetting error text view
-		TextView errorTextView = (TextView) findViewById(R.id.errorTextViewEPA);
-		errorTextView.setVisibility(1);
-
 		group = GLOBAL.getGroupBuffer();
-		
-			
-		
 		if (group != null)
 			getGroupProfile();
 

@@ -231,24 +231,74 @@ public class ManageParticipantsActivity extends ActionBarActivity {
 			//setup for each friend
 			for(User user : members)
 			{
+				index = members.indexOf(user);
 				//TODO: add all to aded
-				GridLayout rowView;
-				rowView = (GridLayout) li.inflate(R.layout.list_row_invitefriend, null);
-				final Button makeAdminButton = (Button) rowView.findViewById(R.id.removeFriendButtonNoAccess);
-
-				final TextView friendName = (TextView) rowView.findViewById(R.id.friendNameButtonNoAccess);
-				final CheckBox cb = (CheckBox) rowView.findViewById(R.id.addToGroupBox);
+				final LayoutInflater inflater = getLayoutInflater();
+				final View view = inflater.inflate(R.layout.list_row_invitefriend, null);
+				final GridLayout rowView = (GridLayout) view.findViewById(R.id.friendGridLayoutNoAccess);
+				final Button makeAdminButton = (Button) view.findViewById(R.id.removeFriendButtonNoAccess);
+				final TextView friendNameButton = (TextView) view.findViewById(R.id.friendNameButtonNoAccess);
+				final String friendName = friendNameButton.getText().toString();
+				final CheckBox cb = (CheckBox) view.findViewById(R.id.addToGroupBox);
+				rowView.setId(index);
 				makeAdminButton.setId(index);
-				cb.setId(makeAdminButton.getId());
-				
+				cb.setId(index);
+	
 				makeAdminButton.setText(roles.get(index));
 				if (roles.get(index).equals("A"))
 					makeAdminButton.setTextColor(getResources().getColor(R.color.light_green));
 				else if (roles.get(index).equals("U"))
-					makeAdminButton.setTextColor(getResources().getColor(R.color.light_blue));
+					makeAdminButton.setTextColor(getResources().getColor(R.color.orange));
 				else if (roles.get(index).equals("P"))
 					makeAdminButton.setTextColor(getResources().getColor(R.color.purple));
 					
+				
+				rowView.setOnClickListener(new OnClickListener()
+				{
+					@Override
+					public void onClick(View view) 
+					{
+						//final Button makeAdminButton = (Button)view.getParent().findViewById(R.id.removeFriendButtonNoAccess);
+	
+						//final TextView friendNameButton = (TextView) view.findViewById(R.id.friendNameButtonNoAccess);
+						//final CheckBox cb = (CheckBox) view.findViewById(R.id.addToGroupBox);
+	
+						if (makeAdminButton.getText().toString().equals("P")) 
+						{
+							makeAdminButton.setText("A");
+							toUpdateRole.put(view.getId(), "A");
+							makeAdminButton.setTextColor(getResources().getColor(
+									R.color.light_green));
+							cb.setChecked(false);
+						} 
+						else if (makeAdminButton.getText().toString().equals("A")) 
+						{
+							makeAdminButton.setText("U");
+							toUpdateRole.put(view.getId(), "U");
+							makeAdminButton.setTextColor(getResources().getColor(
+									R.color.orange));
+							cb.setChecked(false);
+						} 
+						else if (makeAdminButton.getText().toString().equals("U")) 
+						{
+							makeAdminButton.setText("P");
+							toUpdateRole.put(view.getId(), "P");
+							makeAdminButton.setTextColor(getResources().getColor(
+									R.color.purple));
+							cb.setChecked(false);
+						}
+						else
+						{
+							makeAdminButton.setText("U");
+							toUpdateRole.put(view.getId(), "U");
+							makeAdminButton.setTextColor(getResources().getColor(
+									R.color.orange));
+							cb.setChecked(false);
+						}
+					}
+						
+				});
+				
 
 				//listener when clicking makeAdmin button
 				makeAdminButton.setOnClickListener(new OnClickListener() 
@@ -270,12 +320,20 @@ public class ManageParticipantsActivity extends ActionBarActivity {
 							makeAdminButton.setTextColor(getResources().getColor(
 									R.color.light_green));
 						}
-						else
+						else if (makeAdminButton.getText().toString().equals("A")) 
 						{
 							makeAdminButton.setText("U");
 							toUpdateRole.put(view.getId(), "U");
 							makeAdminButton.setTextColor(getResources().getColor(
-									R.color.light_green));
+									R.color.orange));
+						}
+						else
+						{
+							makeAdminButton.setText("U");
+							toUpdateRole.put(view.getId(), "U");
+							cb.setChecked(false);
+							makeAdminButton.setTextColor(getResources().getColor(
+									R.color.orange));
 						}
 						System.out.println("Setting role for user: " + toUpdate.get(view.getId()) + " to: " + toUpdateRole.get(view.getId()));
 					}
@@ -290,31 +348,30 @@ public class ManageParticipantsActivity extends ActionBarActivity {
 						
 						if (cb.isChecked())
 						{
-							String text = friendName.getLayout()
-									.getText().toString();
-						
-							View parent = (View)view.getParent();
-							Button friendNameButton = (Button) parent.findViewById(R.id.friendNameButtonNoAccess);
-							toRemove.put(view.getId(), toUpdate.get(view.getId()));
 							//REMOVING THOSE CHECKED OFF FOR DELETION
-							toUpdate.remove(view.getId());
-							System.out.println("Added size: "+toUpdate.size());
+							toUpdateRole.put(view.getId(), "-");
+							makeAdminButton.setText("-");
+							makeAdminButton.setTextColor(getResources().getColor(
+									R.color.black));
+							
+							System.out.println("REMOVING A USER");
 							System.out.println("Role size: "+toUpdateRole.size());	
 						}
 						else if (!cb.isChecked())
 						{
-							toUpdate.put(view.getId(), toRemove.get(view.getId()));
+							toUpdateRole.put(view.getId(), "U");
 							//REMOVING THOSE CHECKED OFF FOR DELETION
-							toRemove.remove(view.getId());	
+							makeAdminButton.setText("U");
+							makeAdminButton.setTextColor(getResources().getColor(
+									R.color.orange));
 							System.out.println("Added size: "+toUpdate.size());
 							System.out.println("Role size: "+toUpdateRole.size());	
 						}
 					}
 				});
 				
-				friendName.setText(user.getName());
-				friendName.setId(index);
-				friendName.setOnClickListener(null);
+				friendNameButton.setText(user.getName());
+				friendNameButton.setId(index);
 				toUpdate.put(index, user.getEmail());
 				toUpdateRole.put(index, roles.get(index));
 				rowView.setId(index);
@@ -328,7 +385,7 @@ public class ManageParticipantsActivity extends ActionBarActivity {
 			// The user has no friend's so display the sad guy image.
 			View row = li.inflate(R.layout.listitem_sadguy, null);
 			((TextView) row.findViewById(R.id.sadGuyTextView))
-				.setText("No members to manage.");
+				.setText("No participants to manage.");
 			pickFriendsLayout.addView(row);
 		}
 	}
@@ -353,20 +410,23 @@ public class ManageParticipantsActivity extends ActionBarActivity {
 			//grab the role of friend to add
 			String friendsRole = toUpdateRole.valueAt(key);
 
-			System.out.println("adding member: "+friendsEmail+", role: "+friendsRole);
-
-			//initiate add of user
-			new UpdateGroupMembersTask().execute("http://68.59.162.183/android_connect/update_event_member.php", friendsEmail, "no", friendsRole, Integer.toString(e_id));
-		}
-		size = toRemove.size();
-		for(int i = 0; i < size; i++) 
-		{
-			int key = toUpdate.keyAt(i);
-			String friendsEmail = toRemove.valueAt(key);
+			
+			if (friendsRole.equals("-"))
+			{
 			System.out.println("removing mg member: "+friendsEmail);
 			new UpdateGroupMembersTask().execute("http://68.59.162.183/"
 					+ "android_connect/update_event_member.php", friendsEmail, "yes", "M", Integer.toString(e_id));
+			}
+			else
+			{
+			System.out.println("adding member: "+friendsEmail+", role: "+friendsRole);
+			//initiate add of user
+			new UpdateGroupMembersTask().execute("http://68.59.162.183/android_connect/update_event_member.php", friendsEmail, "no", friendsRole, Integer.toString(e_id));
+			}
 		}
+
+			
+		
 		
 		//group.fetchGroupInfo();
 		event.fetchParticipants();
@@ -376,7 +436,7 @@ public class ManageParticipantsActivity extends ActionBarActivity {
 		//GLOBAL.setGroupBuffer(group);
 		
 		Context context = getApplicationContext();
-		Toast toast = Toast.makeText(context, "Event participants have been updated.", Toast.LENGTH_SHORT);
+		Toast toast = GLOBAL.getToast(context, "Event participants have been updated.");
 		toast.show();
 		
 		//remove this activity from back-loop by calling finish().

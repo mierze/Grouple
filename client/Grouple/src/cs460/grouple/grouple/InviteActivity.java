@@ -332,7 +332,7 @@ public class InviteActivity extends ActionBarActivity {
 		GLOBAL.setGroupBuffer(group);
 		
 		Context context = getApplicationContext();
-		Toast toast = Toast.makeText(context, "Friends have been invited.", Toast.LENGTH_SHORT);
+		Toast toast = GLOBAL.getToast(context, "Friends have been invited.");
 		toast.show();
 		//remove this activity from back-loop by calling finish().
 		finish();
