@@ -315,15 +315,15 @@ public class EventCreateActivity extends ActionBarActivity
 			.setNegativeButton("Ok", null).show();
 		}
 		//if empty minimum
-		else if(minimum.compareTo("") == 0)
-		{
-			new AlertDialog.Builder(this)
-			.setMessage("Please specify a Minimum size before creating.")
-			.setCancelable(true)
-			.setNegativeButton("Ok", null).show();
-		}
+		//else if(minimum.compareTo("") == 0)
+		//{
+			//new AlertDialog.Builder(this)
+		//	.setMessage("Please specify a Minimum size before creating.")
+		//	.setCancelable(true)
+		//	.setNegativeButton("Ok", null).show();
+		//}
 		//if maximum is set and it is less than minimum
-		else if(!(maximum.compareTo("") == 0) && (Integer.parseInt(maximum) < Integer.parseInt(minimum)))
+		else if(!(maximum.compareTo("") == 0) && !(minimum.compareTo("") == 0) && (Integer.parseInt(maximum) < Integer.parseInt(minimum)))
 		{
 			new AlertDialog.Builder(this)
 			.setMessage("Your Minimum size cannot be larger than your Maximum size.")

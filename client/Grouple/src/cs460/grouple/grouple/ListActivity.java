@@ -568,6 +568,7 @@ public class ListActivity extends ActionBarActivity
 			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()))
 			{
 				bufferID = parent.getId(); //PANDA
+
 				new performActionTask().execute("http://68.59.162.183/android_connect/leave_event.php", Integer.toString(bufferID));
 			}
 			break;
@@ -620,7 +621,7 @@ public class ListActivity extends ActionBarActivity
 		{	
 			//Get the id.
 			bufferID = view.getId();
-			System.out.println("ID IS SET TO" + bufferID);
+			System.out.println("ID IS SET TO IN PAST EVENT!! " + bufferID);
 			new AlertDialog.Builder(this)
 					.setMessage("Are you sure you want to leave this event?")
 					.setCancelable(true)
@@ -739,10 +740,9 @@ public class ListActivity extends ActionBarActivity
 				//users.get(id).fetchFriends();
 				
 				intent = new Intent(this, MessagesActivity.class);
-				GridLayout parent = (GridLayout)view.getParent();
-				Button nameText = (Button) parent
-						.findViewById(R.id.nameButtonLI);
-				intent.putExtra("NAME", nameText.getText().toString());
+				//View parent = (View)view.getParent();
+				//Button nameText = (Button) parent.findViewById(R.id.nameButtonLI);
+				intent.putExtra("NAME", users.get(id).getName());
 			}
 			else
 			{
@@ -828,6 +828,8 @@ public class ListActivity extends ActionBarActivity
 	    	else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
 	    	{
 	    		//nothing yet
+	    		//user.fetchEventsInvites();
+	    		user.fetchEventsPast();
 	    	}
 	    	else if (CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()))
 	    	{
@@ -928,7 +930,7 @@ public class ListActivity extends ActionBarActivity
 		protected String doInBackground(String... urls)
 		{
 			System.out.println("IN ACCEPT DECLINE NOW");
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			// Add your data
 			
 			if (CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString()) || CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
@@ -938,14 +940,15 @@ public class ListActivity extends ActionBarActivity
 			}
 			else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()) || CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
 			{
-				System.out.println("SENDER: " + urls[1]);
+				
 				//System.out.println()
 				//possibly check that all gorup invtes / events follow suit
 				nameValuePairs.add(new BasicNameValuePair("sender", urls[1]));
 				nameValuePairs.add(new BasicNameValuePair("receiver", user.getEmail()));
 			}
-			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
+			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString())|| CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
 			{
+				System.out.println("IS THIS GOING WELL!?");
 				//possibly check that all gorup invtes / events follow suit
 				nameValuePairs.add(new BasicNameValuePair("email", user.getEmail()));
 				nameValuePairs.add(new BasicNameValuePair("eid", urls[1]));
@@ -1009,6 +1012,16 @@ public class ListActivity extends ActionBarActivity
 					{
 						user.removeEventInvite(bufferID);
 						user.fetchEventsInvites();
+			
+						System.out.println("THE MESSAGE IS" + message);
+						if (!message.equals("Event invite accepted!"))
+							message = "Event invite declined!";
+					}
+					else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
+					{
+						user.removeEventPast(bufferID);
+						message = "Past event removed!";
+						user.fetchEventsPast();
 			
 						System.out.println("THE MESSAGE IS" + message);
 						if (!message.equals("Event invite accepted!"))
