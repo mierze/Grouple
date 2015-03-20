@@ -374,6 +374,9 @@ public class MessagesActivity extends ActionBarActivity
                             
                             //This is where we put the recipients regID.
                             data.putString("recipient",getRecipientRegID());
+                            //This is where we put our first and last name. That way the recipient knows who sent it.
+                            data.putString("first", user.getFirstName());
+                            data.putString("last", user.getLastName());
                             String id = Integer.toString(msgId.incrementAndGet());
                             gcm.send(SENDER_ID + "@gcm.googleapis.com", id, data);
                             msg = "Sent message";

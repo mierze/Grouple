@@ -40,6 +40,8 @@ public class GcmIntentService extends IntentService {
     private NotificationManager mNotificationManager;
     NotificationCompat.Builder builder;
     String from;
+    String first;
+    String last;
     public GcmIntentService() {
         super("GcmIntentService");
     }
@@ -49,7 +51,9 @@ public class GcmIntentService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         Bundle extras = intent.getExtras();
         String msg = extras.getString("msg");
-        from = extras.getString("sender");   
+        from = extras.getString("sender");
+        first = extras.getString("first");
+        last = extras.getString("last");
         //grab first last
         //Concatenate the msg to: Sender: message
        // msg = from+": "+msg;
@@ -101,6 +105,7 @@ public class GcmIntentService extends IntentService {
 
         //put whatever data you want to send, if any
         intent.putExtra("EMAIL", from);
+        intent.putExtra("NAME", first+" "+last);
 
         //send broadcast
         context.sendBroadcast(intent);
@@ -120,16 +125,19 @@ public class GcmIntentService extends IntentService {
         Intent notificationIntent = new Intent(getApplicationContext(), MessagesActivity.class);
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         notificationIntent.putExtra("EMAIL", from);
+        notificationIntent.putExtra("NAME", first+" "+last);
         PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(),0,notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT);
 
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
-        .setContentTitle("New Grouple Message")
+        .setContentTitle(first+" "+last)
         .setStyle(new NotificationCompat.BigTextStyle()
         //.bigText(msg))
         .bigText(msg))
         .setSmallIcon(R.drawable.grouple_icon)
         .setSound(soundUri)
         .setContentText(msg);
+		
+		mBuilder.setAutoCancel(true);
 
         mBuilder.setContentIntent(contentIntent);
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
