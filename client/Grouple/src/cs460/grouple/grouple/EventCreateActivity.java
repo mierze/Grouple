@@ -98,9 +98,9 @@ public class EventCreateActivity extends ActionBarActivity
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent e)  
 	{
-		loadDialog.show();
+		
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-	
+	    	loadDialog.show();
 	    	finish();
 	    }
 	    return true;
@@ -237,8 +237,52 @@ public class EventCreateActivity extends ActionBarActivity
 	public void selectStartDateButton(View view)
 	{
 		System.out.println("clicked on startdate");
+		//startDate is not currently set. load datepicker set to current calendar date.
+		//if(startDateEditText.getText().toString().compareTo("") ==0)
+		//{
 		new DatePickerDialog(this, myStartDateListener, year, month, day).show();
-		
+		//}
+		//load the datepicker using the date that was set in startDate
+		//else
+		//{
+		//	String tmpStartDate = startDateEditText.getText().toString();
+		//	System.out.println(tmpStartDate);
+		//	String tmpYear = tmpStartDate.substring(0,3);
+		//	String tmpMonth;
+		//	String tmpDay;
+			//month was single character
+		//	if(tmpStartDate.substring(6, 6).compareTo("-") == 0)
+		//	{
+		//		tmpMonth = tmpStartDate.substring(5,5);
+		//		System.out.println(tmpMonth);
+		//		//day was single character
+		//		if(tmpStartDate.substring(9, 9).compareTo(" ") == 0)
+		//		{
+		//			tmpDay = tmpStartDate.substring(7,7);
+		//		}
+				//day was two character
+		//		else
+		//		{
+		//			tmpDay = tmpStartDate.substring(7,8);
+		//		}
+		//	}
+			//month was two character
+	//		else
+		//	{
+			//	tmpMonth = tmpStartDate.substring(5,6);
+			//	System.out.println(tmpMonth);
+				//day was single character
+			//	if(tmpStartDate.substring(8, 8).compareTo(" ") == 0)
+			//	{
+			//		tmpDay = tmpStartDate.substring(7,7);
+		//		}
+				//day was two character
+			//	else
+				//{
+					//tmpDay = tmpStartDate.substring(7,8);
+				//}
+			//}
+		//}
 	}
 	
 	//onClick for end date button
@@ -335,7 +379,11 @@ public class EventCreateActivity extends ActionBarActivity
 		//	.setNegativeButton("Ok", null).show();
 		//}
 		//if maximum is set and it is less than minimum
-		else if(!(maximum.compareTo("") == 0) && !(minimum.compareTo("") == 0) && (Integer.parseInt(maximum) < Integer.parseInt(minimum)))
+		if (minimum.compareTo("") == 0)
+		{
+			minimum = "1";
+		}
+		if(!(maximum.compareTo("") == 0) && (Integer.parseInt(maximum) < Integer.parseInt(minimum)))
 		{
 			new AlertDialog.Builder(this)
 			.setMessage("Your Minimum size cannot be larger than your Maximum size.")
@@ -373,7 +421,7 @@ public class EventCreateActivity extends ActionBarActivity
 			//grab group name and bio from textviews
 			String eventname = eventNameEditText.getText().toString();
 			String eventbio = eventBioEditText.getText().toString();	
-			
+
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("e_name", eventname));
 			nameValuePairs.add(new BasicNameValuePair("about", eventbio));

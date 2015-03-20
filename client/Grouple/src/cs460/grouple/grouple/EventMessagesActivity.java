@@ -19,6 +19,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -63,6 +64,7 @@ public class EventMessagesActivity extends ActionBarActivity
     String regid;
     String recipientRegID = "";
 
+    
 
 	@Override
 	protected void onStop()
@@ -130,9 +132,9 @@ public class EventMessagesActivity extends ActionBarActivity
 			//else
 				
 			if (senders.get(index).equals(user.getEmail()))
-				row =  li.inflate(R.layout.message_row_out, null); //inflate the sender message row
-			else
 				row =  li.inflate(R.layout.message_row, null); //inflate the sender message row
+			else
+				row =  li.inflate(R.layout.message_row_out, null); //inflate the sender message row
 			
 			messageBody = (TextView) row.findViewById(R.id.messageBody);
 			messageBody.setText(senders.get(index).split("@")[0] + ":\t" + m);
@@ -161,9 +163,9 @@ public class EventMessagesActivity extends ActionBarActivity
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent e)  
 	{
-		loadDialog.show();
+		
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-	
+	    	loadDialog.show();
 	    	finish();
 	    }
 	    return true;
@@ -427,9 +429,21 @@ public class EventMessagesActivity extends ActionBarActivity
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_settings)
+		if (id == R.id.action_logout)
 		{
+			
+			Intent login = new Intent(this, LoginActivity.class);
+			GLOBAL.destroySession();
+			startActivity(login);
+			Intent intent = new Intent("CLOSE_ALL");
+			this.sendBroadcast(intent);
+			
 			return true;
+		}
+		if (id == R.id.action_home)
+		{
+			Intent intent = new Intent(this, HomeActivity.class);
+			startActivity(intent);
 		}
 		return super.onOptionsItemSelected(item);
 	}

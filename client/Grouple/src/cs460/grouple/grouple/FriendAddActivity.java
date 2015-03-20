@@ -199,8 +199,9 @@ public class FriendAddActivity extends ActionBarActivity
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)  {
-		loadDialog.show();
+	
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
+	    	loadDialog.show();
 	    	user.fetchFriends();
 	    	user.fetchFriendRequests();
 	    	GLOBAL.setCurrentUser(user);

@@ -753,8 +753,9 @@ public class ListActivity extends ActionBarActivity
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent e)  
 	{
-		loadDialog.show();
+		
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
+	    	loadDialog.show();
 	    	//refresh pertinent info
 	    	if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()) || CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
 	    	{

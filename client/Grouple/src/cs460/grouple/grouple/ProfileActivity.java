@@ -384,9 +384,10 @@ public class ProfileActivity extends ActionBarActivity
 		System.out.println("NOW IN SET NOTIFICATIONS");
 		if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
 		{
-			profileButton2.setVisibility(View.VISIBLE);
+			//if (group.getUsers().contains(user.getEmail()))
+				profileButton2.setVisibility(View.VISIBLE);
 			profileButton1.setText("Members\n(" + group.getNumUsers() + ")");
-			profileButton2.setText("Chat");
+			profileButton2.setText("Messages");
 			if (ROLE.equals("A"))
 				editProfileButton.setVisibility(View.VISIBLE);		
 		}
@@ -402,9 +403,10 @@ public class ProfileActivity extends ActionBarActivity
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.EVENT.toString()))
 		{
-			profileButton2.setVisibility(View.VISIBLE);
+		//	if (event.getUsers().contains(user.getEmail()))
+				profileButton2.setVisibility(View.VISIBLE);
 			profileButton1.setText("Attending (" + event.getNumUsers() + ")");	
-			profileButton2.setText("Chat");
+			profileButton2.setText("Messages");
 			if (ROLE.equals("A") && !event.getEventState().equals("Ended"))
 				editProfileButton.setVisibility(View.VISIBLE);
 		}	
@@ -509,18 +511,19 @@ public class ProfileActivity extends ActionBarActivity
 		case R.id.profileButton3:
 			//events UPCOMING
 			//join the public group
-		if (CONTENT.equals(CONTENT_TYPE.GROUP))
+		if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
 		{
 			new JoinPublicTask().execute("http://68.59.162.183/"
-					+ "android_connect/join_public_group.php", user.getEmail(), "M", Integer.toString(group.getID()));
+					+ "android_connect/join_public_group.php", user.getEmail(), "P", Integer.toString(group.getID()));
 				System.out.println("NOW ADDING TO  GROUP");	
 				noIntent = true;
+				
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.EVENT))//join the public event
 		{
 			new JoinPublicTask().execute("http://68.59.162.183/"
 		
-				+ "android_connect/join_public_event.php", user.getEmail(), "M", Integer.toString(event.getID()));
+				+ "android_connect/join_public_event.php", user.getEmail(), "P", Integer.toString(event.getID()));
 			noIntent = true;
 		}
 		else
@@ -564,12 +567,15 @@ public class ProfileActivity extends ActionBarActivity
 			startActivity(intent);
 				System.out.println("Now did intent");
 		}
+		else
+			loadDialog.hide();
 	}
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent e)  {
-		loadDialog.show();
+		
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
+	    	loadDialog.show();
 	    	//do nothing
 	    	if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
 	    	{

@@ -33,6 +33,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -130,8 +131,9 @@ public class ContactList extends ActionBarActivity
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)  {
-		loadDialog.show();
+		
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
+	    	loadDialog.show();
 	    	finish(); //preventing back-loop
 	    }
 	    return true;
@@ -220,13 +222,18 @@ public class ContactList extends ActionBarActivity
 			System.out.println("For 'contactName': "+contactName.getText().toString()+", setting 'messageBody' to: "+messages.get(index));
 			ImageView contactImage = (ImageView) row.findViewById(R.id.contactImage);
 
-			if (read.get(index) == null)
+			System.out.println("READ AT INDEX " +index+"\tis " + read.get(index));
+			/*if (read.get(index).equals("0000-00-00 00:00:00") && emails.get(index).equals(user.getEmail()))
 			{
 				System.out.println("Should be changing color here");
-				messageBody.setTextColor(getResources().getColor(R.color.orange));
+				contactName.setTextColor(getResources().getColor(R.color.purple));
+				contactName.setTypeface(null, Typeface.BOLD);
+				row.setBackgroundResource(R.drawable.top_bottom_border_new);
+				//messageBody.setTextColor(getResources().getColor(R.color.orange));
+				//messageBody.setTypeface(null, Typeface.BOLD);
 			}
 			else
-				System.out.println("Should not be changing this");
+				System.out.println("Should not be changing this message");*/
 			//add row into scrollable layout
 			messageLayout.addView(row);
 			System.out.println("Done adding row with name: "+contactName.getText().toString());
@@ -369,7 +376,7 @@ public class ContactList extends ActionBarActivity
 					// getUsers().clear();
 					// looping thru array
 					
-					System.out.println("current size of emails:"+emails.size());
+					//System.out.println("current size of emails:"+emails.size());
 					
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
@@ -379,26 +386,19 @@ public class ContactList extends ActionBarActivity
 						// function adds friend to the friends map					
 				
 						String otheremail = o.getString("sender").equals(user.getEmail()) ? o.getString("receiver") : o.getString("sender");
-						System.out.println("otheremail was set to: "+otheremail);
-						System.out.println("The current message to check is: "+o.getString("message"));
+						//System.out.println("otheremail was set to: "+otheremail);
+						//System.out.println("The current message to check is: "+o.getString("message"));
 						
 						if (!emails.contains(otheremail))
 						{
-							System.out.println("This otheremail has never been seen yet, so we will store the message");
-							System.out.println("IN THE IF BABY!!");
+							
 							emails.add(otheremail);
 							dates.add(o.getString("senddate"));
 							messages.add(o.getString("message"));
-							if (o.getString("read_date").length() > 2)
-							{
-								System.out.println("ShHOULD BE NOT NULL " + o.getString("read_date"));
+							
+								System.out.println("ADDING NEW READ_DATE FOR MESSAGE FROM  " + otheremail+ ": " + o.getString("read_date"));
 								read.add(o.getString("read_date"));
-							}
-							else 
-							{
-								System.out.println("Should bNULL HERE");
-								read.add(null);
-							}
+							
 							names.add(o.getString("first") + " " + o.getString("last"));
 							ids.add(o.getString("id"));
 						}

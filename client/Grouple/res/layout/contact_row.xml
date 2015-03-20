@@ -28,15 +28,13 @@
 	        android:contentDescription="Profile photo."
 	        android:layout_width="80dp"
 	        android:layout_margin="0dp"
-	        android:layout_marginTop="2dp"
-	        android:layout_marginBottom="2dp"
+	        android:layout_marginTop="5dp"
 	        android:padding="2dp"
 	        android:gravity="center"
-	        
 	        android:layout_height="80dp"
 	        android:background="@drawable/border"
 	        android:layout_gravity="left"
-	        android:src="@drawable/abc_ab_bottom_solid_dark_holo" />
+	        android:src="@drawable/abc_ab_bottom_solid_light_holo" />
             	    
 
             	    

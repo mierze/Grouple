@@ -391,9 +391,10 @@ int drawable shape_window_dim 0x7f020097
 int drawable thumbs_down 0x7f020098
 int drawable thumbs_up 0x7f020099
 int drawable top_bottom_border 0x7f02009a
-int drawable user_button_border 0x7f02009b
-int drawable user_icon 0x7f02009c
-int drawable user_image_default 0x7f02009d
+int drawable top_bottom_border_new 0x7f02009b
+int drawable user_button_border 0x7f02009c
+int drawable user_icon 0x7f02009d
+int drawable user_image_default 0x7f02009e
 int id ChangeEmailButton 0x7f0c00e6
 int id ChangePasswordButton 0x7f0c00e7
 int id DeleteAccountButton 0x7f0c00e8

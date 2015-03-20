@@ -171,8 +171,9 @@ public class EventsActivity extends ActionBarActivity
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)  {
-		loadDialog.show();
+		
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
+	    	loadDialog.show();
 	    	user.fetchEventsInvites();
 	    	user.fetchFriendRequests();
 	    	user.fetchGroupInvites();

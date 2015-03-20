@@ -36,9 +36,9 @@ public class RegisterActivity extends Activity
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent e)  
 	{
-		loadDialog.show();
+		
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-	
+	    	loadDialog.show();
 	    	finish();
 	    }
 	    return true;

@@ -1577,9 +1577,10 @@ containing a value of this type.
         public static final int thumbs_down=0x7f020098;
         public static final int thumbs_up=0x7f020099;
         public static final int top_bottom_border=0x7f02009a;
-        public static final int user_button_border=0x7f02009b;
-        public static final int user_icon=0x7f02009c;
-        public static final int user_image_default=0x7f02009d;
+        public static final int top_bottom_border_new=0x7f02009b;
+        public static final int user_button_border=0x7f02009c;
+        public static final int user_icon=0x7f02009d;
+        public static final int user_image_default=0x7f02009e;
     }
     public static final class id {
         public static final int ChangeEmailButton=0x7f0c00e6;
