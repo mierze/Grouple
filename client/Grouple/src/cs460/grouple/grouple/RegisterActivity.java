@@ -7,6 +7,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -30,13 +31,32 @@ public class RegisterActivity extends Activity
 {
 	private BroadcastReceiver broadcastReceiver;
 	private Global GLOBAL;
-
+	private Dialog loadDialog = null;
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent e)  
+	{
+		loadDialog.show();
+	    if (keyCode == KeyEvent.KEYCODE_BACK) {
+	
+	    	finish();
+	    }
+	    return true;
+	}
+	
+	@Override
+	protected void onStop()
+	{
+		super.onStop();
+		loadDialog.hide();
+	}
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_register);
-
+		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
+        loadDialog.setOwnerActivity(this);
 
 		initKillswitchListener();
 	}

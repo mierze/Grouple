@@ -109,22 +109,10 @@ public class HomeActivity extends ActionBarActivity
 		//grabbing the user with the given email in the extras
 		user = GLOBAL.getCurrentUser();
 		
-
-		loadDialog= new Dialog(this);
-        loadDialog.getWindow().getCurrentFocus();
-        loadDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-       // View v = li.inflate(R.layout.load, null);
-       // ImageView loadImage = (ImageView) v.findViewById(R.id.loadIconImageView);
-       // loadImage.startAnimation( 
-        	 //   AnimationUtils.loadAnimation(this, R.anim.rotate));
-        final Window window = loadDialog.getWindow();
-        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
-       // window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        loadDialog.setContentView(R.layout.load);
-        loadDialog.setCancelable(false);
+	
+		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
         loadDialog.setOwnerActivity(this);
-        loadDialog.getWindow().setDimAmount(0.7f);
+		
 		
 		
 		//set notifications
@@ -148,6 +136,8 @@ public class HomeActivity extends ActionBarActivity
 
 	public void setNotifications()
 	{
+		//NOTE: moving to GCM notifications
+		/*
 		// Home Activity
 		int numFriendRequests = user.getNumFriendRequests();
 		if (numFriendRequests > 0)
@@ -198,7 +188,9 @@ public class HomeActivity extends ActionBarActivity
 		{
 			((Button) findViewById(R.id.eventsButtonHA)).setText("Events");
 		}
+		*/
 	}
+	
 	@Override
 	protected void onDestroy()
 	{

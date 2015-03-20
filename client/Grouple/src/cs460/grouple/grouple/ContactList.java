@@ -23,6 +23,7 @@ import cs460.grouple.grouple.ProfileActivity.CONTENT_TYPE;
 
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -64,7 +65,7 @@ public class ContactList extends ActionBarActivity
 	private Global GLOBAL;
 	private int IMAGE_INDEX = 0;//holy shit
 	private User user; //will be null for now
-	
+	private Dialog loadDialog = null;
 	private ArrayList<String> ids = new ArrayList<String>();
 	private ArrayList<String> emails = new ArrayList<String>();
 	private ArrayList<String> dates = new ArrayList<String>();
@@ -88,7 +89,12 @@ public class ContactList extends ActionBarActivity
     AtomicInteger msgId = new AtomicInteger();
     Context context;
 
-
+	@Override
+	protected void onStop()
+	{
+		super.onStop();
+		loadDialog.hide();
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -108,6 +114,8 @@ public class ContactList extends ActionBarActivity
 		initKillswitchListener();
 		context = getApplicationContext();
 		fetchRecentContacts();
+		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
+        loadDialog.setOwnerActivity(this);
 		//new getContactsTask().execute("http://68.59.162.183/android_connect/get_chat_id.php");
         // Check device for Play Services APK. If check succeeds, proceed with GCM registration.
 
@@ -122,6 +130,7 @@ public class ContactList extends ActionBarActivity
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)  {
+		loadDialog.show();
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
 	    	finish(); //preventing back-loop
 	    }

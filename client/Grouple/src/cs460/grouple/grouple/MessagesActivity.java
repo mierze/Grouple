@@ -24,6 +24,7 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import cs460.grouple.grouple.User.getFriendsTask;
 
 
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -75,7 +76,7 @@ public class MessagesActivity extends ActionBarActivity
     private ArrayList<String> dates = new ArrayList<String>();
     private ArrayList<String> senders = new ArrayList<String>();
     private ArrayList<String> receivers = new ArrayList<String>();
-    
+	private Dialog loadDialog = null;
     GoogleCloudMessaging gcm;
     AtomicInteger msgId = new AtomicInteger();
     Context context;
@@ -91,7 +92,12 @@ public class MessagesActivity extends ActionBarActivity
 	}
 
 	//register your activity onResume()
-
+	@Override
+	protected void onStop()
+	{
+		super.onStop();
+		loadDialog.hide();
+	}
 
 	//Must unregister onPause()
 	@Override
@@ -149,6 +155,8 @@ public class MessagesActivity extends ActionBarActivity
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
 		String name = extras.getString("NAME");
 		String first = name.split(" ")[0];
+		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
+        loadDialog.setOwnerActivity(this);
 		actionbarTitle.setText(name);
 		initKillswitchListener();
 		context = getApplicationContext();
@@ -236,14 +244,15 @@ public class MessagesActivity extends ActionBarActivity
 	}
 
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event)  {
+	public boolean onKeyDown(int keyCode, KeyEvent e)  
+	{
+		loadDialog.show();
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-
-	    	finish(); //preventing back-loop
+	
+	    	finish();
 	    }
 	    return true;
-	   }
-	
+	}
     
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)

@@ -16,6 +16,7 @@ import org.json.JSONObject;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
@@ -42,7 +43,7 @@ public class GroupMessagesActivity extends ActionBarActivity
 	private Global GLOBAL;
 	private User user; //will be null for now
 	private Group group;
-	
+	private Dialog loadDialog = null;
     public static final String EXTRA_MESSAGE = "message";
     public static final String PROPERTY_REG_ID = "registration_id";
     private static final String PROPERTY_APP_VERSION = "appVersion";
@@ -61,7 +62,13 @@ public class GroupMessagesActivity extends ActionBarActivity
     Context context;
     String regid;
     String recipientRegID = "";
-
+    
+	@Override
+	protected void onStop()
+	{
+		super.onStop();
+		loadDialog.hide();
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -79,6 +86,8 @@ public class GroupMessagesActivity extends ActionBarActivity
 		gcm = GoogleCloudMessaging.getInstance(this);
 		GID = extras.getString("GID"); 
 		ab.setCustomView(R.layout.actionbar);
+		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
+        loadDialog.setOwnerActivity(this);
 		ab.setDisplayHomeAsUpEnabled(false);
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
 		String name = extras.getString("NAME");
@@ -149,13 +158,15 @@ public class GroupMessagesActivity extends ActionBarActivity
 	}
 	
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event)  {
+	public boolean onKeyDown(int keyCode, KeyEvent e)  
+	{
+		loadDialog.show();
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-
-	    	finish(); //preventing back-loop
+	
+	    	finish();
 	    }
 	    return true;
-	   }
+	}
 	
 	 
     //Stores the message in the database.

@@ -8,6 +8,8 @@ import java.util.concurrent.TimeoutException;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
+
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -37,6 +39,8 @@ public class FriendAddActivity extends ActionBarActivity
 	private BroadcastReceiver broadcastReceiver;
 	private User user; //current user
 	private Global GLOBAL;
+	private Dialog loadDialog = null;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -45,11 +49,20 @@ public class FriendAddActivity extends ActionBarActivity
 		setContentView(R.layout.activity_add_friend);
 		GLOBAL = ((Global) getApplicationContext());
 		user = GLOBAL.getCurrentUser();
-		
+		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
+        loadDialog.setOwnerActivity(this);
 		initActionBar();
 		// Initialize the kill switch. The kill switch will kill all open
 		// activities.
 		initKillswitchListener();
+	}
+	
+	
+	@Override
+	protected void onStop()
+	{
+		super.onStop();
+		loadDialog.hide();
 	}
 
 	public void initActionBar()
@@ -186,6 +199,7 @@ public class FriendAddActivity extends ActionBarActivity
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)  {
+		loadDialog.show();
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
 	    	user.fetchFriends();
 	    	user.fetchFriendRequests();

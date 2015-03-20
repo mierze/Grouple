@@ -23,8 +23,11 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import cs460.grouple.grouple.ListActivity.CONTENT_TYPE;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -38,6 +41,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -66,13 +70,20 @@ public class EventAddGroupsActivity extends ActionBarActivity
 	private String email = null;
 	private String e_id = null;
 	private Global GLOBAL;
-
+	private Dialog loadDialog = null;
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_event_addgroups);
 		load();	
+	}
+	
+	@Override
+	protected void onStop()
+	{
+		super.onStop();
+		loadDialog.hide();
 	}
 	
 	private void load()
@@ -85,7 +96,8 @@ public class EventAddGroupsActivity extends ActionBarActivity
 		Bundle extras = getIntent().getExtras();
 		//grab the e_id from extras
 		e_id = extras.getString("EID");
-		
+		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
+        loadDialog.setOwnerActivity(this);
 		//load our list of current groups.  key is group id -> value is group name
 		allGroups = user.getGroups();
 		if (allGroups != null)
@@ -336,6 +348,17 @@ public class EventAddGroupsActivity extends ActionBarActivity
 			startActivity(intent);
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent e)  
+	{
+		loadDialog.show();
+	    if (keyCode == KeyEvent.KEYCODE_BACK) {
+	
+	    	finish();
+	    }
+	    return true;
 	}
 	
 	public void initKillswitchListener()

@@ -13,6 +13,7 @@ import org.json.JSONObject;
 
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -24,6 +25,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -46,12 +48,23 @@ public class ManageMembersActivity extends ActionBarActivity {
 	private SparseArray<String> toUpdate = new SparseArray<String>();    //holds list of name of all friend rows to be added
 	private SparseArray<String> toUpdateRole = new SparseArray<String>();   //holds list of role of all friend rows to be added
 	//private SparseArray<String> toRemove = new SparseArray<String>();    //holds list of name of all friend rows to be added
-	
+	private Dialog loadDialog = null;
 	private ArrayList<User> members = new ArrayList<User>();   //holds list of all current friends
 	private static Global GLOBAL;
 	private static String CONTENT; //type of content to display
 	private static Bundle EXTRAS; //type of content to display
 	ArrayList<String> roles = new ArrayList<String>();
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent e)  
+	{
+		loadDialog.show();
+	    if (keyCode == KeyEvent.KEYCODE_BACK) {
+	
+	    	finish();
+	    }
+	    return true;
+	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +80,13 @@ public class ManageMembersActivity extends ActionBarActivity {
 		return true;
 	}
 
+	@Override
+	protected void onStop()
+	{
+		super.onStop();
+		loadDialog.hide();
+	}
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle action bar item clicks here. The action bar will
@@ -110,7 +130,8 @@ public class ManageMembersActivity extends ActionBarActivity {
 		//should always be current user
 		user = GLOBAL.getCurrentUser();
 		group = GLOBAL.getGroupBuffer();
-		
+		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
+        loadDialog.setOwnerActivity(this);
 		setRoles();
 		//populateManageMembers();
 		

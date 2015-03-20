@@ -28,6 +28,7 @@ import org.json.JSONObject;
 import cs460.grouple.grouple.ProfileActivity.CONTENT_TYPE;
 import android.support.v7.app.ActionBarActivity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -45,6 +46,7 @@ import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.util.Base64;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -71,11 +73,23 @@ public class GroupEditActivity extends ActionBarActivity implements
 	private ImageView iv;
 	private final static int CAMERA_DATA = 0;
 	private Bitmap bmp;
+	private Dialog loadDialog = null;
 	private Intent i;
 	private Group group;
 	private BroadcastReceiver broadcastReceiver;
 	private Global GLOBAL;
 
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent e)  
+	{
+		loadDialog.show();
+	    if (keyCode == KeyEvent.KEYCODE_BACK) {
+	
+	    	finish();
+	    }
+	    return true;
+	}
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -85,6 +99,13 @@ public class GroupEditActivity extends ActionBarActivity implements
 		
 		load();		
 	}
+	
+	@Override
+	protected void onStop()
+	{
+		super.onStop();
+		loadDialog.hide();
+	}
 
 	private void load()
 	{
@@ -93,7 +114,8 @@ public class GroupEditActivity extends ActionBarActivity implements
 		group = GLOBAL.getGroupBuffer();
 		if (group != null)
 			getGroupProfile();
-
+		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
+        loadDialog.setOwnerActivity(this);
 		initActionBar();
 		initKillswitchListener();
 	}
@@ -372,6 +394,7 @@ public class GroupEditActivity extends ActionBarActivity implements
 				//success: group profile was either successfully updated in database or no changes were necesssary
 				if (jsonObject.getString("success").toString().equals("1") || jsonObject.getString("success").toString().equals("2"))
 				{
+					//loadDialog.show();
 					// Success			
 					Context context = getApplicationContext();
 					Toast toast = GLOBAL.getToast(context, "Group profile changed successfully.");

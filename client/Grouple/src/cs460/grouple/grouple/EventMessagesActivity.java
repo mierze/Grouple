@@ -16,6 +16,7 @@ import org.json.JSONObject;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
@@ -55,7 +56,7 @@ public class EventMessagesActivity extends ActionBarActivity
     private ArrayList<String> messages = new ArrayList<String>();
     private ArrayList<String> dates = new ArrayList<String>();
     private ArrayList<String> senders = new ArrayList<String>();
-    
+	private Dialog loadDialog = null;
     GoogleCloudMessaging gcm;
     AtomicInteger msgId = new AtomicInteger();
     Context context;
@@ -63,6 +64,13 @@ public class EventMessagesActivity extends ActionBarActivity
     String recipientRegID = "";
 
 
+	@Override
+	protected void onStop()
+	{
+		super.onStop();
+		loadDialog.hide();
+	}
+    
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -86,6 +94,8 @@ public class EventMessagesActivity extends ActionBarActivity
 		actionbarTitle.setText(name);
 	//	initKillswitchListener();
 		context = getApplicationContext();
+		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
+        loadDialog.setOwnerActivity(this);
 		//onNewIntent(getIntent());
 		//Get the recipient 
 		//new getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php", recipient);
@@ -149,13 +159,15 @@ public class EventMessagesActivity extends ActionBarActivity
 	}
 	
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event)  {
+	public boolean onKeyDown(int keyCode, KeyEvent e)  
+	{
+		loadDialog.show();
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-
-	    	finish(); //preventing back-loop
+	
+	    	finish();
 	    }
 	    return true;
-	   }
+	}
 	
 	 
     //Stores the message in the database.

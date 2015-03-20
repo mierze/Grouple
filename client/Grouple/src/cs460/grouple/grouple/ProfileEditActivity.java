@@ -30,6 +30,7 @@ import org.json.JSONObject;
 import android.support.v7.app.ActionBarActivity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -76,7 +77,24 @@ public class ProfileEditActivity extends ActionBarActivity implements
 	private User user;
 	private BroadcastReceiver broadcastReceiver;
 	private Global GLOBAL;
+	private Dialog loadDialog = null;
 	private TextView birthdateTextView;
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent e)  
+	{
+		loadDialog.show();
+	    if (keyCode == KeyEvent.KEYCODE_BACK) {
+	
+	    	finish();
+	    }
+	    return true;
+	}
+	@Override
+	protected void onStop()
+	{
+		super.onStop();
+		loadDialog.hide();
+	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -97,7 +115,8 @@ public class ProfileEditActivity extends ActionBarActivity implements
 
 		Bundle extras = getIntent().getExtras();
 		user = GLOBAL.getCurrentUser();
-	
+		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
+        loadDialog.setOwnerActivity(this);
 		System.out.println("In edit ACTIVITY NOW: loading");
 		if (user != null)
 			getProfile();

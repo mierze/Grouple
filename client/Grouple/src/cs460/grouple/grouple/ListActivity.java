@@ -111,29 +111,8 @@ public class ListActivity extends ActionBarActivity
 		addNew = (Button)findViewById(R.id.addNewButtonLiA);
 		addNew.setVisibility(View.GONE); //GONE FOR NOW
 		
-		
-		//LOAD DIALOG INITIALIZING
-		if ((loadDialog == null) || (!loadDialog.isShowing())) 
-		{
-	        loadDialog= new Dialog(this);
-	        loadDialog.getWindow().getCurrentFocus();
-	        loadDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-	        View v = li.inflate(R.layout.load, null);
-	        ImageView loadImage = (ImageView) v.findViewById(R.id.loadIconImageView);
-	        loadImage.startAnimation( 
-	        	    AnimationUtils.loadAnimation(this, R.anim.rotate));
-	        final Window window = loadDialog.getWindow();
-	        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
-	       // window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-	        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-	        loadDialog.setContentView(R.layout.load);
-	        loadDialog.setCancelable(false);
-	        loadDialog.setOwnerActivity(this);
-	        loadDialog.getWindow().setDimAmount(0.7f);
-	      //  WindowManager.LayoutParams lp = dialog.getWindow().getAttributes();  
-	       // lp.dimAmount=0.0f; // Dim level. 0.0 - no dim, 1.0 - completely opaque
-	       // dialog.getWindow().setAttributes(lp);
-		}
+		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
+        loadDialog.setOwnerActivity(this);
 			
 		//GRABBING A USER
 		if (EXTRAS.getString("EMAIL") != null)

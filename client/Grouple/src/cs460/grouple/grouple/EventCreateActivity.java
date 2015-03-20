@@ -28,6 +28,7 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -42,6 +43,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -85,7 +87,7 @@ public class EventCreateActivity extends ActionBarActivity
 	private AlertDialog toBringDialog;
 	private Button addToBringRowButton;
 	private View toBringLayout;
-	
+	private Dialog loadDialog = null;
 	
 	private DatePicker datePicker;
 	private Calendar calendar;
@@ -93,7 +95,16 @@ public class EventCreateActivity extends ActionBarActivity
 	private int year, month, day, hour, minute;
 	private Global GLOBAL;
 
-
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent e)  
+	{
+		loadDialog.show();
+	    if (keyCode == KeyEvent.KEYCODE_BACK) {
+	
+	    	finish();
+	    }
+	    return true;
+	}
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -119,7 +130,8 @@ public class EventCreateActivity extends ActionBarActivity
 		//grab the email of current users from our GLOBAL class
 		user =  GLOBAL.getCurrentUser();
 		email = user.getEmail();
-
+		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
+        loadDialog.setOwnerActivity(this);
 		initActionBar();
 		initKillswitchListener();
 	}

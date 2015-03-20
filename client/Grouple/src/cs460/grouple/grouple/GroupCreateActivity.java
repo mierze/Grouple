@@ -23,6 +23,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -36,6 +37,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -64,6 +66,7 @@ public class GroupCreateActivity extends ActionBarActivity
 	private ArrayList<User> allFriends = new ArrayList<User>();   //holds list of all current friends
 	private User user;
 	private String email = null;
+	private Dialog loadDialog = null;
 	private String g_id = null;
 	private Global GLOBAL;
 
@@ -76,6 +79,24 @@ public class GroupCreateActivity extends ActionBarActivity
 		load();	
 	}
 	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent e)  
+	{
+		loadDialog.show();
+	    if (keyCode == KeyEvent.KEYCODE_BACK) {
+	
+	    	finish();
+	    }
+	    return true;
+	}
+	
+	@Override
+	protected void onStop()
+	{
+		super.onStop();
+		loadDialog.hide();
+	}
+	
 	private void load()
 	{
 		GLOBAL = ((Global) getApplicationContext());
@@ -83,7 +104,8 @@ public class GroupCreateActivity extends ActionBarActivity
 		user = GLOBAL.getCurrentUser();
 		email = user.getEmail();
 		
-	
+		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
+        loadDialog.setOwnerActivity(this);
 		
 		//load our list of current friends.  key is friend email -> value is full names
 		allFriends = user.getUsers();
@@ -588,8 +610,6 @@ public class GroupCreateActivity extends ActionBarActivity
 		if (id == R.id.action_home)
 		{
 			Intent intent = new Intent(this, HomeActivity.class);
-			intent.putExtra("up", "false");
-			intent.putExtra("ParentClassName", "GroupCreateActivity");
 			startActivity(intent);
 		}
 		return super.onOptionsItemSelected(item);

@@ -12,6 +12,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +23,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,6 +49,18 @@ public class InviteActivity extends ActionBarActivity {
 	private static Global GLOBAL;
 	private static String CONTENT; //type of content to display
 	private static Bundle EXTRAS; //type of content to display
+	private Dialog loadDialog = null;
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent e)  
+	{
+		loadDialog.show();
+	    if (keyCode == KeyEvent.KEYCODE_BACK) {
+	
+	    	finish();
+	    }
+	    return true;
+	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +75,13 @@ public class InviteActivity extends ActionBarActivity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.navigation_actions, menu);
 		return true;
+	}
+	
+	@Override
+	protected void onStop()
+	{
+		super.onStop();
+		loadDialog.hide();
 	}
 
 	@Override
@@ -106,7 +127,8 @@ public class InviteActivity extends ActionBarActivity {
 		//should always be current user
 		user = GLOBAL.getCurrentUser();
 		group = GLOBAL.getGroupBuffer();
-		
+		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
+        loadDialog.setOwnerActivity(this);
 		populateInviteMembers();
 		
 		initActionBar();

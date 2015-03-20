@@ -3,6 +3,7 @@ package cs460.grouple.grouple;
 import org.json.JSONObject;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -32,6 +33,7 @@ public class LoginActivity extends Activity
 	private ProgressBar progBar;
 	private TextView loginFail;
 	private Global GLOBAL;// = 
+	private Dialog loadDialog = null;
 	boolean tokenFlag;
 	SharedPreferences prefs;
 	CheckBox rememberLogin;
@@ -44,6 +46,8 @@ public class LoginActivity extends Activity
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		String token = prefs.getString("session_token", null);
 		String email = prefs.getString("session_email", null);
+		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
+        loadDialog.setOwnerActivity(this);
 		if(token !=null && email != null)
 		{
 			System.out.println("token was found... initiating login with email: "+email + ", token: "+token);
@@ -73,6 +77,13 @@ public class LoginActivity extends Activity
 			Log.d("app666", "we created");
 			initKillswitchListener();
 		}	
+	}
+	
+	@Override
+	protected void onStop()
+	{
+		super.onStop();
+		loadDialog.hide();
 	}
 
 	@Override
