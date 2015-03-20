@@ -245,6 +245,14 @@
             android:name=".ContactList"
             android:label="@string/title_activity_contact_list" >
         </activity>
+        <activity
+            android:name=".GroupMessagesActivity"
+            android:label="@string/title_activity_group_messages" >
+        </activity>
+        <activity
+            android:name=".EventMessagesActivity"
+            android:label="@string/title_activity_event_messaging" >
+        </activity>
     </application>
 
 </manifest>

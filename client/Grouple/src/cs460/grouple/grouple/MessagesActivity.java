@@ -164,7 +164,7 @@ public class MessagesActivity extends ActionBarActivity
         super.onResume();
 	    context .registerReceiver(mMessageReceiver, new IntentFilter("NEW_MESSAGE"));
 		//new getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php", recipient);
-		//fetchMessages(); 
+		fetchMessages(); 
     }
 	
     

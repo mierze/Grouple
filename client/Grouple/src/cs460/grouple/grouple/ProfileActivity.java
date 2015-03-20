@@ -241,10 +241,15 @@ public class ProfileActivity extends ActionBarActivity
 			{
 				if (CONTENT.equals(CONTENT_TYPE.EVENT.toString()) && event.getEventState().equals("Ended"))
 				{}//do nothing, else it is public and joinable
+				else if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
+				{
+					profileButton3.setVisibility(View.VISIBLE);
+					profileButton3.setText(pro2Text);
+				}
 				else
 				{
-					profileButton2.setVisibility(View.VISIBLE);
-					profileButton2.setText(pro2Text);
+					profileButton3.setVisibility(View.VISIBLE);
+					profileButton3.setText(pro2Text);
 				}
 			}
 			setNotifications();//call here since not checking role first
@@ -394,7 +399,9 @@ public class ProfileActivity extends ActionBarActivity
 		System.out.println("NOW IN SET NOTIFICATIONS");
 		if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
 		{
+			profileButton2.setVisibility(View.VISIBLE);
 			profileButton1.setText("Members\n(" + group.getNumUsers() + ")");
+			profileButton2.setText("Chat");
 			if (ROLE.equals("A"))
 				editProfileButton.setVisibility(View.VISIBLE);		
 		}
@@ -410,7 +417,9 @@ public class ProfileActivity extends ActionBarActivity
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.EVENT.toString()))
 		{
+			profileButton2.setVisibility(View.VISIBLE);
 			profileButton1.setText("Attending (" + event.getNumUsers() + ")");	
+			profileButton2.setText("Chat");
 			if (ROLE.equals("A") && !event.getEventState().equals("Ended"))
 				editProfileButton.setVisibility(View.VISIBLE);
 		}	
@@ -503,24 +512,37 @@ public class ProfileActivity extends ActionBarActivity
 			}
 			else if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
 			{
-				//join the public group
-				new JoinPublicTask().execute("http://68.59.162.183/"
-						+ "android_connect/join_public_group.php", user.getEmail(), "M", Integer.toString(group.getID()));
-					System.out.println("NOW ADDING TO  GROUP");	
-					noIntent = true;
+				intent = new Intent(this, GroupMessagesActivity.class);
+				intent.putExtra("NAME",group.getName());
 			}
 			else
 			{
-				//join the public event
-				new JoinPublicTask().execute("http://68.59.162.183/"
-						+ "android_connect/join_public_event.php", user.getEmail(), "M", Integer.toString(event.getID()));
-					noIntent = true;
+				intent = new Intent(this, EventMessagesActivity.class);
+				intent.putExtra("NAME",event.getName());
 			}
 			break;
 		case R.id.profileButton3:
 			//events UPCOMING
+			//join the public group
+		if (CONTENT.equals(CONTENT_TYPE.GROUP))
+		{
+			new JoinPublicTask().execute("http://68.59.162.183/"
+					+ "android_connect/join_public_group.php", user.getEmail(), "M", Integer.toString(group.getID()));
+				System.out.println("NOW ADDING TO  GROUP");	
+				noIntent = true;
+		}
+		else if (CONTENT.equals(CONTENT_TYPE.EVENT))//join the public event
+		{
+			new JoinPublicTask().execute("http://68.59.162.183/"
+		
+				+ "android_connect/join_public_event.php", user.getEmail(), "M", Integer.toString(event.getID()));
+			noIntent = true;
+		}
+		else
+		{
 			user.fetchEventsUpcoming();
 			intent.putExtra("CONTENT", "EVENTS_UPCOMING");
+		}
 			break;
 		case R.id.profileEditButton:
 			if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))

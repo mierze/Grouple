@@ -358,15 +358,9 @@ new AlertDialog.Builder(this)
 .setNegativeButton("Ok", null).show();
 }
 //if empty minimum
-else if(minimum.compareTo("") == 0)
-{
-new AlertDialog.Builder(this)
-.setMessage("You must specify a Minimum Size for your event.")
-.setCancelable(true)
-.setNegativeButton("Ok", null).show();
-}
+
 //if maximum is set and it is less than minimum
-else if(!(maximum.compareTo("") == 0) && (Integer.parseInt(maximum) < Integer.parseInt(minimum)))
+else if(!(maximum.compareTo("") == 0) && !(maximum.compareTo("") == 0)  && (Integer.parseInt(maximum) < Integer.parseInt(minimum)))
 {
 new AlertDialog.Builder(this)
 .setMessage("Your Minimum size cannot be larger than your Maximum size.")

@@ -343,7 +343,7 @@ public class EventCreateActivity extends ActionBarActivity
 				{
 					//initiate creation of event
 					new CreateEventTask().execute("http://68.59.162.183/"
-					+ "android_connect/create_event2.php");
+					+ "android_connect/create_event.php");
 				}
 			}).setNegativeButton("Cancel", null).show();
 		}
