@@ -51,7 +51,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -95,7 +94,7 @@ public class EventAddGroupsActivity extends ActionBarActivity
 		
 		Bundle extras = getIntent().getExtras();
 		//grab the e_id from extras
-		e_id = extras.getString("EID");
+		e_id = Integer.toString(extras.getInt("EID"));
 		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
         loadDialog.setOwnerActivity(this);
 		//load our list of current groups.  key is group id -> value is group name
@@ -119,19 +118,18 @@ public class EventAddGroupsActivity extends ActionBarActivity
 	
 	private void populateGroupCreate()
 	{
+		View row;
 		// begin building the interface
-		LayoutInflater inflater = getLayoutInflater();
+		LayoutInflater li = getLayoutInflater();
 		LinearLayout membersToAdd = (LinearLayout) findViewById(R.id.linearLayoutNested_eventAddGroups);
 		
-		if(allGroups.size() == 0)
+		if(allGroups.isEmpty())
 		{
-			View row = inflater.inflate(
-					R.layout.list_row_eventinvitegroup, null);
-
-			((Button) row.findViewById(R.id.groupNameButtonNoAccess))
-					.setText("You don't have any groups to add yet!");
-			row.findViewById(R.id.groupNameButtonNoAccess)
-					.setVisibility(1);
+			// user has no friends
+			// The user has no friend's so display the sad guy image.
+			row = li.inflate(R.layout.listitem_sadguy, null);
+			((TextView) row.findViewById(R.id.sadGuyTextView))
+				.setText("You don't have any groups to add yet!");
 			membersToAdd.addView(row);
 		}
 		
@@ -139,13 +137,13 @@ public class EventAddGroupsActivity extends ActionBarActivity
 		//setup for each group
 		for(int i=0; i<allGroups.size(); i++)
 		{
-			GridLayout rowView;
-			rowView = (GridLayout) inflater.inflate(
+		
+			row = li.inflate(
 					R.layout.list_row_eventinvitegroup, null);
 
-			final Button groupNameButton = (Button) rowView
+			final Button groupNameButton = (Button) row
 					.findViewById(R.id.groupNameButtonNoAccess);
-			final CheckBox cb = (CheckBox) rowView
+			final CheckBox cb = (CheckBox) row
 					.findViewById(R.id.addToEventBox);
 			cb.setId(i);
 					
@@ -173,8 +171,8 @@ public class EventAddGroupsActivity extends ActionBarActivity
 			
 			groupNameButton.setText(allGroups.get(i).getName());
 			groupNameButton.setId(i);
-			rowView.setId(i);
-			membersToAdd.addView(rowView);	
+			row.setId(i);
+			membersToAdd.addView(row);	
 		}
 	}
 	

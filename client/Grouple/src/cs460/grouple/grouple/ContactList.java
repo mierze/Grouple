@@ -268,8 +268,6 @@ public class ContactList extends ActionBarActivity
 					ImageView iv = images.get(IMAGE_INDEX);
 					IMAGE_INDEX++;
 					String image = jsonObject.getString("image").toString();
-	
-					
 					Bitmap bmp = null;
 					//jsonArray.getString("image");
 				

@@ -32,7 +32,6 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -116,9 +115,7 @@ public class InviteActivity extends ActionBarActivity {
 		super.onDestroy();
 	}
 
-	
-	
-	////////////////////////////////////////////////////////////////////////////////////////
+
 	private void load()
 	{
 		GLOBAL = (Global)getApplicationContext();
@@ -177,7 +174,7 @@ public class InviteActivity extends ActionBarActivity {
 	private void populateInviteMembers()
 	{
 		//could use content here
-		
+		View row;
 		LinearLayout pickFriendsLayout = (LinearLayout) findViewById(R.id.pickFriendsLayout);
 		ArrayList<User> members;
 		LayoutInflater li = getLayoutInflater();
@@ -208,16 +205,14 @@ public class InviteActivity extends ActionBarActivity {
 			//setup for each friend
 			for(User user : users)
 			{
-				
-				GridLayout rowView;
-				rowView = (GridLayout) li.inflate(
+				row = li.inflate(
 						R.layout.list_row_invitefriend, null);
-				final Button makeAdminButton = (Button) rowView
+				final Button makeAdminButton = (Button) row
 						.findViewById(R.id.removeFriendButtonNoAccess);
 
-				final TextView friendName = (TextView) rowView
+				final TextView friendName = (TextView) row
 						.findViewById(R.id.friendNameButtonNoAccess);
-				final CheckBox cb = (CheckBox) rowView
+				final CheckBox cb = (CheckBox) row
 						.findViewById(R.id.addToGroupBox);
 				makeAdminButton.setId(index);
 				cb.setId(makeAdminButton.getId());
@@ -291,8 +286,8 @@ public class InviteActivity extends ActionBarActivity {
 				
 				friendName.setText(user.getName());
 				friendName.setId(index);
-				rowView.setId(index);
-				pickFriendsLayout.addView(rowView);	
+				row.setId(index);
+				pickFriendsLayout.addView(row);	
 				index++;
 			}
 		}
@@ -300,7 +295,7 @@ public class InviteActivity extends ActionBarActivity {
 		{		
 			// user has no friends
 			// The user has no friend's so display the sad guy image.
-			View row = li.inflate(R.layout.listitem_sadguy, null);
+			row = li.inflate(R.layout.listitem_sadguy, null);
 			((TextView) row.findViewById(R.id.sadGuyTextView))
 				.setText("All of your friends are already in this group.");
 			pickFriendsLayout.addView(row);

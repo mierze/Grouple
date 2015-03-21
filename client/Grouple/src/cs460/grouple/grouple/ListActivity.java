@@ -232,18 +232,18 @@ public class ListActivity extends ActionBarActivity
 				{
 					if (GLOBAL.isCurrentUser(user.getEmail()))
 					{
-						row = (GridLayout) li.inflate(R.layout.list_row, null);
+						row = li.inflate(R.layout.list_row, null);
 						Button leaveGroupButton = (Button)row.findViewById(R.id.removeButtonLI);
 						leaveGroupButton.setId(g.getID());
 					}
 					else
-						row = (GridLayout) li.inflate(R.layout.list_row_nobutton, null);
+						row = li.inflate(R.layout.list_row_nobutton, null);
 					
 					nameButton =  (Button)row.findViewById(R.id.nameButtonLI);
 				}
 				else //GROUP INVITES
 				{
-					row = (GridLayout) li.inflate(R.layout.list_row_acceptdecline, null);
+					row = li.inflate(R.layout.list_row_acceptdecline, null);
 					nameButton =  (Button)row.findViewById(R.id.nameButtonAD);
 				}
 				row.setId(id);
@@ -309,12 +309,10 @@ public class ListActivity extends ActionBarActivity
 			{
 				index = users.indexOf(u);
 				email = u.getEmail();
-				System.out.println("IN USERS POP : emaiL: " + email);
-
 				if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()) && GLOBAL.isCurrentUser(user.getEmail()) && !CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()))
 				{
 					nameText = u.getName();
-					row = (GridLayout) li.inflate(R.layout.list_row, null);
+					row = li.inflate(R.layout.list_row, null);
 					nameButton = (Button) row.findViewById(R.id.nameButtonLI);
 					Button removeFriendButton = (Button) row.findViewById(R.id.removeButtonLI);
 					removeFriendButton.setId(index);	 
@@ -322,8 +320,7 @@ public class ListActivity extends ActionBarActivity
 				//FOR FRIEND REQUESTS
 				else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
 				{	
-					System.out.println("SHOULD BE IN THIS NOW");
-					row = (GridLayout) li.inflate(R.layout.list_row_acceptdecline, null);
+					row = li.inflate(R.layout.list_row_acceptdecline, null);
 					nameButton = (Button) row.findViewById(R.id.nameButtonAD);
 					nameText = email;
 				}
@@ -331,7 +328,7 @@ public class ListActivity extends ActionBarActivity
 				else
 				{
 					nameText = u.getName();
-					row = (GridLayout) li.inflate(R.layout.list_row_nobutton, null);
+					row = li.inflate(R.layout.list_row_nobutton, null);
 					nameButton = (Button) row.findViewById(R.id.nameButtonLI);
 				}
 				nameButton.setText(nameText);
@@ -400,12 +397,12 @@ public class ListActivity extends ActionBarActivity
 					System.out.println("IN FIRST EVENT IF");
 					if (GLOBAL.isCurrentUser(user.getEmail()))
 					{
-						row = (GridLayout) li.inflate(R.layout.list_row, null);	
+						row = li.inflate(R.layout.list_row, null);	
 						removeEventButton = (Button) row.findViewById(R.id.removeButtonLI);
 						removeEventButton.setId(id);		
 					}
 					else //user does not have ability to remove events
-						row = (GridLayout) li.inflate(R.layout.list_row_nobutton, null);
+						row = li.inflate(R.layout.list_row_nobutton, null);
 					
 					nameButton =  (Button)row.findViewById(R.id.nameButtonLI);
 
@@ -416,7 +413,7 @@ public class ListActivity extends ActionBarActivity
 				}
 				else
 				{
-					row = (GridLayout) li.inflate(R.layout.list_row_acceptdecline, null);
+					row = li.inflate(R.layout.list_row_acceptdecline, null);
 					nameButton =  (Button)row.findViewById(R.id.nameButtonAD);
 					nameButton.setText(e.getName() + "\n(" + e.getNumUsers() + " confirmed / " + e.getMinPart() + " required)");
 				}
@@ -432,11 +429,11 @@ public class ListActivity extends ActionBarActivity
 		else
 		{
 			//no group requests were found
-			GridLayout sadGuy = (GridLayout) li.inflate(R.layout.listitem_sadguy, null);
-			TextView sadTextView = (TextView) sadGuy.findViewById(R.id.sadGuyTextView);
+			row = li.inflate(R.layout.listitem_sadguy, null);
+			TextView sadTextView = (TextView) row.findViewById(R.id.sadGuyTextView);
 			//Set the sad guy text.
 			sadTextView.setText(sadGuyText);
-			listLayout.addView(sadGuy);
+			listLayout.addView(row);
 		}	
 	}
 			
@@ -528,7 +525,7 @@ public class ListActivity extends ActionBarActivity
 	 */
 	public void onClick(View view)
 	{
-		GridLayout parent = (GridLayout)view.getParent();
+		View parent = (View)view.getParent();
 		Button nameText = (Button) parent
 				.findViewById(R.id.nameButtonAD);
 		switch (view.getId())
@@ -650,8 +647,6 @@ public class ListActivity extends ActionBarActivity
 		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()))
 		{
 			intent = new Intent(this, EventAddGroupsActivity.class);
-			intent.putExtra("EID", Integer.toString(event.getID()));
-			System.out.println("Setting EID to " + event.getID());
 			GLOBAL.getCurrentUser().fetchGroups();
 		}
 		if (user != null)

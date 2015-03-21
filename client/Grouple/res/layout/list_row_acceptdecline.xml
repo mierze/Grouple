@@ -1,24 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/friendRequestGridLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="horizontal"
     android:background="@drawable/top_bottom_border"
-    android:columnCount="3"
-    android:rowCount="1" >
+     >
 
     <Button
         android:id="@+id/nameButtonAD"
-        android:layout_column="0"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:onClick="startProfileActivity"
         android:background="@android:color/transparent"
         android:textColor="@color/text_color"
        	android:fontFamily="sans-serif-condensed"
-        android:layout_row="0"
         android:textStyle="bold"
         android:gravity="center_vertical"
-        android:layout_width="200dp"
+        android:layout_width="wrap_content"
+        android:layout_weight="3"
         android:paddingLeft="10dp"
         android:layout_marginTop="0dp"
         android:paddingRight="10dp"
@@ -29,15 +28,16 @@
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_column="2"
         android:layout_gravity="right|center_vertical"
         android:layout_margin="5dp"
         android:layout_marginLeft="10dp"
-        android:layout_row="0"
+        android:layout_weight="1"
         android:background="@drawable/decline_button_border"
         android:fontFamily="sans-serif-condensed"
         android:onClick="onClick"
         android:padding="10dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
         android:text="Decline"
         android:textColor="@color/button_text_color" />
 
@@ -46,16 +46,17 @@
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_column="2"
+        android:layout_weight="1"
         android:layout_gravity="right|center_vertical"
         android:layout_margin="5dp"
-        android:layout_marginRight="70dp"
         android:layout_row="0"
         android:background="@drawable/accept_button_border"
         android:fontFamily="sans-serif-condensed"
         android:onClick="onClick"
         android:padding="10dp"
+                android:paddingLeft="15dp"
+        android:paddingRight="15dp"
         android:text="Accept"
         android:textColor="@color/button_text_color" />
 
-</GridLayout>
+</LinearLayout>
