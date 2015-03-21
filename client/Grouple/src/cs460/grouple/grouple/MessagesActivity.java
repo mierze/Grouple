@@ -243,52 +243,52 @@ public class MessagesActivity extends ActionBarActivity
 	}
 
 	 /*
-		 * 
-		 * will be fetching the friends key->val stuff here
-		 */
-		// Get numFriends, TODO: work on returning the integer
-		public int readMessages()
+	 * 
+	 * will be fetching the friends key->val stuff here
+	 */
+	// Get numFriends, TODO: work on returning the integer
+	public int readMessages()
+	{
+		new readMessagesTask().execute("http://68.59.162.183/android_connect/update_messageread_date.php");
+		
+		return 1;
+	}
+
+	class readMessagesTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected String doInBackground(String... urls)
 		{
-			new readMessagesTask().execute("http://68.59.162.183/android_connect/update_messageread_date.php");
-			
-			return 1;
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("sender", recipient));
+			nameValuePairs.add(new BasicNameValuePair("receiver", user.getEmail()));
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
 
-		class readMessagesTask extends AsyncTask<String, Void, String>
+		@Override
+		protected void onPostExecute(String result)
 		{
-			@Override
-			protected String doInBackground(String... urls)
+			try
 			{
-				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-				nameValuePairs.add(new BasicNameValuePair("sender", recipient));
-				nameValuePairs.add(new BasicNameValuePair("receiver", user.getEmail()));
-				return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
-			}
-
-			@Override
-			protected void onPostExecute(String result)
-			{
-				try
+				JSONObject jsonObject = new JSONObject(result);
+				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					JSONObject jsonObject = new JSONObject(result);
-					if (jsonObject.getString("success").toString().equals("1"))
-					{
-						System.out.println("WE HAD SUCCESS IN READ MESSAGES!");
-					}
-					// user has no friends
-					if (jsonObject.getString("success").toString().equals("2"))
-					{
-						Log.d("fetchFriends", "failed = 2 return");
-						// setNumFriends(0); //PANDA need to set the user class not
-						// global
-					}
-				} catch (Exception e)
-				{
-					Log.d("fetchFriends", "exception caught");
-					Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+					System.out.println("WE HAD SUCCESS IN READ MESSAGES!");
 				}
+				// user has no friends
+				if (jsonObject.getString("success").toString().equals("2"))
+				{
+					Log.d("fetchFriends", "failed = 2 return");
+					// setNumFriends(0); //PANDA need to set the user class not
+					// global
+				}
+			} catch (Exception e)
+			{
+				Log.d("fetchFriends", "exception caught");
+				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
 			}
 		}
+	}
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent e)  

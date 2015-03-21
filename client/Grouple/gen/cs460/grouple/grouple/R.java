@@ -1833,11 +1833,11 @@ containing a value of this type.
         public static final int tabMode=0x7f0c001e;
         public static final int terrain=0x7f0c000c;
         public static final int title=0x7f0c0040;
-        public static final int toBringAddRowButton=0x7f0c0108;
+        public static final int toBringAddRowButton=0x7f0c0107;
         public static final int toBringButton=0x7f0c0082;
+        public static final int toBringEditText=0x7f0c0109;
         public static final int toBringInnerLayout=0x7f0c0106;
-        public static final int toBringItem1=0x7f0c0107;
-        public static final int toBringSaveButton=0x7f0c0109;
+        public static final int toBringSaveButton=0x7f0c0108;
         public static final int topRowNavLayoutHA=0x7f0c00ad;
         public static final int top_action_bar=0x7f0c0035;
         public static final int up=0x7f0c0036;

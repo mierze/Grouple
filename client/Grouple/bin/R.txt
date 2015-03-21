@@ -645,11 +645,11 @@ int id submit_area 0x7f0c004e
 int id tabMode 0x7f0c001e
 int id terrain 0x7f0c000c
 int id title 0x7f0c0040
-int id toBringAddRowButton 0x7f0c0108
+int id toBringAddRowButton 0x7f0c0107
 int id toBringButton 0x7f0c0082
+int id toBringEditText 0x7f0c0109
 int id toBringInnerLayout 0x7f0c0106
-int id toBringItem1 0x7f0c0107
-int id toBringSaveButton 0x7f0c0109
+int id toBringSaveButton 0x7f0c0108
 int id topRowNavLayoutHA 0x7f0c00ad
 int id top_action_bar 0x7f0c0035
 int id up 0x7f0c0036

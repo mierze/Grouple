@@ -7,7 +7,7 @@
     android:padding="0dp">
 
         <EditText
-            android:id="@+id/toBringItem1"
+            android:id="@+id/toBringEditText"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
