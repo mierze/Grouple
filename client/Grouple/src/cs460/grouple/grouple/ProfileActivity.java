@@ -67,8 +67,6 @@ public class ProfileActivity extends ActionBarActivity
 	private Button editProfileButton;
 	private Dialog loadDialog = null;
 	
-	
-	
 	@Override
 	protected void onStart()
 	{
@@ -499,12 +497,14 @@ public class ProfileActivity extends ActionBarActivity
 			}
 			else if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
 			{
-				intent = new Intent(this, GroupMessagesActivity.class);
+				intent = new Intent(this, EntityMessagesActivity.class);
+				intent.putExtra("CONTENT_TYPE", "GROUP");
 				intent.putExtra("NAME",group.getName());
 			}
 			else
 			{
-				intent = new Intent(this, EventMessagesActivity.class);
+				intent = new Intent(this, EntityMessagesActivity.class);
+				intent.putExtra("CONTENT_TYPE", "EVENT");
 				intent.putExtra("NAME",event.getName());
 			}
 			break;

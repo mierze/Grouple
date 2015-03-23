@@ -67,28 +67,8 @@ import android.widget.TimePicker;
 public class EventCreateActivity extends ActionBarActivity
 {
 	private BroadcastReceiver broadcastReceiver;
-	private SparseArray<String> added = new SparseArray<String>(); // holds list
-																	// of name
-																	// of all
-																	// friend
-																	// rows to
-																	// be added
-	private SparseArray<Boolean> role = new SparseArray<Boolean>(); // holds
-																	// list of
-																	// role of
-																	// all
-																	// friend
-																	// rows to
-																	// be added
-	private Map<String, String> allFriends = new HashMap<String, String>(); // holds
-																			// list
-																			// of
-																			// all
-																			// current
-																			// friends
 	private User user;
-	private String email = null;
-	private String e_id = null;
+	private String ID;
 	private String startDate = "";
 	private String endDate = "";
 	private String minimum = "";
@@ -104,13 +84,13 @@ public class EventCreateActivity extends ActionBarActivity
 	private Button addToBringRowButton;
 	private Button toBringButton;
 	private View toBringLayout;
-	private Dialog loadDialog = null;
-	private ArrayList<String> toBringList = new ArrayList<String>();
+	private Dialog loadDialog;
 	private DatePicker datePicker;
 	private Calendar currentCal;
 	private Calendar startCal;
 	private Calendar endCal;
 	private TextView dateView;
+	private LayoutInflater inflater;
 	private final ArrayList<EditText> toBringEditTexts = new ArrayList<EditText>();
 	private int year, month, day, hour, minute;
 	private Global GLOBAL;
@@ -130,11 +110,8 @@ public class EventCreateActivity extends ActionBarActivity
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-
 		setContentView(R.layout.activity_event_create);
-
 		load();
-
 	}
 
 	private void load()
@@ -152,7 +129,6 @@ public class EventCreateActivity extends ActionBarActivity
 		endDateEditText = (EditText) findViewById(R.id.endTimeButton);
 		// grab the email of current users from our GLOBAL class
 		user = GLOBAL.getCurrentUser();
-		email = user.getEmail();
 		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
 		loadDialog.setOwnerActivity(this);
 		initActionBar();
@@ -183,8 +159,7 @@ public class EventCreateActivity extends ActionBarActivity
 		// Creating and Building the Dialog
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Add Items To Bring");
-		final LayoutInflater inflater = EventCreateActivity.this
-				.getLayoutInflater();
+		inflater = EventCreateActivity.this.getLayoutInflater();
 		toBringLayout = inflater.inflate(R.layout.tobring_dialog, null);
 		final LinearLayout layout = (LinearLayout) toBringLayout
 				.findViewById(R.id.toBringInnerLayout);
@@ -492,7 +467,7 @@ public class EventCreateActivity extends ActionBarActivity
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("e_name", eventname));
 			nameValuePairs.add(new BasicNameValuePair("about", eventbio));
-			nameValuePairs.add(new BasicNameValuePair("creator", email));
+			nameValuePairs.add(new BasicNameValuePair("creator", user.getEmail()));
 			nameValuePairs.add(new BasicNameValuePair("start_date", startDate));
 			nameValuePairs.add(new BasicNameValuePair("end_date", endDate));
 			nameValuePairs.add(new BasicNameValuePair("category", category));
@@ -507,7 +482,6 @@ public class EventCreateActivity extends ActionBarActivity
 		        nameValuePairs.add(new BasicNameValuePair("toBring[]", toBringEditTexts.get(i).getText().toString()));
 		    }
 			
-
 			// pass url and nameValuePairs off to GLOBAL to do the JSON call.
 			// Code continues at onPostExecute when JSON returns.
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
@@ -531,16 +505,16 @@ public class EventCreateActivity extends ActionBarActivity
 					// Note: g_id is the only unique identifier of a group and
 					// therefore must be used for any future calls concerning
 					// that group.
-					e_id = jsonObject.getString("e_id").toString();
+					ID = jsonObject.getString("e_id").toString();
 					Context context = getApplicationContext();
 					System.out.println("MEssage: "
 							+ jsonObject.getString("message"));
 					System.out.println("e_id of newly created group is: "
-							+ e_id);
+							+ ID);
 					user.fetchEventsInvites();
 					user.fetchEventsPending();
 					user.fetchEventsUpcoming();
-					Event e = new Event(Integer.parseInt(e_id));
+					Event e = new Event(Integer.parseInt(ID));
 					e.fetchEventInfo();
 					e.fetchParticipants();
 					GLOBAL.setCurrentUser(user);
@@ -566,7 +540,7 @@ public class EventCreateActivity extends ActionBarActivity
 													EventCreateActivity.this,
 													EventAddGroupsActivity.class);
 											intent.putExtra("CONTENT", "EVENT");
-											intent.putExtra("EID", e_id);
+											intent.putExtra("EID", ID);
 											intent.putExtra("EMAIL",
 													user.getEmail());
 											startActivity(intent);
@@ -589,7 +563,7 @@ public class EventCreateActivity extends ActionBarActivity
 													EventCreateActivity.this,
 													ProfileActivity.class);
 											intent.putExtra("CONTENT", "EVENT");
-											intent.putExtra("EID", e_id);
+											intent.putExtra("EID", ID);
 											intent.putExtra("EMAIL",
 													user.getEmail());
 											startActivity(intent);

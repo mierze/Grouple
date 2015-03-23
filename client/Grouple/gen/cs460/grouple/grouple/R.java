@@ -1602,12 +1602,12 @@ containing a value of this type.
         public static final int action_bar_subtitle=0x7f0c0038;
         public static final int action_bar_title=0x7f0c0037;
         public static final int action_context_bar=0x7f0c0032;
-        public static final int action_home=0x7f0c010b;
-        public static final int action_logout=0x7f0c010c;
+        public static final int action_home=0x7f0c010c;
+        public static final int action_logout=0x7f0c010d;
         public static final int action_menu_divider=0x7f0c0002;
         public static final int action_menu_presenter=0x7f0c0003;
         public static final int action_mode_close_button=0x7f0c0039;
-        public static final int action_settings=0x7f0c010a;
+        public static final int action_settings=0x7f0c010b;
         public static final int actionbarTitleTextView=0x7f0c0051;
         public static final int activity_chooser_view_content=0x7f0c003a;
         public static final int addFriendButtonAFA=0x7f0c0053;
@@ -1641,6 +1641,7 @@ containing a value of this type.
         public static final int contactImage=0x7f0c00ec;
         public static final int contactLayout=0x7f0c005b;
         public static final int contactName=0x7f0c00ee;
+        public static final int contactNameButton=0x7f0c0105;
         public static final int createGroupButton=0x7f0c00aa;
         public static final int createIntroMessage=0x7f0c0071;
         public static final int createbioMessage=0x7f0c0077;
@@ -1803,7 +1804,7 @@ containing a value of this type.
         public static final int scrollViewManageMembers=0x7f0c00c2;
         public static final int scrollViewPickFriends=0x7f0c00b5;
         public static final int scrollViewPickMembers=0x7f0c006f;
-        public static final int scrollViewToBring=0x7f0c0105;
+        public static final int scrollViewToBring=0x7f0c0106;
         public static final int search_badge=0x7f0c0047;
         public static final int search_bar=0x7f0c0046;
         public static final int search_button=0x7f0c0048;
@@ -1833,11 +1834,11 @@ containing a value of this type.
         public static final int tabMode=0x7f0c001e;
         public static final int terrain=0x7f0c000c;
         public static final int title=0x7f0c0040;
-        public static final int toBringAddRowButton=0x7f0c0107;
+        public static final int toBringAddRowButton=0x7f0c0108;
         public static final int toBringButton=0x7f0c0082;
-        public static final int toBringEditText=0x7f0c0109;
-        public static final int toBringInnerLayout=0x7f0c0106;
-        public static final int toBringSaveButton=0x7f0c0108;
+        public static final int toBringEditText=0x7f0c010a;
+        public static final int toBringInnerLayout=0x7f0c0107;
+        public static final int toBringSaveButton=0x7f0c0109;
         public static final int topRowNavLayoutHA=0x7f0c00ad;
         public static final int top_action_bar=0x7f0c0035;
         public static final int up=0x7f0c0036;
@@ -1937,10 +1938,12 @@ containing a value of this type.
         public static final int listitem_sadguy=0x7f030036;
         public static final int load=0x7f030037;
         public static final int message_row=0x7f030038;
-        public static final int message_row_out=0x7f030039;
-        public static final int support_simple_spinner_dropdown_item=0x7f03003a;
-        public static final int tobring_dialog=0x7f03003b;
-        public static final int tobring_edittext=0x7f03003c;
+        public static final int message_row_entity=0x7f030039;
+        public static final int message_row_entity_out=0x7f03003a;
+        public static final int message_row_out=0x7f03003b;
+        public static final int support_simple_spinner_dropdown_item=0x7f03003c;
+        public static final int tobring_dialog=0x7f03003d;
+        public static final int tobring_edittext=0x7f03003e;
     }
     public static final class menu {
         public static final int add_friend=0x7f0e0000;

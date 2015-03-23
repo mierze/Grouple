@@ -246,7 +246,7 @@
             android:label="@string/title_activity_contact_list" >
         </activity>
         <activity
-            android:name=".GroupMessagesActivity"
+            android:name=".EntityMessagesActivity"
             android:label="@string/title_activity_group_messages" >
         </activity>
         <activity

@@ -66,10 +66,11 @@ public class EventAddGroupsActivity extends ActionBarActivity
 	private SparseArray<String> added = new SparseArray<String>();    //holds list of name of all group rows to be added
 	private ArrayList<Group> allGroups = new ArrayList<Group>();   //holds list of all current groups
 	private User user;
-	private String email = null;
-	private String e_id = null;
+	private String email;
+	private String ID;
 	private Global GLOBAL;
-	private Dialog loadDialog = null;
+	private Dialog loadDialog;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -90,11 +91,10 @@ public class EventAddGroupsActivity extends ActionBarActivity
 		GLOBAL = ((Global) getApplicationContext());
 		//grab the email of current users from our global class
 		user = GLOBAL.getCurrentUser();
-		email = user.getEmail();
 		
 		Bundle extras = getIntent().getExtras();
 		//grab the e_id from extras
-		e_id = Integer.toString(extras.getInt("EID"));
+		ID = Integer.toString(extras.getInt("EID"));
 		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
         loadDialog.setOwnerActivity(this);
 		//load our list of current groups.  key is group id -> value is group name
@@ -204,7 +204,7 @@ public class EventAddGroupsActivity extends ActionBarActivity
 			
 			//initiate add of group
 			new EventAddGroupTask().execute("http://68.59.162.183/"
-					+ "android_connect/add_eventmember.php", groupsgid, email, e_id);
+					+ "android_connect/add_eventmember.php", groupsgid, email, ID);
 		}		
 	}
 	
@@ -244,29 +244,25 @@ public class EventAddGroupsActivity extends ActionBarActivity
 					//looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
-						
-						//at each iteration set to hashmap friendEmail -> 'first last'
 						JSONObject o = (JSONObject) jsonArray.get(i);
-						//function adds friend to the friends map
 						String memberToAdd = o.getString("email");
-						System.out.println("FETCHING GROUP MEMBER" + memberToAdd + " EID is " + e_id);
+						System.out.println("FETCHING GROUP MEMBER" + memberToAdd + " EID is " + ID);
 						new EventAddMemberTask().execute("http://68.59.162.183/"
-								+ "android_connect/add_eventmember.php", memberToAdd, email, e_id);
+								+ "android_connect/add_eventmember.php", memberToAdd, email, ID);
 					}
-					
+					//making a success toast
 					Context context = getApplicationContext();
 					String message = "Successfully invited groups!";
 					Toast toast = GLOBAL.getToast(context, message);
 					toast.show();
-					finish();
-					
+					finish();		
 				}
-				// group has no members
 				if (jsonObject.getString("success").toString().equals("2"))
 				{
 					Log.d("fetchgroupmembers", "failed = 2 return");
 				}
-			} catch (Exception e)
+			} 
+			catch (Exception e)
 			{
 				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
 			}
@@ -274,44 +270,44 @@ public class EventAddGroupsActivity extends ActionBarActivity
 	}
 	
 	//aSynch task to add individual group to event.
-		private class EventAddMemberTask extends AsyncTask<String,Void,String>
+	private class EventAddMemberTask extends AsyncTask<String,Void,String>
+	{
+		@Override
+		protected String doInBackground(String... urls)
 		{
-			@Override
-			protected String doInBackground(String... urls)
-			{
-	
-					List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-					nameValuePairs.add(new BasicNameValuePair("email", urls[1]));
-					nameValuePairs.add(new BasicNameValuePair("sender", urls[2]));
-					nameValuePairs.add(new BasicNameValuePair("e_id", urls[3]));
 
-					//pass url and nameValuePairs off to GLOBAL to do the JSON call.  Code continues at onPostExecute when JSON returns.
-					return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
-				
-			}
+				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+				nameValuePairs.add(new BasicNameValuePair("email", urls[1]));
+				nameValuePairs.add(new BasicNameValuePair("sender", urls[2]));
+				nameValuePairs.add(new BasicNameValuePair("e_id", urls[3]));
 
-			protected void onPostExecute(String result)
-			{
-				try
-				{
-					JSONObject jsonObject = new JSONObject(result);
-
-					// group has been successfully added
-					if (jsonObject.getString("success").toString().equals("1"))
-					{
-						//all working correctly, continue to next user or finish.
-					} 
-					else if (jsonObject.getString("success").toString().equals("0"))
-					{	
-						//a particular group was unable to be added to database for some reason...
-						//Don't tell the user!
-					}
-				} catch (Exception e)
-				{
-					Log.d("readJSONFeed", e.getLocalizedMessage());
-				}
-			}		
+				//pass url and nameValuePairs off to GLOBAL to do the JSON call.  Code continues at onPostExecute when JSON returns.
+				return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+			
 		}
+
+		protected void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+				// group has been successfully added
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					//all working correctly, continue to next user or finish.
+				} 
+				else if (jsonObject.getString("success").toString().equals("0"))
+				{	
+					//a particular group was unable to be added to database for some reason...
+					//Don't tell the user!
+				}
+			} 
+			catch (Exception e)
+			{
+				Log.d("readJSONFeed", e.getLocalizedMessage());
+			}
+		}		
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
@@ -330,14 +326,11 @@ public class EventAddGroupsActivity extends ActionBarActivity
 		int id = item.getItemId();
 		if (id == R.id.action_logout)
 		{
-			
 			Intent login = new Intent(this, LoginActivity.class);
 			GLOBAL.destroySession();
 			startActivity(login);
 			Intent intent = new Intent("CLOSE_ALL");
 			this.sendBroadcast(intent);
-			
-			
 			return true;
 		}
 		if (id == R.id.action_home)
@@ -351,7 +344,6 @@ public class EventAddGroupsActivity extends ActionBarActivity
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent e)  
 	{
-		
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
 	    	loadDialog.show();
 	    	finish();
