@@ -4,8 +4,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
+
 public class Message
 {
+	private int id;
     private String message;
     private String dateString;
     private String rawDateString;
@@ -14,11 +19,13 @@ public class Message
     private String senderName;
     private String receiver; //GID/EID/EMAIL
     private String readByDateString;
+	private Bitmap image; //all entities have images
     
     protected Message(String message, String rawDateString, String sender, String senderName, String receiver, String readByDateString)
     {
     	this.message = message;
     	this.rawDateString = rawDateString;
+    	dateString = parseDate(rawDateString);
     	this.sender = sender;
     	this.senderName = senderName;
     	this.receiver = receiver;
@@ -26,6 +33,10 @@ public class Message
     }
     
     //GETTERS
+    protected int getID()
+    {
+    	return id;
+    }
     protected String getMessage()
     {
     	return message;
@@ -50,8 +61,20 @@ public class Message
     {
     	return receiver;
     }
+    protected String getReadByDateString()
+    {
+    	return readByDateString;
+    }
+    protected Bitmap getImage()
+    {
+    	return image;
+    }
     
     //SETTERS
+    protected void setID(int id)
+    {
+    	this.id = id;
+    }
     protected void setMessage(String message)
     {
     	this.message = message;
@@ -77,6 +100,26 @@ public class Message
     {
     	this.receiver = receiver;
     }
+  //img is taken from json string
+  	protected void setImage(String img)
+  	{
+  		Bitmap bmp;
+  		//jsonArray.getString("image");
+  	
+  		// decode image back to android bitmap format
+  		byte[] decodedString = Base64.decode(img, Base64.DEFAULT);
+  		if (decodedString != null)
+  		{
+  			bmp = BitmapFactory.decodeByteArray(decodedString, 0,
+  					decodedString.length);
+  			//setting bmp;
+  			this.image = bmp;
+  		}
+  		else
+  		{
+  			image = null;
+  		}
+  	}
     
     
 
@@ -86,21 +129,41 @@ public class Message
 		String dateString = "";
 		SimpleDateFormat raw = new SimpleDateFormat("yyyy-M-d h:mm:ss");
 		SimpleDateFormat dateFormat = new SimpleDateFormat(
-				"EEEE, MMMM d, h:mma");
+				"EEEE h:mma");
 		try
 		{
 
-			date = (Date) raw.parse(dateString);
+			date = (Date) raw.parse(rawDateString);
 			dateString = dateFormat.format(date);
 			// date = raw.format(parsedDate);
-			System.out.println("\nDATE IN RAW TRANSLATION: "
-					+ raw.format(date));
-			System.out.println("\nDATE IN FINAL: "
-					+ dateFormat.format(date) + "\n\n");
+
 		} catch (ParseException ex)
 		{
 			System.out.println("Exception " + ex);
 		}
 		return dateString;
+	}
+	
+    private String parseDateMessage(String dateString)
+	{
+		System.out.println("\n\nDATE IS FIRST: " + dateString);
+		String date = "";
+		SimpleDateFormat raw = new SimpleDateFormat("yyyy-M-d h:mm:ss");
+		SimpleDateFormat dateFormat = new SimpleDateFormat(
+				"EEEE h:mma");
+		try
+		{
+			Date parsedDate = (Date) raw.parse(dateString);
+			date = dateFormat.format(parsedDate);
+			// date = raw.format(parsedDate);
+			System.out.println("\nDATE IN RAW TRANSLATION: "
+					+ raw.format(parsedDate));
+			System.out.println("\nDATE IN FINAL: "
+					+ dateFormat.format(parsedDate) + "\n\n");
+		} catch (ParseException ex)
+		{
+			System.out.println("Exception " + ex);
+		}
+		return date;
 	}
 }

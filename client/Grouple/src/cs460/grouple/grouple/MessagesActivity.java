@@ -71,10 +71,7 @@ public class MessagesActivity extends ActionBarActivity
     static final String TAG = "GCM";
     //Sender ID is the project number from API console. Needs to be secret.
     String SENDER_ID = "957639483805"; 
-    private ArrayList<String> messages = new ArrayList<String>();
-    private ArrayList<String> dates = new ArrayList<String>();
-    private ArrayList<String> senders = new ArrayList<String>();
-    private ArrayList<String> receivers = new ArrayList<String>();
+    private ArrayList<Message> messages = new ArrayList<Message>();
 	private Dialog loadDialog = null;
     GoogleCloudMessaging gcm;
     AtomicInteger msgId = new AtomicInteger();
@@ -115,10 +112,7 @@ public class MessagesActivity extends ActionBarActivity
 	        String fromEmail = intent.getStringExtra("EMAIL");
 	        if (fromEmail.equals(recipient))
 	        {
-	            messages.clear();
-	            dates.clear();
-	            senders.clear();
-	            receivers.clear();
+	            messages.clear(); //TODO: smartly add to this
 	        	fetchMessages(); 
 	        }
 
@@ -161,7 +155,7 @@ public class MessagesActivity extends ActionBarActivity
 		//onNewIntent(getIntent());
 		//Get the recipient 
 		new getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php", recipient);
-		fetchMessages(); 
+		//fetchMessages(); 
         
 	}
 	
@@ -217,11 +211,14 @@ public class MessagesActivity extends ActionBarActivity
 						// 'first last'
 						JSONObject o = (JSONObject) jsonArray.get(i);
 						// function adds friend to the friends map
-					
-						messages.add(o.getString("message"));
-						senders.add(o.getString("sender"));
-						receivers.add(o.getString("receiver"));
-						dates.add(parseDate(o.getString("send_date")));
+						//construct new message
+						//String message, String rawDateString, String sender,
+						//String senderName, String receiver, String readByDateString
+						Message m = new Message(o.getString("message"), o.getString("send_date"), o.getString("sender"),
+								"NAME", o.getString("receiver"), null);
+						
+						messages.add(m);
+						
 						
 					}
 					populateMessages();
@@ -352,18 +349,18 @@ public class MessagesActivity extends ActionBarActivity
 		
 		int index = 0;
 		//loop through messages (newest first), maybe a map String String with messagebody, date
-		for (String m : messages)
+		for (Message m : messages)
 		{
 			
-			if (receivers.get(index).equals(user.getEmail()/*our email*/))
+			if (m.getReceiver().equals(user.getEmail()/*our email*/))
 				row =  li.inflate(R.layout.message_row_out, null); //inflate this message row
 			else
 				row =  li.inflate(R.layout.message_row, null); //inflate the sender message row
 			
 			messageBody = (TextView) row.findViewById(R.id.messageBody);
-			messageBody.setText(m);
+			messageBody.setText(m.getMessage());
 			messageDate = (TextView) row.findViewById(R.id.messageDate);
-			messageDate.setText(dates.get(index));
+			messageDate.setText(m.getDateString());
 			
 			//set these values to what you want
 			
@@ -391,44 +388,33 @@ public class MessagesActivity extends ActionBarActivity
         {
             //Get message from edit text
             EditText mymessage   = (EditText)findViewById(R.id.messageEditText);
-            String msg = mymessage.getText().toString();
+            String message = mymessage.getText().toString();
             
             //make sure message field is not blank
-            if(!(msg.compareTo("") ==0))
+            if(!(message.compareTo("") ==0))
             {
-            	 //PHP expects msg,sender,receiver.
-                //new storeMessageTask().execute("http://68.59.162.183/android_connect/send_message.php",msg,"mierze@gmail.com","tfeipel@gmail.com");
-                new storeMessageTask().execute("http://68.59.162.183/android_connect/send_message.php",msg, user.getEmail(),recipient);
+            	 //PHP expects message,sender,receiver.
+                //new storeMessageTask().execute("http://68.59.162.183/android_connect/send_message.php",message,"mierze@gmail.com","tfeipel@gmail.com");
+                new storeMessageTask().execute("http://68.59.162.183/android_connect/send_message.php",message, user.getEmail(),recipient);
                 new AsyncTask<Void, Void, String>() {
                     @Override
                     protected String doInBackground(Void... params) {
-                        String msg = "";
-
-                        
-                        try {
+                        String message = "";
+                        try 
+                        {
                             Bundle data = new Bundle();
                             //Get message from edit text
                             EditText mymessage   = (EditText)findViewById(R.id.messageEditText);
-                            msg = mymessage.getText().toString();
-        
-                            messages.add(msg);
-                            receivers.add(recipient);
-                            senders.add(user.getEmail());
-                          
-                    		SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE h:mma");
-                    		
-                    		String date = dateFormat.format(new Date());
-                    		dates.add(date);
-                            data.putString("my_message", msg);
+                            message = mymessage.getText().toString();
+    						Message m = new Message(message, new Date().toString(), user.getEmail(),
+    								user.getName(), recipient, null);
+    			       		SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE h:mma");
+    						String dateString = dateFormat.format(new Date());
+                    		m.setDateString(dateString);
+                            messages.add(m);
+                            data.putString("my_message", m.getMessage());
                             data.putString("my_action", "cs460.grouple.grouple.ECHO_NOW");
-                            data.putString("sender", user.getEmail());
-                            //Clear edit text
-                           // mymessage.setText("");
-                            //Get friend's regID based off their email address from db
-                            //Todd's Reg ID
-                            //String recipientRegId = "APA91bFdWkh9GiaNoLJvGyFpSK3HRQy8vtlmh3OPK8FekU4aWEhZn_hwvr7LmYu_s11dQnoPmj6hKuklISIh_A2Dhyjm_cNT-K4kh5-bYhPYpp-QGbqScbwE9YCnWqyXORN2gwY3fNQx-_ex7D6i-ONaT7peHcu3Hlzbc-60amu0pTu8SD9l7xI";
-                            //Brett's Reg ID
-                            
+                            data.putString("sender", m.getSender());
                             //This is where we put the recipients regID.
                             data.putString("recipient",getRecipientRegID());
                             //This is where we put our first and last name. That way the recipient knows who sent it.
@@ -436,12 +422,12 @@ public class MessagesActivity extends ActionBarActivity
                             data.putString("last", user.getLastName());
                             String id = Integer.toString(msgId.incrementAndGet());
                             gcm.send(SENDER_ID + "@gcm.googleapis.com", id, data);
-                            msg = "Sent message";
+                            message = "Sent message";
                         } catch (IOException ex) {
-                            msg = "Error :" + ex.getMessage();
+                            message = "Error :" + ex.getMessage();
                         }
                       
-                        return msg;
+                        return message;
                     }
 
                     @Override
@@ -589,26 +575,5 @@ public class MessagesActivity extends ActionBarActivity
 		}
 	}
     
-    private String parseDate(String dateString)
-	{
-		System.out.println("\n\nDATE IS FIRST: " + dateString);
-		String date = "";
-		SimpleDateFormat raw = new SimpleDateFormat("yyyy-M-d h:mm:ss");
-		SimpleDateFormat dateFormat = new SimpleDateFormat(
-				"EEEE h:mma");
-		try
-		{
-			Date parsedDate = (Date) raw.parse(dateString);
-			date = dateFormat.format(parsedDate);
-			// date = raw.format(parsedDate);
-			System.out.println("\nDATE IN RAW TRANSLATION: "
-					+ raw.format(parsedDate));
-			System.out.println("\nDATE IN FINAL: "
-					+ dateFormat.format(parsedDate) + "\n\n");
-		} catch (ParseException ex)
-		{
-			System.out.println("Exception " + ex);
-		}
-		return date;
-	}
+
 }

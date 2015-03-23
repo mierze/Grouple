@@ -242,7 +242,7 @@
         <service android:name=".GcmIntentService" />
 
         <activity
-            android:name=".ContactList"
+            android:name=".RecentMessagesActivity"
             android:label="@string/title_activity_contact_list" >
         </activity>
         <activity

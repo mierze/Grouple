@@ -281,7 +281,7 @@ public class HomeActivity extends ActionBarActivity
 			intent = new Intent(this, EventsActivity.class);
 			break;
 		case R.id.messagesButtonHA:
-			intent = new Intent(this, ContactList.class);
+			intent = new Intent(this, RecentMessagesActivity.class);
 			break;
 		case R.id.groupsButtonHA:
 			user.fetchGroupInvites();
