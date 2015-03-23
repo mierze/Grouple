@@ -107,7 +107,9 @@ public class EventCreateActivity extends ActionBarActivity
 	private Dialog loadDialog = null;
 	private ArrayList<String> toBringList = new ArrayList<String>();
 	private DatePicker datePicker;
-	private Calendar calendar;
+	private Calendar currentCal;
+	private Calendar startCal;
+	private Calendar endCal;
 	private TextView dateView;
 	private final ArrayList<EditText> toBringEditTexts = new ArrayList<EditText>();
 	private int year, month, day, hour, minute;
@@ -138,12 +140,12 @@ public class EventCreateActivity extends ActionBarActivity
 	private void load()
 	{
 		GLOBAL = ((Global) getApplicationContext());
-		calendar = Calendar.getInstance();
-		year = calendar.get(Calendar.YEAR);
-		month = calendar.get(Calendar.MONTH);
-		day = calendar.get(Calendar.DAY_OF_MONTH);
-		hour = calendar.get(Calendar.HOUR_OF_DAY);
-		minute = calendar.get(Calendar.MINUTE);
+		currentCal = Calendar.getInstance();
+		year = currentCal.get(Calendar.YEAR);
+		month = currentCal.get(Calendar.MONTH);
+		day = currentCal.get(Calendar.DAY_OF_MONTH);
+		hour = currentCal.get(Calendar.HOUR_OF_DAY);
+		minute = currentCal.get(Calendar.MINUTE);
 		categoryEditText = (EditText) findViewById(R.id.category);
 		toBringButton = (Button) findViewById(R.id.toBringButton);
 		startDateEditText = (EditText) findViewById(R.id.startTimeButton);
@@ -278,59 +280,79 @@ public class EventCreateActivity extends ActionBarActivity
 		System.out.println("clicked on startdate");
 		// startDate is not currently set. load datepicker set to current
 		// calendar date.
-		// if(startDateEditText.getText().toString().compareTo("") ==0)
-		// {
-		new DatePickerDialog(this, myStartDateListener, year, month, day)
-				.show();
-		// }
-		// load the datepicker using the date that was set in startDate
-		// else
-		// {
-		// String tmpStartDate = startDateEditText.getText().toString();
-		// System.out.println(tmpStartDate);
-		// String tmpYear = tmpStartDate.substring(0,3);
-		// String tmpMonth;
-		// String tmpDay;
-		// month was single character
-		// if(tmpStartDate.substring(6, 6).compareTo("-") == 0)
-		// {
-		// tmpMonth = tmpStartDate.substring(5,5);
-		// System.out.println(tmpMonth);
-		// //day was single character
-		// if(tmpStartDate.substring(9, 9).compareTo(" ") == 0)
-		// {
-		// tmpDay = tmpStartDate.substring(7,7);
-		// }
-		// day was two character
-		// else
-		// {
-		// tmpDay = tmpStartDate.substring(7,8);
-		// }
-		// }
-		// month was two character
-		// else
-		// {
-		// tmpMonth = tmpStartDate.substring(5,6);
-		// System.out.println(tmpMonth);
-		// day was single character
-		// if(tmpStartDate.substring(8, 8).compareTo(" ") == 0)
-		// {
-		// tmpDay = tmpStartDate.substring(7,7);
-		// }
-		// day was two character
-		// else
-		// {
-		// tmpDay = tmpStartDate.substring(7,8);
-		// }
-		// }
-		// }
+		if(startDateEditText.getText().toString().compareTo("") ==0)
+		{
+			new DatePickerDialog(this, myStartDateListener, year, month, day).show();
+		}
+		// load the datepicker using the date that was previously set in startDate
+		else
+		{
+			startCal = Calendar.getInstance();
+			startDate = startDateEditText.getText().toString();
+			
+			//parse to our calendar object
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+			try {
+				startCal.setTime(sdf.parse(startDate));
+				System.out.println("cal was parsed from tmpStartDate!");
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}// all done
+		
+			new DatePickerDialog(this, myStartDateListener, startCal.get(Calendar.YEAR),startCal.get(Calendar.MONTH), startCal.get(Calendar.DAY_OF_MONTH)).show();
+		}
 	}
 
 	// onClick for end date button
 	public void selectEndDateButton(View view)
 	{
 		System.out.println("clicked on enddate");
-		new DatePickerDialog(this, myEndDateListener, year, month, day).show();
+		// endDate is not currently set. load datepicker set to current
+		// calendar date.
+		if(endDateEditText.getText().toString().compareTo("") ==0)
+		{
+			if(startDateEditText.getText().toString().compareTo("")==0)
+			{
+				new DatePickerDialog(this, myEndDateListener, year, month, day).show();
+			}
+			else
+			{
+				endCal = Calendar.getInstance();
+				endDate = startDateEditText.getText().toString();
+				
+				//parse to our calendar object
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+				try {
+					endCal.setTime(sdf.parse(endDate));
+					System.out.println("cal was parsed from tmpStartDate!");
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}// all done
+			
+				new DatePickerDialog(this, myEndDateListener, endCal.get(Calendar.YEAR),endCal.get(Calendar.MONTH), endCal.get(Calendar.DAY_OF_MONTH)).show();
+			}
+			
+		}
+		// load the datepicker using the date that was previously set in endDate
+		else
+		{
+			endCal = Calendar.getInstance();
+			endDate = endDateEditText.getText().toString();
+			
+			//parse to our calendar object
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+			try {
+				endCal.setTime(sdf.parse(endDate));
+				System.out.println("cal was parsed from tmpEndDate!");
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}// all done
+		
+			new DatePickerDialog(this, myEndDateListener, endCal.get(Calendar.YEAR),endCal.get(Calendar.MONTH), endCal.get(Calendar.DAY_OF_MONTH)).show();
+		}
 	}
 
 	// onClick for Confirm create event button
@@ -354,6 +376,11 @@ public class EventCreateActivity extends ActionBarActivity
 		maximum = maximumEditText.getText().toString();
 		Date start = null;
 		Date end = null;
+		
+		if (minimum.compareTo("") == 0)
+		{
+			minimum = "1";
+		}
 		
 		if (!(startDate.compareTo("") == 0) && !(endDate.compareTo("") == 0))
 		{
@@ -416,21 +443,8 @@ public class EventCreateActivity extends ActionBarActivity
 			new AlertDialog.Builder(this)
 					.setMessage("Please select a Category before creating.")
 					.setCancelable(true).setNegativeButton("Ok", null).show();
-		}
-		// if empty minimum
-		// else if(minimum.compareTo("") == 0)
-		// {
-		// new AlertDialog.Builder(this)
-		// .setMessage("Please specify a Minimum size before creating.")
-		// .setCancelable(true)
-		// .setNegativeButton("Ok", null).show();
-		// }
-		// if maximum is set and it is less than minimum
-		if (minimum.compareTo("") == 0)
-		{
-			minimum = "1";
-		}
-		if (!(maximum.compareTo("") == 0)
+		}		
+		else if (!(maximum.compareTo("") == 0)
 				&& (Integer.parseInt(maximum) < Integer.parseInt(minimum)))
 		{
 			new AlertDialog.Builder(this)
@@ -474,7 +488,7 @@ public class EventCreateActivity extends ActionBarActivity
 			// grab group name and bio from textviews
 			String eventname = eventNameEditText.getText().toString();
 			String eventbio = eventBioEditText.getText().toString();
-
+		
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("e_name", eventname));
 			nameValuePairs.add(new BasicNameValuePair("about", eventbio));
@@ -484,18 +498,15 @@ public class EventCreateActivity extends ActionBarActivity
 			nameValuePairs.add(new BasicNameValuePair("category", category));
 			nameValuePairs.add(new BasicNameValuePair("min_part", minimum));
 			nameValuePairs.add(new BasicNameValuePair("max_part", maximum));
-			
-			//TODO (SCOTT): for mustbringlist,
-				//all values are in toBringEditTexts.get(index).getText().toString()
-				//loop thru and put those into items_tobring table
-					//set name = to that text
-					//email will default null which is good
-					//id will AI
-					//will need to pass this e_id into e_id
-			
-			
-			nameValuePairs.add(new BasicNameValuePair("mustbringlist", ""));
 			nameValuePairs.add(new BasicNameValuePair("location", location));
+			
+			//loop through toBringList, adding each member into php array toBring[]
+		    for (int i = 0; i < toBringEditTexts.size(); i++) 
+		    {
+		    	System.out.println("adding the toBring entries");
+		        nameValuePairs.add(new BasicNameValuePair("toBring[]", toBringEditTexts.get(i).getText().toString()));
+		    }
+			
 
 			// pass url and nameValuePairs off to GLOBAL to do the JSON call.
 			// Code continues at onPostExecute when JSON returns.
@@ -505,9 +516,12 @@ public class EventCreateActivity extends ActionBarActivity
 		@Override
 		protected void onPostExecute(String result)
 		{
+			System.out.println("in onPostExecute.");
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
+				
+				System.out.println("success value: "+jsonObject.getString("success").toString());
 
 				// event has been successfully created
 				if (jsonObject.getString("success").toString().equals("1"))
@@ -618,7 +632,7 @@ public class EventCreateActivity extends ActionBarActivity
 				}
 			} catch (Exception e)
 			{
-				Log.d("readJSONFeed", e.getLocalizedMessage());
+				Log.d("onPostreadJSONFeed", e.getLocalizedMessage());
 			}
 		}
 	}
@@ -690,8 +704,21 @@ public class EventCreateActivity extends ActionBarActivity
 			{
 				int tmpMonth = month + 1;
 				startDateEditText.setText(year + "-" + tmpMonth + "-" + day);
-				new TimePickerDialog(EventCreateActivity.this,
+								
+				//start the TimePicker using hour and minute previously set in startCal
+				if(startCal != null)
+				{
+					System.out.println("Hour:"+startCal.get(Calendar.HOUR_OF_DAY));
+					System.out.println("Minute:"+startCal.get(Calendar.MINUTE));
+					new TimePickerDialog(EventCreateActivity.this,
+							myStartTimeListener, startCal.get(Calendar.HOUR_OF_DAY), startCal.get(Calendar.MINUTE), false).show();
+				}
+				//start the TimePicker using current system time
+				else
+				{
+					new TimePickerDialog(EventCreateActivity.this,
 						myStartTimeListener, hour, minute, false).show();
+				}
 			}
 		}
 	};
@@ -719,8 +746,21 @@ public class EventCreateActivity extends ActionBarActivity
 			{
 				int tmpMonth = month + 1;
 				endDateEditText.setText(year + "-" + tmpMonth + "-" + day);
-				new TimePickerDialog(EventCreateActivity.this,
+								
+				//start the TimePicker using hour and minute previously set in startCal
+				if(endCal != null)
+				{
+					System.out.println("Hour:"+endCal.get(Calendar.HOUR_OF_DAY));
+					System.out.println("Minute:"+endCal.get(Calendar.MINUTE));
+					new TimePickerDialog(EventCreateActivity.this,
+							myEndTimeListener, endCal.get(Calendar.HOUR_OF_DAY), endCal.get(Calendar.MINUTE), false).show();
+				}
+				//start the TimePicker using current system time
+				else
+				{
+					new TimePickerDialog(EventCreateActivity.this,
 						myEndTimeListener, hour, minute, false).show();
+				}
 			}
 		}
 	};
