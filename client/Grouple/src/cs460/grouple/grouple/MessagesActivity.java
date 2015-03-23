@@ -115,7 +115,6 @@ public class MessagesActivity extends ActionBarActivity
 	        String fromEmail = intent.getStringExtra("EMAIL");
 	        if (fromEmail.equals(recipient))
 	        {
-	        	System.out.println("WE HAVE A MATCH OMGOMGOMG!");
 	            messages.clear();
 	            dates.clear();
 	            senders.clear();
