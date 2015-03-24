@@ -109,10 +109,10 @@ public class MessagesActivity extends ActionBarActivity
 	    public void onReceive(Context context, Intent intent) {
 
 	        // Extract data included in the Intent
-	        String fromEmail = intent.getStringExtra("EMAIL");
+	        String fromEmail = intent.getStringExtra("FROM");
 	        if (fromEmail.equals(recipient))
 	        {
-	            messages.clear(); //TODO: smartly add to this
+	            //messages.clear(); //TODO: smartly add to this
 	        	fetchMessages(); 
 	        }
 	    }
@@ -147,7 +147,7 @@ public class MessagesActivity extends ActionBarActivity
 	@Override
     protected void onResume() {
         super.onResume();
-	    context .registerReceiver(mMessageReceiver, new IntentFilter("NEW_MESSAGE"));
+	    context .registerReceiver(mMessageReceiver, new IntentFilter("USER_MESSAGE"));
 		//new getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php", recipient);
 		fetchMessages(); 
     }
@@ -184,6 +184,7 @@ public class MessagesActivity extends ActionBarActivity
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					JSONArray jsonArray = jsonObject.getJSONArray("messages");
+					messages.clear();
 					// looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
@@ -367,8 +368,9 @@ public class MessagesActivity extends ActionBarActivity
     						String dateString = dateFormat.format(new Date());
                     		m.setDateString(dateString);
                             messages.add(m);
-                            data.putString("my_message", m.getMessage());
+                            data.putString("msg", m.getMessage());
                             data.putString("my_action", "cs460.grouple.grouple.ECHO_NOW");
+                            data.putString("CONTENT_TYPE", "USER_MESSAGE");
                             data.putString("sender", m.getSender());
                             //This is where we put the recipients regID.
                             data.putString("recipient",getRecipientRegID());

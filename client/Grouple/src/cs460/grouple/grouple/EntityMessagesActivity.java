@@ -45,6 +45,7 @@ public class EntityMessagesActivity extends ActionBarActivity
 	private User user; //will be null for now
 	private Group group;
 	private Event event;
+	private String NAME;
 	private Dialog loadDialog = null;
     public static final String EXTRA_MESSAGE = "message";
     public static final String PROPERTY_REG_ID = "registration_id";
@@ -72,7 +73,48 @@ public class EntityMessagesActivity extends ActionBarActivity
 		super.onStop();
 		loadDialog.hide();
 	}
+	
+	//Must unregister onPause()
+	@Override
+	protected void onPause() {
+	    super.onPause();
+	    context.unregisterReceiver(mMessageReceiver);
+	}
 
+	//This is the handler that will manager to process the broadcast intent
+	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+	    @Override
+	    public void onReceive(Context context, Intent intent) {
+
+	    	/*
+    		intent.putExtra("ID", ID);
+    		intent.putExtra("TYPE", TYPE);
+            intent.putExtra("FROM", from);
+            intent.putExtra("NAME", first+" "+last);
+	    	 */
+	        // Extract data included in the Intent
+	    	String type = intent.getStringExtra("TYPE");
+	        String id = intent.getStringExtra("ID");
+	        if (type.equals("GROUP_MESSAGE") && CONTENT_TYPE.equals("GROUP"))
+	        {
+		        if (id.equals(ID))
+		        {
+		            //messages.clear(); //TODO: smartly add to this
+		        	fetchMessages(); 
+		        }
+	        }
+	        else if (type.equals("EVENT_MESSAGE") && CONTENT_TYPE.equals("EVENT"))
+	        {
+	        	  if (id.equals(ID))
+			        {
+			           // messages.clear(); //TODO: smartly add to this
+			        	fetchMessages(); 
+			        }
+	        }
+
+	    }
+	};
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -81,7 +123,7 @@ public class EntityMessagesActivity extends ActionBarActivity
 		
 		Bundle extras = getIntent().getExtras();
 		user = GLOBAL.getCurrentUser();
-		group = GLOBAL.getGroupBuffer();
+
 		setContentView(R.layout.activity_messages);
 		/* Action bar */
 		ActionBar ab = getSupportActionBar();
@@ -89,9 +131,17 @@ public class EntityMessagesActivity extends ActionBarActivity
 		gcm = GoogleCloudMessaging.getInstance(this);
 		CONTENT_TYPE = extras.getString("CONTENT_TYPE");
 		if (CONTENT_TYPE.equals("GROUP"))
+		{
+			group = GLOBAL.getGroupBuffer();
+			NAME = group.getName();
 			ID = extras.getString("GID"); 
+		}
 		else
+		{
+			event = GLOBAL.getEventBuffer();
+			NAME = event.getName();
 			ID = extras.getString("EID");
+		}
 		ab.setCustomView(R.layout.actionbar);
 		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
         loadDialog.setOwnerActivity(this);
@@ -105,11 +155,10 @@ public class EntityMessagesActivity extends ActionBarActivity
 		//onNewIntent(getIntent());
 		//Get the recipient 
 		//new getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php", recipient);
-		new getRegIDsTask().execute("http://68.59.162.183/android_connect/get_chat_ids_by_gid.php", ID,user.getEmail());
+		new getRegIDsTask().execute("http://68.59.162.183/android_connect/get_chat_ids_by_gid.php",ID ,user.getEmail());
 		//fetchMessages(); 
 		setContentView(R.layout.activity_messages);
 	}
-
 
 	private void populateMessages()
 	{
@@ -117,7 +166,6 @@ public class EntityMessagesActivity extends ActionBarActivity
 		LinearLayout messageLayout = (LinearLayout) findViewById(R.id.messageLayout);
 		//clear out any previous views already inflated
 		messageLayout.removeAllViews();
-		
 		//layout inflater
 		LayoutInflater li = getLayoutInflater();
 		
@@ -129,14 +177,8 @@ public class EntityMessagesActivity extends ActionBarActivity
 		//messages consist of some things (messagebody, date, sender, receiver)
 		
 		int index = 0;
-		//loop through messages (newest first), maybe a map String String with messagebody, date
 		for (Message m : messages)
 		{
-			
-			//if (senders.get(index).equals(user.getEmail()/*our email*/))
-			//	row =  li.inflate(R.layout.message_row_out, null); //inflate this message row
-			//else
-				
 			if (m.getSender().equals(user.getEmail()))
 				row =  li.inflate(R.layout.message_row_entity, null); //inflate the sender message row
 			else
@@ -155,10 +197,9 @@ public class EntityMessagesActivity extends ActionBarActivity
 			messageLayout.addView(row);
 			index++;
 		}
-		
+		//scrolling down to the bottom
 		final ScrollView scrollview = ((ScrollView) findViewById(R.id.messagesScrollView));
 		scrollview.post(new Runnable() {
-
 		        @Override
 		        public void run() {
 		            scrollview.fullScroll(ScrollView.FOCUS_DOWN);
@@ -169,7 +210,6 @@ public class EntityMessagesActivity extends ActionBarActivity
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent e)  
 	{
-		
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
 	    	loadDialog.show();
 	    	finish();
@@ -177,11 +217,9 @@ public class EntityMessagesActivity extends ActionBarActivity
 	    return true;
 	}
 	
-	 
     //Stores the message in the database.
     private class storeMessageTask extends AsyncTask<String, Void, String>
 	{
-
 		@Override
 		protected String doInBackground(String... urls)
 		{
@@ -191,7 +229,6 @@ public class EntityMessagesActivity extends ActionBarActivity
 			nameValuePairs.add(new BasicNameValuePair("msg", urls[1]));
 			nameValuePairs.add(new BasicNameValuePair("sender", urls[2]));
 			nameValuePairs.add(new BasicNameValuePair(type, urls[3]));	
-			
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
 
@@ -206,11 +243,8 @@ public class EntityMessagesActivity extends ActionBarActivity
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					
-					//EditText mymessage   = (EditText)findViewById(R.id.messageEditText);
-					//mymessage.setText("");
-					//fetchMessages();
-					
-				} else
+				} 
+				else
 				{
 					Context context = getApplicationContext();
 					Toast toast = Toast.makeText(context, "Error Storing Message. Message not sent. Contact Devs", Toast.LENGTH_LONG);
@@ -226,7 +260,7 @@ public class EntityMessagesActivity extends ActionBarActivity
 	@Override
     protected void onResume() {
         super.onResume();
-	 //   context .registerReceiver(mMessageReceiver, new IntentFilter("NEW_MESSAGE"));
+	    context .registerReceiver(mMessageReceiver, new IntentFilter("ENTITY_MESSAGE"));
 		//new getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php", recipient);
 		fetchMessages(); 
     }
@@ -273,27 +307,32 @@ public class EntityMessagesActivity extends ActionBarActivity
                     @Override
                     protected String doInBackground(Void... params) {
                         String msg = "";
-
-                        
-                        try {
+                        try 
+                        {
                             Bundle data = new Bundle();
                             //Get message from edit text
                             EditText mymessage   = (EditText)findViewById(R.id.messageEditText);
                             msg = mymessage.getText().toString();
         
-                            //messages.add(msg);
-                            //receivers.add(recipient);
-                            //senders.add(user.getEmail());
-                          
-                    		SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE h:mma");
-                    		
-                    		String date = dateFormat.format(new Date());
+                            //print message to our screen
+                            Message m = new Message(msg, new Date().toString(), user.getEmail(),
+    								user.getName(), ID, null);
+    			       		SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE h:mma");
+    						String dateString = dateFormat.format(new Date());
+                    		m.setDateString(dateString);
+                            messages.add(m);
                     		//dates.add(date);
-                            data.putString("my_message", msg);
+                            data.putString("msg", msg);
                             data.putString("my_action", "cs460.grouple.grouple.ECHO_NOW");
+                            data.putString("CONTENT_TYPE", CONTENT_TYPE + "_MESSAGE");
                             data.putString("sender", user.getEmail());
+                            //data.putString("recipient",getRecipientRegID());
+                            data.putString("ID", ID);
+                            data.putString("NAME", NAME);
+                            //data.putString("GID", value)
                             data.putString("first", user.getFirstName());
                             data.putString("last", user.getLastName());
+                            
                             String id = Integer.toString(msgId.incrementAndGet());
                             
                             //Send the message to all the group members.
@@ -432,10 +471,11 @@ public class EntityMessagesActivity extends ActionBarActivity
 		@Override
 		protected String doInBackground(String... urls)
 		{
+			String type = CONTENT_TYPE.equals("GROUP") ? "g_id" : "e_id";
 			Global global = ((Global) getApplicationContext());
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			//The recipient's email is urls[1]
-			nameValuePairs.add(new BasicNameValuePair("g_id", urls[1]));
+			nameValuePairs.add(new BasicNameValuePair(type, urls[1]));
 			nameValuePairs.add(new BasicNameValuePair("email", urls[2]));
 
 			return global.readJSONFeed(urls[0], nameValuePairs);

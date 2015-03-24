@@ -123,16 +123,13 @@ public class ProfileActivity extends ActionBarActivity
 		profileButton2.setVisibility(View.GONE);
 		profileButton3.setVisibility(View.GONE);
 		editProfileButton.setVisibility(View.GONE);		
-		
 		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
         loadDialog.setOwnerActivity(this);
-		
-		
+
 		if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
 		{
 			System.out.println("NOW IN USER");
 			//grabbing the user with the given email in the EXTRAS
-			
 			if (!GLOBAL.isCurrentUser(EXTRAS.getString("EMAIL")))
 			{
 				if (GLOBAL.getUserBuffer() != null)

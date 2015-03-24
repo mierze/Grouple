@@ -43,7 +43,6 @@ public class InviteActivity extends ActionBarActivity {
 	private ArrayList<User> users;
 	private Group group;
 	private BroadcastReceiver broadcastReceiver;
-	private SparseArray<String> added = new SparseArray<String>();    //holds list of name of all friend rows to be added
 	private SparseArray<Character> role = new SparseArray<Character>();   //holds list of role of all friend rows to be added
 	private ArrayList<User> allFriends = new ArrayList<User>();   //holds list of all current friends
 	private static Global GLOBAL;
@@ -157,7 +156,6 @@ public class InviteActivity extends ActionBarActivity {
 			}
 		};
 		registerReceiver(broadcastReceiver, intentFilter);
-		// End Kill switch listener
 	}
 	
 	private void populateInviteMembers()
@@ -201,6 +199,7 @@ public class InviteActivity extends ActionBarActivity {
 
 				final TextView friendName = (TextView) row
 						.findViewById(R.id.friendNameTextView);
+				
 				final CheckBox cb = (CheckBox) row
 						.findViewById(R.id.addToGroupBox);
 				makeAdminButton.setId(index);
@@ -296,12 +295,9 @@ public class InviteActivity extends ActionBarActivity {
 					@Override
 					public void onCheckedChanged(CompoundButton view, boolean isChecked)
 					{
-						String text = friendName.getLayout()
-								.getText().toString();
 					
 						if(cb.isChecked())
 						{
-							added.put(view.getId(), text);
 							role.put(view.getId(), 'U');
 							makeAdminButton.setText("U");
 							makeAdminButton.setTextColor(getResources().getColor(
@@ -309,7 +305,6 @@ public class InviteActivity extends ActionBarActivity {
 						}
 						else
 						{
-							added.put(view.getId(), text);
 							role.put(view.getId(), '-');
 							makeAdminButton.setText("-");
 							makeAdminButton.setTextColor(getResources().getColor(
@@ -338,13 +333,12 @@ public class InviteActivity extends ActionBarActivity {
 	public void confirmButton(View view)
 	{
 		//now loop through list of added to add all the additional users to the group
-		int size = added.size();
+		int size = role.size();
 		System.out.println("Total count of users to process: "+size);
 		for(int i = 0; i < size; i++) 
 		{
-			System.out.println("adding friend #"+i+"/"+added.size());
 			//get the user's email by matching indexes from added list with indexes from allFriendslist.
-			int key = added.keyAt(i);
+			int key = role.keyAt(i);
 			//grab the email of friend to add
 			String friendsEmail = users.get(key).getEmail();
 			//grab the role of friend to add
@@ -360,7 +354,6 @@ public class InviteActivity extends ActionBarActivity {
 		user.fetchGroups();
 		GLOBAL.setCurrentUser(user);
 		GLOBAL.setGroupBuffer(group);
-		
 		Context context = getApplicationContext();
 		Toast toast = GLOBAL.getToast(context, "Friends have been invited.");
 		toast.show();
@@ -374,17 +367,14 @@ public class InviteActivity extends ActionBarActivity {
 		@Override
 		protected String doInBackground(String... urls)
 		{
-			
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("email", urls[1]));
 			nameValuePairs.add(new BasicNameValuePair("sender", urls[2]));
 			nameValuePairs.add(new BasicNameValuePair("role", urls[3]));
 			nameValuePairs.add(new BasicNameValuePair("g_id", urls[4]));
-
 			//pass url and nameValuePairs off to GLOBAL to do the JSON call.  Code continues at onPostExecute when JSON returns.
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
-
 
 		@Override
 		protected void onPostExecute(String result)
@@ -392,13 +382,11 @@ public class InviteActivity extends ActionBarActivity {
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
-
 				// member has been successfully added
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					System.out.println("USER HAS SUCCESSFULLY BEEN ADDED");
 					//all working correctly, continue to next user or finish.
-					
 				} 
 				else if (jsonObject.getString("success").toString().equals("0"))
 				{	

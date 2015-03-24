@@ -67,7 +67,7 @@ public class RecentMessagesActivity extends ActionBarActivity
 	private int IMAGE_INDEX = 0;//holy shit
 	private User user; //will be null for now
 	private ArrayList<ImageView> images = new ArrayList<ImageView>();
-	private Dialog loadDialog = null;
+	private Dialog loadDialog;
 	private ArrayList<Message> recentMessages = new ArrayList<Message>();
     private static final String EXTRA_MESSAGE = "message";
     private static final String PROPERTY_REG_ID = "registration_id";
@@ -242,7 +242,6 @@ public class RecentMessagesActivity extends ActionBarActivity
 		@Override
 		protected String doInBackground(String... urls)
 		{
-			
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("email", urls[1]));
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);

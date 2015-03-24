@@ -14,7 +14,20 @@
 	    android:layout_gravity="center_vertical"
 	    android:gravity="center"
 	    android:orientation="vertical" >
-	    
+	    	
+	   	<Button
+	   	    android:id="@+id/createGroupButton"
+		    android:onClick="startGroupCreateActivity"
+	   	    android:layout_width="match_parent"
+	   	    android:layout_marginTop="5dp"
+	   	    android:layout_marginBottom="5dp"
+	   	    android:layout_height="80dp"
+	   	    android:background="@drawable/button_border"
+	   	    android:fontFamily="sans-serif-condensed"
+	   	    android:text="@string/createGroupButton"
+	   	    android:textColor="@color/button_text_color"
+	   	    android:textSize="20sp" />
+	   	
 	   	<Button
 	   	    android:id="@+id/yourGroupsButton"
 		    android:onClick="startGroupsCurrentActivity"
@@ -38,19 +51,6 @@
 	   	    android:background="@drawable/button_border"
 	   	    android:fontFamily="sans-serif-condensed"
 	   	    android:text="@string/pendingGroupsButton"
-	   	    android:textColor="@color/button_text_color"
-	   	    android:textSize="20sp" />
-	
-	   	<Button
-	   	    android:id="@+id/createGroupButton"
-		    android:onClick="startGroupCreateActivity"
-	   	    android:layout_width="match_parent"
-	   	    android:layout_marginTop="5dp"
-	   	    android:layout_marginBottom="5dp"
-	   	    android:layout_height="80dp"
-	   	    android:background="@drawable/button_border"
-	   	    android:fontFamily="sans-serif-condensed"
-	   	    android:text="@string/createGroupButton"
 	   	    android:textColor="@color/button_text_color"
 	   	    android:textSize="20sp" />
 	   	

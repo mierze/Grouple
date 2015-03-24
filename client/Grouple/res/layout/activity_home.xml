@@ -12,7 +12,7 @@
 	    android:layout_width="match_parent"
 	    android:layout_height="fill_parent"
 	    android:layout_marginRight="20dp"
-	    android:layout_above="@+id/topRowNavLayoutHA"
+	    android:layout_above="@+id/navLayout"
 	    android:layout_marginLeft="20dp"
 	    android:layout_marginTop="5dp"
 	    android:contentDescription="test"
@@ -20,140 +20,144 @@
 	    android:layout_gravity="center_vertical"
 	    android:src="@drawable/home_logo_update4"
 	    android:visibility="visible" />
-      
-	<LinearLayout
-  	    android:id="@+id/topRowNavLayoutHA"
-  	    android:orientation="horizontal"
-
-  	    android:layout_above="@+id/bottRowNavLayoutHA"
+    
+  	<LinearLayout
+  	    android:id="@+id/navLayout"
+  	    android:orientation="vertical"
+  	   	android:layout_alignParentBottom="true"
   	    android:layout_marginBottom="5dp"
   	    android:layout_width="match_parent"
   	    android:layout_height="wrap_content" >
-      	    
-      	    
- 	    <Button
- 	        android:layout_height="wrap_content"
-  	        android:layout_width="wrap_content"
- 	        android:id="@+id/userButtonHA"
- 	        android:layout_margin="5dp"
- 	        android:layout_weight="1"
- 	        android:background="@drawable/user_button_border"
- 	        android:textStyle="bold"
- 	        android:fontFamily="sans-serif"
- 	        android:paddingBottom="10dp"
- 	        android:gravity="bottom|center_horizontal"
- 	        android:onClick="navigate"
- 	        android:text="Profile"
- 	        android:textColor="@color/text_color"
- 	        android:textSize="16sp" />
- 	    
- 		<Button
- 		   	android:layout_height="wrap_content"
-  	        android:layout_width="wrap_content"
-  	        android:layout_margin="5dp"
- 	        android:id="@+id/messagesButtonHA"		
- 	        android:paddingBottom="10dp"
- 	        android:background="@drawable/messages_button_border"
- 	        android:textStyle="bold"
- 	        android:layout_weight="1"
- 	       	android:fontFamily="sans-serif"
- 	        android:gravity="bottom|center_horizontal"
- 	        android:onClick="navigate"
- 	        android:text="Messages"
- 	        android:textColor="@color/text_color"
- 	        android:textSize="16sp" />
-
- 	    <Button
- 	      	android:layout_height="wrap_content"
-  	        android:layout_width="wrap_content"
- 	        android:id="@+id/settingsButtonHA"
-			android:layout_margin="5dp"
- 	        android:layout_weight="1"
- 	       	android:paddingBottom="10dp"
- 	        android:background="@drawable/settings_button_border"
- 	        android:textStyle="bold"
- 	     	android:fontFamily="sans-serif"
- 	        android:gravity="bottom|center_horizontal"
- 	        android:onClick="navigate"
- 	        android:text="Settings"
- 	        android:textColor="@color/text_color"
- 	        android:textSize="16sp" />
-
- 	</LinearLayout>
-      	
-      	
-   	<LinearLayout
-   	    android:id="@+id/bottRowNavLayoutHA"
-   	    android:orientation="horizontal"
-   	    android:layout_alignParentBottom="true"
-   	    android:layout_marginTop="5dp"
-   	    android:layout_width="match_parent"
-   	    android:layout_height="wrap_content" >
-    	
-    	<Button
-    	   	android:layout_height="wrap_content"
-  	        android:layout_width="wrap_content"
-  	        android:layout_margin="5dp"
-   	        android:id="@+id/friendsButtonHA"
-   	        android:layout_weight="1"
-   	        android:background="@drawable/friends_button_border"
-   	        android:paddingBottom="10dp"
-   	        android:gravity="bottom|center_horizontal"
-   	        android:onClick="navigate"
-   	        android:text="Friends"
-   	        android:textColor="@color/text_color"
-   	        android:textStyle="bold"
-   	       	android:fontFamily="sans-serif"
-   	        android:textSize="16sp" />
-
-
-  	    
-  	    <Button
-  	       	android:layout_height="wrap_content"
-  	        android:layout_width="wrap_content"
-  	        android:id="@+id/groupsButtonHA"
-  	        android:layout_weight="1"
-  	        android:layout_margin="5dp"
-  	        android:background="@drawable/groups_button_border"
-  	        android:textStyle="bold"
-  	        android:fontFamily="sans-serif"
-  	        android:gravity="bottom|center_horizontal"
-  	        android:onClick="navigate"
-  	     	android:paddingBottom="10dp"
-  	        android:text="Groups"
-  	        android:textColor="@color/text_color"
-  	        android:textSize="16sp" />
-
-
-  	    <!-- TextView
-  	        android:id="@+id/userNotificationTextView"
-  	        android:layout_width="16dp"
-  	        android:layout_height="16dp"
-  	        android:layout_column="1"
-  	        android:layout_gravity="center_horizontal|top"
-  	        android:layout_row="2"
-  	        android:background="@drawable/notification_icon"
-  	        android:gravity="center"
-  	        android:textAppearance="?android:attr/textAppearanceSmall"
-  	        android:textColor="#FFFFFF"
-  	        android:visibility="invisible" /> -->
-
- 		<Button
-  	        android:id="@+id/eventsButtonHA"
-  	        android:layout_weight="1"
-  	        android:layout_height="wrap_content"
-  	        android:layout_width="wrap_content"
-  	        android:background="@drawable/events_button_border"
-      	    android:textStyle="bold"
-      	   	android:layout_margin="5dp"
-  	        android:fontFamily="sans-serif"
-  	        android:gravity="bottom|center_horizontal"
-  	        android:onClick="navigate"
-  	        android:text="Events"
-  	        android:textColor="@color/text_color"
-  	        android:paddingBottom="10dp"
-  	        android:textSize="16sp" />
-
+		<LinearLayout
+	  	    android:id="@+id/topRowNavLayoutHA"
+	  	    android:orientation="horizontal"
+	  	    android:layout_marginBottom="5dp"
+	  	    android:layout_width="match_parent"
+	  	    android:layout_height="wrap_content" >
+	      	    
+	      	    
+	 	    <Button
+	 	        android:layout_height="wrap_content"
+	  	        android:layout_width="wrap_content"
+	 	        android:id="@+id/userButtonHA"
+	 	        android:layout_margin="5dp"
+	 	        android:layout_weight="1"
+	 	        android:background="@drawable/user_button_border"
+	 	        android:textStyle="bold"
+	 	        android:fontFamily="sans-serif"
+	 	        android:paddingBottom="10dp"
+	 	        android:gravity="bottom|center_horizontal"
+	 	        android:onClick="navigate"
+	 	        android:text="Profile"
+	 	        android:textColor="@color/text_color"
+	 	        android:textSize="16sp" />
+	 	    
+	 		<Button
+	 		   	android:layout_height="wrap_content"
+	  	        android:layout_width="wrap_content"
+	  	        android:layout_margin="5dp"
+	 	        android:id="@+id/messagesButtonHA"		
+	 	        android:paddingBottom="10dp"
+	 	        android:background="@drawable/messages_button_border"
+	 	        android:textStyle="bold"
+	 	        android:layout_weight="1"
+	 	       	android:fontFamily="sans-serif"
+	 	        android:gravity="bottom|center_horizontal"
+	 	        android:onClick="navigate"
+	 	        android:text="Messages"
+	 	        android:textColor="@color/text_color"
+	 	        android:textSize="16sp" />
+	
+	 	    <Button
+	 	      	android:layout_height="wrap_content"
+	  	        android:layout_width="wrap_content"
+	 	        android:id="@+id/settingsButtonHA"
+				android:layout_margin="5dp"
+	 	        android:layout_weight="1"
+	 	       	android:paddingBottom="10dp"
+	 	        android:background="@drawable/settings_button_border"
+	 	        android:textStyle="bold"
+	 	     	android:fontFamily="sans-serif"
+	 	        android:gravity="bottom|center_horizontal"
+	 	        android:onClick="navigate"
+	 	        android:text="Settings"
+	 	        android:textColor="@color/text_color"
+	 	        android:textSize="16sp" />
+	
+	 	</LinearLayout>
+	      	
+	      	
+	   	<LinearLayout
+	   	    android:id="@+id/bottRowNavLayoutHA"
+	   	    android:orientation="horizontal"
+	   	    android:layout_marginTop="5dp"
+	   	    android:layout_width="match_parent"
+	   	    android:layout_height="wrap_content" >
+	    	
+	    	<Button
+	    	   	android:layout_height="wrap_content"
+	  	        android:layout_width="wrap_content"
+	  	        android:layout_margin="5dp"
+	   	        android:id="@+id/friendsButtonHA"
+	   	        android:layout_weight="1"
+	   	        android:background="@drawable/friends_button_border"
+	   	        android:paddingBottom="10dp"
+	   	        android:gravity="bottom|center_horizontal"
+	   	        android:onClick="navigate"
+	   	        android:text="Friends"
+	   	        android:textColor="@color/text_color"
+	   	        android:textStyle="bold"
+	   	       	android:fontFamily="sans-serif"
+	   	        android:textSize="16sp" />
+	
+	
+	  	    
+	  	    <Button
+	  	       	android:layout_height="wrap_content"
+	  	        android:layout_width="wrap_content"
+	  	        android:id="@+id/groupsButtonHA"
+	  	        android:layout_weight="1"
+	  	        android:layout_margin="5dp"
+	  	        android:background="@drawable/groups_button_border"
+	  	        android:textStyle="bold"
+	  	        android:fontFamily="sans-serif"
+	  	        android:gravity="bottom|center_horizontal"
+	  	        android:onClick="navigate"
+	  	     	android:paddingBottom="10dp"
+	  	        android:text="Groups"
+	  	        android:textColor="@color/text_color"
+	  	        android:textSize="16sp" />
+	
+	
+	  	    <!-- TextView
+	  	        android:id="@+id/userNotificationTextView"
+	  	        android:layout_width="16dp"
+	  	        android:layout_height="16dp"
+	  	        android:layout_column="1"
+	  	        android:layout_gravity="center_horizontal|top"
+	  	        android:layout_row="2"
+	  	        android:background="@drawable/notification_icon"
+	  	        android:gravity="center"
+	  	        android:textAppearance="?android:attr/textAppearanceSmall"
+	  	        android:textColor="#FFFFFF"
+	  	        android:visibility="invisible" /> -->
+	
+	 		<Button
+	  	        android:id="@+id/eventsButtonHA"
+	  	        android:layout_weight="1"
+	  	        android:layout_height="wrap_content"
+	  	        android:layout_width="wrap_content"
+	  	        android:background="@drawable/events_button_border"
+	      	    android:textStyle="bold"
+	      	   	android:layout_margin="5dp"
+	  	        android:fontFamily="sans-serif"
+	  	        android:gravity="bottom|center_horizontal"
+	  	        android:onClick="navigate"
+	  	        android:text="Events"
+	  	        android:textColor="@color/text_color"
+	  	        android:paddingBottom="10dp"
+	  	        android:textSize="16sp" />
+	
+		</LinearLayout>
 	</LinearLayout>
-
 </RelativeLayout>
