@@ -108,7 +108,6 @@ public class EventEditActivity extends ActionBarActivity implements
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent e)  
 	{
-		
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
 	    	loadDialog.show();
 	    	finish();

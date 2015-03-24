@@ -1,20 +1,10 @@
 package cs460.grouple.grouple;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
 import org.json.JSONObject;
-
-import cs460.grouple.grouple.ProfileActivity.CONTENT_TYPE;
-import cs460.grouple.grouple.User.getUserInfoTask;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
@@ -22,34 +12,21 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.util.SparseArray;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.GridLayout;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 
 /*
  * ListActivity is an activity that displays lists of different types, 
@@ -203,8 +180,8 @@ public class ListActivity extends ActionBarActivity
 	private void populateGroups()
 	{
 		String sadGuyText = "";
-		String nameText = "";
-		Button nameButton;
+		String name = "";
+		TextView nameView;
 		View row = null;
 		int index;
 		int id;		
@@ -226,7 +203,7 @@ public class ListActivity extends ActionBarActivity
 			{
 				index = groups.indexOf(g);
 				id = groups.get(index).getID();
-				nameText = groups.get(index).getName();
+				name = groups.get(index).getName();
 				//
 				if  (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
 				{
@@ -239,16 +216,16 @@ public class ListActivity extends ActionBarActivity
 					else
 						row = li.inflate(R.layout.list_row_nobutton, null);
 					
-					nameButton =  (Button)row.findViewById(R.id.nameButtonLI);
+					nameView =  (TextView)row.findViewById(R.id.nameTextViewLI);
 				}
 				else //GROUP INVITES
 				{
 					row = li.inflate(R.layout.list_row_acceptdecline, null);
-					nameButton =  (Button)row.findViewById(R.id.nameButtonAD);
+					nameView =  (TextView)row.findViewById(R.id.nameTextViewAD);
 				}
 				row.setId(id);
-				nameButton.setId(id);
-				nameButton.setText(nameText);
+				nameView.setId(id);
+				nameView.setText(name);
 				listLayout.addView(row);
 			}		
 		}
@@ -268,8 +245,8 @@ public class ListActivity extends ActionBarActivity
 		View row = null;
 		int index;
 		String email = "";
-		String nameText = "";
-		Button nameButton = null;
+		String name = "";
+		TextView nameTextView;
 
 		if  (CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()))
 		{
@@ -311,9 +288,9 @@ public class ListActivity extends ActionBarActivity
 				email = u.getEmail();
 				if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()) && GLOBAL.isCurrentUser(user.getEmail()) && !CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()))
 				{
-					nameText = u.getName();
+					name = u.getName();
 					row = li.inflate(R.layout.list_row, null);
-					nameButton = (Button) row.findViewById(R.id.nameButtonLI);
+					nameTextView = (TextView) row.findViewById(R.id.nameTextViewLI);
 					Button removeFriendButton = (Button) row.findViewById(R.id.removeButtonLI);
 					removeFriendButton.setId(index);	 
 				} 
@@ -321,18 +298,18 @@ public class ListActivity extends ActionBarActivity
 				else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
 				{	
 					row = li.inflate(R.layout.list_row_acceptdecline, null);
-					nameButton = (Button) row.findViewById(R.id.nameButtonAD);
-					nameText = email;
+					nameTextView = (TextView) row.findViewById(R.id.nameTextViewAD);
+					name = email;
 				}
 				//FOR GROUP MEMBERS / CURRENT FRIENDS NON MOD / SELECT FRIEND
 				else
 				{
-					nameText = u.getName();
+					name = u.getName();
 					row = li.inflate(R.layout.list_row_nobutton, null);
-					nameButton = (Button) row.findViewById(R.id.nameButtonLI);
+					nameTextView = (TextView) row.findViewById(R.id.nameTextViewLI);
 				}
-				nameButton.setText(nameText);
-				nameButton.setId(index);
+				nameTextView.setText(name);
+				nameTextView.setId(index);
 				row.setId(index);
 				listLayout.addView(row);
 			}		
@@ -353,12 +330,12 @@ public class ListActivity extends ActionBarActivity
 	{
 		View row = null;
 		String sadGuyText = "";
-		Button nameButton = null;
+		TextView nameTextView = null;
 		Button removeEventButton = null;
 
 		int id;
 		int index;
-		String nameText = "";
+		String name = "";
 		/*
 		 * Checking which CONTENT we need to inflate
 		 */
@@ -404,24 +381,22 @@ public class ListActivity extends ActionBarActivity
 					else //user does not have ability to remove events
 						row = li.inflate(R.layout.list_row_nobutton, null);
 					
-					nameButton =  (Button)row.findViewById(R.id.nameButtonLI);
+					nameTextView =  (TextView)row.findViewById(R.id.nameTextViewLI);
 
 					if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
-						nameButton.setText(e.getName());//future get date too?
+						nameTextView.setText(e.getName());//future get date too?
 					else
-						nameButton.setText(e.getName() + "\n(" + e.getNumUsers() + " confirmed / " + e.getMinPart() + " required)");
+						nameTextView.setText(e.getName() + "\n(" + e.getNumUsers() + " confirmed / " + e.getMinPart() + " required)");
 				}
 				else
 				{
 					row = li.inflate(R.layout.list_row_acceptdecline, null);
-					nameButton =  (Button)row.findViewById(R.id.nameButtonAD);
-					nameButton.setText(e.getName() + "\n(" + e.getNumUsers() + " confirmed / " + e.getMinPart() + " required)");
+					nameTextView =  (TextView)row.findViewById(R.id.nameTextViewAD);
+					nameTextView.setText(e.getName() + "\n(" + e.getNumUsers() + " confirmed / " + e.getMinPart() + " required)");
 				}
-
 				//setting ids to the id of the group for button functionality
-				nameButton.setId(id);
+				nameTextView.setId(id);
 				row.setId(id);
-	
 				//adding row to view
 				listLayout.addView(row);
 			}
@@ -457,7 +432,6 @@ public class ListActivity extends ActionBarActivity
 		for (User u : users)
 			if (u.getEmail().equals(user.getEmail()))
 				inEntity = true;
-		
 		if (inEntity)
 		{
 			System.out.println("NOW IN SET ROLE");
@@ -467,7 +441,6 @@ public class ListActivity extends ActionBarActivity
 				new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_event.php", Integer.toString(event.getID()));
 		}
 	}
-
 	
 	/* Default methods */
 	@Override
@@ -475,7 +448,7 @@ public class ListActivity extends ActionBarActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list);
-		load();
+		//load();
 	}
 	@Override
 	protected void onResume()
@@ -526,8 +499,8 @@ public class ListActivity extends ActionBarActivity
 	public void onClick(View view)
 	{
 		View parent = (View)view.getParent();
-		Button nameText = (Button) parent
-				.findViewById(R.id.nameButtonAD);
+		Button name = (Button) parent
+				.findViewById(R.id.nameTextViewAD);
 		switch (view.getId())
 		{
 		case R.id.declineButton:
@@ -715,7 +688,7 @@ public class ListActivity extends ActionBarActivity
 				
 				intent = new Intent(this, MessagesActivity.class);
 				//View parent = (View)view.getParent();
-				//Button nameText = (Button) parent.findViewById(R.id.nameButtonLI);
+				//Button name = (Button) parent.findViewById(R.id.nameTextViewLI);
 				intent.putExtra("NAME", users.get(id).getName());
 			}
 			else

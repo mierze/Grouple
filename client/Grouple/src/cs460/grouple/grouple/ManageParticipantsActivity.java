@@ -36,6 +36,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -256,12 +257,12 @@ public class ManageParticipantsActivity extends ActionBarActivity {
 				//TODO: add all to aded
 				final LayoutInflater inflater = getLayoutInflater();
 				final View view = inflater.inflate(R.layout.list_row_invitefriend, null);
-				final GridLayout rowView = (GridLayout) view.findViewById(R.id.friendGridLayoutNoAccess);
+				final RelativeLayout row = (RelativeLayout) view.findViewById(R.id.friendManageLayout);
 				final Button makeAdminButton = (Button) view.findViewById(R.id.removeFriendButtonNoAccess);
-				final TextView friendNameButton = (TextView) view.findViewById(R.id.friendNameButtonNoAccess);
+				final TextView friendNameButton = (TextView) view.findViewById(R.id.friendNameTextView);
 				final String friendName = friendNameButton.getText().toString();
 				final CheckBox cb = (CheckBox) view.findViewById(R.id.addToGroupBox);
-				rowView.setId(index);
+				row.setId(index);
 				makeAdminButton.setId(index);
 				cb.setId(index);
 	
@@ -274,16 +275,11 @@ public class ManageParticipantsActivity extends ActionBarActivity {
 					makeAdminButton.setTextColor(getResources().getColor(R.color.purple));
 					
 				
-				rowView.setOnClickListener(new OnClickListener()
+				row.setOnClickListener(new OnClickListener()
 				{
 					@Override
 					public void onClick(View view) 
 					{
-						//final Button makeAdminButton = (Button)view.getParent().findViewById(R.id.removeFriendButtonNoAccess);
-	
-						//final TextView friendNameButton = (TextView) view.findViewById(R.id.friendNameButtonNoAccess);
-						//final CheckBox cb = (CheckBox) view.findViewById(R.id.addToGroupBox);
-	
 						if (makeAdminButton.getText().toString().equals("P")) 
 						{
 							makeAdminButton.setText("A");
@@ -316,10 +312,8 @@ public class ManageParticipantsActivity extends ActionBarActivity {
 									R.color.orange));
 							cb.setChecked(false);
 						}
-					}
-						
+					}	
 				});
-				
 
 				//listener when clicking makeAdmin button
 				makeAdminButton.setOnClickListener(new OnClickListener() 
@@ -395,8 +389,8 @@ public class ManageParticipantsActivity extends ActionBarActivity {
 				friendNameButton.setId(index);
 				toUpdate.put(index, user.getEmail());
 				toUpdateRole.put(index, roles.get(index));
-				rowView.setId(index);
-				pickFriendsLayout.addView(rowView);	
+				row.setId(index);
+				pickFriendsLayout.addView(row);	
 				index++;
 			}
 		}

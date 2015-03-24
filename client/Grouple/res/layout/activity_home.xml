@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/homeLayout"
     android:layout_width="match_parent"
@@ -10,21 +10,23 @@
   	<ImageView
 		android:id="@+id/homeLogoImageViewHA"
 	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:layout_marginRight="30dp"
-	    android:layout_marginLeft="30dp"
+	    android:layout_height="fill_parent"
+	    android:layout_marginRight="20dp"
+	    android:layout_above="@+id/topRowNavLayoutHA"
+	    android:layout_marginLeft="20dp"
 	    android:layout_marginTop="5dp"
 	    android:contentDescription="test"
-	    android:gravity="center"
+	    android:gravity="center_vertical"
+	    android:layout_gravity="center_vertical"
 	    android:src="@drawable/home_logo_update4"
-	    android:layout_weight="2"
 	    android:visibility="visible" />
       
 	<LinearLayout
   	    android:id="@+id/topRowNavLayoutHA"
   	    android:orientation="horizontal"
-  	    android:layout_gravity="bottom"
-  	    android:layout_weight="1"
+
+  	    android:layout_above="@+id/bottRowNavLayoutHA"
+  	    android:layout_marginBottom="5dp"
   	    android:layout_width="match_parent"
   	    android:layout_height="wrap_content" >
       	    
@@ -33,7 +35,6 @@
  	        android:layout_height="wrap_content"
   	        android:layout_width="wrap_content"
  	        android:id="@+id/userButtonHA"
- 	        android:layout_column="0"
  	        android:layout_margin="5dp"
  	        android:layout_weight="1"
  	        android:background="@drawable/user_button_border"
@@ -63,10 +64,10 @@
  	        android:textSize="16sp" />
 
  	    <Button
- 	          	        android:layout_height="wrap_content"
+ 	      	android:layout_height="wrap_content"
   	        android:layout_width="wrap_content"
  	        android:id="@+id/settingsButtonHA"
- 	         	        android:layout_margin="5dp"
+			android:layout_margin="5dp"
  	        android:layout_weight="1"
  	       	android:paddingBottom="10dp"
  	        android:background="@drawable/settings_button_border"
@@ -84,15 +85,15 @@
    	<LinearLayout
    	    android:id="@+id/bottRowNavLayoutHA"
    	    android:orientation="horizontal"
-   	    android:layout_weight="1"
-   	    android:layout_gravity="bottom"
+   	    android:layout_alignParentBottom="true"
+   	    android:layout_marginTop="5dp"
    	    android:layout_width="match_parent"
    	    android:layout_height="wrap_content" >
     	
     	<Button
     	   	android:layout_height="wrap_content"
   	        android:layout_width="wrap_content"
-  	         	        android:layout_margin="5dp"
+  	        android:layout_margin="5dp"
    	        android:id="@+id/friendsButtonHA"
    	        android:layout_weight="1"
    	        android:background="@drawable/friends_button_border"
@@ -112,7 +113,7 @@
   	        android:layout_width="wrap_content"
   	        android:id="@+id/groupsButtonHA"
   	        android:layout_weight="1"
-  	         	        android:layout_margin="5dp"
+  	        android:layout_margin="5dp"
   	        android:background="@drawable/groups_button_border"
   	        android:textStyle="bold"
   	        android:fontFamily="sans-serif"
@@ -144,7 +145,7 @@
   	        android:layout_width="wrap_content"
   	        android:background="@drawable/events_button_border"
       	    android:textStyle="bold"
-      	     	        android:layout_margin="5dp"
+      	   	android:layout_margin="5dp"
   	        android:fontFamily="sans-serif"
   	        android:gravity="bottom|center_horizontal"
   	        android:onClick="navigate"
@@ -155,4 +156,4 @@
 
 	</LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>

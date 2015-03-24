@@ -51,6 +51,7 @@ import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -140,27 +141,20 @@ public class GroupCreateActivity extends ActionBarActivity
 			//setup for each friend
 			for(int i=0; i<allFriends.size(); i++)
 			{
-				
-				
 				final View view = inflater.inflate(R.layout.list_row_invitefriend, null);
-				final GridLayout rowView = (GridLayout) view.findViewById(R.id.friendGridLayoutNoAccess);
+				final RelativeLayout row = (RelativeLayout) view.findViewById(R.id.friendManageLayout);
 				final Button makeAdminButton = (Button) view.findViewById(R.id.removeFriendButtonNoAccess);
-				final TextView friendNameButton = (TextView) view.findViewById(R.id.friendNameButtonNoAccess);
+				final TextView friendNameButton = (TextView) view.findViewById(R.id.friendNameTextView);
 				final CheckBox cb = (CheckBox) view.findViewById(R.id.addToGroupBox);
-				rowView.setId(i);
+				row.setId(i);
 				makeAdminButton.setId(i);
 				cb.setId(i);
 	
-				rowView.setOnClickListener(new OnClickListener()
+				row.setOnClickListener(new OnClickListener()
 				{
 					@Override
 					public void onClick(View view) 
 					{
-						//final Button makeAdminButton = (Button)view.getParent().findViewById(R.id.removeFriendButtonNoAccess);
-	
-						//final TextView friendNameButton = (TextView) view.findViewById(R.id.friendNameButtonNoAccess);
-						//final CheckBox cb = (CheckBox) view.findViewById(R.id.addToGroupBox);
-	
 						if (makeAdminButton.getText().toString().equals("P")) 
 						{
 							makeAdminButton.setText("A");
@@ -203,8 +197,7 @@ public class GroupCreateActivity extends ActionBarActivity
 							makeAdminButton.setTextColor(getResources().getColor(
 									R.color.purple));
 						}
-					}
-						
+					}		
 				});
 				
 				//listener when clicking makeAdmin button
@@ -318,8 +311,8 @@ public class GroupCreateActivity extends ActionBarActivity
 				
 				friendNameButton.setText(allFriends.get(i).getName());
 				friendNameButton.setId(i);
-				rowView.setId(i);
-				membersToAdd.addView(rowView);	
+				row.setId(i);
+				membersToAdd.addView(row);	
 			}
 		}
 	}

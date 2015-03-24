@@ -141,24 +141,62 @@ public class EventAddGroupsActivity extends ActionBarActivity
 			row = li.inflate(
 					R.layout.list_row_eventinvitegroup, null);
 
-			final Button groupNameButton = (Button) row
-					.findViewById(R.id.groupNameButtonNoAccess);
+			final TextView groupNameTextView = (TextView) row
+					.findViewById(R.id.groupNameTextView);
 			final CheckBox cb = (CheckBox) row
 					.findViewById(R.id.addToEventBox);
+			final String name = groupNameTextView.getText().toString();
 			cb.setId(i);
-					
+			row.setId(i);
+			groupNameTextView.setId(i);
+			//listener when clicking makeAdmin button
+			row.setOnClickListener(new OnClickListener() 
+			{
+				@Override
+				public void onClick(View view) 
+				{
+					if(cb.isChecked())
+					{
+						cb.setChecked(false);
+						added.remove(view.getId());
+						System.out.println("Added size: "+added.size());
+					}
+					else
+					{
+						cb.setChecked(true);
+						added.put(view.getId(), name);
+						System.out.println("Added size: "+added.size());
+					}
+				}
+			});		
+			groupNameTextView.setOnClickListener(new OnClickListener() 
+			{
+				@Override
+				public void onClick(View view) 
+				{
+					if(cb.isChecked())
+					{
+						cb.setChecked(false);
+						added.remove(view.getId());
+						System.out.println("Added size: "+added.size());
+					}
+					else
+					{
+						cb.setChecked(true);
+						added.put(view.getId(), name);
+						System.out.println("Added size: "+added.size());
+					}
+				}
+			});		
 			//listener when clicking checkbox
 			cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
 			{
 				@Override
 				public void onCheckedChanged(CompoundButton view, boolean isChecked)
 				{
-					String text = groupNameButton.getLayout()
-							.getText().toString();
-				
 					if(cb.isChecked())
 					{
-						added.put(view.getId(), text);
+						added.put(view.getId(), name);
 						System.out.println("Added size: "+added.size());
 					}
 					else
@@ -168,10 +206,7 @@ public class EventAddGroupsActivity extends ActionBarActivity
 					}
 				}
 			});
-			
-			groupNameButton.setText(allGroups.get(i).getName());
-			groupNameButton.setId(i);
-			row.setId(i);
+			groupNameTextView.setText(allGroups.get(i).getName());
 			membersToAdd.addView(row);	
 		}
 	}
@@ -198,13 +233,13 @@ public class EventAddGroupsActivity extends ActionBarActivity
 			//get the groups's g_id by matching indexes from added list with indexes from allGroupslist.
 			int key = added.keyAt(i);
 			//grab the gid of group to add
-			String groupsgid = String.valueOf(allGroups.get(key).getID());
+			String ID = String.valueOf(allGroups.get(key).getID());
 				
-			System.out.println("adding group: "+groupsgid);		
+			System.out.println("adding group: "+ID);		
 			
 			//initiate add of group
 			new EventAddGroupTask().execute("http://68.59.162.183/"
-					+ "android_connect/add_eventmember.php", groupsgid, email, ID);
+					+ "android_connect/add_eventmember.php", ID, email, ID);
 		}		
 	}
 	
@@ -216,15 +251,8 @@ public class EventAddGroupsActivity extends ActionBarActivity
 		{
 			int tmpid = Integer.parseInt(urls[1]);
 			System.out.println("tmpid: "+tmpid);
-			
-			//Cannot currently use because of synch problems, until fixed just calling getMembers myself here so it will WORK
-			//Group group = new Group(tmpid);
-			//group.fetchMembers();
-			//allMembers = group.getUsers();
-			
 			//pass url off to GLOBAL to do the JSON call.  Code continues at onPostExecute when JSON returns.
 			return GLOBAL.readJSONFeed("http://68.59.162.183/android_connect/get_group_members.php?gid="+tmpid, null);
-			
 		}
 
 		@Override
@@ -275,15 +303,12 @@ public class EventAddGroupsActivity extends ActionBarActivity
 		@Override
 		protected String doInBackground(String... urls)
 		{
-
 				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 				nameValuePairs.add(new BasicNameValuePair("email", urls[1]));
 				nameValuePairs.add(new BasicNameValuePair("sender", urls[2]));
 				nameValuePairs.add(new BasicNameValuePair("e_id", urls[3]));
-
 				//pass url and nameValuePairs off to GLOBAL to do the JSON call.  Code continues at onPostExecute when JSON returns.
 				return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
-			
 		}
 
 		protected void onPostExecute(String result)

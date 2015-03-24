@@ -9,19 +9,19 @@
 
     
     <LinearLayout 
-    android:id="@+id/messageInnerLayout"
-    android:layout_width="wrap_content"
-    android:background="@drawable/message_border_out"
-    android:layout_alignParentLeft="true"
-    android:layout_marginRight="75dp"
-    android:minWidth="150dp"
-    android:layout_marginLeft="5dp"
-    android:gravity="left"
-    android:layout_marginBottom="5dp"
-    android:layout_gravity="left"
-        android:padding="15dp"
-    android:layout_height="match_parent"
-    android:orientation="vertical"> 
+	    android:id="@+id/messageInnerLayout"
+	    android:layout_width="wrap_content"
+	    android:background="@drawable/message_border_out"
+	    android:layout_alignParentLeft="true"
+	    android:layout_marginRight="75dp"
+	    android:minWidth="150dp"
+	    android:layout_marginLeft="5dp"
+	    android:gravity="left"
+	    android:layout_marginBottom="5dp"
+	    android:layout_gravity="left"
+	   	android:padding="15dp"
+	    android:layout_height="match_parent"
+	    android:orientation="vertical" > 
   		
         <Button
             android:id="@+id/contactNameButton"

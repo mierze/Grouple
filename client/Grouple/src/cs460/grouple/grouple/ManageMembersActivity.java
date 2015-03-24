@@ -36,13 +36,13 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class ManageMembersActivity extends ActionBarActivity {
 
 	private User user;
-	//private ArrayList<User> users;
 	private Group group;
 	private BroadcastReceiver broadcastReceiver;
 	private SparseArray<String> toUpdate = new SparseArray<String>();    //holds list of name of all friend rows to be added
@@ -53,12 +53,11 @@ public class ManageMembersActivity extends ActionBarActivity {
 	private static Global GLOBAL;
 	private static String CONTENT; //type of content to display
 	private static Bundle EXTRAS; //type of content to display
-	ArrayList<String> roles = new ArrayList<String>();
+	private ArrayList<String> roles = new ArrayList<String>();
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent e)  
 	{
-		
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
 	    	loadDialog.show();
 	    	finish();
@@ -119,9 +118,6 @@ public class ManageMembersActivity extends ActionBarActivity {
 		super.onDestroy();
 	}
 
-	
-	
-	////////////////////////////////////////////////////////////////////////////////////////
 	private void load()
 	{
 		GLOBAL = (Global)getApplicationContext();
@@ -133,26 +129,20 @@ public class ManageMembersActivity extends ActionBarActivity {
 		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
         loadDialog.setOwnerActivity(this);
 		setRoles();
-		//populateManageMembers();
-		
 		initActionBar();
 		initKillswitchListener();
 	}
 	
 	private void initActionBar()
 	{
-		
 		ActionBar ab = getSupportActionBar();
 		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
 		ab.setCustomView(R.layout.actionbar);
 		ab.setDisplayHomeAsUpEnabled(false);
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
-
-		actionbarTitle.setText("Manage Group Members"); //PANDA		
+		actionbarTitle.setText("Manage " + group.getName() + " Members");
 	}
-	
-	
-	
+
 	private void initKillswitchListener()
 	{
 		// START KILL SWITCH LISTENER
@@ -167,26 +157,21 @@ public class ManageMembersActivity extends ActionBarActivity {
 				if (intent.getAction().equals("CLOSE_ALL"))
 				{
 					Log.d("app666", "we killin the login it");
-					// System.exit(1);
 					finish();
 				}
-
 			}
 		};
 		registerReceiver(broadcastReceiver, intentFilter);
-		// End Kill switch listener
 	}
 	
 	private void setRoles()
 	{
 		members = group.getUsers();
-
 		for (User u : members)
 			new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_group.php", Integer.toString(members.indexOf(u)), Integer.toString(group.getID()));
 		
 	}
 		
-
 	private class getRoleTask extends AsyncTask<String, Void, String>
 	{
 		@Override
@@ -194,8 +179,7 @@ public class ManageMembersActivity extends ActionBarActivity {
 		{
 			String type = "gid";
 			String email = members.get(Integer.parseInt(urls[1])).getEmail();
-			String id = urls[2];
-			
+			String id = urls[2];		
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
 			nameValuePairs.add(new BasicNameValuePair("email", email));
 			nameValuePairs.add(new BasicNameValuePair(type, id));
@@ -208,7 +192,6 @@ public class ManageMembersActivity extends ActionBarActivity {
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
-				 
 				//json fetch was successful
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
@@ -219,7 +202,6 @@ public class ManageMembersActivity extends ActionBarActivity {
 					if (roles.size() == members.size()) //done with all
 						populateManageMembers();
 					//setNotifications(); //for group / event
-				
 				} 
 				//unsuccessful
 				else
@@ -238,29 +220,23 @@ public class ManageMembersActivity extends ActionBarActivity {
 	}
 	private void populateManageMembers()
 	{
-		//could use content here
-		
 		LinearLayout pickFriendsLayout = (LinearLayout) findViewById(R.id.manageMembersLayout);
 		LayoutInflater li = getLayoutInflater();
-
-
 		if (members != null && !members.isEmpty())
 		{
-			// looping thru json and adding to an array
 			int index = 0;
 			//setup for each friend
 			for(User user : members)
 			{
 				index = members.indexOf(user);
-				//TODO: add all to aded
 				final LayoutInflater inflater = getLayoutInflater();
 				final View view = inflater.inflate(R.layout.list_row_invitefriend, null);
-				final GridLayout rowView = (GridLayout) view.findViewById(R.id.friendGridLayoutNoAccess);
+				final RelativeLayout row = (RelativeLayout) view.findViewById(R.id.friendManageLayout);
 				final Button makeAdminButton = (Button) view.findViewById(R.id.removeFriendButtonNoAccess);
-				final TextView friendNameButton = (TextView) view.findViewById(R.id.friendNameButtonNoAccess);
+				final TextView friendNameButton = (TextView) view.findViewById(R.id.friendNameTextView);
 				final String friendName = friendNameButton.getText().toString();
 				final CheckBox cb = (CheckBox) view.findViewById(R.id.addToGroupBox);
-				rowView.setId(index);
+				row.setId(index);
 				makeAdminButton.setId(index);
 				cb.setId(index);
 	
@@ -273,16 +249,11 @@ public class ManageMembersActivity extends ActionBarActivity {
 					makeAdminButton.setTextColor(getResources().getColor(R.color.purple));
 					
 				
-				rowView.setOnClickListener(new OnClickListener()
+				row.setOnClickListener(new OnClickListener()
 				{
 					@Override
 					public void onClick(View view) 
 					{
-						//final Button makeAdminButton = (Button)view.getParent().findViewById(R.id.removeFriendButtonNoAccess);
-	
-						//final TextView friendNameButton = (TextView) view.findViewById(R.id.friendNameButtonNoAccess);
-						//final CheckBox cb = (CheckBox) view.findViewById(R.id.addToGroupBox);
-	
 						if (makeAdminButton.getText().toString().equals("P")) 
 						{
 							makeAdminButton.setText("A");
@@ -316,10 +287,7 @@ public class ManageMembersActivity extends ActionBarActivity {
 							cb.setChecked(false);
 						}
 					}
-						
 				});
-				
-
 				//listener when clicking makeAdmin button
 				makeAdminButton.setOnClickListener(new OnClickListener() 
 				{
@@ -358,14 +326,12 @@ public class ManageMembersActivity extends ActionBarActivity {
 						System.out.println("Setting role for user: " + toUpdate.get(view.getId()) + " to: " + toUpdateRole.get(view.getId()));
 					}
 				});
-						
 				//listener when clicking checkbox
 				cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
 				{
 					@Override
 					public void onCheckedChanged(CompoundButton view, boolean isChecked)
 					{
-						
 						if (cb.isChecked())
 						{
 							//REMOVING THOSE CHECKED OFF FOR DELETION
@@ -389,20 +355,18 @@ public class ManageMembersActivity extends ActionBarActivity {
 						}
 					}
 				});
-				
 				friendNameButton.setText(user.getName());
 				friendNameButton.setId(index);
 				toUpdate.put(index, user.getEmail());
 				toUpdateRole.put(index, roles.get(index));
-				rowView.setId(index);
-				pickFriendsLayout.addView(rowView);	
+				row.setId(index);
+				pickFriendsLayout.addView(row);	
 				index++;
 			}
 		}
 		else
 		{		
-			// user has no friends
-			// The user has no friend's so display the sad guy image.
+			// Group has no members, display sad guy
 			View row = li.inflate(R.layout.listitem_sadguy, null);
 			((TextView) row.findViewById(R.id.sadGuyTextView))
 				.setText("No members to manage.");
@@ -419,7 +383,6 @@ public class ManageMembersActivity extends ActionBarActivity {
 		for (int i = 0 ; i < size ; i++)
 		{
 			System.out.println("adding friend #"+i+"/"+size);
-			//get the user's email by matching indexes from added list with indexes from allFriendslist.
 			int key = toUpdate.keyAt(i);
 			//grab the email of friend to add
 			String friendsEmail = toUpdate.valueAt(key);
@@ -431,13 +394,11 @@ public class ManageMembersActivity extends ActionBarActivity {
 			{
 				System.out.println("removing mg member: "+friendsEmail);
 				new UpdateGroupMembersTask().execute("http://68.59.162.183/"
-						+ "android_connect/update_group_member.php", friendsEmail, "yes", "M", Integer.toString(g_id));
-			
+						+ "android_connect/update_group_member.php", friendsEmail, "yes", friendsRole, Integer.toString(g_id));
 			}
 			else
 			{
 				System.out.println("adding member: "+friendsEmail+", role: "+friendsRole);
-			
 				System.out.println("http://68.59.162.183/android_connect/update_group_member.php, url1: " + friendsEmail + ", 2: no, 3: " + friendsRole +", 4: " + Integer.toString(g_id));
 				new UpdateGroupMembersTask().execute("http://68.59.162.183/android_connect/update_group_member.php", friendsEmail, "no", friendsRole, Integer.toString(g_id));
 			}

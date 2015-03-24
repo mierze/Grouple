@@ -33,6 +33,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,7 +44,7 @@ public class InviteActivity extends ActionBarActivity {
 	private Group group;
 	private BroadcastReceiver broadcastReceiver;
 	private SparseArray<String> added = new SparseArray<String>();    //holds list of name of all friend rows to be added
-	private SparseArray<Boolean> role = new SparseArray<Boolean>();   //holds list of role of all friend rows to be added
+	private SparseArray<Character> role = new SparseArray<Character>();   //holds list of role of all friend rows to be added
 	private ArrayList<User> allFriends = new ArrayList<User>();   //holds list of all current friends
 	private static Global GLOBAL;
 	private static String CONTENT; //type of content to display
@@ -53,7 +54,6 @@ public class InviteActivity extends ActionBarActivity {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent e)  
 	{
-		
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
 	    	loadDialog.show();
 	    	finish();
@@ -65,7 +65,6 @@ public class InviteActivity extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_invite);
-		
 		load();
 	}
 
@@ -95,7 +94,6 @@ public class InviteActivity extends ActionBarActivity {
 			Intent login = new Intent(this, LoginActivity.class);
 			startActivity(login);
 			Intent intent = new Intent("CLOSE_ALL");
-	
 			this.sendBroadcast(intent);
 			return true;
 		}
@@ -115,7 +113,6 @@ public class InviteActivity extends ActionBarActivity {
 		super.onDestroy();
 	}
 
-
 	private void load()
 	{
 		GLOBAL = (Global)getApplicationContext();
@@ -127,25 +124,20 @@ public class InviteActivity extends ActionBarActivity {
 		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
         loadDialog.setOwnerActivity(this);
 		populateInviteMembers();
-		
 		initActionBar();
 		initKillswitchListener();
 	}
 	
 	private void initActionBar()
 	{
-		
 		ActionBar ab = getSupportActionBar();
 		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
 		ab.setCustomView(R.layout.actionbar);
 		ab.setDisplayHomeAsUpEnabled(false);
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
-
 		actionbarTitle.setText("Invite Friends"); //PANDA		
 	}
-	
-	
-	
+
 	private void initKillswitchListener()
 	{
 		// START KILL SWITCH LISTENER
@@ -160,21 +152,18 @@ public class InviteActivity extends ActionBarActivity {
 				if (intent.getAction().equals("CLOSE_ALL"))
 				{
 					Log.d("app666", "we killin the login it");
-					// System.exit(1);
 					finish();
 				}
-
 			}
 		};
 		registerReceiver(broadcastReceiver, intentFilter);
 		// End Kill switch listener
 	}
 	
-	
 	private void populateInviteMembers()
 	{
 		//could use content here
-		View row;
+		View view;
 		LinearLayout pickFriendsLayout = (LinearLayout) findViewById(R.id.pickFriendsLayout);
 		ArrayList<User> members;
 		LayoutInflater li = getLayoutInflater();
@@ -192,7 +181,6 @@ public class InviteActivity extends ActionBarActivity {
 					inGroup = true;			
 				}
 			}
-			
 			if (!inGroup)
 				users.add(friend);
 		}
@@ -205,18 +193,61 @@ public class InviteActivity extends ActionBarActivity {
 			//setup for each friend
 			for(User user : users)
 			{
-				row = li.inflate(
+				view = li.inflate(
 						R.layout.list_row_invitefriend, null);
+				final RelativeLayout row = (RelativeLayout) view.findViewById(R.id.friendManageLayout);
 				final Button makeAdminButton = (Button) row
 						.findViewById(R.id.removeFriendButtonNoAccess);
 
 				final TextView friendName = (TextView) row
-						.findViewById(R.id.friendNameButtonNoAccess);
+						.findViewById(R.id.friendNameTextView);
 				final CheckBox cb = (CheckBox) row
 						.findViewById(R.id.addToGroupBox);
 				makeAdminButton.setId(index);
 				cb.setId(makeAdminButton.getId());
 
+				//listener when clicking makeAdmin button
+				row.setOnClickListener(new OnClickListener() 
+				{
+					@Override
+					public void onClick(View view) 
+					{
+						if (makeAdminButton.getText().toString().equals("-")) 
+						{
+							makeAdminButton.setText("U");
+							role.put(view.getId(), 'U');
+							cb.setChecked(true);
+
+							makeAdminButton.setTextColor(getResources().getColor(
+									R.color.orange));
+						} 
+						else if (makeAdminButton.getText().toString().equals("U")) 
+						{
+							makeAdminButton.setText("P");
+							role.put(view.getId(), 'P');
+							cb.setChecked(true);
+							makeAdminButton.setTextColor(getResources().getColor(
+									R.color.purple));
+						} 
+						else if (makeAdminButton.getText().toString().equals("P")) 
+						{
+							makeAdminButton.setText("A");
+							role.put(view.getId(), 'A');
+							cb.setChecked(true);
+
+							makeAdminButton.setTextColor(getResources().getColor(
+									R.color.light_green));
+						}
+						else if (makeAdminButton.getText().toString().equals("A")) 
+						{
+							makeAdminButton.setText("-");
+							cb.setChecked(false);
+							role.put(view.getId(), '-');
+							makeAdminButton.setTextColor(getResources().getColor(
+									R.color.black));
+						}
+					}
+				});
 				//listener when clicking makeAdmin button
 				makeAdminButton.setOnClickListener(new OnClickListener() 
 				{
@@ -225,25 +256,37 @@ public class InviteActivity extends ActionBarActivity {
 					{
 						if (makeAdminButton.getText().toString().equals("-")) 
 						{
-							makeAdminButton.setText("A");
-							if (cb.isChecked()) 
-							{
-								role.put(view.getId(), true);
-							}
-
-							makeAdminButton.setTextColor(getResources().getColor(
-									R.color.light_green));
-						} 
-						else 
-						{
-							makeAdminButton.setText("-");
-							if (cb.isChecked()) 
-							{
-								role.put(view.getId(), false);
-							}
+							makeAdminButton.setText("U");
+							role.put(view.getId(), 'U');
+							cb.setChecked(true);
 
 							makeAdminButton.setTextColor(getResources().getColor(
 									R.color.orange));
+						} 
+						else if (makeAdminButton.getText().toString().equals("U")) 
+						{
+							makeAdminButton.setText("P");
+							role.put(view.getId(), 'P');
+							cb.setChecked(true);
+							makeAdminButton.setTextColor(getResources().getColor(
+									R.color.purple));
+						} 
+						else if (makeAdminButton.getText().toString().equals("P")) 
+						{
+							makeAdminButton.setText("A");
+							role.put(view.getId(), 'A');
+							cb.setChecked(true);
+
+							makeAdminButton.setTextColor(getResources().getColor(
+									R.color.light_green));
+						}
+						else if (makeAdminButton.getText().toString().equals("A")) 
+						{
+							makeAdminButton.setText("-");
+							cb.setChecked(false);
+							role.put(view.getId(), '-');
+							makeAdminButton.setTextColor(getResources().getColor(
+									R.color.black));
 						}
 					}
 				});
@@ -257,33 +300,24 @@ public class InviteActivity extends ActionBarActivity {
 						String text = friendName.getLayout()
 								.getText().toString();
 					
-						if(makeAdminButton.getText().toString().equals("A") && cb.isChecked())
+						if(cb.isChecked())
 						{
 							added.put(view.getId(), text);
-							role.put(view.getId(), true);
-							
-							System.out.println("Added size: "+added.size());
-							System.out.println("Role size: "+role.size());
-						}
-						else if(makeAdminButton.getText().toString().equals("-") && cb.isChecked())
-						{
-							added.put(view.getId(), text);
-							role.put(view.getId(), false);
-							
-							System.out.println("Added size: "+added.size());
-							System.out.println("Role size: "+role.size());
+							role.put(view.getId(), 'U');
+							makeAdminButton.setText("U");
+							makeAdminButton.setTextColor(getResources().getColor(
+									R.color.orange));
 						}
 						else
 						{
-							added.remove(view.getId());
-							role.remove(view.getId());
-							
-							System.out.println("Added size: "+added.size());
-							System.out.println("Role size: "+role.size());
+							added.put(view.getId(), text);
+							role.put(view.getId(), '-');
+							makeAdminButton.setText("-");
+							makeAdminButton.setTextColor(getResources().getColor(
+									R.color.black));
 						}
 					}
 				});
-				
 				friendName.setText(user.getName());
 				friendName.setId(index);
 				row.setId(index);
@@ -295,52 +329,32 @@ public class InviteActivity extends ActionBarActivity {
 		{		
 			// user has no friends
 			// The user has no friend's so display the sad guy image.
-			row = li.inflate(R.layout.listitem_sadguy, null);
-			((TextView) row.findViewById(R.id.sadGuyTextView))
+			view = li.inflate(R.layout.listitem_sadguy, null);
+			((TextView) view.findViewById(R.id.sadGuyTextView))
 				.setText("All of your friends are already in this group.");
-			pickFriendsLayout.addView(row);
+			pickFriendsLayout.addView(view);
 		}
 	}
 	
 	public void confirmButton(View view)
 	{
-		
-		int g_id = group.getID();
 		//now loop through list of added to add all the additional users to the group
 		int size = added.size();
 		System.out.println("Total count of users to process: "+size);
 		for(int i = 0; i < size; i++) 
 		{
 			System.out.println("adding friend #"+i+"/"+added.size());
-			
 			//get the user's email by matching indexes from added list with indexes from allFriendslist.
 			int key = added.keyAt(i);
-			
-			
 			//grab the email of friend to add
 			String friendsEmail = users.get(key).getEmail();
-			
 			//grab the role of friend to add
-			boolean tmpRole = role.valueAt(i);
-			String friendsRole;
-			
-			if(tmpRole)
-			{
-				friendsRole = "A";
-			}
-			else
-			{
-				friendsRole = "M";
-			}
-			
-			System.out.println("adding member: "+friendsEmail+", role: "+friendsRole);
-			
-			//initiate add of user
-			new AddGroupMembersTask().execute("http://68.59.162.183/"
-					+ "android_connect/add_groupmember.php", friendsEmail, user.getEmail(), friendsRole, Integer.toString(g_id));
+			char friendsRole = role.valueAt(key);
+			System.out.println("adding member: "+friendsEmail+", role: "+role.valueAt(key));
+			if (!(friendsRole == '-'))
+				new AddGroupMembersTask().execute("http://68.59.162.183/"
+					+ "android_connect/add_groupmember.php", friendsEmail, user.getEmail(), role.valueAt(key).toString(), Integer.toString(group.getID()));
 		}
-		
-		//GLOBAL.loadUser(user.getEmail());
 		group.fetchGroupInfo();
 		group.fetchMembers();
 		user.fetchGroupInvites();
