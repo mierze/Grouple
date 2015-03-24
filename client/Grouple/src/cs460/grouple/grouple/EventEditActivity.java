@@ -121,27 +121,32 @@ public class EventEditActivity extends ActionBarActivity implements
 		// Set the activity layout to activity_edit_profile.
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_event_edit);
-		currentCal = Calendar.getInstance();
-		year = currentCal.get(Calendar.YEAR);
-		month = currentCal.get(Calendar.MONTH);
-		day = currentCal.get(Calendar.DAY_OF_MONTH);
-		hour = currentCal.get(Calendar.HOUR_OF_DAY);
-		minute = currentCal.get(Calendar.MINUTE);
 		load();
 	}
 
 	private void load()
 	{
 		GLOBAL = ((Global) getApplicationContext());
+		
+		//init variables
+		currentCal = Calendar.getInstance();
+		year = currentCal.get(Calendar.YEAR);
+		month = currentCal.get(Calendar.MONTH);
+		day = currentCal.get(Calendar.DAY_OF_MONTH);
+		hour = currentCal.get(Calendar.HOUR_OF_DAY);
+		minute = currentCal.get(Calendar.MINUTE);
 		// Resetting error text view
 		TextView errorTextView = (TextView) findViewById(R.id.errorTextViewEPA);
 		errorTextView.setVisibility(1);
 		Bundle extras = getIntent().getExtras();
 		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
         loadDialog.setOwnerActivity(this);
+        iv = (ImageView)findViewById(R.id.editEventImageView);
 		event = GLOBAL.getEventBuffer();
 		if (event != null)
 			getEventProfile();
+		b = (Button) findViewById(R.id.editEventImageButton);
+		b.setOnClickListener(this);
 		initActionBar();
 		initKillswitchListener();
 	}
@@ -193,8 +198,6 @@ public class EventEditActivity extends ActionBarActivity implements
 				// json fetch was successful
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					if (iv == null)
-						iv = (ImageView) findViewById(R.id.eventPhoto);
 					String image = jsonObject.getString("image").toString();
 					event.setImage(image);
 					iv.setImageBitmap(event.getImage());
@@ -227,11 +230,6 @@ public class EventEditActivity extends ActionBarActivity implements
 		maxEditText = (EditText) findViewById(R.id.maxPartButtonEEA);
 		startEditText = (EditText) findViewById(R.id.startTimeButtonEEA);
 		endEditText = (EditText) findViewById(R.id.endTimeButtonEEA);
-		if (iv == null)
-		{
-			Log.d("scott", "7th");
-			iv = (ImageView) findViewById(R.id.eventPhoto);
-		}
 		// Add the info to the edittexts.
 		nameEditText.setText(event.getName());
 		categoryEditText.setText(event.getCategory());
@@ -291,12 +289,6 @@ public class EventEditActivity extends ActionBarActivity implements
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.navigation_actions, menu);
 		// Set up the edit button and image view
-		b = (Button) findViewById(R.id.editEventPhotoButton);
-		b.setOnClickListener(this);
-		if (iv == null)
-		{
-			iv = (ImageView) findViewById(R.id.eventPhoto);
-		}
 		return true;
 	}
 
@@ -420,65 +412,46 @@ public class EventEditActivity extends ActionBarActivity implements
 	}
 
 	// onClick for start date button
-		public void selectStartDateButton(View view)
+	public void selectStartDateButton(View view)
+	{
+		System.out.println("clicked on startdate");
+		// startDate is not currently set. load datepicker set to current
+		// calendar date.
+		if(startEditText.getText().toString().compareTo("") ==0)
 		{
-			System.out.println("clicked on startdate");
-			// startDate is not currently set. load datepicker set to current
-			// calendar date.
-			if(startEditText.getText().toString().compareTo("") ==0)
-			{
-				new DatePickerDialog(this, myStartDateListener, year, month, day).show();
-			}
-			// load the datepicker using the date that was previously set in startDate
-			else
-			{
-				startCal = Calendar.getInstance();
-				
-				//parse to our calendar object
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-				try {
-					startCal.setTime(sdf.parse(startDate));
-					System.out.println("cal was parsed from tmpStartDate!");
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}// all done
-			
-				new DatePickerDialog(this, myStartDateListener, startCal.get(Calendar.YEAR),startCal.get(Calendar.MONTH), startCal.get(Calendar.DAY_OF_MONTH)).show();
-			}
+			new DatePickerDialog(this, myStartDateListener, year, month, day).show();
 		}
-
-		// onClick for end date button
-		public void selectEndDateButton(View view)
+		// load the datepicker using the date that was previously set in startDate
+		else
 		{
-			System.out.println("clicked on enddate");
-			// endDate is not currently set. load datepicker set to current
-			// calendar date.
-			if(endEditText.getText().toString().compareTo("") ==0)
+			startCal = Calendar.getInstance();
+			
+			//parse to our calendar object
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+			try {
+				startCal.setTime(sdf.parse(startDate));
+				System.out.println("cal was parsed from tmpStartDate!");
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}// all done
+		
+			new DatePickerDialog(this, myStartDateListener, startCal.get(Calendar.YEAR),startCal.get(Calendar.MONTH), startCal.get(Calendar.DAY_OF_MONTH)).show();
+		}
+	}
+
+	// onClick for end date button
+	public void selectEndDateButton(View view)
+	{
+		System.out.println("clicked on enddate");
+		// endDate is not currently set. load datepicker set to current
+		// calendar date.
+		if(endEditText.getText().toString().compareTo("") ==0)
+		{
+			if(startEditText.getText().toString().compareTo("")==0)
 			{
-				if(startEditText.getText().toString().compareTo("")==0)
-				{
-					new DatePickerDialog(this, myEndDateListener, year, month, day).show();
-				}
-				else
-				{
-					endCal = Calendar.getInstance();
-					
-					//parse to our calendar object
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-					try {
-						endCal.setTime(sdf.parse(endDate));
-						System.out.println("cal was parsed from tmpStartDate!");
-					} catch (ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}// all done
-				
-					new DatePickerDialog(this, myEndDateListener, endCal.get(Calendar.YEAR),endCal.get(Calendar.MONTH), endCal.get(Calendar.DAY_OF_MONTH)).show();
-				}
-				
+				new DatePickerDialog(this, myEndDateListener, year, month, day).show();
 			}
-			// load the datepicker using the date that was previously set in endDate
 			else
 			{
 				endCal = Calendar.getInstance();
@@ -487,7 +460,7 @@ public class EventEditActivity extends ActionBarActivity implements
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 				try {
 					endCal.setTime(sdf.parse(endDate));
-					System.out.println("cal was parsed from tmpEndDate!");
+					System.out.println("cal was parsed from tmpStartDate!");
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -495,12 +468,36 @@ public class EventEditActivity extends ActionBarActivity implements
 			
 				new DatePickerDialog(this, myEndDateListener, endCal.get(Calendar.YEAR),endCal.get(Calendar.MONTH), endCal.get(Calendar.DAY_OF_MONTH)).show();
 			}
+			
 		}
+		// load the datepicker using the date that was previously set in endDate
+		else
+		{
+			endCal = Calendar.getInstance();
+			
+			//parse to our calendar object
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+			try {
+				endCal.setTime(sdf.parse(endDate));
+				System.out.println("cal was parsed from tmpEndDate!");
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}// all done
+		
+			new DatePickerDialog(this, myEndDateListener, endCal.get(Calendar.YEAR),endCal.get(Calendar.MONTH), endCal.get(Calendar.DAY_OF_MONTH)).show();
+		}
+	}
 
 	// Button Listener for when user clicks on category.
 	public void selectCategoryButton(View view)
 	{
-		System.out.println("clicked on category");
+		//THINKING OUT LOUD
+			//Food / Entertainment
+			//Sports / Games
+			//Party / Nightlife
+			//Professional / Education
+			//Community
 		// Strings to Show In Dialog with Radio Buttons
 		final CharSequence[] items =
 		{ "Food ", "Sports ", "Party ", "Work ", "School" };
@@ -508,31 +505,31 @@ public class EventEditActivity extends ActionBarActivity implements
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Select your category");
 		builder.setSingleChoiceItems(items, -1,
-				new DialogInterface.OnClickListener()
+			new DialogInterface.OnClickListener()
+			{
+				public void onClick(DialogInterface dialog, int item)
 				{
-					public void onClick(DialogInterface dialog, int item)
+					switch (item)
 					{
-						switch (item)
-						{
-						case 0:
-							categoryEditText.setText(items[0]);
-							break;
-						case 1:
-							categoryEditText.setText(items[1]);
-							break;
-						case 2:
-							categoryEditText.setText(items[2]);
-							break;
-						case 3:
-							categoryEditText.setText(items[3]);
-							break;
-						case 4:
-							categoryEditText.setText(items[4]);
-							break;
-						}
-						categoryDialog.cancel();
+					case 0:
+						categoryEditText.setText(items[0]);
+						break;
+					case 1:
+						categoryEditText.setText(items[1]);
+						break;
+					case 2:
+						categoryEditText.setText(items[2]);
+						break;
+					case 3:
+						categoryEditText.setText(items[3]);
+						break;
+					case 4:
+						categoryEditText.setText(items[4]);
+						break;
 					}
-				});
+					categoryDialog.cancel();
+				}
+			});
 		categoryDialog = builder.create();
 		categoryDialog.show();
 	}
@@ -625,7 +622,7 @@ public class EventEditActivity extends ActionBarActivity implements
 					builder = null;
 				} else
 				{
-					Log.d("JSON", "Failed to download file");
+					Log.d("SetProfileJSON", "Failed to download file");
 				}
 			} catch (Exception e)
 			{
@@ -638,7 +635,6 @@ public class EventEditActivity extends ActionBarActivity implements
 		@Override
 		protected void onPostExecute(String result)
 		{
-			System.out.println("entering onpostexecute");
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
@@ -665,11 +661,10 @@ public class EventEditActivity extends ActionBarActivity implements
 							"Failed to update event profile.",
 							Toast.LENGTH_SHORT);
 					toast.show();
-					System.out.println("Fail");
 				}
 			} catch (Exception e)
 			{
-				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 			}
 		}
 	}
@@ -680,7 +675,7 @@ public class EventEditActivity extends ActionBarActivity implements
 		// TODO Auto-generated method stub
 		switch (v.getId())
 		{
-		case R.id.editEventPhotoButton:
+		case R.id.editEventImageButton:
 			final CharSequence[] items =
 			{ "Take Photo", "Choose from Gallery", "Cancel" };
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);

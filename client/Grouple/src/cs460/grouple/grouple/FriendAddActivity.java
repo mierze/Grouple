@@ -39,7 +39,7 @@ public class FriendAddActivity extends ActionBarActivity
 	private BroadcastReceiver broadcastReceiver;
 	private User user; //current user
 	private Global GLOBAL;
-	private Dialog loadDialog = null;
+	private Dialog loadDialog;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -52,11 +52,8 @@ public class FriendAddActivity extends ActionBarActivity
 		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
         loadDialog.setOwnerActivity(this);
 		initActionBar();
-		// Initialize the kill switch. The kill switch will kill all open
-		// activities.
 		initKillswitchListener();
 	}
-	
 	
 	@Override
 	protected void onStop()

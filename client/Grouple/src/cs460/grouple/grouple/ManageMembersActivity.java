@@ -195,25 +195,23 @@ public class ManageMembersActivity extends ActionBarActivity {
 				//json fetch was successful
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					
 					String ROLE = jsonObject.getString("role").toString();
 					System.out.println("ROLE IS BEING SET TO " + ROLE);
 					roles.add(ROLE);
 					if (roles.size() == members.size()) //done with all
 						populateManageMembers();
-					//setNotifications(); //for group / event
 				} 
 				//unsuccessful
 				else
 				{
 					// failed
-					Log.d("FETCH ROLE FAILED", "FAILED");
+					Log.d("getRoleTask", "FAILED");
 				}
 			} 
 			catch (Exception e)
 			{
-				Log.d("atherjsoninuserpost", "here");
-				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+				Log.d("getRoleTask", "exception caught");
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 			}
 			//do next thing here
 		}

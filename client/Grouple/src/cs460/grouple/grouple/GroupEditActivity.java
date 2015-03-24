@@ -147,7 +147,7 @@ public class GroupEditActivity extends ActionBarActivity implements
 		if (iv == null)
 		{
 			Log.d("scott", "7th");
-			iv = (ImageView) findViewById(R.id.groupPhoto);
+			iv = (ImageView) findViewById(R.id.editGroupImageView);
 		}
 		// Add the info to the textviews for editing.
 		nameTextView.setText(group.getName());
@@ -257,12 +257,9 @@ public class GroupEditActivity extends ActionBarActivity implements
 				//json fetch was successful
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					if (iv == null)
-						iv = (ImageView) findViewById(R.id.groupPhoto);
 					String image = jsonObject.getString("image").toString();
 					group.setImage(image);
 					iv.setImageBitmap(group.getImage());
-	
 				} 
 				else
 				{
@@ -424,7 +421,7 @@ public class GroupEditActivity extends ActionBarActivity implements
 		// TODO Auto-generated method stub
 		switch (v.getId()) 
 		{
-		case R.id.editGroupPhotoButton:
+		case R.id.editGroupImageView:
 			final CharSequence[] items = {"Take Photo", "Choose from Gallery",
 					"Cancel" };
 
@@ -496,11 +493,11 @@ public class GroupEditActivity extends ActionBarActivity implements
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.navigation_actions, menu);
 		// Set up the edit button and image view
-		b = (Button) findViewById(R.id.editGroupPhotoButton);
+		b = (Button) findViewById(R.id.editGroupImageButton);
 		b.setOnClickListener(this);
 		if (iv == null)
 		{
-			iv = (ImageView) findViewById(R.id.groupPhoto);
+			iv = (ImageView) findViewById(R.id.editGroupImageView);
 		}
 
 		return true;

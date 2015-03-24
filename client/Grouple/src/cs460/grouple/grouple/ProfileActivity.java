@@ -537,7 +537,7 @@ public class ProfileActivity extends ActionBarActivity
 				intent = new Intent(this, GroupEditActivity.class);
 			else if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
 			{
-				intent = new Intent(this, ProfileEditActivity.class);
+				intent = new Intent(this, UserEditActivity.class);
 				System.out.println("Setting the intent");
 			}
 			else

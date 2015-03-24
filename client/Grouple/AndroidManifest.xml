@@ -175,7 +175,7 @@
                 android:value="cs460.grouple.grouple.HomeActivity" />
         </activity>
         <activity
-            android:name=".ProfileEditActivity"
+            android:name=".UserEditActivity"
             android:label="@string/title_activity_edit_profile"
             android:screenOrientation="portrait" >
         </activity>

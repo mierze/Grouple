@@ -92,21 +92,15 @@ public class RecentMessagesActivity extends ActionBarActivity
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
-		GLOBAL = ((Global) getApplicationContext());
+		
 		super.onCreate(savedInstanceState);
-		user = GLOBAL.getCurrentUser();
 		setContentView(R.layout.activity_contact_list);
+		GLOBAL = ((Global) getApplicationContext());
+		user = GLOBAL.getCurrentUser();
 		/* Action bar */
-		ActionBar ab = getSupportActionBar();
-		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-		ab.setCustomView(R.layout.actionbar);
-		ab.setDisplayHomeAsUpEnabled(false);
-		populateRecentContacts();
-		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
-		actionbarTitle.setText("Messages");
+		initActionBar();		
 		initKillswitchListener();
 		context = getApplicationContext();
-		//fetchRecentContacts();
 		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
         loadDialog.setOwnerActivity(this);
 		//new getContactsTask().execute("http://68.59.162.183/android_connect/get_chat_id.php");
@@ -114,16 +108,28 @@ public class RecentMessagesActivity extends ActionBarActivity
 
 	}
 	
+	private void initActionBar()
+	{
+		ActionBar ab = getSupportActionBar();
+		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+		ab.setCustomView(R.layout.actionbar);
+		ab.setDisplayHomeAsUpEnabled(false);
+		populateRecentContacts();
+		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
+		actionbarTitle.setText("Messages");
+	}
+	
 	@Override
-    protected void onResume() {
+    protected void onResume() 
+	{
         super.onResume();
         fetchRecentContacts();
         // Check device for Play Services APK.
     }
 	
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event)  {
-		
+	public boolean onKeyDown(int keyCode, KeyEvent event)  
+	{
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
 	    	loadDialog.show();
 	    	finish(); //preventing back-loop
@@ -176,14 +182,13 @@ public class RecentMessagesActivity extends ActionBarActivity
 	//onClick for items to bring
 	public void newMessageButton(View view)
 	{
-		//loadDialog.show();
+		loadDialog.show();
 		final String CONTENT = "SELECT_FRIEND";
 		Intent intent = new Intent(this, ListActivity.class);
 		intent.putExtra("EMAIL", user.getEmail());
 		user.fetchFriends();
 		intent.putExtra("CONTENT", CONTENT);
 		startActivity(intent);
-		
 	}
 	
 	private void populateRecentContacts()
@@ -195,9 +200,8 @@ public class RecentMessagesActivity extends ActionBarActivity
 		//layout inflater
 		LayoutInflater li = getLayoutInflater();
 		TextView messageBody, messageDate, contactName;
-		View row = null;
+		View row;
 
-		//messages consist of some things (messagebody, date, sender, receiver)
 		if (!recentMessages.isEmpty())
 			for (int index = recentMessages.size()-1; index >= 0; index--)
 			{
@@ -208,7 +212,6 @@ public class RecentMessagesActivity extends ActionBarActivity
 				messageDate = (TextView) row.findViewById(R.id.messageDate);
 				contactName = (TextView) row.findViewById(R.id.contactName);
 				messageDate.setText(recentMessages.get(index).getDateString());
-				
 				messageBody.setText(recentMessages.get(index).getMessage());
 				//recentMessages.get(index).setImage((ImageView)row.findViewById(R.id.contactImage));
 				String otherEmail = recentMessages.get(index).getSender().equals(user.getEmail()) ? recentMessages.get(index).getReceiver() : recentMessages.get(index).getSender();
@@ -218,17 +221,15 @@ public class RecentMessagesActivity extends ActionBarActivity
 				ImageView contactImage = (ImageView) row.findViewById(R.id.contactImage);
 				images.add(contactImage);
 				System.out.println("READ AT INDEX " +index+"\tis " + recentMessages.get(index).getReadByDateString());
-				/*if (read.get(index).equals("0000-00-00 00:00:00") && emails.get(index).equals(user.getEmail()))
+				if (recentMessages.get(index).getReadByDateString().equals("0000-00-00 00:00:00") && recentMessages.get(index).getReceiver().equals(user.getEmail()))
 				{
 					System.out.println("Should be changing color here");
 					contactName.setTextColor(getResources().getColor(R.color.purple));
 					contactName.setTypeface(null, Typeface.BOLD);
 					row.setBackgroundResource(R.drawable.top_bottom_border_new);
-					//messageBody.setTextColor(getResources().getColor(R.color.orange));
-					//messageBody.setTypeface(null, Typeface.BOLD);
 				}
 				else
-					System.out.println("Should not be changing this message");*/
+					System.out.println("Should not be changing this message");
 				//add row into scrollable layout
 				messageLayout.addView(row);
 				System.out.println("Done adding row with name: "+contactName.getText().toString());
@@ -236,8 +237,6 @@ public class RecentMessagesActivity extends ActionBarActivity
 		
 	}
 	
-
-	/* TASK FOR GRABBING IMAGE OF EVENT/USER/GROUP */
 	private class getImageTask extends AsyncTask<String, Void, String>
 	{
 		@Override
@@ -248,24 +247,20 @@ public class RecentMessagesActivity extends ActionBarActivity
 			nameValuePairs.add(new BasicNameValuePair("email", urls[1]));
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
-
 		@Override
 		protected void onPostExecute(String result)
 		{
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
-				 
 				//json fetch was successful
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					
 					ImageView iv = images.get(IMAGE_INDEX);
-					
 					String image = jsonObject.getString("image").toString();
 					Message m = recentMessages.get(IMAGE_INDEX);
 					m.setImage(image);
-					
+					iv.setId(IMAGE_INDEX);
 					if (m.getImage() != null)
 						iv.setImageBitmap(m.getImage());
 					else
@@ -277,19 +272,38 @@ public class RecentMessagesActivity extends ActionBarActivity
 				else
 				{
 					// failed
-					Log.d("FETCH ROLE FAILED", "FAILED");
+					Log.d("getImageTask", "FAILED");
 				}
 			} 
 			catch (Exception e)
 			{
- 				Log.d("atherjsoninuserpost", "here");
-				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 			}
 			//do next thing here
 		}
 	}
 
-    
+	public void startProfileActivity(View view)
+	{
+		Intent intent = new Intent(this, ProfileActivity.class);
+		String friendEmail;
+		int id = view.getId();
+		friendEmail = recentMessages.get(id).getReceiver().equals(user.getEmail()) ? recentMessages.get(id).getSender() : recentMessages.get(id).getReceiver();
+			
+		User u = new User(friendEmail);
+		u.fetchEventsUpcoming();
+		u.fetchFriends();
+		u.fetchGroups();
+		u.fetchUserInfo();
+		if (!GLOBAL.isCurrentUser(friendEmail))
+			GLOBAL.setUserBuffer(u);
+		else
+			GLOBAL.setCurrentUser(u); //reloading user
+		
+		intent.putExtra("EMAIL", friendEmail);
+		intent.putExtra("CONTENT", "USER");	
+		startActivity(intent);
+	}
 	public void initKillswitchListener()
 	{
 		// START KILL SWITCH LISTENER
@@ -304,31 +318,20 @@ public class RecentMessagesActivity extends ActionBarActivity
 				if (intent.getAction().equals("CLOSE_ALL"))
 				{
 					Log.d("app666", "we killin the login it");
-					// System.exit(1);
 					finish();
 				}
-
 			}
 		};
 		registerReceiver(broadcastReceiver, intentFilter);
-		// End Kill switch listener
 	}
 
-    
-
-    /*
-	 * 
-	 * will be fetching the friends key->val stuff here
-	 */
-	// Get numFriends, TODO: work on returning the integer
 	public int fetchRecentContacts()
 	{
-		System.out.println("calling");
+		//resetting data, currently pulling everything each time
 		recentMessages.clear();
 		images.clear();
 		IMAGE_INDEX = 0;
 		new getRecentContactsTask().execute("http://68.59.162.183/android_connect/testcontacts4.php");
-		
 		return 1;
 	}
 
@@ -350,7 +353,6 @@ public class RecentMessagesActivity extends ActionBarActivity
 				JSONObject jsonObject = new JSONObject(result);
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					System.out.println("WE HAD SUCCESS IN GET MESSAGES!");
 					// gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("messages");
 					for (int i = 0; i < jsonArray.length(); i++)
@@ -370,9 +372,9 @@ public class RecentMessagesActivity extends ActionBarActivity
 								indexFound = recentMessages.indexOf(m);
 							}
 						}
-					
 						if (!contains)
 						{
+							//recent messages does not contain a message from this user
 							recentMessages.add(newMsg);
 						}
 						else if (recentMessages.get(indexFound).getDate().compareTo(newMsg.getDate()) < 0)
@@ -382,23 +384,20 @@ public class RecentMessagesActivity extends ActionBarActivity
 						}		
 						else
 						{
-							System.out.println("IN THE ELSE");
 							System.out.println("no replace happened.  Message is same as before: " + recentMessages.get(indexFound).getMessage());
 						}
 					}
+					//done fetching, now populate to scrollview
 					populateRecentContacts();
 				}
-				// user has no friends
 				if (jsonObject.getString("success").toString().equals("2"))
 				{
-					Log.d("fetchFriends", "failed = 2 return");
-					// setNumFriends(0); //PANDA need to set the user class not
-					// global
+					Log.d("fetchRecentContacts", "failed = 2 return");
 				}
 			} catch (Exception e)
 			{
-				Log.d("fetchFriends", "exception caught");
-				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+				Log.d("fetchRecentContacts", "exception caught");
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 			}
 		}
 	}

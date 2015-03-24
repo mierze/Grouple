@@ -66,7 +66,6 @@ public class GroupCreateActivity extends ActionBarActivity
 	private SparseArray<Character> role = new SparseArray<Character>();   //holds list of role of all friend rows to be added
 	private ArrayList<User> allFriends = new ArrayList<User>();   //holds list of all current friends
 	private User user;
-	private String email = null;
 	private Dialog loadDialog = null;
 	private String g_id = null;
 	private Global GLOBAL;
@@ -103,7 +102,6 @@ public class GroupCreateActivity extends ActionBarActivity
 		GLOBAL = ((Global) getApplicationContext());
 		//grab the email of current users from our global class
 		user = GLOBAL.getCurrentUser();
-		email = user.getEmail();
 		
 		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
         loadDialog.setOwnerActivity(this);
@@ -413,7 +411,7 @@ public class GroupCreateActivity extends ActionBarActivity
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("g_name", groupname));
 			nameValuePairs.add(new BasicNameValuePair("about", groupbio));
-			nameValuePairs.add(new BasicNameValuePair("creator", email));
+			nameValuePairs.add(new BasicNameValuePair("creator", user.getEmail()));
 			
 			//1 for public, 0 for private.
 			int publicStatus = 1;
@@ -448,7 +446,7 @@ public class GroupCreateActivity extends ActionBarActivity
 					
 					//add yourself to the group as Creator
 					new AddGroupMembersTask().execute("http://68.59.162.183/"
-							+ "android_connect/add_groupmember.php", email, email, "A", g_id);
+							+ "android_connect/add_groupmember.php", user.getEmail(), user.getEmail(), "C", g_id);
 					
 					//now loop through list of added to add all the additional users to the group
 					int size = added.size();
@@ -456,25 +454,18 @@ public class GroupCreateActivity extends ActionBarActivity
 					for(int i = 0; i < size; i++) 
 					{
 						System.out.println("adding friend #"+i+"/"+added.size());
-						
 						//get the user's email by matching indexes from added list with indexes from allFriendslist.
 						int key = added.keyAt(i);
 						User u = allFriends.get(key);
-						
 						//grab the email of friend to add
 						String friendsEmail = u.getEmail();
-						
 						//grab the role of friend to add
 						char tmpRole = role.valueAt(i);
 						String friendsRole = tmpRole + "";
-						
-					
-						
 						System.out.println("adding member: "+friendsEmail+", role: "+friendsRole);
-						
 						//initiate add of user
 						new AddGroupMembersTask().execute("http://68.59.162.183/"
-								+ "android_connect/add_groupmember.php", friendsEmail, email, friendsRole, g_id);
+								+ "android_connect/add_groupmember.php", friendsEmail, user.getEmail(), friendsRole, g_id);
 					}
 					
 					//display confirmation box
@@ -496,7 +487,6 @@ public class GroupCreateActivity extends ActionBarActivity
 							//add code here to take user to groupaddmembersactivity page.  (pass g_id as extra so invites can be sent to correct group id)
 						}
 					}).show();
-				
 					user.fetchGroupInvites();
 					user.fetchGroups();
 					Group g = new Group(Integer.parseInt(g_id));
@@ -504,7 +494,6 @@ public class GroupCreateActivity extends ActionBarActivity
 					g.fetchMembers();
 					GLOBAL.setCurrentUser(user);
 					GLOBAL.setGroupBuffer(g);
-					
 					//remove this activity from back-loop by calling finish().
 					finish();
 				} 
@@ -526,7 +515,8 @@ public class GroupCreateActivity extends ActionBarActivity
 						}
 					}).setNegativeButton("Cancel", null).show();
 				}
-			} catch (Exception e)
+			} 
+			catch (Exception e)
 			{
 				Log.d("readJSONFeed", e.getLocalizedMessage());
 			}
@@ -545,7 +535,6 @@ public class GroupCreateActivity extends ActionBarActivity
 			nameValuePairs.add(new BasicNameValuePair("sender", urls[2]));
 			nameValuePairs.add(new BasicNameValuePair("role", urls[3]));
 			nameValuePairs.add(new BasicNameValuePair("g_id", urls[4]));
-
 			//pass url and nameValuePairs off to global to do the JSON call.  Code continues at onPostExecute when JSON returns.
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
@@ -556,12 +545,10 @@ public class GroupCreateActivity extends ActionBarActivity
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
-
 				// member has been successfully added
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					//all working correctly, continue to next user or finish.
-					
 				} 
 				else if (jsonObject.getString("success").toString().equals("0"))
 				{	
@@ -592,7 +579,6 @@ public class GroupCreateActivity extends ActionBarActivity
 		int id = item.getItemId();
 		if (id == R.id.action_logout)
 		{
-			
 			Intent login = new Intent(this, LoginActivity.class);
 			GLOBAL.destroySession();
 			startActivity(login);
@@ -627,6 +613,5 @@ public class GroupCreateActivity extends ActionBarActivity
 			}
 		};
 		registerReceiver(broadcastReceiver, intentFilter);
-		// End Kill switch listener
 	}
 }

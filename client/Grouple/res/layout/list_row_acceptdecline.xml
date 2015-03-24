@@ -24,11 +24,29 @@
         android:paddingRight="10dp"
         android:text="Sample" />
 
+   	<Button
+        android:id="@+id/acceptButton"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:layout_gravity="right|center_vertical"
+        android:layout_margin="5dp"
+        android:layout_row="0"
+        android:background="@drawable/accept_button_border"
+        android:fontFamily="sans-serif-condensed"
+        android:onClick="onClick"
+        android:padding="10dp"
+    	android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:text="Accept"
+        android:textColor="@color/button_text_color" />
+    
     <Button
         android:id="@+id/declineButton"
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="50dp"
         android:layout_gravity="right|center_vertical"
         android:layout_margin="5dp"
         android:layout_marginLeft="10dp"
@@ -40,24 +58,6 @@
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
         android:text="Decline"
-        android:textColor="@color/button_text_color" />
-
-    <Button
-        android:id="@+id/acceptButton"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:layout_gravity="right|center_vertical"
-        android:layout_margin="5dp"
-        android:layout_row="0"
-        android:background="@drawable/accept_button_border"
-        android:fontFamily="sans-serif-condensed"
-        android:onClick="onClick"
-        android:padding="10dp"
-                android:paddingLeft="15dp"
-        android:paddingRight="15dp"
-        android:text="Accept"
         android:textColor="@color/button_text_color" />
 
 </LinearLayout>

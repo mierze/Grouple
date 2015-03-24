@@ -115,26 +115,15 @@ public class MessagesActivity extends ActionBarActivity
 	            messages.clear(); //TODO: smartly add to this
 	        	fetchMessages(); 
 	        }
-
-	        //do other stuff here
 	    }
 	};
 	
-	
-	//@Override
-	//protected void onNewIntent(Intent intent)
-	//{
-	//	Bundle extras = intent.getExtras();
-	//	recipient = extras.getString("EMAIL"); 
-	//}
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		GLOBAL = ((Global) getApplicationContext());
-		
 		Bundle extras = getIntent().getExtras();
 		super.onCreate(savedInstanceState);
-		
 		user = GLOBAL.getCurrentUser();
 		setContentView(R.layout.activity_messages);
 		/* Action bar */
@@ -146,17 +135,13 @@ public class MessagesActivity extends ActionBarActivity
 		ab.setDisplayHomeAsUpEnabled(false);
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
 		String name = extras.getString("NAME");
-		String first = name.split(" ")[0];
 		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
         loadDialog.setOwnerActivity(this);
 		actionbarTitle.setText(name);
 		initKillswitchListener();
 		context = getApplicationContext();
-		//onNewIntent(getIntent());
 		//Get the recipient 
 		new getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php", recipient);
-		//fetchMessages(); 
-        
 	}
 	
 	@Override
@@ -176,7 +161,6 @@ public class MessagesActivity extends ActionBarActivity
 	public int fetchMessages()
 	{
 		new getMessagesTask().execute("http://68.59.162.183/android_connect/get_messages.php");
-		
 		return 1;
 	}
 
@@ -199,40 +183,25 @@ public class MessagesActivity extends ActionBarActivity
 				JSONObject jsonObject = new JSONObject(result);
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					System.out.println("WE HAD SUCCESS IN GET MESSAGES!");
-					// gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("messages");
-					// success so clear previous
-					// getUsers().clear();
 					// looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
-						// at each iteration set to hashmap friendEmail ->
-						// 'first last'
 						JSONObject o = (JSONObject) jsonArray.get(i);
-						// function adds friend to the friends map
-						//construct new message
-						//String message, String rawDateString, String sender,
-						//String senderName, String receiver, String readByDateString
 						Message m = new Message(o.getString("message"), o.getString("send_date"), o.getString("sender"),
 								"NAME", o.getString("receiver"), null);
-						
-						messages.add(m);
-						
-						
+						messages.add(m); //adding message to message array
 					}
 					populateMessages();
 				}
 				// user has no friends
 				if (jsonObject.getString("success").toString().equals("2"))
 				{
-					Log.d("fetchFriends", "failed = 2 return");
-					// setNumFriends(0); //PANDA need to set the user class not
-					// global
+					Log.d("fetchMessages", "failed = 2 return");
 				}
 			} catch (Exception e)
 			{
-				Log.d("fetchFriends", "exception caught");
+				Log.d("fetchMessages", "exception caught");
 				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
 			}
 		}
@@ -246,7 +215,6 @@ public class MessagesActivity extends ActionBarActivity
 	public int readMessages()
 	{
 		new readMessagesTask().execute("http://68.59.162.183/android_connect/update_messageread_date.php");
-		
 		return 1;
 	}
 
@@ -258,6 +226,7 @@ public class MessagesActivity extends ActionBarActivity
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("sender", recipient));
 			nameValuePairs.add(new BasicNameValuePair("receiver", user.getEmail()));
+			System.out.println("ABOUT TO read messages sender: " + recipient + " receiver is " + user.getEmail());
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
 
@@ -274,13 +243,11 @@ public class MessagesActivity extends ActionBarActivity
 				// user has no friends
 				if (jsonObject.getString("success").toString().equals("2"))
 				{
-					Log.d("fetchFriends", "failed = 2 return");
-					// setNumFriends(0); //PANDA need to set the user class not
-					// global
+					Log.d("readMessage", "failed = 2 return");
 				}
 			} catch (Exception e)
 			{
-				Log.d("fetchFriends", "exception caught");
+				Log.d("readMessage", "exception caught");
 				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
 			}
 		}
@@ -289,7 +256,6 @@ public class MessagesActivity extends ActionBarActivity
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent e)  
 	{
-	
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
 	    	loadDialog.show();
 	    	finish();
@@ -303,7 +269,6 @@ public class MessagesActivity extends ActionBarActivity
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.navigation_actions, menu);
 		return true;
-
 	}
 
 	@Override
@@ -315,7 +280,6 @@ public class MessagesActivity extends ActionBarActivity
 		int id = item.getItemId();
 		if (id == R.id.action_logout)
 		{
-			
 			Intent login = new Intent(this, LoginActivity.class);
 			GLOBAL.destroySession();
 			startActivity(login);
@@ -337,38 +301,29 @@ public class MessagesActivity extends ActionBarActivity
 		LinearLayout messageLayout = (LinearLayout) findViewById(R.id.messageLayout);
 		//clear out any previous views already inflated
 		messageLayout.removeAllViews();
-		
 		//layout inflater
 		LayoutInflater li = getLayoutInflater();
-		
 		TextView messageBody, messageDate;
 		View row = null;
 		String message = "";
-		
 		//messages consist of some things (messagebody, date, sender, receiver)
-		
 		int index = 0;
 		//loop through messages (newest first), maybe a map String String with messagebody, date
 		for (Message m : messages)
 		{
-			
 			if (m.getReceiver().equals(user.getEmail()/*our email*/))
 				row =  li.inflate(R.layout.message_row_out, null); //inflate this message row
 			else
 				row =  li.inflate(R.layout.message_row, null); //inflate the sender message row
-			
 			messageBody = (TextView) row.findViewById(R.id.messageBody);
 			messageBody.setText(m.getMessage());
 			messageDate = (TextView) row.findViewById(R.id.messageDate);
 			messageDate.setText(m.getDateString());
-			
-			//set these values to what you want
-			
 			//add row into scrollable layout
 			messageLayout.addView(row);
 			index++;
 		}
-		
+		//scrolling to last message
 		final ScrollView scrollview = ((ScrollView) findViewById(R.id.messagesScrollView));
 		scrollview.post(new Runnable() {
 
