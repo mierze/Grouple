@@ -234,7 +234,6 @@ public class InviteActivity extends ActionBarActivity {
 							makeAdminButton.setText("A");
 							role.put(view.getId(), 'A');
 							cb.setChecked(true);
-
 							makeAdminButton.setTextColor(getResources().getColor(
 									R.color.light_green));
 						}

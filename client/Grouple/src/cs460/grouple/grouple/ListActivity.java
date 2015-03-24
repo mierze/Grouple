@@ -517,7 +517,6 @@ public class ListActivity extends ActionBarActivity
 			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()))
 			{
 				bufferID = parent.getId(); //PANDA
-
 				new performActionTask().execute("http://68.59.162.183/android_connect/leave_event.php", Integer.toString(bufferID));
 			}
 			break;
@@ -529,7 +528,6 @@ public class ListActivity extends ActionBarActivity
 			}
 			else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
 			{
-			
 				PANDABUFFER = users.get(parent.getId()).getEmail();
 				new performActionTask().execute("http://68.59.162.183/android_connect/accept_friend_request.php", PANDABUFFER);
 			}

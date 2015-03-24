@@ -1,4 +1,5 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
    	android:id="@+id/eventsContainer"
     android:layout_width="match_parent"
@@ -6,74 +7,77 @@
     android:padding="5dp"
 	android:background="@color/background_color" >
 
-	<Button
-	    android:id="@+id/eventsUpcomingButtonEA"
+  	<LinearLayout
+	    android:id="@+id/groupsLayout"
 	    android:layout_width="match_parent"
-	    android:layout_height="80dp"
-	    android:layout_alignParentLeft="true"
-	    android:layout_below="@+id/eventCreateButtonEA"
-	    android:layout_marginTop="14dp"
-	    android:background="@drawable/button_border"
-	    android:fontFamily="sans-serif-condensed"
-	    android:onClick="onClick"
-	    android:text="Upcoming Events"
-	    android:textColor="@color/button_text_color"
-	    android:textSize="20sp" />
+	    android:layout_height="wrap_content"
+	    android:layout_gravity="center_vertical"
+	    android:gravity="center"
+	    android:orientation="vertical" >
 	
+		<Button
+		    android:id="@+id/eventCreateButtonEA"
+		    android:layout_width="match_parent"
+		    android:layout_height="80dp"
+		    android:layout_marginTop="5dp"
+		    android:layout_marginBottom="5dp"
+		    android:background="@drawable/button_border"
+		    android:fontFamily="sans-serif-condensed"
+		    android:onClick="onClick"
+		    android:text="Create Event"
+		    android:textColor="@color/button_text_color"
+		    android:textSize="20sp" />
+		
+		<Button
+		    android:id="@+id/eventsUpcomingButtonEA"
+		    android:layout_width="match_parent"
+		    android:layout_height="80dp"
+		    android:layout_marginTop="5dp"
+		    android:layout_marginBottom="5dp"
+		    android:background="@drawable/button_border"
+		    android:fontFamily="sans-serif-condensed"
+		    android:onClick="onClick"
+		    android:text="Upcoming Events"
+		    android:textColor="@color/button_text_color"
+		    android:textSize="20sp" />
+		
 		<Button
 		    android:id="@+id/eventsPendingButtonEA"
 		    android:layout_width="match_parent"
 		    android:layout_height="80dp"
-		    android:layout_alignParentLeft="true"
-		    android:layout_below="@+id/eventsUpcomingButtonEA"
-		    android:layout_marginTop="16dp"
+		    android:layout_marginTop="5dp"
+		    android:layout_marginBottom="5dp"
 		    android:background="@drawable/button_border"
 		    android:fontFamily="sans-serif-condensed"
 		    android:onClick="onClick"
 		    android:text="Pending Events"
 		    android:textColor="@color/button_text_color"
 		    android:textSize="20sp" />
-
-	<Button
-	    android:id="@+id/eventInvitesButtonEA"
-	    android:layout_width="match_parent"
-	    android:layout_height="80dp"
-	    android:layout_alignParentLeft="true"
-	    android:layout_below="@+id/eventsPendingButtonEA"
-	    android:layout_marginTop="16dp"
-	    android:background="@drawable/button_border"
-	    android:fontFamily="sans-serif-condensed"
-	    android:onClick="onClick"
-	    android:text="Event Invites"
-	    android:textColor="@color/button_text_color"
-	    android:textSize="20sp" />
-
-	<Button
-	    android:id="@+id/eventCreateButtonEA"
-	    android:layout_width="match_parent"
-	    android:layout_height="80dp"
-	    android:layout_alignLeft="@+id/eventsUpcomingButtonEA"
-	    android:layout_alignParentTop="true"
-	    android:layout_marginTop="12dp"
-	    android:background="@drawable/button_border"
-	    android:fontFamily="sans-serif-condensed"
-	    android:onClick="onClick"
-	    android:text="Create Event"
-	    android:textColor="@color/button_text_color"
-	    android:textSize="20sp" />
-
-	<Button
-	    android:id="@+id/eventsPastButtonEA"
-	    android:layout_width="match_parent"
-	    android:layout_height="80dp"
-	    android:layout_alignLeft="@+id/eventInvitesButtonEA"
-	    android:layout_below="@+id/eventInvitesButtonEA"
-	    android:layout_marginTop="18dp"
-	    android:background="@drawable/button_border"
-	    android:fontFamily="sans-serif-condensed"
-	    android:onClick="onClick"
-	    android:text="Past Events"
-	    android:textColor="@color/button_text_color"
-	    android:textSize="20sp" />
-
-</RelativeLayout>
+	
+		<Button
+		    android:id="@+id/eventInvitesButtonEA"
+		    android:layout_width="match_parent"
+		    android:layout_height="80dp"
+		    android:layout_marginTop="5dp"
+		    android:layout_marginBottom="5dp"
+		    android:background="@drawable/button_border"
+		    android:fontFamily="sans-serif-condensed"
+		    android:onClick="onClick"
+		    android:text="Event Invites"
+		    android:textColor="@color/button_text_color"
+		    android:textSize="20sp" />
+	
+		<Button
+		    android:id="@+id/eventsPastButtonEA"
+		    android:layout_width="match_parent"
+		    android:layout_height="80dp"
+		    android:layout_marginTop="5dp"
+		    android:layout_marginBottom="5dp"
+		    android:background="@drawable/button_border"
+		    android:fontFamily="sans-serif-condensed"
+		    android:onClick="onClick"
+		    android:text="Past Events"
+		    android:textColor="@color/button_text_color"
+		    android:textSize="20sp" />
+	</LinearLayout>
+</LinearLayout>

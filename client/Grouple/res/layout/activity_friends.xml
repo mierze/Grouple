@@ -1,4 +1,5 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
    	android:id="@+id/friendsContainer"
     android:layout_width="match_parent"
@@ -6,46 +7,51 @@
     android:padding="5dp"
 	android:background="@color/background_color" >
 
-	<Button
-	    android:id="@+id/addFriendButtonFA"
+  	<LinearLayout
+	    android:id="@+id/groupsLayout"
 	    android:layout_width="match_parent"
-	    android:layout_height="80dp"
-	    android:layout_alignParentLeft="true"
-	    android:layout_alignParentTop="true"
-	    android:layout_marginTop="97dp"
-	    android:background="@drawable/button_border"
-	    android:fontFamily="sans-serif-condensed"
-	    android:onClick="startFriendAddActivity"
-	    android:text="Add Friend"
-	    android:textColor="@color/button_text_color"
-	    android:textSize="20sp" />
-
-	<Button
-	    android:id="@+id/currentFriendsButtonFA"
-	    android:layout_width="match_parent"
-	    android:layout_height="80dp"
-	    android:layout_alignParentLeft="true"
-	    android:layout_below="@+id/addFriendButtonFA"
-	    android:layout_marginTop="14dp"
-	    android:background="@drawable/button_border"
-	    android:fontFamily="sans-serif-condensed"
-	    android:onClick="startFriendsCurrentActivity"
-	    android:text="My Friends"
-	    android:textColor="@color/button_text_color"
-	    android:textSize="20sp" />
-
-	<Button
-	    android:id="@+id/friendRequestsButtonFA"
-	    android:layout_width="match_parent"
-	    android:layout_height="80dp"
-	    android:layout_alignParentLeft="true"
-	    android:layout_below="@+id/currentFriendsButtonFA"
-	    android:layout_marginTop="16dp"
-	    android:background="@drawable/button_border"
-	    android:fontFamily="sans-serif-condensed"
-	    android:onClick="startFriendRequestsActivity"
-	    android:text="Friend Requests"
-	    android:textColor="@color/button_text_color"
-	    android:textSize="20sp" />
-
-</RelativeLayout>
+	    android:layout_height="wrap_content"
+	    android:layout_gravity="center_vertical"
+	    android:gravity="center"
+	    android:orientation="vertical" >
+	    
+		<Button
+		    android:id="@+id/addFriendButtonFA"
+		    android:layout_width="match_parent"
+		    android:layout_height="80dp"
+		    android:layout_marginTop="5dp"
+		    android:layout_marginBottom="5dp"
+		    android:background="@drawable/button_border"
+		    android:fontFamily="sans-serif-condensed"
+		    android:onClick="startFriendAddActivity"
+		    android:text="Add Friend"
+		    android:textColor="@color/button_text_color"
+		    android:textSize="20sp" />
+	
+		<Button
+		    android:id="@+id/currentFriendsButtonFA"
+		    android:layout_width="match_parent"
+		    android:layout_height="80dp"
+		    android:layout_marginTop="5dp"
+		    android:layout_marginBottom="5dp"
+		    android:background="@drawable/button_border"
+		    android:fontFamily="sans-serif-condensed"
+		    android:onClick="startFriendsCurrentActivity"
+		    android:text="My Friends"
+		    android:textColor="@color/button_text_color"
+		    android:textSize="20sp" />
+	
+		<Button
+		    android:id="@+id/friendRequestsButtonFA"
+		    android:layout_width="match_parent"
+		    android:layout_height="80dp"
+		    android:layout_marginTop="5dp"
+		    android:layout_marginBottom="5dp"
+		    android:background="@drawable/button_border"
+		    android:fontFamily="sans-serif-condensed"
+		    android:onClick="startFriendRequestsActivity"
+		    android:text="Friend Requests"
+		    android:textColor="@color/button_text_color"
+		    android:textSize="20sp" />
+	</LinearLayout>
+</LinearLayout>

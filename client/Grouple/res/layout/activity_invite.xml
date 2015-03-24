@@ -5,12 +5,12 @@
     android:padding="5dp"
    	android:background="@color/background_color"
     tools:context="cs460.grouple.grouple.InviteActivity" >
-
-
-
+    
     <ScrollView
         android:id="@+id/scrollViewPickFriends"
         android:layout_width="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="5dp"
         android:layout_height="wrap_content"
         android:layout_above="@+id/confirmButton"
     	android:background="@color/layout_background_color"

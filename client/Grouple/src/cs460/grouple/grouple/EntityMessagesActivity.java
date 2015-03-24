@@ -14,9 +14,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-
-import cs460.grouple.grouple.ListActivity.CONTENT_TYPE;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
@@ -53,6 +50,8 @@ public class EntityMessagesActivity extends ActionBarActivity
     public static final String PROPERTY_REG_ID = "registration_id";
     private static final String PROPERTY_APP_VERSION = "appVersion";
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    private ArrayList<String> regIDList = new ArrayList<String>();
+    
     private String ID;
     //Tag to search for when logging info.
     static final String TAG = "GCM";
@@ -101,11 +100,12 @@ public class EntityMessagesActivity extends ActionBarActivity
 		String name = extras.getString("NAME");
 		//String first = name.split(" ")[0];
 		actionbarTitle.setText(name);
-	//	initKillswitchListener();
+		//initKillswitchListener();
 		context = getApplicationContext();
 		//onNewIntent(getIntent());
 		//Get the recipient 
 		//new getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php", recipient);
+		new getRegIDsTask().execute("http://68.59.162.183/android_connect/get_chat_ids_by_gid.php", ID,user.getEmail());
 		//fetchMessages(); 
 		setContentView(R.layout.activity_messages);
 	}
@@ -205,25 +205,10 @@ public class EntityMessagesActivity extends ActionBarActivity
 				System.out.print(jsonObject.getString("success") + "\n\n\n");
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					/*//Message was successfully stored, now notify the user.
-					String msg = "";
-					try {
-                        Bundle data = new Bundle();
-                        //Get message from edit text
-                        
-                        messages.add(msg);
-                        data.putString("my_message", msg);
-                        data.putString("my_action", "cs460.grouple.grouple.ECHO_NOW");
-                        data.putString("recipient",getRecipientRegID());
-                        String id = Integer.toString(msgId.incrementAndGet());
-                        gcm.send(SENDER_ID + "@gcm.googleapis.com", id, data);
-                        msg = "Sent message";
-                    } catch (IOException ex) {
-                        msg = "Error :" + ex.getMessage();
-                    }*/
-					EditText mymessage   = (EditText)findViewById(R.id.messageEditText);
-                  mymessage.setText("");
-					fetchMessages();
+					
+					//EditText mymessage   = (EditText)findViewById(R.id.messageEditText);
+					//mymessage.setText("");
+					//fetchMessages();
 					
 				} else
 				{
@@ -284,7 +269,7 @@ public class EntityMessagesActivity extends ActionBarActivity
             	   new storeMessageTask().execute("http://68.59.162.183/android_connect/send_group_message.php",msg, user.getEmail(), ID);
                else
             	   new storeMessageTask().execute("http://68.59.162.183/android_connect/send_event_message.php",msg, user.getEmail(), ID);
-               /* new AsyncTask<Void, Void, String>() {
+                new AsyncTask<Void, Void, String>() {
                     @Override
                     protected String doInBackground(Void... params) {
                         String msg = "";
@@ -296,34 +281,33 @@ public class EntityMessagesActivity extends ActionBarActivity
                             EditText mymessage   = (EditText)findViewById(R.id.messageEditText);
                             msg = mymessage.getText().toString();
         
-                            messages.add(msg);
-                           // receivers.add(recipient);
-                            senders.add(user.getEmail());
+                            //messages.add(msg);
+                            //receivers.add(recipient);
+                            //senders.add(user.getEmail());
                           
                     		SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE h:mma");
                     		
                     		String date = dateFormat.format(new Date());
-                    		dates.add(date);
+                    		//dates.add(date);
                             data.putString("my_message", msg);
                             data.putString("my_action", "cs460.grouple.grouple.ECHO_NOW");
                             data.putString("sender", user.getEmail());
-                            //Clear edit text
-                           // mymessage.setText("");
-                            //Get friend's regID based off their email address from db
-                            //Todd's Reg ID
-                            //String recipientRegId = "APA91bFdWkh9GiaNoLJvGyFpSK3HRQy8vtlmh3OPK8FekU4aWEhZn_hwvr7LmYu_s11dQnoPmj6hKuklISIh_A2Dhyjm_cNT-K4kh5-bYhPYpp-QGbqScbwE9YCnWqyXORN2gwY3fNQx-_ex7D6i-ONaT7peHcu3Hlzbc-60amu0pTu8SD9l7xI";
-                            //Brett's Reg ID
-                            
-                            //This is where we put the recipients regID.
-                          //  data.putString("recipient",getRecipientRegID());
-                            //This is where we put our first and last name. That way the recipient knows who sent it.
                             data.putString("first", user.getFirstName());
                             data.putString("last", user.getLastName());
                             String id = Integer.toString(msgId.incrementAndGet());
-                            gcm.send(SENDER_ID + "@gcm.googleapis.com", id, data);
-                            msg = "Sent message";
+                            
+                            //Send the message to all the group members.
+                            for(int i = 0; i < regIDList.size(); i++)
+                            {
+                                data.putString("recipient",regIDList.get(i));                           
+                                gcm.send(SENDER_ID + "@gcm.googleapis.com", id, data);
+                            }
+
                         } catch (IOException ex) {
                             msg = "Error :" + ex.getMessage();
+        					Context context = getApplicationContext();
+        					Toast toast = Toast.makeText(context, "Error Sending Group Message. Contact Devs", Toast.LENGTH_LONG);
+        					toast.show();
                         }
                       
                         return msg;
@@ -343,7 +327,7 @@ public class EntityMessagesActivity extends ActionBarActivity
                     	//also when you send a message, add it to the array and repopulate messages
                     	populateMessages();
                     }
-                }.execute(null, null, null); */
+                }.execute(null, null, null);
             }      
         }
     }
@@ -439,5 +423,54 @@ public class EntityMessagesActivity extends ActionBarActivity
 			startActivity(intent);
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	 //This task gets your singular friend's regid
+    private class getRegIDsTask extends AsyncTask<String, Void, String>
+	{
+
+		@Override
+		protected String doInBackground(String... urls)
+		{
+			Global global = ((Global) getApplicationContext());
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			//The recipient's email is urls[1]
+			nameValuePairs.add(new BasicNameValuePair("g_id", urls[1]));
+			nameValuePairs.add(new BasicNameValuePair("email", urls[2]));
+
+			return global.readJSONFeed(urls[0], nameValuePairs);
+		}
+
+		@Override
+		protected void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+				System.out.println(jsonObject.getString("success"));
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					JSONArray jsonArray = jsonObject.getJSONArray("chat_ids");
+					
+					for (int i = 0; i < jsonArray.length(); i++)
+					{
+						//get the ith friend's chat id.
+						JSONObject o = (JSONObject) jsonArray.get(i);
+						
+						regIDList.add(o.getString("chat_id"));
+									
+					}
+					
+				} else
+				{
+					Context context = getApplicationContext();
+					Toast toast = Toast.makeText(context, "Error Getting GCM REGID. Contact Devs", Toast.LENGTH_LONG);
+					toast.show();
+				}
+			} catch (Exception e)
+			{
+				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+			}
+		}
 	}
 }

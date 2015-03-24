@@ -9,7 +9,7 @@
 
     <TextView
         android:id="@+id/nameTextViewAD"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:onClick="startProfileActivity"
         android:background="@android:color/transparent"
         android:textColor="@color/text_color"

@@ -260,12 +260,11 @@ public class RecentMessagesActivity extends ActionBarActivity
 					String image = jsonObject.getString("image").toString();
 					Message m = recentMessages.get(IMAGE_INDEX);
 					m.setImage(image);
-					iv.setId(IMAGE_INDEX);
+					iv.setId(recentMessages.size()-1-IMAGE_INDEX);
 					if (m.getImage() != null)
 						iv.setImageBitmap(m.getImage());
 					else
 						iv.setImageResource(R.drawable.user_image_default);
-					
 					iv.setScaleType(ScaleType.CENTER_CROP);
 					IMAGE_INDEX++;
 				} 
@@ -289,7 +288,6 @@ public class RecentMessagesActivity extends ActionBarActivity
 		String friendEmail;
 		int id = view.getId();
 		friendEmail = recentMessages.get(id).getReceiver().equals(user.getEmail()) ? recentMessages.get(id).getSender() : recentMessages.get(id).getReceiver();
-			
 		User u = new User(friendEmail);
 		u.fetchEventsUpcoming();
 		u.fetchFriends();
@@ -299,7 +297,6 @@ public class RecentMessagesActivity extends ActionBarActivity
 			GLOBAL.setUserBuffer(u);
 		else
 			GLOBAL.setCurrentUser(u); //reloading user
-		
 		intent.putExtra("EMAIL", friendEmail);
 		intent.putExtra("CONTENT", "USER");	
 		startActivity(intent);
