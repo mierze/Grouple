@@ -29,77 +29,88 @@ android:gravity="left"
 android:padding="5dp"
 android:text="Email Notifications:"
 android:textColor="@color/white" />
-
 <LinearLayout
-    android:id="@+id/linearLayoutEmail"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical" >
-
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:orientation="vertical"
+>
 <Switch
-android:id="@+id/emailFriendSwitch"
+android:id="@+id/friendSwitch"
 android:layout_width="fill_parent"
 android:layout_margin="5dp"
 android:layout_height="wrap_content"
 android:gravity="top"
 android:text="New Friend Requests" />
 <Switch
-android:id="@+id/emailGroupSwitch"
+android:id="@+id/groupSwitch"
 android:layout_margin="5dp"
 android:layout_width="fill_parent"
 android:layout_height="wrap_content"
 android:gravity="top"
 android:text="New Group Requests" />
 <Switch
-android:id="@+id/emailEventSwitch"
+android:id="@+id/eventSwitch"
 android:layout_margin="5dp"
 android:gravity="top"
 android:layout_width="fill_parent"
 android:layout_height="wrap_content"
 android:text="New Event Requests" />
 <Switch
-android:id="@+id/emailUpcomingEventSwitch"
+android:id="@+id/upcomingSwitch"
 android:layout_margin="5dp"
 android:layout_width="fill_parent"
 android:layout_height="wrap_content"
 android:gravity="top"
 android:text="One of your Events becomes Upcoming" />
 </LinearLayout>
-
-<TextView android:id="@+id/androidNotificationsTextView" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="5dp" android:background="@color/black" android:gravity="left" android:padding="5dp" android:text="Android Notifications:" android:textColor="@color/white" />
-
-<LinearLayout
-    android:id="@+id/linearLayoutAndroid"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/background_color"
-    android:orientation="vertical" >
-
-<Switch android:id="@+id/androidFriendSwitch" android:layout_width="fill_parent" android:layout_margin="5dp" android:layout_height="wrap_content" android:gravity="top" android:text="New Friend Requests" />
-<Switch android:id="@+id/androidGroupSwitch" android:layout_margin="5dp" android:layout_width="fill_parent" android:layout_height="wrap_content" android:gravity="top" android:text="New Group Requests" />
-<Switch android:id="@+id/androidEventSwitch" android:layout_margin="5dp" android:gravity="top" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="New Event Requests" />
-<Switch android:id="@+id/androidUpcomingEventSwitch" android:layout_margin="5dp" android:layout_width="fill_parent" android:layout_height="wrap_content" android:gravity="top" android:text="One of your Events becomes Upcoming" />
-</LinearLayout>
 <TextView
-                android:id="@+id/accountActionsTextView"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:background="@color/black"
-                android:gravity="left"
-                android:padding="5dp"
-                android:text="Account Actions:"
-                android:textColor="@color/white" />
-
+android:id="@+id/accountSettingsTextView"
+android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+android:layout_marginTop="5dp"
+android:background="@color/black"
+android:gravity="left"
+android:padding="5dp"
+android:text="Account Settings:"
+android:textColor="@color/white" />
 <LinearLayout
-    android:id="@+id/linearLayoutAccount"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical" >
-
-<Button android:id="@+id/ChangeEmailButton" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_gravity="center|top" android:background="@drawable/button_border" android:fontFamily="sans-serif-condensed" android:onClick="changeEmailButton" android:text="Change Email Address" android:layout_marginTop="5dp" android:textColor="@color/button_text_color" />
-<Button android:id="@+id/ChangePasswordButton" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_gravity="center|top" android:background="@drawable/button_border" android:fontFamily="sans-serif-condensed" android:onClick="changePasswordButton" android:text="Change Password" android:textColor="@color/button_text_color" android:layout_marginTop="5dp" />
-<Button android:id="@+id/DeleteAccountButton" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_gravity="center|top" android:background="@drawable/button_border" android:fontFamily="sans-serif-condensed" android:onClick="deleteAccountButton" android:text="Delete Account" android:textColor="@color/button_text_color" android:layout_marginTop="5dp" />
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:orientation="vertical"
+>
+<Button
+android:id="@+id/ChangeEmailButton"
+android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+android:layout_gravity="center|top"
+android:background="@drawable/button_border"
+android:fontFamily="sans-serif-condensed"
+android:onClick="changeEmailButton"
+android:text="Change Email Address"
+android:layout_marginTop="5dp"
+android:textColor="@color/button_text_color" />
+<Button
+android:id="@+id/ChangePasswordButton"
+android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+android:layout_gravity="center|top"
+android:background="@drawable/button_border"
+android:fontFamily="sans-serif-condensed"
+android:onClick="changePasswordButton"
+android:text="Change Password"
+android:textColor="@color/button_text_color"
+android:layout_marginTop="5dp" />
+<Button
+android:id="@+id/DeleteAccountButton"
+android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+android:layout_gravity="center|top"
+android:background="@drawable/button_border"
+android:fontFamily="sans-serif-condensed"
+android:onClick="deleteAccountButton"
+android:text="Delete Account"
+android:textColor="@color/button_text_color"
+android:layout_marginTop="5dp"  />
 </LinearLayout>
 </LinearLayout>
 </ScrollView>

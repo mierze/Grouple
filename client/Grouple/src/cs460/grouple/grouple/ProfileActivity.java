@@ -79,7 +79,7 @@ public class ProfileActivity extends ActionBarActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_profile);
 		initKillswitchListener();
-		load();
+		//load();
 	}
 
 	@Override

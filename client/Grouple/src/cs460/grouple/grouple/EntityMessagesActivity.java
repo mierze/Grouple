@@ -211,6 +211,20 @@ public class EntityMessagesActivity extends ActionBarActivity
 	public boolean onKeyDown(int keyCode, KeyEvent e)  
 	{
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
+	    	if (CONTENT_TYPE.equals("GROUP"))
+	    	{
+	    		group.fetchGroupInfo();
+	    		group.fetchMembers();
+	    		GLOBAL.setGroupBuffer(group);
+	    	}
+	    	else
+	    	{
+	    		event.fetchEventInfo();
+	    		event.fetchParticipants();
+	    		GLOBAL.setEventBuffer(event);
+	    		
+	    	}
+	    	
 	    	loadDialog.show();
 	    	finish();
 	    }

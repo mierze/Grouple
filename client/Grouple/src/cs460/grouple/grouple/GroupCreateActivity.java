@@ -21,7 +21,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
-
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -439,20 +438,17 @@ public class GroupCreateActivity extends ActionBarActivity
 				// group has been successfully created
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					// now we can grab the newly created g_id returned from the
-					// server
-					// Note: g_id is the only unique identifier of a group and
-					// therefore must be used for any future calls concerning
-					// that group.
+					//now we can grab the newly created g_id returned from the server
+					//Note: g_id is the only unique identifier of a group and therefore must be used for any future calls concerning that group.
 					g_id = jsonObject.getString("g_id").toString();
-										
+					
 					System.out.println("g_id of newly created group is: "+g_id);
 					
-					//now add yourself to the group as Creator
+					//add yourself to the group as Creator
 					new AddGroupMembersTask().execute("http://68.59.162.183/"
 							+ "android_connect/add_groupmember.php", user.getEmail(), user.getEmail(), "C", g_id);
 					
-					//now loop through list of added to add all the additional specified users to the group
+					//now loop through list of added to add all the additional users to the group
 					int size = added.size();
 					System.out.println("Total count of users to process: "+size);
 					for(int i = 0; i < size; i++) 
@@ -472,98 +468,52 @@ public class GroupCreateActivity extends ActionBarActivity
 								+ "android_connect/add_groupmember.php", friendsEmail, user.getEmail(), friendsRole, g_id);
 					}
 					
-					// display confirmation box
-					AlertDialog dialog = new AlertDialog.Builder(
-							GroupCreateActivity.this)
-							.setMessage("You've successfully created a group!")
-							.setCancelable(true)
-							.setPositiveButton("Invite more friends to your Group",
-									new DialogInterface.OnClickListener()
-									{
-										@Override
-										public void onClick(
-												DialogInterface dialog, int id)
-										{
-											// code here to take user to
-											// groupaddmembersactivity page.
-											// (pass g_id as extra so invites
-											// can be sent to correct group id)
-											Intent intent = new Intent(
-													GroupCreateActivity.this,
-													InviteActivity.class);
-											intent.putExtra("CONTENT", "GROUP");
-											intent.putExtra("GID", g_id);
-											intent.putExtra("EMAIL",
-													user.getEmail());
-											startActivity(intent);
-											finish();
-										}
-									})
-							.setNegativeButton("View your Group Profile",
-									new DialogInterface.OnClickListener()
-									{
-										@Override
-										public void onClick(
-												DialogInterface dialog,
-												int which)
-										{
-											// code here to take user to newly
-											// created group profile page. (pass
-											// g_id as extra so correct group
-											// profile can be loaded)
-											Intent intent = new Intent(
-													GroupCreateActivity.this,
-													ProfileActivity.class);
-											intent.putExtra("CONTENT", "GROUP");
-											intent.putExtra("GID", g_id);
-											intent.putExtra("EMAIL",
-													user.getEmail());
-											startActivity(intent);
-											finish();
-										}
-									}).show();
-					// if user dimisses the confirmation box, just finish() here to get sent to back
-					// to GroupsActivity.class
-					dialog.setOnCancelListener(new DialogInterface.OnCancelListener()
+					//display confirmation box
+					new AlertDialog.Builder(GroupCreateActivity.this)
+					.setMessage("Nice work, you've successfully created a group!")
+					.setCancelable(true)
+					.setPositiveButton("View your Group Profile", new DialogInterface.OnClickListener()
 					{
-
 						@Override
-						public void onCancel(DialogInterface dialog)
+						public void onClick(DialogInterface dialog, int id)
 						{
-							finish();
+							//add code here to take user to newly created group profile page.  (pass g_id as extra so correct group profile can be loaded)
 						}
-					});
-					
-
+					}).setPositiveButton("Invite more friends", new DialogInterface.OnClickListener()
+					{
+						@Override
+						public void onClick(DialogInterface dialog, int which) 
+						{
+							//add code here to take user to groupaddmembersactivity page.  (pass g_id as extra so invites can be sent to correct group id)
+						}
+					}).show();
 					user.fetchGroupInvites();
 					user.fetchGroups();
 					Group g = new Group(Integer.parseInt(g_id));
 					g.fetchGroupInfo();
 					g.fetchMembers();
 					GLOBAL.setCurrentUser(user);
-					GLOBAL.setGroupBuffer(g);	
-				}
-				// Create group failed for some reasons. Allow user to retry.
+					GLOBAL.setGroupBuffer(g);
+					//remove this activity from back-loop by calling finish().
+					finish();
+				} 
+				//Create group failed for some reasons.
 				else if (jsonObject.getString("success").toString().equals("0"))
-				{
-					// display error box
+				{	
+					//display error box
 					new AlertDialog.Builder(GroupCreateActivity.this)
-							.setMessage(
-									"Unable to create group! Please choose an option:")
-							.setCancelable(true)
-							.setPositiveButton("Try Again",
-									new DialogInterface.OnClickListener()
-									{
-										@Override
-										public void onClick(
-												DialogInterface dialog, int id)
-										{
-											// initiate creation of group AGAIN
-											new CreateGroupTask()
-													.execute("http://68.59.162.183/"
-															+ "android_connect/create_group.php");
-										}
-									}).setNegativeButton("Cancel", null).show();
+					.setMessage("Unable to create group! Please choose an option:")
+					.setCancelable(true)
+					.setPositiveButton("Try Again", new DialogInterface.OnClickListener()
+					{
+						@Override
+						public void onClick(DialogInterface dialog, int id)
+						{
+							//initiate creation of group AGAIN
+							new CreateGroupTask().execute("http://68.59.162.183/"
+							+ "android_connect/create_group.php");
+						}
+					}).setNegativeButton("Cancel", null).show();
 				}
 			} 
 			catch (Exception e)
