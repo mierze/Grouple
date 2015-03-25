@@ -94,7 +94,15 @@ public class MessagesActivity extends ActionBarActivity
 		super.onStop();
 		loadDialog.hide();
 	}
-
+	
+	@Override
+	protected void onDestroy()
+	{
+		// TODO Auto-generated method stub
+		unregisterReceiver(broadcastReceiver);
+		super.onDestroy();
+	}
+	
 	//Must unregister onPause()
 	@Override
 	protected void onPause() {
@@ -147,7 +155,7 @@ public class MessagesActivity extends ActionBarActivity
 	@Override
     protected void onResume() {
         super.onResume();
-	    context .registerReceiver(mMessageReceiver, new IntentFilter("USER_MESSAGE"));
+	    context.registerReceiver(mMessageReceiver, new IntentFilter("USER_MESSAGE"));
 		//new getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php", recipient);
 		fetchMessages(); 
     }

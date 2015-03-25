@@ -82,6 +82,15 @@ public class RecentMessagesActivity extends ActionBarActivity
     AtomicInteger msgId = new AtomicInteger();
     Context context;
 
+	
+	@Override
+	protected void onDestroy()
+	{
+		// TODO Auto-generated method stub
+		unregisterReceiver(broadcastReceiver);
+		super.onDestroy();
+	}
+    
 	@Override
 	protected void onStop()
 	{
@@ -105,7 +114,6 @@ public class RecentMessagesActivity extends ActionBarActivity
         loadDialog.setOwnerActivity(this);
 		//new getContactsTask().execute("http://68.59.162.183/android_connect/get_chat_id.php");
         // Check device for Play Services APK. If check succeeds, proceed with GCM registration.
-
 	}
 	
 	private void initActionBar()

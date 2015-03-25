@@ -96,7 +96,7 @@ public class GroupEditActivity extends ActionBarActivity implements
 		// Set the activity layout to activity_edit_profile.
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_group_edit);
-		
+		initKillswitchListener();
 		load();		
 	}
 	
@@ -117,7 +117,6 @@ public class GroupEditActivity extends ActionBarActivity implements
 		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
         loadDialog.setOwnerActivity(this);
 		initActionBar();
-		initKillswitchListener();
 	}
 	
 	private void initActionBar()

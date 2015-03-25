@@ -74,6 +74,14 @@ public class EntityMessagesActivity extends ActionBarActivity
 		loadDialog.hide();
 	}
 	
+	@Override
+	protected void onDestroy()
+	{
+		// TODO Auto-generated method stub
+		unregisterReceiver(broadcastReceiver);
+		super.onDestroy();
+	}
+	
 	//Must unregister onPause()
 	@Override
 	protected void onPause() {

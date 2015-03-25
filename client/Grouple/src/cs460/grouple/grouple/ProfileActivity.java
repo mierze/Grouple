@@ -79,7 +79,6 @@ public class ProfileActivity extends ActionBarActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_profile);
 		initKillswitchListener();
-		//load();
 	}
 
 	@Override
@@ -98,14 +97,11 @@ public class ProfileActivity extends ActionBarActivity
 	
 	public void initActionBar(String title)
 	{
-		
 		/* Action bar */
 		ActionBar ab = getSupportActionBar();
 		ab.setCustomView(R.layout.actionbar);
 		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
-		//ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
-
 		actionbarTitle.setText(title);
 	}
 
@@ -316,13 +312,12 @@ public class ProfileActivity extends ActionBarActivity
 				else
 				{
 					// failed
-					Log.d("FETCH ROLE FAILED", "FAILED");
+					Log.d("fetchImage", "FAILED");
 				}
 			} 
 			catch (Exception e)
 			{
-				Log.d("atherjsoninuserpost", "here");
-				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 			}
 			//do next thing here
 		}
@@ -621,7 +616,7 @@ public class ProfileActivity extends ActionBarActivity
 		{
 			aboutTitle.setText("About Group:");
 			//iv.setImageBitmap(group.getImage());
-			info.setText("Extra group info");
+			info.setText("Creator: " + group.getEmail());
 			about.setText(group.getAbout());
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.USER.toString()))

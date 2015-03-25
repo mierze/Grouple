@@ -78,6 +78,8 @@ public class ListActivity extends ActionBarActivity
 	/* loading in everything needed to generate the list */
 	public void load()
 	{
+		//clearing any previous views populated, for refresh
+		listLayout = ((LinearLayout)findViewById(R.id.listLayout));
 		//INSTANTIATIONS
 		GLOBAL = ((Global) getApplicationContext());
 		EXTRAS =  getIntent().getExtras();
@@ -101,7 +103,11 @@ public class ListActivity extends ActionBarActivity
 			else if (GLOBAL.getUserBuffer() != null && GLOBAL.getUserBuffer().getEmail().equals(EXTRAS.getString("EMAIL")))
 				user = GLOBAL.getUserBuffer();
 
-		//CALL APPROPRIATE METHODS
+		
+		//CLEAR LIST
+		listLayout.removeAllViews();
+		
+		//CALL APPROPRIATE METHODS TO POPULATE LIST
 		//CONTENT_TYPE -> POPULATEUSERS
 		if (CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()) || CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()) 
 				||  CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()) || CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()) || CONTENT.equals((CONTENT_TYPE.SELECT_FRIEND.toString())))
@@ -110,12 +116,6 @@ public class ListActivity extends ActionBarActivity
 			{
 				addNew.setText("Add New Friend");
 				addNew.setVisibility(View.VISIBLE);
-				View svLayout = findViewById(R.id.scrollViewLayout);
-			    if (svLayout.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
-			        ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) svLayout.getLayoutParams();
-			        p.setMargins(0, 0, 0, 60);
-			        svLayout.requestLayout();
-			    }
 				actionBarTitle = user.getFirstName() + "'s Friends";
 			}
 			else if (CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()))
@@ -173,7 +173,7 @@ public class ListActivity extends ActionBarActivity
 		}
 		//calling next functions to execute
 		initActionBar(actionBarTitle);
-		initKillswitchListener();
+
 	}
 	
 	//populates a list of groups
@@ -448,14 +448,12 @@ public class ListActivity extends ActionBarActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list);
-		//load();
+		initKillswitchListener();
 	}
 	@Override
 	protected void onResume()
 	{
 		super.onResume();
-		listLayout = ((LinearLayout)findViewById(R.id.listLayout));
-		listLayout.removeAllViews();
 		load();
 	}	
 	@Override
@@ -601,7 +599,7 @@ public class ListActivity extends ActionBarActivity
 		}
 	}
 	//Starts an activity to add new friends/group members/invite groups to events
-	public void startInviteActivity(View view)
+	public void bottomButton(View view)
 	{
 		loadDialog.show();
 		Intent intent = null;
@@ -833,27 +831,12 @@ public class ListActivity extends ActionBarActivity
 							if (!event.getEventState().equals("Ended"))
 							{
 								addNew.setVisibility(View.VISIBLE);
-								//TODO PANDA refactor this out, if it works
-								View svLayout = findViewById(R.id.scrollViewLayout);
-							    if (svLayout.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
-							        ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) svLayout.getLayoutParams();
-							        p.setMargins(0, 0, 0, 100);
-							        svLayout.requestLayout();
-							    }
 							}
 						}
 						else
 						{
 							addNew.setVisibility(View.VISIBLE);
-							View svLayout = findViewById(R.id.scrollViewLayout);
-						    if (svLayout.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
-						        ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) svLayout.getLayoutParams();
-						        p.setMargins(0, 0, 0, 100);
-						        svLayout.requestLayout();
-						    }
 						}
-				//	setControls(); //for group / event
-				
 				} 
 				//unsuccessful
 				else
@@ -864,10 +847,8 @@ public class ListActivity extends ActionBarActivity
 			} 
 			catch (Exception e)
 			{
-				Log.d("atherjsoninuserpost", "here");
-				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 			}
-			//do next thing here
 		}
 	}
 	private class performActionTask extends AsyncTask<String, Void, String>
@@ -875,34 +856,29 @@ public class ListActivity extends ActionBarActivity
 		@Override
 		protected String doInBackground(String... urls)
 		{
-			System.out.println("IN ACCEPT DECLINE NOW");
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			// Add your data
-			
 			if (CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString()) || CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
 			{
+				//group invites or current groups, add email and gid
 				nameValuePairs.add(new BasicNameValuePair("email", urls[1]));
 				nameValuePairs.add(new BasicNameValuePair("gid",urls[2]));
 			}
 			else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()) || CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
 			{
-				
-				//System.out.println()
-				//possibly check that all gorup invtes / events follow suit
+				//friend requests or remove friend, both pass sender and receiver
 				nameValuePairs.add(new BasicNameValuePair("sender", urls[1]));
 				nameValuePairs.add(new BasicNameValuePair("receiver", user.getEmail()));
 			}
 			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString())|| CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
 			{
-				System.out.println("IS THIS GOING WELL!?");
-				//possibly check that all gorup invtes / events follow suit
+				//events pending past, upcoming or invites, all need email and eid
 				nameValuePairs.add(new BasicNameValuePair("email", user.getEmail()));
 				nameValuePairs.add(new BasicNameValuePair("eid", urls[1]));
 			}
-
+			//calling readJSONFeed in Global, continues below in onPostExecute
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
-
 		@Override
 		protected void onPostExecute(String result)
 		{
@@ -912,26 +888,19 @@ public class ListActivity extends ActionBarActivity
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					// successful
-					System.out.println("success in acceptdecline on post!");
-					
-		
-					//removing all friend requests for refresh
-					listLayout.removeAllViews();
 					String message = jsonObject.getString("message");
 					Context context = getApplicationContext();
 					if (CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString()))
 					{
-						//user.fetchGroupInvites();
 						user.removeGroupInvite(bufferID);
+						//since leave_group and decline group invite call same php
 						if (!message.equals("Group invite accepted!"))
-						{
 							message = "Group invite declined!";
-						}
 					}
 					else if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
 					{
-						//user.fetchGroups();
 						user.removeGroup(bufferID);
+						user.fetchGroups();
 					}
 					else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
 					{
@@ -942,7 +911,6 @@ public class ListActivity extends ActionBarActivity
 					{
 						user.removeUser(PANDABUFFER);
 						user.fetchFriends();
-					
 					}
 					else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
 					{
@@ -958,8 +926,7 @@ public class ListActivity extends ActionBarActivity
 					{
 						user.removeEventInvite(bufferID);
 						user.fetchEventsInvites();
-			
-						System.out.println("THE MESSAGE IS" + message);
+						//since leave_event and decline event call same php
 						if (!message.equals("Event invite accepted!"))
 							message = "Event invite declined!";
 					}
@@ -968,27 +935,21 @@ public class ListActivity extends ActionBarActivity
 						user.removeEventPast(bufferID);
 						message = "Past event removed!";
 						user.fetchEventsPast();
-			
-						System.out.println("THE MESSAGE IS" + message);
-						if (!message.equals("Event invite accepted!"))
-							message = "Event invite declined!";
 					}
-					System.out.println("NOW IN ACCEPT DECLINE ONPOST3");
-					
 					/*if (GLOBAL.isCurrentUser(user.getEmail()))
 						GLOBAL.setCurrentUser(user);
 					else
 						GLOBAL.setUserBuffer(user);
 					 */
 					Toast toast = GLOBAL.getToast(context, message);
-					
 					toast.show();
-					System.out.println("NOW IN ACCEPT DECLINE ONPOST4");
-					
 					PANDABUFFER = "";
 					bufferID = -1;
-
+					//removing all friend requests for refresh
+					listLayout.removeAllViews();
 					///refreshing views
+					
+					//CALLING CORRESPONDING METHOD TO REPOPULATE
 					if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()) || CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
 						populateUsers();
 					else if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()) || CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString()))
@@ -1003,7 +964,7 @@ public class ListActivity extends ActionBarActivity
 				}
 			} catch (Exception e)
 			{
-				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 			}
 		}
 	}

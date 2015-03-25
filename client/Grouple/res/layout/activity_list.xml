@@ -39,7 +39,7 @@
           android:layout_marginTop="0dp"
           android:layout_alignParentBottom="true"
           android:background="@drawable/button_border"
-          android:onClick="startInviteActivity"
+          android:onClick="bottomButton"
           android:text="Invite Friends"
           android:textColor="@color/button_text_color"
           android:textSize="20sp" />

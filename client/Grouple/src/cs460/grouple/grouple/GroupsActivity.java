@@ -42,7 +42,7 @@ public class GroupsActivity extends ActionBarActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_groups);
-
+		initKillswitchListener();
 		load();
 	}
 
@@ -86,9 +86,7 @@ public class GroupsActivity extends ActionBarActivity
 		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
         loadDialog.setOwnerActivity(this);
 		setNotifications();
-
 		initActionBar();
-		initKillswitchListener();
 	}
 
 	private void setNotifications()

@@ -21,6 +21,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
+
+import cs460.grouple.grouple.ListActivity.CONTENT_TYPE;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -66,8 +68,8 @@ public class GroupCreateActivity extends ActionBarActivity
 	private SparseArray<Character> role = new SparseArray<Character>();   //holds list of role of all friend rows to be added
 	private ArrayList<User> allFriends = new ArrayList<User>();   //holds list of all current friends
 	private User user;
-	private Dialog loadDialog = null;
-	private String g_id = null;
+	private Dialog loadDialog;
+	private String g_id;
 	private Global GLOBAL;
 
 	@Override
@@ -75,14 +77,21 @@ public class GroupCreateActivity extends ActionBarActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_group_create);
-
+		initKillswitchListener();
 		load();	
+	}
+	
+	@Override
+	protected void onDestroy()
+	{
+		// TODO Auto-generated method stub
+		unregisterReceiver(broadcastReceiver);
+		super.onDestroy();
 	}
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent e)  
 	{
-		
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
 	    	loadDialog.show();
 	    	finish();
@@ -111,7 +120,7 @@ public class GroupCreateActivity extends ActionBarActivity
 		
 		populateGroupCreate();
 		initActionBar();
-		initKillswitchListener();
+
 	}
 	
 
@@ -242,7 +251,6 @@ public class GroupCreateActivity extends ActionBarActivity
 							{
 								role.put(view.getId(), 'P');
 							}
-	
 							makeAdminButton.setTextColor(getResources().getColor(
 									R.color.purple));
 						}
@@ -306,7 +314,6 @@ public class GroupCreateActivity extends ActionBarActivity
 						}
 					}
 				});
-				
 				friendNameButton.setText(allFriends.get(i).getName());
 				friendNameButton.setId(i);
 				row.setId(i);
@@ -472,21 +479,42 @@ public class GroupCreateActivity extends ActionBarActivity
 					new AlertDialog.Builder(GroupCreateActivity.this)
 					.setMessage("Nice work, you've successfully created a group!")
 					.setCancelable(true)
-					.setPositiveButton("View your Group Profile", new DialogInterface.OnClickListener()
+					.setPositiveButton("View Group Profile", new DialogInterface.OnClickListener()
 					{
 						@Override
 						public void onClick(DialogInterface dialog, int id)
 						{
 							//add code here to take user to newly created group profile page.  (pass g_id as extra so correct group profile can be loaded)
+							loadDialog.show();
+							Intent intent = new Intent(GroupCreateActivity.this, ProfileActivity.class);
+							Group g = new Group(Integer.parseInt(g_id));
+							g.fetchMembers();
+							g.fetchGroupInfo();
+							GLOBAL.getCurrentUser().fetchFriends();
+							intent.putExtra("EMAIL", user.getEmail());
+							intent.putExtra("GID", g.getID());
+							intent.putExtra("CONTENT", "GROUP");
+							GLOBAL.setGroupBuffer(g);
+							startActivity(intent);	
 						}
-					}).setPositiveButton("Invite more friends", new DialogInterface.OnClickListener()
+					}).setPositiveButton("Invite More Friends", new DialogInterface.OnClickListener()
 					{
 						@Override
 						public void onClick(DialogInterface dialog, int which) 
 						{
 							//add code here to take user to groupaddmembersactivity page.  (pass g_id as extra so invites can be sent to correct group id)
+							loadDialog.show();
+							Intent intent = new Intent(GroupCreateActivity.this, InviteActivity.class);
+							Group g = new Group(Integer.parseInt(g_id));
+							g.fetchMembers();
+							g.fetchGroupInfo();
+							GLOBAL.getCurrentUser().fetchFriends();
+							intent.putExtra("EMAIL", user.getEmail());
+							intent.putExtra("GID", g.getID());
+							GLOBAL.setGroupBuffer(g);
+							startActivity(intent);	
 						}
-					}).show();
+					}).setNegativeButton("Cancel", null).show();
 					user.fetchGroupInvites();
 					user.fetchGroups();
 					Group g = new Group(Integer.parseInt(g_id));

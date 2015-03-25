@@ -43,12 +43,11 @@ public class InviteActivity extends ActionBarActivity {
 	private ArrayList<User> users;
 	private Group group;
 	private BroadcastReceiver broadcastReceiver;
-	private SparseArray<Character> role = new SparseArray<Character>();   //holds list of role of all friend rows to be added
-	private ArrayList<User> allFriends = new ArrayList<User>();   //holds list of all current friends
-	private static Global GLOBAL;
-	private static String CONTENT; //type of content to display
-	private static Bundle EXTRAS; //type of content to display
-	private Dialog loadDialog = null;
+	private SparseArray<String> role = new SparseArray<String>();   //holds list of role of all friend rows to be added
+	private Global GLOBAL;
+	private String CONTENT; //type of content to display
+	private Bundle EXTRAS; //type of content to display
+	private Dialog loadDialog;
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent e)  
@@ -64,6 +63,7 @@ public class InviteActivity extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_invite);
+		initKillswitchListener();
 		load();
 	}
 
@@ -191,21 +191,17 @@ public class InviteActivity extends ActionBarActivity {
 			//setup for each friend
 			for(User user : users)
 			{
-				view = li.inflate(
-						R.layout.list_row_invitefriend, null);
+				view = li.inflate(R.layout.list_row_invitefriend, null);
 				final RelativeLayout row = (RelativeLayout) view.findViewById(R.id.friendManageLayout);
-				final Button makeAdminButton = (Button) row
-						.findViewById(R.id.removeFriendButtonNoAccess);
-
-				final TextView friendName = (TextView) row
-						.findViewById(R.id.friendNameTextView);
-				
-				final CheckBox cb = (CheckBox) row
-						.findViewById(R.id.addToGroupBox);
+				final Button makeAdminButton = (Button) row.findViewById(R.id.removeFriendButtonNoAccess);
+				final TextView friendName = (TextView) row.findViewById(R.id.friendNameTextView);
+				final CheckBox cb = (CheckBox) row.findViewById(R.id.addToGroupBox);
 				makeAdminButton.setId(index);
-				cb.setId(makeAdminButton.getId());
+				cb.setId(index);
+				friendName.setId(index);
+				row.setId(index);
 
-				//listener when clicking makeAdmin button
+				//onClickListeners
 				row.setOnClickListener(new OnClickListener() 
 				{
 					@Override
@@ -214,7 +210,7 @@ public class InviteActivity extends ActionBarActivity {
 						if (makeAdminButton.getText().toString().equals("-")) 
 						{
 							makeAdminButton.setText("U");
-							role.put(view.getId(), 'U');
+							role.put(view.getId(), "U");
 							cb.setChecked(true);
 
 							makeAdminButton.setTextColor(getResources().getColor(
@@ -223,7 +219,7 @@ public class InviteActivity extends ActionBarActivity {
 						else if (makeAdminButton.getText().toString().equals("U")) 
 						{
 							makeAdminButton.setText("P");
-							role.put(view.getId(), 'P');
+							role.put(view.getId(), "P");
 							cb.setChecked(true);
 							makeAdminButton.setTextColor(getResources().getColor(
 									R.color.purple));
@@ -231,7 +227,7 @@ public class InviteActivity extends ActionBarActivity {
 						else if (makeAdminButton.getText().toString().equals("P")) 
 						{
 							makeAdminButton.setText("A");
-							role.put(view.getId(), 'A');
+							role.put(view.getId(), "A");
 							cb.setChecked(true);
 							makeAdminButton.setTextColor(getResources().getColor(
 									R.color.light_green));
@@ -240,13 +236,12 @@ public class InviteActivity extends ActionBarActivity {
 						{
 							makeAdminButton.setText("-");
 							cb.setChecked(false);
-							role.put(view.getId(), '-');
+							role.remove(view.getId());
 							makeAdminButton.setTextColor(getResources().getColor(
 									R.color.black));
 						}
 					}
 				});
-				//listener when clicking makeAdmin button
 				makeAdminButton.setOnClickListener(new OnClickListener() 
 				{
 					@Override
@@ -255,7 +250,7 @@ public class InviteActivity extends ActionBarActivity {
 						if (makeAdminButton.getText().toString().equals("-")) 
 						{
 							makeAdminButton.setText("U");
-							role.put(view.getId(), 'U');
+							role.put(view.getId(), "U");
 							cb.setChecked(true);
 
 							makeAdminButton.setTextColor(getResources().getColor(
@@ -264,7 +259,7 @@ public class InviteActivity extends ActionBarActivity {
 						else if (makeAdminButton.getText().toString().equals("U")) 
 						{
 							makeAdminButton.setText("P");
-							role.put(view.getId(), 'P');
+							role.put(view.getId(), "P");
 							cb.setChecked(true);
 							makeAdminButton.setTextColor(getResources().getColor(
 									R.color.purple));
@@ -272,7 +267,7 @@ public class InviteActivity extends ActionBarActivity {
 						else if (makeAdminButton.getText().toString().equals("P")) 
 						{
 							makeAdminButton.setText("A");
-							role.put(view.getId(), 'A');
+							role.put(view.getId(), "A");
 							cb.setChecked(true);
 
 							makeAdminButton.setTextColor(getResources().getColor(
@@ -282,14 +277,12 @@ public class InviteActivity extends ActionBarActivity {
 						{
 							makeAdminButton.setText("-");
 							cb.setChecked(false);
-							role.put(view.getId(), '-');
+							role.remove(view.getId());
 							makeAdminButton.setTextColor(getResources().getColor(
 									R.color.black));
 						}
 					}
 				});
-						
-				//listener when clicking checkbox
 				cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
 				{
 					@Override
@@ -298,14 +291,14 @@ public class InviteActivity extends ActionBarActivity {
 					
 						if(cb.isChecked())
 						{
-							role.put(view.getId(), 'U');
+							role.put(view.getId(), "U");
 							makeAdminButton.setText("U");
 							makeAdminButton.setTextColor(getResources().getColor(
 									R.color.orange));
 						}
 						else
 						{
-							role.put(view.getId(), '-');
+							role.remove(view.getId());
 							makeAdminButton.setText("-");
 							makeAdminButton.setTextColor(getResources().getColor(
 									R.color.black));
@@ -313,16 +306,13 @@ public class InviteActivity extends ActionBarActivity {
 					}
 				});
 				friendName.setText(user.getName());
-				friendName.setId(index);
-				row.setId(index);
 				pickFriendsLayout.addView(row);	
 				index++;
 			}
 		}
 		else
 		{		
-			// user has no friends
-			// The user has no friend's so display the sad guy image.
+			//no friends that are not already in group
 			view = li.inflate(R.layout.listitem_sadguy, null);
 			((TextView) view.findViewById(R.id.sadGuyTextView))
 				.setText("All of your friends are already in this group.");
@@ -342,22 +332,21 @@ public class InviteActivity extends ActionBarActivity {
 			//grab the email of friend to add
 			String friendsEmail = users.get(key).getEmail();
 			//grab the role of friend to add
-			char friendsRole = role.valueAt(key);
-			System.out.println("adding member: "+friendsEmail+", role: "+role.valueAt(key));
-			if (!(friendsRole == '-'))
+			String friendsRole = role.get(key);
+			if (!(friendsRole.equals("-")))
 				new AddGroupMembersTask().execute("http://68.59.162.183/"
-					+ "android_connect/add_groupmember.php", friendsEmail, user.getEmail(), role.valueAt(key).toString(), Integer.toString(group.getID()));
+					+ "android_connect/add_groupmember.php", friendsEmail, user.getEmail(), friendsRole, Integer.toString(group.getID()));
 		}
 		group.fetchGroupInfo();
 		group.fetchMembers();
 		user.fetchGroupInvites();
 		user.fetchGroups();
-		GLOBAL.setCurrentUser(user);
+		GLOBAL.setCurrentUser(user);  
 		GLOBAL.setGroupBuffer(group);
 		Context context = getApplicationContext();
 		Toast toast = GLOBAL.getToast(context, "Friends have been invited.");
 		toast.show();
-		//remove this activity from back-loop by calling finish().
+		//end activity, go back to previous activity
 		finish();
 	}
 	
