@@ -199,7 +199,7 @@ public class Event extends Entity
 			nameValuePairs.add(new BasicNameValuePair("eid", Integer
 					.toString(getID())));
 			// ADD ALL NAME VALUE REQuirEMENTS
-			return readJSONFeed(urls[0], nameValuePairs);
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
 
 		@Override
@@ -282,7 +282,7 @@ public class Event extends Entity
 		@Override
 		protected String doInBackground(String... urls)
 		{
-			return readJSONFeed(urls[0], null);
+			return GLOBAL.readJSONFeed(urls[0], null);
 		}
 
 		@Override

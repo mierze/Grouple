@@ -11,8 +11,6 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import cs460.grouple.grouple.User.getUserInfoTask;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.app.AlertDialog;
@@ -58,13 +56,12 @@ public class ProfileActivity extends ActionBarActivity
 	private Group group;
 	private Event event;
 	private Bundle EXTRAS;
-	private String ROLE = "U";//defaulting to lowest level
 	private String CONTENT; //type of content to display in profile, passed in from other activities
 	private Global GLOBAL;
 	private Button profileButton1;
 	private Button profileButton2;
 	private Button profileButton3;
-	private Button editProfileButton;
+	private Button profileButton4;
 	private Dialog loadDialog = null;
 	
 	@Override
@@ -115,10 +112,10 @@ public class ProfileActivity extends ActionBarActivity
 		profileButton1 = (Button)findViewById(R.id.profileButton1);
 		profileButton2 = (Button)findViewById(R.id.profileButton2);
 		profileButton3 = (Button)findViewById(R.id.profileButton3);
-		editProfileButton = (Button)findViewById(R.id.profileEditButton);
+		profileButton4 = (Button)findViewById(R.id.profileEditButton);
 		profileButton2.setVisibility(View.GONE);
 		profileButton3.setVisibility(View.GONE);
-		editProfileButton.setVisibility(View.GONE);		
+		profileButton4.setVisibility(View.GONE);		
 		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
         loadDialog.setOwnerActivity(this);
 
@@ -174,14 +171,6 @@ public class ProfileActivity extends ActionBarActivity
         ImageView image = (ImageView) layout.findViewById(R.id.fullimage);
         image.setImageDrawable(tempImageView.getDrawable());
         imageDialog.setView(layout);
-      //  imageDialog.setPositiveButton("Okay", new DialogInterface.OnClickListener(){
-
-            //public void onClick(DialogInterface dialog, int which) {
-           //     dialog.dismiss();
-         //   }
-
-       // });
-
 
         imageDialog.create();
         imageDialog.show();     
@@ -305,7 +294,6 @@ public class ProfileActivity extends ActionBarActivity
 						else
 							iv.setImageResource(R.drawable.event_image_default);		
 					}
-					System.out.println("ROLE IS BEING SET TO " + ROLE);
 					iv.setScaleType(ScaleType.CENTER_CROP);
 					setNotifications(); //for group / event	
 				} 
@@ -349,11 +337,16 @@ public class ProfileActivity extends ActionBarActivity
 				//json fetch was successful
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					
-					ROLE = jsonObject.getString("role").toString();
-					System.out.println("ROLE IS BEING SET TO " + ROLE);
+					String role = jsonObject.getString("role").toString();
+					if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
+					{
+						user.addToGroupRoles(group.getID(), role);
+					}
+					else
+					{
+						user.addToEventRoles(event.getID(), role);
+					}
 					setNotifications(); //for group / event
-				
 				} 
 				else
 				{
@@ -363,8 +356,7 @@ public class ProfileActivity extends ActionBarActivity
 			} 
 			catch (Exception e)
 			{
-				Log.d("atherjsoninuserpost", "here");
-				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 			}
 		}
 	}
@@ -374,12 +366,12 @@ public class ProfileActivity extends ActionBarActivity
 		System.out.println("NOW IN SET NOTIFICATIONS");
 		if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
 		{
-			//if (group.getUsers().contains(user.getEmail()))
+			if (group.inUsers(user.getEmail()))
 				profileButton2.setVisibility(View.VISIBLE);
 			profileButton1.setText("Members\n(" + group.getNumUsers() + ")");
 			profileButton2.setText("Messages");
-			if (ROLE.equals("A"))
-				editProfileButton.setVisibility(View.VISIBLE);		
+			if (user.getGroupRole(group.getID()) != null && user.getGroupRole(group.getID()).equals("A"))
+				profileButton4.setVisibility(View.VISIBLE);		
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
 		{
@@ -388,8 +380,14 @@ public class ProfileActivity extends ActionBarActivity
 			profileButton1.setText("Friends\n(" + user.getNumUsers() + ")");
 			profileButton2.setText("Groups\n(" + user.getNumGroups() + ")");	
 			profileButton3.setText("Events\n(" + user.getNumEventsUpcoming() + ")");	
-			if (GLOBAL.isCurrentUser(user.getEmail()))
-				editProfileButton.setVisibility(View.VISIBLE);
+			if (!GLOBAL.isCurrentUser(user.getEmail()))
+			{
+				if (user.inUsers(GLOBAL.getCurrentUser().getEmail()))
+					profileButton4.setText("Send " + user.getFirstName() + " a Message");
+				else
+					profileButton4.setText("Invite " + user.getFirstName() + " to Friends");
+			}
+			profileButton4.setVisibility(View.VISIBLE);
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.EVENT.toString()))
 		{
@@ -397,8 +395,8 @@ public class ProfileActivity extends ActionBarActivity
 				profileButton2.setVisibility(View.VISIBLE);
 			profileButton1.setText("Attending (" + event.getNumUsers() + ")");	
 			profileButton2.setText("Messages");
-			if (ROLE.equals("A") && !event.getEventState().equals("Ended"))
-				editProfileButton.setVisibility(View.VISIBLE);
+			if (user.getEventRole(event.getID()) != null && user.getEventRole(event.getID()).equals("A") && !event.getEventState().equals("Ended"))
+				profileButton4.setVisibility(View.VISIBLE);
 		}	
 	}
 	
@@ -529,7 +527,20 @@ public class ProfileActivity extends ActionBarActivity
 				intent = new Intent(this, GroupEditActivity.class);
 			else if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
 			{
-				intent = new Intent(this, UserEditActivity.class);
+				if (!GLOBAL.isCurrentUser(user.getEmail()))
+				{
+					if (user.inUsers(GLOBAL.getCurrentUser().getEmail()))
+					{
+						System.out.println("\n\nSEND USER A MESSAGE");
+					}
+					else
+						System.out.println("\n\nINVITE TO FRIENDS");
+					noIntent = true;
+				}
+				else
+				{
+					intent = new Intent(this, UserEditActivity.class);
+				}
 				System.out.println("Setting the intent");
 			}
 			else
@@ -616,7 +627,7 @@ public class ProfileActivity extends ActionBarActivity
 		{
 			aboutTitle.setText("About Group:");
 			//iv.setImageBitmap(group.getImage());
-			info.setText("Creator: " + group.getEmail());
+			info.setText("Creator: " +group.getEmail());
 			about.setText(group.getAbout());
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
@@ -631,7 +642,6 @@ public class ProfileActivity extends ActionBarActivity
 				infoT = location;
 			else
 				infoT = age + " yrs young\n" + location;
-			//iv.setImageBitmap(user.getImage());
 			info.setText(infoT);
 			about.setText(user.getAbout());
 		}

@@ -44,10 +44,8 @@ public class FriendsActivity extends ActionBarActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_friends);
-		
-		load();
-
 		initKillswitchListener();
+		load();
 	}
 
 	protected void onStop() 
@@ -59,9 +57,8 @@ public class FriendsActivity extends ActionBarActivity
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)  {
-		
-	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-	    	
+	    if (keyCode == KeyEvent.KEYCODE_BACK) 
+	    {
 	    	loadDialog.show();
 	    	user.fetchEventsInvites();
 	    	user.fetchFriendRequests();
@@ -100,7 +97,6 @@ public class FriendsActivity extends ActionBarActivity
         loadDialog.setOwnerActivity(this);
 		setNotifications();
 		initActionBar();
-		initKillswitchListener();
 	}
 
 	@Override
@@ -210,13 +206,10 @@ public class FriendsActivity extends ActionBarActivity
 				if (intent.getAction().equals("CLOSE_ALL"))
 				{
 					Log.d("app666", "we killin the login it");
-					// System.exit(1);
 					finish();
 				}
-
 			}
 		};
 		registerReceiver(broadcastReceiver, intentFilter);
-		// End Kill switch listener
 	}
 }

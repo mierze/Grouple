@@ -96,7 +96,7 @@ public class Group extends Entity
 		@Override
 		protected String doInBackground(String... urls)
 		{
-			return readJSONFeed(urls[0], null);
+			return GLOBAL.readJSONFeed(urls[0], null);
 		}
 		@Override
 		protected void onPostExecute(String result)
@@ -119,6 +119,7 @@ public class Group extends Entity
 						User u = new User(o.getString("email"));
 						u.setName(o.getString("first") + " " + o.getString("last"));
 						addToUsers(u);
+						//GLOBAL.addToUsers(u);
 					}
 				}
 				
@@ -175,7 +176,7 @@ public class Group extends Entity
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
 			nameValuePairs.add(new BasicNameValuePair("gid", urls[1]));
 			System.out.println("Finding group with gid = " + urls[1]);
-			return readJSONFeed(urls[0], nameValuePairs);
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
 
 		@Override
@@ -207,9 +208,6 @@ public class Group extends Entity
 					
 					int pub = (Integer) jsonArray.get(3);
 					setPub(pub); 
-					
-					
-
 				}
 				//unsuccessful
 				if (jsonObject.getString("success").toString().equals("2"))
@@ -222,77 +220,5 @@ public class Group extends Entity
 				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
 			}
 		}
-	}
-
-	public String readJSONFeed(String URL, List<NameValuePair> nameValuePairs)
-	{
-		StringBuilder stringBuilder = new StringBuilder();
-		HttpClient httpClient = new DefaultHttpClient();
-
-		if (nameValuePairs == null)
-		{
-			HttpGet httpGet = new HttpGet(URL);
-
-			try
-			{
-				HttpResponse response = httpClient.execute(httpGet);
-				StatusLine statusLine = response.getStatusLine();
-				int statusCode = statusLine.getStatusCode();
-				if (statusCode == 200)
-				{
-					HttpEntity entity = response.getEntity();
-					InputStream inputStream = entity.getContent();
-					BufferedReader reader = new BufferedReader(
-							new InputStreamReader(inputStream));
-					String line;
-					while ((line = reader.readLine()) != null)
-					{
-						System.out.println("New line: " + line);
-						stringBuilder.append(line);
-					}
-					inputStream.close();
-				} else
-				{
-					Log.d("JSON", "Failed to download file");
-				}
-			} catch (Exception e)
-			{
-				Log.d("readJSONFeed", e.getLocalizedMessage());
-			}
-
-		}
-
-		else
-		{
-			HttpPost httpPost = new HttpPost(URL);
-			try
-			{
-				httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
-				HttpResponse response = httpClient.execute(httpPost);
-				StatusLine statusLine = response.getStatusLine();
-				int statusCode = statusLine.getStatusCode();
-				if (statusCode == 200)
-				{
-					HttpEntity entity = response.getEntity();
-					InputStream inputStream = entity.getContent();
-					BufferedReader reader = new BufferedReader(
-							new InputStreamReader(inputStream));
-					String line;
-					while ((line = reader.readLine()) != null)
-					{
-						stringBuilder.append(line);
-					}
-					inputStream.close();
-				} else
-				{
-					Log.d("JSON", "Failed to download file");
-				}
-			} catch (Exception e)
-			{
-				Log.d("readJSONFeed", e.getLocalizedMessage());
-			}
-		}
-		return stringBuilder.toString();
 	}
 }

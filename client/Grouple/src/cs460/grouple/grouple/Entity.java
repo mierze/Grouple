@@ -27,15 +27,20 @@ public abstract class Entity
 {
 	private String email; //email of user, email of group creator, email of event creator
 	private String name; //fullname of user, fName of group creator, fName of event creator ?or possibly not
-	private ArrayList<User> users; //group users, event participants, friends
+	private ArrayList<User> users = new ArrayList<User>(); //group users, event participants, friends
 	private String about; //about user, group, event
 	private Bitmap image; //all entities have images
 	private String inviter;
 	private int pub; //public 1=yes, 0=no(private)
+	protected static Global GLOBAL;// = new Global();
 
 	/*
 	 * Constructor for our parent entity of users, groups, events...
 	 */
+	public Entity()
+	{
+		GLOBAL = new Global();
+	}
 	//nothing for now, shouldn't be making any entities alone
 	
 	/*
@@ -125,7 +130,6 @@ public abstract class Entity
 				break;
 			}
 	}
-	
 	public ArrayList<User> getUsers()
 	{
 		return users;
@@ -139,97 +143,15 @@ public abstract class Entity
 	}
 	public void addToUsers(User u)
 	{
-		boolean inUsers = false;
-		if (users == null)
-		{
-			users = new ArrayList<User>();
-			users.add(u);
-		}
-		else
-		{
-			for (User t : users)
-				if (t.getEmail().equals(u.getEmail()))
-					inUsers = true;
-			if (!inUsers)
+			if (!inUsers(u.getEmail()))
 				users.add(u);
-		}
-	
 	}
-	
-	/*
-	 * 
-	 * READJSONFEEDBELOW
-	 */
-	public String readJSONFeed(String URL, List<NameValuePair> nameValuePairs)
+	public boolean inUsers(String email)
 	{
-		StringBuilder stringBuilder = new StringBuilder();
-		HttpClient httpClient = new DefaultHttpClient();
-
-		if (nameValuePairs == null)
-		{
-			HttpGet httpGet = new HttpGet(URL);
-
-			try
-			{
-				HttpResponse response = httpClient.execute(httpGet);
-				StatusLine statusLine = response.getStatusLine();
-				int statusCode = statusLine.getStatusCode();
-				if (statusCode == 200)
-				{
-					HttpEntity entity = response.getEntity();
-					InputStream inputStream = entity.getContent();
-					BufferedReader reader = new BufferedReader(
-							new InputStreamReader(inputStream));
-					String line;
-					while ((line = reader.readLine()) != null)
-					{
-						System.out.println("New line: " + line);
-						stringBuilder.append(line);
-					}
-					inputStream.close();
-				} else
-				{
-					Log.d("JSON", "Failed to download file");
-				}
-			} catch (Exception e)
-			{
-				Log.d("readJSONFeed", e.getLocalizedMessage());
-			}
-
-		}
-
-		else
-		{
-			HttpPost httpPost = new HttpPost(URL);
-			try
-			{
-				httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
-				HttpResponse response = httpClient.execute(httpPost);
-				StatusLine statusLine = response.getStatusLine();
-				int statusCode = statusLine.getStatusCode();
-				if (statusCode == 200)
-				{
-					HttpEntity entity = response.getEntity();
-					InputStream inputStream = entity.getContent();
-					BufferedReader reader = new BufferedReader(
-							new InputStreamReader(inputStream));
-					String line;
-					while ((line = reader.readLine()) != null)
-					{
-						stringBuilder.append(line);
-					}
-					inputStream.close();
-				} else
-				{
-					Log.d("JSON", "Failed to download file");
-				}
-			} catch (Exception e)
-			{
-				Log.d("readJSONFeed", e.getLocalizedMessage());
-			}
-		}
-		return stringBuilder.toString();
+			if (!users.isEmpty())
+				for (User u : users)
+					if (u.getEmail().equals(email))
+						return true;
+			return false;
 	}
-
 }

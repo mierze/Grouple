@@ -39,108 +39,156 @@ import android.widget.Button;
 import android.widget.Toast;
 
 /*
- * Global stores user values needed for notifications.
+ * Global holds data that has been loaded into the application
  */
 public class Global extends Application
 {
+	private static ArrayList<User> users = new ArrayList<User>();
+	private static ArrayList<Group> groups = new ArrayList<Group>();
+	private static ArrayList<Event> events = new ArrayList<Event>();
 	private static User currentUser; //contains the current user, is updated on every pertinent activity call
 	private static Group groupBuffer;
 	private static User userBuffer;
 	private static Event eventBuffer;
+	private static Context context;
 	
-	/*
-	 * Adds a user to the users arraylist
-	 */
-	public void setCurrentUser(User u)
+	
+	@Override
+	public void onCreate()
+	{
+		super.onCreate();
+		context = getApplicationContext();
+		
+	}
+	protected static Context getContext()
+	{
+		return context;
+	}
+	//SETTERS
+	protected void setCurrentUser(User u)
 	{
 		currentUser = u;
 	}
-	
-	public User getCurrentUser()
-	{
-		return currentUser;
-	}
-	public void setGroupBuffer(Group g)
-	{
-		groupBuffer = g;
-	}
-	public Group getGroupBuffer()
-	{
-		return groupBuffer;
-	}
-	public void setUserBuffer(User u)
+	protected void setUserBuffer(User u)
 	{
 		userBuffer = u;
 	}
-	public void setEventBuffer(Event e)
+	protected void setGroupBuffer(Group g)
+	{
+		groupBuffer = g;
+	}
+	protected void setEventBuffer(Event e)
 	{
 		eventBuffer = e;
 	}
-	public User getUserBuffer()
+	
+	//GETTERS
+	protected User getCurrentUser()
+	{
+		return currentUser;
+	}
+	protected User getUserBuffer()
 	{
 		return userBuffer;
 	}
-	public Event getEventBuffer()
+	protected Group getGroupBuffer()
+	{
+		return groupBuffer;
+	}
+	protected Event getEventBuffer()
 	{
 		return eventBuffer;
 	}
-	public boolean isCurrentUser(String email)
+	
+	//METHODS
+	protected boolean isCurrentUser(String email)
 	{
 		if (getCurrentUser().getEmail().equals(email))
 			return true;
 		else 
 			return false;
 	}
+	protected int addToUsers(User u)
+	{
+		int size = users.size();
+		if (!containsUser(u.getEmail()))
+		{
+			users.add(u);
+			if (users.size() == size+1)
+				return 1;
+			else
+				return -1;
+		}
+		else
+		{
+			//TODO: think over before saving
+		}
+		return 0;
+	}
+	protected User getUser(String email)
+	{
+		for (User u : users)
+			if (u.getEmail().equals(email))
+				return u;
+		return null;
+	}
+	protected boolean containsUser(String email)
+	{
+		if (!users.isEmpty())
+			for (User u : users)
+				if (u.getEmail().equals(email))
+					return true;
+		return false;
+	}
 	
-	public int destroySession()
+	//destroy session is used when logging out to clear all data
+	protected int destroySession()
 	{
 		currentUser = null;
 		groupBuffer = null;
 		userBuffer = null;
+		users.clear();
+		groups.clear();
+		events.clear();
 		//Get rid of sharepreferences for token login
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 		SharedPreferences.Editor editor = preferences.edit();
 		editor.remove("session_email");
 		editor.remove("session_token");
 		editor.commit();
-		return 1;
+		return 1; //success
 	}
 	
-	public Dialog getLoadDialog(Dialog loadDialog)
+	//returns an umbrella loading icon for switching between activities
+	protected Dialog getLoadDialog(Dialog loadDialog)
 	{
-		
-		//new Dialog(this);
         loadDialog.getWindow().getCurrentFocus();
         loadDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-       // View v = li.inflate(R.layout.load, null);
-       // ImageView loadImage = (ImageView) v.findViewById(R.id.loadIconImageView);
-       // loadImage.startAnimation( 
-        	 //   AnimationUtils.loadAnimation(this, R.anim.rotate));
         final Window window = loadDialog.getWindow();
         window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
-       // window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         loadDialog.setContentView(R.layout.load);
         loadDialog.setCancelable(false);
         loadDialog.getWindow().setDimAmount(0.7f);
         return loadDialog;
 	}
-	public Toast getToast(Context context, String message)
+	
+	//takes in a message and returns it in the universal toast style for the app
+	protected Toast getToast(Context context, String message)
 	{
 		Toast toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
 		toast.setGravity(Gravity.CENTER, 0, 0);
 		return toast;
 	}
 	
-	public String readJSONFeed(String URL, List<NameValuePair> nameValuePairs)
+	//asynctasks around the app call this function to get the json return from the server
+	protected String readJSONFeed(String URL, List<NameValuePair> nameValuePairs)
 	{
 		StringBuilder stringBuilder = new StringBuilder();
 		HttpClient httpClient = new DefaultHttpClient();
-
 		if (nameValuePairs == null)
 		{
 			HttpGet httpGet = new HttpGet(URL);
-
 			try
 			{
 				HttpResponse response = httpClient.execute(httpGet);
@@ -167,7 +215,6 @@ public class Global extends Application
 			{
 				Log.d("readJSONFeed", e.getLocalizedMessage());
 			}
-
 		}
 		else
 		{
@@ -204,5 +251,4 @@ public class Global extends Application
 		}
 		return stringBuilder.toString();
 	}//end readJSONFeed
-
 }//end Global class
