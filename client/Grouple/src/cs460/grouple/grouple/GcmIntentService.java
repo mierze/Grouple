@@ -59,8 +59,7 @@ public class GcmIntentService extends IntentService
 	protected void onHandleIntent(Intent intent)
 	{
 		Bundle extras = intent.getExtras();
-		String msg = extras.getString("msg");
-		from = extras.getString("sender");
+		String msg = extras.getString("msg");		from = extras.getString("sender");
 		TYPE = extras.getString("CONTENT_TYPE");
 		first = extras.getString("first");
 		last = extras.getString("last");
@@ -164,15 +163,13 @@ public class GcmIntentService extends IntentService
 		mNotificationManager = (NotificationManager) this
 				.getSystemService(Context.NOTIFICATION_SERVICE);
 
-		PendingIntent contentIntent = null;
-		NotificationCompat.Builder mBuilder = null;
+
 
 		if (TYPE.equals("GROUP_MESSAGE") || TYPE.equals("EVENT_MESSAGE"))
 		{
-			Intent notificationIntent = new Intent(getApplicationContext(),
+			Intent notificationIntent = new Intent(this,
 					EntityMessagesActivity.class);
-			notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP
-					| Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
 			if (TYPE.equals("GROUP_MESSAGE"))
 			{
 				notificationIntent.putExtra("CONTENT_TYPE", "GROUP");
@@ -190,38 +187,47 @@ public class GcmIntentService extends IntentService
 			}
 			notificationIntent.putExtra("EMAIL", from);
 			notificationIntent.putExtra("NAME", NAME);
-			contentIntent = PendingIntent.getActivity(getApplicationContext(),
-					0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-			mBuilder = new NotificationCompat.Builder(this)
+			
+			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
 					.setContentTitle(NAME)
 					.setStyle(new NotificationCompat.BigTextStyle()
 					// .bigText(msg))
 							.bigText(first + " " + last + ": " + msg))
 					.setSmallIcon(R.drawable.grouple_icon).setSound(soundUri)
 					.setContentText(msg);
-		} else if (TYPE.equals("USER_MESSAGE"))
+			notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP
+					| Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(),
+					0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+			mBuilder.setAutoCancel(true);
+
+			// null check
+			mBuilder.setContentIntent(contentIntent);
+			mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+		} 
+		else if (TYPE.equals("USER_MESSAGE"))
 		{
 			Intent notificationIntent = new Intent(getApplicationContext(),
 					MessagesActivity.class);
-			notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP
-					| Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			notificationIntent.putExtra("EMAIL", from);
 			notificationIntent.putExtra("NAME", first + " " + last);
-			contentIntent = PendingIntent.getActivity(getApplicationContext(),
-					0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-			mBuilder = new NotificationCompat.Builder(this)
+			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
 					.setContentTitle(first + " " + last)
 					.setStyle(new NotificationCompat.BigTextStyle()
 					// .bigText(msg))
 							.bigText(msg))
 					.setSmallIcon(R.drawable.grouple_icon).setSound(soundUri)
 					.setContentText(msg);
+			notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP
+					| Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(),
+					0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+			mBuilder.setAutoCancel(true);
+
+			// null check
+			mBuilder.setContentIntent(contentIntent);
+			mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
 		}
 
-		mBuilder.setAutoCancel(true);
-
-		// null check
-		mBuilder.setContentIntent(contentIntent);
-		mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
 	}
 }

@@ -113,6 +113,7 @@ public class ProfileActivity extends ActionBarActivity
 		profileButton2 = (Button)findViewById(R.id.profileButton2);
 		profileButton3 = (Button)findViewById(R.id.profileButton3);
 		profileButton4 = (Button)findViewById(R.id.profileEditButton);
+		iv = (ImageView) findViewById(R.id.profileImageUPA);
 		profileButton2.setVisibility(View.GONE);
 		profileButton3.setVisibility(View.GONE);
 		profileButton4.setVisibility(View.GONE);		
@@ -264,8 +265,6 @@ public class ProfileActivity extends ActionBarActivity
 				//json fetch was successful
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					if (iv == null)
-						iv = (ImageView) findViewById(R.id.profileImageUPA);
 					String image = jsonObject.getString("image").toString();
 					if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
 					{
@@ -413,12 +412,6 @@ public class ProfileActivity extends ActionBarActivity
 	{
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.navigation_actions, menu);
-
-		// Set up the image view
-		if (iv == null)
-		{
-			iv = (ImageView) findViewById(R.id.profileImageUPA);
-		}
 		return true;
 	}
 
@@ -532,10 +525,23 @@ public class ProfileActivity extends ActionBarActivity
 					if (user.inUsers(GLOBAL.getCurrentUser().getEmail()))
 					{
 						System.out.println("\n\nSEND USER A MESSAGE");
+						
+						intent = new Intent(this, MessagesActivity.class);
+						//View parent = (View)view.getParent();
+						//Button name = (Button) parent.findViewById(R.id.nameTextViewLI);
+						intent.putExtra("NAME", user.getName());
 					}
 					else
+					{
 						System.out.println("\n\nINVITE TO FRIENDS");
-					noIntent = true;
+						Toast toast = GLOBAL.getToast(this, "Successfully invited " + user.getFirstName() + " to friends!");
+						toast.show();
+						profileButton4.setVisibility(View.INVISIBLE);
+						//call a json task here
+						//in onpost toast and change refresh the page with that button gone
+						//we need a check for pending requests
+						noIntent = true;
+					}
 				}
 				else
 				{
@@ -679,7 +685,6 @@ public class ProfileActivity extends ActionBarActivity
 			}
 		};
 		registerReceiver(broadcastReceiver, intentFilter);
-		// End Kill switch listener
 	}
 	
 	//aSynch task to add individual member to group.
@@ -713,7 +718,6 @@ public class ProfileActivity extends ActionBarActivity
 				{
 					System.out.println("USER HAS SUCCESSFULLY BEEN ADDED");
 					Context context = getApplicationContext();
-					
 					Toast toast = GLOBAL.getToast(context, jsonObject.getString("message"));
 					toast.show();
 					profileButton2.setVisibility(View.GONE);
@@ -730,7 +734,6 @@ public class ProfileActivity extends ActionBarActivity
 					load();
 					//all working correctly, continue to next user or finish.
 					loadDialog.hide();
-					
 				} 
 				else if (jsonObject.getString("success").toString().equals("0"))
 				{	
