@@ -148,6 +148,9 @@ public class Global extends Application
 		currentUser = null;
 		groupBuffer = null;
 		userBuffer = null;
+		users.clear();
+		groups.clear();
+		events.clear();
 		//Get rid of sharepreferences for token login
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 		SharedPreferences.Editor editor = preferences.edit();
