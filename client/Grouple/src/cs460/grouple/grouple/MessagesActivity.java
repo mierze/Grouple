@@ -61,29 +61,37 @@ public class MessagesActivity extends ActionBarActivity
 {
 	private BroadcastReceiver broadcastReceiver;
 	private Global GLOBAL;
-	private User user; //will be null for now
-    public static final String EXTRA_MESSAGE = "message";
-    public static final String PROPERTY_REG_ID = "registration_id";
-    private static final String PROPERTY_APP_VERSION = "appVersion";
-    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
-    private String recipient;
-    //Tag to search for when logging info.
-    static final String TAG = "GCM";
-    //Sender ID is the project number from API console. Needs to be secret.
-    String SENDER_ID = "957639483805"; 
+	private Bundle EXTRAS;
+	private Button sendMessageButton;
+	private EditText messageEditText;
+	private User user; 
+	private String recipient;
+    private String SENDER_ID = "957639483805"; 
     private ArrayList<Message> messages = new ArrayList<Message>();
 	private Dialog loadDialog = null;
-    GoogleCloudMessaging gcm;
-    AtomicInteger msgId = new AtomicInteger();
-    Context context;
-    String regid;
-    String recipientRegID = "";
+    private GoogleCloudMessaging gcm;
+    private AtomicInteger msgId = new AtomicInteger();
+    private String recipientRegID = "";
+    
+	//don't think we need these below for our app
+  //  public static final String EXTRA_MESSAGE = "message";
+   // public static final String PROPERTY_REG_ID = "registration_id";
+   // private static final String PROPERTY_APP_VERSION = "appVersion";
+    //private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    //private String regid;
+    
+    //Tag to search for when logging info.
+    //static final String TAG = "GCM";
+    //Sender ID is the project number from API console. Needs to be secret.
 
-	public String getRecipientRegID() {
+
+	private String getRecipientRegID() 
+	{
 		return recipientRegID;
 	}
 
-	public void setRecipientRegID(String recipientRegID) {
+	private void setRecipientRegID(String recipientRegID) 
+	{
 		this.recipientRegID = recipientRegID;
 	}
 
@@ -107,55 +115,63 @@ public class MessagesActivity extends ActionBarActivity
 	@Override
 	protected void onPause() {
 	    super.onPause();
-	    context.unregisterReceiver(mMessageReceiver);
+	    this.unregisterReceiver(mMessageReceiver);
 	}
 
-
 	//This is the handler that will manager to process the broadcast intent
-	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() 
+	{
 	    @Override
-	    public void onReceive(Context context, Intent intent) {
-
+	    public void onReceive(Context context, Intent intent) 
+	    {
 	        // Extract data included in the Intent
 	        String fromEmail = intent.getStringExtra("FROM");
 	        if (fromEmail.equals(recipient))
 	        {
-	            //messages.clear(); //TODO: smartly add to this
 	        	fetchMessages(); 
 	        }
 	    }
 	};
 	
-	@Override
-	protected void onCreate(Bundle savedInstanceState)
+	private void initActionBar()
 	{
-		GLOBAL = ((Global) getApplicationContext());
-		Bundle extras = getIntent().getExtras();
-		super.onCreate(savedInstanceState);
-		user = GLOBAL.getCurrentUser();
-		setContentView(R.layout.activity_messages);
-		/* Action bar */
+		 /* Action bar */
 		ActionBar ab = getSupportActionBar();
 		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-		gcm = GoogleCloudMessaging.getInstance(this);
-		recipient = extras.getString("EMAIL"); 
 		ab.setCustomView(R.layout.actionbar);
 		ab.setDisplayHomeAsUpEnabled(false);
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
-		String name = extras.getString("NAME");
-		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
-        loadDialog.setOwnerActivity(this);
+		String name = EXTRAS.getString("NAME");
 		actionbarTitle.setText(name);
+	}
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_messages);
+		GLOBAL = ((Global) getApplicationContext());
+		EXTRAS = getIntent().getExtras();
+		user = GLOBAL.getCurrentUser();
+		//initializing the variables for the send button / message edit text
+		sendMessageButton = (Button) findViewById(R.id.sendButton);
+		messageEditText = (EditText) findViewById(R.id.messageEditText);
+		initActionBar();
+		gcm = GoogleCloudMessaging.getInstance(this);
+		recipient = EXTRAS.getString("EMAIL"); 
+		//load dialog is the icon displayed between switching activities
+		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
+        loadDialog.setOwnerActivity(this);   
 		initKillswitchListener();
-		context = getApplicationContext();
 		//Get the recipient 
 		new getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php", recipient);
 	}
 	
 	@Override
-    protected void onResume() {
+    protected void onResume() 
+	{
         super.onResume();
-	    context.registerReceiver(mMessageReceiver, new IntentFilter("USER_MESSAGE"));
+	    this.registerReceiver(mMessageReceiver, new IntentFilter("USER_MESSAGE"));
 		//new getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php", recipient);
 		fetchMessages(); 
     }
@@ -211,7 +227,7 @@ public class MessagesActivity extends ActionBarActivity
 			} catch (Exception e)
 			{
 				Log.d("fetchMessages", "exception caught");
-				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 			}
 		}
 	}
@@ -235,7 +251,6 @@ public class MessagesActivity extends ActionBarActivity
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("sender", recipient));
 			nameValuePairs.add(new BasicNameValuePair("receiver", user.getEmail()));
-			System.out.println("ABOUT TO read messages sender: " + recipient + " receiver is " + user.getEmail());
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
 
@@ -350,15 +365,14 @@ public class MessagesActivity extends ActionBarActivity
 
         if (view == findViewById(R.id.sendButton)) 
         {
+        	sendMessageButton.setClickable(false);
             //Get message from edit text
-            EditText mymessage   = (EditText)findViewById(R.id.messageEditText);
-            String message = mymessage.getText().toString();
+            String message = messageEditText.getText().toString();
             
             //make sure message field is not blank
             if(!(message.compareTo("") ==0))
             {
             	 //PHP expects message,sender,receiver.
-                //new storeMessageTask().execute("http://68.59.162.183/android_connect/send_message.php",message,"mierze@gmail.com","tfeipel@gmail.com");
                 new storeMessageTask().execute("http://68.59.162.183/android_connect/send_message.php",message, user.getEmail(),recipient);
                 new AsyncTask<Void, Void, String>() {
                     @Override
@@ -368,8 +382,7 @@ public class MessagesActivity extends ActionBarActivity
                         {
                             Bundle data = new Bundle();
                             //Get message from edit text
-                            EditText mymessage   = (EditText)findViewById(R.id.messageEditText);
-                            message = mymessage.getText().toString();
+                            message = messageEditText.getText().toString();
     						Message m = new Message(message, new Date().toString(), user.getEmail(),
     								user.getName(), recipient, null);
     			       		SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE h:mma");
@@ -388,18 +401,18 @@ public class MessagesActivity extends ActionBarActivity
                             String id = Integer.toString(msgId.incrementAndGet());
                             gcm.send(SENDER_ID + "@gcm.googleapis.com", id, data);
                             message = "Sent message";
-                        } catch (IOException ex) {
+                        } 
+                        catch (IOException ex) 
+                        {
                             message = "Error :" + ex.getMessage();
                         }
-                      
                         return message;
                     }
 
                     @Override
                     protected void onPostExecute(String msg) {
-                    	
-                    	EditText mymessage   = (EditText)findViewById(R.id.messageEditText);
-                    	mymessage.setText("");
+                    	messageEditText.setText("");
+                    	sendMessageButton.setClickable(true);
                         //add to an array of some sort
                     	//ideal to store if it is being received / sent, date, message body
                     	//assuming to start just 1 person to 1 person manually set up
@@ -411,9 +424,11 @@ public class MessagesActivity extends ActionBarActivity
                     }
                 }.execute(null, null, null);
             }
-          
-           
-            
+            else
+            {
+            	Toast toast = GLOBAL.getToast(this, "Please enter a message!");
+            	toast.show();
+            }         
         }
     }
 
@@ -430,23 +445,17 @@ public class MessagesActivity extends ActionBarActivity
 				// close activity
 				if (intent.getAction().equals("CLOSE_ALL"))
 				{
-					Log.d("app666", "we killin the login it");
-					// System.exit(1);
 					finish();
 				}
-
 			}
 		};
 		registerReceiver(broadcastReceiver, intentFilter);
 		// End Kill switch listener
 	}
- 
-
-    
+  
     //This task gets your friend's regid
     private class getRegIDTask extends AsyncTask<String, Void, String>
 	{
-
 		@Override
 		protected String doInBackground(String... urls)
 		{
@@ -454,7 +463,6 @@ public class MessagesActivity extends ActionBarActivity
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			//The recipient's email is urls[1]
 			nameValuePairs.add(new BasicNameValuePair("email", urls[1]));
-
 			return global.readJSONFeed(urls[0], nameValuePairs);
 		}
 
@@ -469,16 +477,15 @@ public class MessagesActivity extends ActionBarActivity
 				{
 					String id = jsonObject.getString("regid").toString();
 					setRecipientRegID(id);
-					
-				} else
+				} 
+				else
 				{
-					Context context = getApplicationContext();
-					Toast toast = Toast.makeText(context, "Error Getting GCM REGID. Contact Devs", Toast.LENGTH_LONG);
+					Toast toast = GLOBAL.getToast(MessagesActivity.this, "Error getting GCM REG_ID.");
 					toast.show();
 				}
 			} catch (Exception e)
 			{
-				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 			}
 		}
 	}
@@ -486,7 +493,6 @@ public class MessagesActivity extends ActionBarActivity
     //Stores the message in the database.
     private class storeMessageTask extends AsyncTask<String, Void, String>
 	{
-
 		@Override
 		protected String doInBackground(String... urls)
 		{
@@ -527,18 +533,16 @@ public class MessagesActivity extends ActionBarActivity
                         msg = "Error :" + ex.getMessage();
                     }*/
 					
-				} else
-				{
-					Context context = getApplicationContext();
-					Toast toast = Toast.makeText(context, "Error Storing Message. Message not sent. Contact Devs", Toast.LENGTH_LONG);
+				} 
+				else
+				{		
+					Toast toast = GLOBAL.getToast(MessagesActivity.this, "Error sending message. Please try again.");
 					toast.show();
 				}
 			} catch (Exception e)
 			{
-				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 			}
 		}
 	}
-    
-
 }

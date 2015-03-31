@@ -1,15 +1,9 @@
 package cs460.grouple.grouple;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -17,15 +11,10 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -33,9 +22,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.TextView;
@@ -534,9 +522,9 @@ public class ProfileActivity extends ActionBarActivity
 					else
 					{
 						System.out.println("\n\nINVITE TO FRIENDS");
-						Toast toast = GLOBAL.getToast(this, "Successfully invited " + user.getFirstName() + " to friends!");
-						toast.show();
-						profileButton4.setVisibility(View.INVISIBLE);
+
+						new addFriendTask().execute("http://68.59.162.183/android_connect/add_friend.php");
+						
 						//call a json task here
 						//in onpost toast and change refresh the page with that button gone
 						//we need a check for pending requests
@@ -580,6 +568,55 @@ public class ProfileActivity extends ActionBarActivity
 			loadDialog.hide();
 	}
 
+	
+	// This task sends a friend request to the given user.
+	private class addFriendTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected String doInBackground(String... urls)
+		{
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("sender", GLOBAL.getCurrentUser().getEmail()));
+			nameValuePairs.add(new BasicNameValuePair("receiver", user.getEmail()));
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+		}
+
+		@Override
+		protected void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+				System.out.println(jsonObject.getString("success"));
+
+				EditText emailEditText = (EditText) findViewById(R.id.emailEditTextAFA);
+				emailEditText.setText("");
+				TextView addFriendMessage = (TextView) findViewById(R.id.addFriendMessageTextViewAFA);
+				addFriendMessage.setText(jsonObject.getString("message"));
+
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					Toast toast = GLOBAL.getToast(ProfileActivity.this, "Successfully invited " + user.getFirstName() + " to friends!");
+					toast.show();
+					profileButton4.setVisibility(View.INVISIBLE);		
+				} 
+				else if (jsonObject.getString("success").toString().equals("2"))
+				{
+					
+				} 
+				else
+				{
+					
+				}
+			
+
+			} 
+			catch (Exception e)
+			{
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
+			}
+		}
+	}
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent e)  {
 		
