@@ -9,11 +9,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.app.Dialog;
@@ -62,6 +64,7 @@ public class HomeActivity extends ActionBarActivity
     GoogleCloudMessaging gcm;
     AtomicInteger msgId = new AtomicInteger();
     Context context;
+    SharedPreferences prefs;
     
     String regid;
 
@@ -70,6 +73,7 @@ public class HomeActivity extends ActionBarActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_home);
+		prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		//Register with the GCM servers and store it in the db.
 		context = getApplicationContext();
 		if (checkPlayServices()) {
@@ -82,6 +86,10 @@ public class HomeActivity extends ActionBarActivity
         } else {
             Log.i(TAG, "No valid Google Play Services APK found.");
         }
+		
+		//Load in user_settings from database and update sharedpreferences file
+	    new GetSettingsTask().execute("http://68.59.162.183/"
+				+ "android_connect/get_userssettings.php");
 		load();
 		
 	}
@@ -523,6 +531,71 @@ public class HomeActivity extends ActionBarActivity
 			}
 		}
 	}
+    
+    //aSynch class to get user settings from database based on email of current user
+  	private class GetSettingsTask extends AsyncTask<String, Void, String>
+  	{
+
+  		@Override
+  		protected String doInBackground(String... urls)
+  		{
+  			Global global = ((Global) getApplicationContext());
+			String email = global.getCurrentUser().getEmail();
+			
+  			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+  			nameValuePairs.add(new BasicNameValuePair("email", email));
+  			
+  			//pass url and nameValuePairs off to global to do the JSON call.  Code continues at onPostExecute when JSON returns.
+  			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+  		}
+
+  		@Override
+  		protected void onPostExecute(String result)
+  		{
+  			try
+  			{
+  				JSONObject jsonObject = new JSONObject(result);
+
+  				// user settings have been returned
+  				if (jsonObject.getString("success").toString().equals("1"))
+  				{
+  					//update sharedpreference file now
+  					JSONArray settings = jsonObject.getJSONArray("settings");
+  					JSONObject jsonSettings = settings.getJSONObject(0);
+  					
+  					SharedPreferences.Editor editor = prefs.edit();
+					editor.putString("emailFriendReq", jsonSettings.getString("emailFriendReq").toString());
+					editor.putString("emailGroupReq", jsonSettings.getString("emailGroupReq").toString());
+					editor.putString("emailEventReq", jsonSettings.getString("emailEventReq").toString());
+					editor.putString("emailFriendMessage", jsonSettings.getString("emailFriendMessage").toString());
+					editor.putString("emailGroupMessage", jsonSettings.getString("emailGroupMessage").toString());
+					editor.putString("emailEventMessage", jsonSettings.getString("emailEventMessage").toString());
+					editor.putString("emailEventUpcoming", jsonSettings.getString("emailEventUpcoming").toString());
+					editor.putString("emailUmbrella", jsonSettings.getString("emailUmbrella").toString());
+					editor.putString("androidFriendReq", jsonSettings.getString("androidFriendReq").toString());
+					editor.putString("androidGroupReq", jsonSettings.getString("androidGroupReq").toString());
+					editor.putString("androidEventReq", jsonSettings.getString("androidEventReq").toString());
+					editor.putString("androidFriendMessage", jsonSettings.getString("androidFriendMessage").toString());
+					editor.putString("androidGroupMessage", jsonSettings.getString("androidGroupMessage").toString());
+					editor.putString("androidEventMessage", jsonSettings.getString("androidEventMessage").toString());
+					editor.putString("androidEventUpcoming", jsonSettings.getString("androidEventUpcoming").toString());
+					editor.putString("androidUmbrella", jsonSettings.getString("androidUmbrella").toString());
+					
+					editor.apply();
+					System.out.println("user settings in sharedpreferences have been initilized and is now up to date!");
+  					
+  				}
+  				else if (jsonObject.getString("success").toString().equals("0"))
+  				{
+  					//no user_settings json was returned.  Will not happen unless database connection problems.
+  				}
+  			} 
+  			catch (Exception e)
+  			{
+  				Log.d("readJSONFeed", e.getLocalizedMessage());
+  			}
+  		}
+  	}
 
 
 }

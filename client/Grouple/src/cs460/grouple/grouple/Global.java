@@ -144,19 +144,38 @@ public class Global extends Application
 	//destroy session is used when logging out to clear all data
 	protected int destroySession()
 	{
+		System.out.println("destroying session...");
 		currentUser = null;
 		groupBuffer = null;
 		userBuffer = null;
-		users.clear();
-		groups.clear();
-		events.clear();
 		//Get rid of sharepreferences for token login
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 		SharedPreferences.Editor editor = preferences.edit();
 		editor.remove("session_email");
 		editor.remove("session_token");
+		
+		//Get rid of sharepreferences for usersettings
+		editor.remove("emailFriendReq");
+		editor.remove("emailGroupReq");
+		editor.remove("emailEventReq");
+		editor.remove("emailFriendMessage");
+		editor.remove("emailGroupMessage");
+		editor.remove("emailEventMessage");
+		editor.remove("emailEventUpcoming");
+		editor.remove("emailUmbrella");
+		
+		editor.remove("androidFriendReq");
+		editor.remove("androidGroupReq");
+		editor.remove("androidEventReq");
+		editor.remove("androidFriendMessage");
+		editor.remove("androidGroupMessage");
+		editor.remove("androidEventMessage");
+		editor.remove("androidEventUpcoming");
+		editor.remove("androidUmbrella");
+		
 		editor.commit();
-		return 1; //success
+		System.out.println("session destroyed!");
+		return 1;
 	}
 	
 	//returns an umbrella loading icon for switching between activities
