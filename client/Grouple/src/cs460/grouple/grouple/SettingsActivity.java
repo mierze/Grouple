@@ -22,17 +22,21 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.text.Layout;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -50,7 +54,23 @@ public class SettingsActivity extends ActionBarActivity
     SharedPreferences.Editor editor;
     //use sharedpreferences info that was filled during login to set initial switches to their correct positions
     SharedPreferences prefs;  
+    
+    //edittexts for changeemail dialog
+	EditText CEDoldPassword;
+	EditText CEDnewEmail;
+	EditText CEDconfirmEmail;
+	
+	//edittexts for changepassword dialog
+	EditText CPDoldPassword;
+	EditText CPDnewPassword;
+	EditText CPDconfirmPassword;
+	
+	//edittext for deleteAccount dialog
+	EditText DADoldPassword;
 
+	AlertDialog emailAlertDialog;
+	AlertDialog passwordAlertDialog;
+	AlertDialog deleteAccountDialog;
 	
 	@Override
 	protected void onStop()
@@ -278,18 +298,193 @@ public class SettingsActivity extends ActionBarActivity
 	{
 		System.out.println("changePassword was activated.");
 		//TODO: add code here to implement changePassword
+		//dialog box:
+		//you must first type your old password, your new password, and confirm new password
+		//this is NOT "forgot password". user must know old password.  Forget password will have to go through registered email to ensure authentication.
+		//call updatePassword.php
+		
+		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+		dialogBuilder.setTitle("Change Account Password");
+		LayoutInflater inflater = this.getLayoutInflater();
+		View dialogView = inflater.inflate(R.layout.changepassword_dialog, null);
+		dialogBuilder.setView(dialogView);
+
+		CPDoldPassword = (EditText) dialogView.findViewById(R.id.passwordOldTextCPD);
+		CPDnewPassword = (EditText) dialogView.findViewById(R.id.passwordNewTextCPD);
+		CPDconfirmPassword = (EditText) dialogView.findViewById(R.id.passwordConfirmTextCPD);
+		
+		passwordAlertDialog = dialogBuilder.create();
+		passwordAlertDialog.show();
+	}
+
+	public void ConfirmPasswordChangeButton(View view)
+	{
+		Context context = getApplicationContext();
+		System.out.println("confirmpasswordchangebutton was activated.");
+		//TODO: add code here to implement confirm changes
+			
+		//error if new password does not match confirm new password
+		if(CPDnewPassword.getText().toString().compareTo(CPDconfirmPassword.getText().toString()) != 0)
+		{			
+			Toast toast = GLOBAL.getToast(context, "'New password' must match 'Confirm new password'");
+			toast.show();
+			CPDnewPassword.setText("");
+			CPDconfirmPassword.setText("");
+		}
+		//error if empty new password field
+		else if(CPDnewPassword.getText().toString().compareTo("") == 0)
+		{
+			Toast toast = GLOBAL.getToast(context, "Enter a new password first.");
+			toast.show();
+		}
+		//error if empty current password field
+		else if(CPDoldPassword.getText().toString().compareTo("") == 0)
+		{
+			Toast toast = GLOBAL.getToast(context, "You must enter your current password for account verification.");
+			toast.show();
+		}
+		//error if password is already equal to newPassword
+		else if(CPDoldPassword.getText().toString().compareTo(CPDnewPassword.getText().toString()) == 0)
+		{
+			Toast toast = GLOBAL.getToast(context, "Your 'New password' cannot be the same as your 'Current password'.");
+			toast.show();
+			CPDnewPassword.setText("");
+			CPDconfirmPassword.setText("");
+		}
+		//attempt to change password
+		else
+		{
+		    new ChangePasswordTask().execute("http://68.59.162.183/"
+					+ "android_connect/update_password.php");
+		}
 	}
 
 	public void changeEmailButton(View view)
 	{
 		System.out.println("changeEmail was activated.");
-		//TODO: add code here to implement changeEmail
+		
+		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+		dialogBuilder.setTitle("Change Account Email");
+		LayoutInflater inflater = this.getLayoutInflater();
+		View dialogView = inflater.inflate(R.layout.changeemail_dialog, null);
+		dialogBuilder.setView(dialogView);
+
+		TextView currentEmail = (TextView) dialogView.findViewById(R.id.currentEmailCED);
+		currentEmail.setText(currentEmail.getText().toString() + GLOBAL.getCurrentUser().getEmail());
+		CEDoldPassword = (EditText) dialogView.findViewById(R.id.passwordOldTextCED);
+		CEDnewEmail = (EditText) dialogView.findViewById(R.id.emailTextCED);
+		CEDconfirmEmail = (EditText) dialogView.findViewById(R.id.emailConfirmTextCED);
+		
+		emailAlertDialog = dialogBuilder.create();
+		emailAlertDialog.show();
+	}
+	
+	public void ConfirmEmailChangeButton(View view)
+	{
+		System.out.println("confirmemailchangebutton was activated.");
+		Context context = getApplicationContext();
+		
+		//error if new email does not match confirm new email
+		if(CEDnewEmail.getText().toString().compareTo(CEDconfirmEmail.getText().toString()) != 0)
+		{
+			
+			Toast toast = GLOBAL.getToast(context, "'New email address' must match 'Confirm new email address'");
+			toast.show();
+			CEDnewEmail.setText("");
+			CEDconfirmEmail.setText("");
+		}
+		//error if empty email field
+		else if(CEDnewEmail.getText().toString().compareTo("") == 0)
+		{
+			Toast toast = GLOBAL.getToast(context, "Enter a new email address first.");
+			toast.show();
+		}
+		//error if empty password field
+		else if(CEDoldPassword.getText().toString().compareTo("") == 0)
+		{
+			Toast toast = GLOBAL.getToast(context, "You must enter your current password for account verification.");
+			toast.show();
+		}
+		//error if new email is already equal to current email
+		else if(CEDnewEmail.getText().toString().compareTo(GLOBAL.getCurrentUser().getEmail()) == 0)
+		{
+			Toast toast = GLOBAL.getToast(context, "Your email is already set to that!");
+			toast.show();
+			CEDnewEmail.setText("");
+			CEDconfirmEmail.setText("");
+		}
+		//attempt to change email address
+		else
+		{
+		    new ChangeEmailTask().execute("http://68.59.162.183/"
+					+ "android_connect/update_email.php");
+		}
 	}
 
 	public void deleteAccountButton(View view)
 	{
 		System.out.println("deleteAccount was activated.");
 		//TODO: add code here to implement deleteAccountButton
+		//dialog box:
+		//you must comfirm your account deletion.  After confirmation, user will be logged out.  
+		//Deleted accounts will be flagged as 'deleted='timestamp' and then accounts will deleted flag will be cleared 30 days after timestamp. (using mysql eventscheduler)
+		//If user logs back in before the 30 days, the flag will be removed and therefore account will not be deleted from database.
+		//call deleteAccount.php
+		
+		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+		dialogBuilder.setTitle("Delete Account");
+		LayoutInflater inflater = this.getLayoutInflater();
+		View dialogView = inflater.inflate(R.layout.deleteaccount_dialog, null);
+		dialogBuilder.setView(dialogView);
+
+		DADoldPassword = (EditText) dialogView.findViewById(R.id.passwordOldTextDAD);
+		
+		deleteAccountDialog = dialogBuilder.create();
+		deleteAccountDialog.show();
+	}
+	
+	public void ConfirmDeleteAccountButton(View view)
+	{
+		System.out.println("confirmdeleteaccountbutton was activated.");
+		Context context = getApplicationContext();
+		
+		//error if empty password field
+		if(DADoldPassword.getText().toString().compareTo("") == 0)
+		{
+			Toast toast = GLOBAL.getToast(context, "You must enter your current password for account verification.");
+			toast.show();
+		}
+		else
+		{
+			//confirm dialog box
+			AlertDialog dialog = new AlertDialog.Builder(
+					SettingsActivity.this)
+					.setMessage("Are you sure you want to delete your Grouple Account?  All your information may be permanently deleted.")
+					.setCancelable(true)
+					.setPositiveButton("Yes",
+							new DialogInterface.OnClickListener()
+							{
+								@Override
+								public void onClick(
+										DialogInterface dialog, int id)
+								{
+									//attempt to delete Account
+									  new DeleteAccountTask().execute("http://68.59.162.183/"
+												+ "android_connect/delete_account.php");
+								}
+							})
+					.setNegativeButton("Cancel",
+							new DialogInterface.OnClickListener()
+							{
+								@Override
+								public void onClick(
+										DialogInterface dialog,
+										int which)
+								{
+									deleteAccountDialog.cancel();
+								}
+							}).show();
+		}
 	}
 
 	@Override
@@ -425,4 +620,195 @@ public class SettingsActivity extends ActionBarActivity
 			}
 		}
 	}
+	
+	//aSynch class to update account password
+		private class ChangePasswordTask extends AsyncTask<String, Void, String>
+		{
+			@Override
+			protected String doInBackground(String... urls)
+			{
+				System.out.println("updating password...");
+				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+				nameValuePairs.add(new BasicNameValuePair("email", GLOBAL.getCurrentUser().getEmail()));
+				nameValuePairs.add(new BasicNameValuePair("password", CPDoldPassword.getText().toString()));
+				nameValuePairs.add(new BasicNameValuePair("newPassword", CPDnewPassword.getText().toString()));
+					
+				//pass url and nameValuePairs off to global to do the JSON call.  Code continues at onPostExecute when JSON returns.
+				return GLOBAL.readJSONFeed(urls[0], nameValuePairs);					
+			}
+
+			@Override
+			protected void onPostExecute(String result)
+			{
+				try
+				{
+					JSONObject jsonObject = new JSONObject(result);
+					// profile settings have been successfully updated
+					if (jsonObject.getString("success").toString().equals("1"))
+					{
+						System.out.println("updating password complete!");
+						Context context = getApplicationContext();
+						Toast toast = GLOBAL.getToast(context, jsonObject.getString("message"));
+						toast.show();
+						passwordAlertDialog.cancel();
+					}
+					else if (jsonObject.getString("success").toString().equals("0"))
+					{
+						System.out.println("Failed to update password!");
+						Context context = getApplicationContext();
+						Toast toast = GLOBAL.getToast(context, jsonObject.getString("message"));
+						toast.show();
+						//failed to update user password for some reason. see error in toast.
+					}
+				} 
+				catch (Exception e)
+				{
+					Log.d("readJSONFeed", e.getLocalizedMessage());
+				}
+			}
+		}
+		
+		//aSynch class to update email address
+		private class ChangeEmailTask extends AsyncTask<String, Void, String>
+		{
+			@Override
+			protected String doInBackground(String... urls)
+			{
+				
+				System.out.println("updating email...");
+				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+				nameValuePairs.add(new BasicNameValuePair("email", GLOBAL.getCurrentUser().getEmail()));
+				nameValuePairs.add(new BasicNameValuePair("password", CEDoldPassword.getText().toString()));
+				nameValuePairs.add(new BasicNameValuePair("newEmail", CEDnewEmail.getText().toString()));
+					
+				//pass url and nameValuePairs off to global to do the JSON call.  Code continues at onPostExecute when JSON returns.
+				return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+			}
+
+			@Override
+			protected void onPostExecute(String result)
+			{
+				try
+				{
+					JSONObject jsonObject = new JSONObject(result);
+					// profile settings have been successfully updated
+					if (jsonObject.getString("success").toString().equals("1"))
+					{
+						System.out.println("updating email complete!");
+						Context context = getApplicationContext();
+						Toast toast = GLOBAL.getToast(context, jsonObject.getString("message"));
+						toast.show();
+						
+						//now that database has been updated, we must update any client-side values of email
+						User user = GLOBAL.getCurrentUser();
+						user.setEmail(CEDnewEmail.getText().toString());
+						GLOBAL.setCurrentUser(user);
+						
+						//update user's sharepreferences information
+						SharedPreferences.Editor editor = prefs.edit();
+						editor.putString("session_email", CEDnewEmail.getText().toString());
+						editor.apply();
+
+						emailAlertDialog.cancel();
+						
+					}
+					else if (jsonObject.getString("success").toString().equals("0"))
+					{
+						System.out.println("Failed to update email!");
+						Context context = getApplicationContext();
+						Toast toast = GLOBAL.getToast(context, jsonObject.getString("message"));
+						toast.show();
+						//failed to update user email for some reasons. see error messagein toast for reasons.
+					}
+				} 
+				catch (Exception e)
+				{
+					Log.d("readJSONFeed", e.getLocalizedMessage());
+				}
+			}
+		}
+		
+		//aSynch class to permanently delete your account
+		private class DeleteAccountTask extends AsyncTask<String, Void, String>
+		{
+			@Override
+			protected String doInBackground(String... urls)
+			{
+				System.out.println("deleting account...");
+				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+				nameValuePairs.add(new BasicNameValuePair("email", GLOBAL.getCurrentUser().getEmail()));
+				nameValuePairs.add(new BasicNameValuePair("password", DADoldPassword.getText().toString()));
+							
+				//pass url and nameValuePairs off to global to do the JSON call.  Code continues at onPostExecute when JSON returns.
+				return GLOBAL.readJSONFeed(urls[0], nameValuePairs);					
+			}
+
+			@Override
+			protected void onPostExecute(String result)
+			{
+				try
+				{
+					JSONObject jsonObject = new JSONObject(result);
+					// profile settings have been successfully updated
+					if (jsonObject.getString("success").toString().equals("1"))
+					{
+						System.out.println("delete account complete!");
+						Context context = getApplicationContext();
+						deleteAccountDialog.cancel();
+						
+						//show user final exit message
+						// display confirmation box
+						AlertDialog dialog = new AlertDialog.Builder(
+								SettingsActivity.this)
+								.setMessage("Okay we've deleted your account but we would like to sincerely thank you for trying Grouple!  Please check your email for your Account Deletion Confirmation.")
+								.setCancelable(true)
+								.setPositiveButton("Exit",
+										new DialogInterface.OnClickListener()
+										{
+											@Override
+											public void onClick(
+													DialogInterface dialog, int id)
+											{
+												//force logout on user
+												GLOBAL.destroySession();
+												Intent login = new Intent(SettingsActivity.this, LoginActivity.class);
+												startActivity(login);
+												Intent intent = new Intent("CLOSE_ALL");
+												SettingsActivity.this.sendBroadcast(intent);
+											}
+										}).show();
+						// if user dimisses the confirmation box, gets logged out also
+						dialog.setOnCancelListener(new DialogInterface.OnCancelListener()
+						{
+
+							@Override
+							public void onCancel(DialogInterface dialog)
+							{
+								//force logout on user
+								GLOBAL.destroySession();
+								Intent login = new Intent(SettingsActivity.this, LoginActivity.class);
+								startActivity(login);
+								Intent intent = new Intent("CLOSE_ALL");
+								SettingsActivity.this.sendBroadcast(intent);
+							}
+						});
+						
+						
+						
+					}
+					else if (jsonObject.getString("success").toString().equals("0"))
+					{
+						System.out.println("Failed to delete account!");
+						Context context = getApplicationContext();
+						Toast toast = GLOBAL.getToast(context, jsonObject.getString("message"));
+						toast.show();
+						//failed to delete account for some reason. see error in toast.
+					}
+				} 
+				catch (Exception e)
+				{
+					Log.d("readJSONFeed", e.getLocalizedMessage());
+				}
+			}
+		}
 }
