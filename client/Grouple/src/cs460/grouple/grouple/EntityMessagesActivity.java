@@ -330,6 +330,7 @@ public class EntityMessagesActivity extends ActionBarActivity
                             data.putString("msg", msg);
                             data.putString("my_action", "cs460.grouple.grouple.ECHO_NOW");
                             data.putString("CONTENT_TYPE", CONTENT_TYPE + "_MESSAGE");
+                            data.putString("receiver", ID);//may want to just use receiver for all instead of ID
                             data.putString("sender", user.getEmail());
                             data.putString("ID", ID);
                             data.putString("NAME", NAME);

@@ -46,7 +46,6 @@ public class GcmIntentService extends IntentService
 	String TYPE;
 	String NAME;
 	String to;
-	String ID;
 	String last;
 
 	public GcmIntentService()
@@ -60,23 +59,27 @@ public class GcmIntentService extends IntentService
 	protected void onHandleIntent(Intent intent)
 	{
 		Bundle extras = intent.getExtras();
-		String msg = extras.getString("msg");		from = extras.getString("sender");
-		to = extras.getString("recipient");
+		String msg = extras.getString("msg");		
+		from = extras.getString("sender");
+		to = extras.getString("receiver");
 		TYPE = extras.getString("CONTENT_TYPE");
 		first = extras.getString("first");
 		last = extras.getString("last");
 		
 
 		if (TYPE != null)
+		{
 			if (TYPE.equals("GROUP_MESSAGE") || TYPE.equals("EVENT_MESSAGE"))
 			{
-				ID = extras.getString("ID");
 				NAME = extras.getString("NAME");
 			} else if (TYPE.equals("USER_MESSAGE"))
 			{
 
 			}
-		String test = extras.getString("my_action");
+		}
+		else
+			TYPE = "USER_MESSAGE";
+		//String test = extras.getString("my_action");
 
 		GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
 
@@ -136,7 +139,7 @@ public class GcmIntentService extends IntentService
 		if (TYPE.equals("GROUP_MESSAGE") || TYPE.equals("EVENT_MESSAGE"))
 		{
 			intent = new Intent("ENTITY_MESSAGE");
-			intent.putExtra("ID", ID);
+			intent.putExtra("ID", to);
 			intent.putExtra("TYPE", TYPE);
 			intent.putExtra("FROM", from);
 			intent.putExtra("NAME", first + " " + last);
@@ -177,15 +180,15 @@ public class GcmIntentService extends IntentService
 			if (TYPE.equals("GROUP_MESSAGE"))
 			{
 				notificationIntent.putExtra("CONTENT_TYPE", "GROUP");
-				notificationIntent.putExtra("GID", ID);
-				Group g = new Group(Integer.parseInt(ID));
+				notificationIntent.putExtra("GID", to);
+				Group g = new Group(Integer.parseInt(to));
 				g.fetchGroupInfo();
 				global.setGroupBuffer(g);
 			} else
 			{
 				notificationIntent.putExtra("CONTENT_TYPE", "EVENT");
-				notificationIntent.putExtra("EID", ID);
-				Event e = new Event(Integer.parseInt(ID));
+				notificationIntent.putExtra("EID", to);
+				Event e = new Event(Integer.parseInt(to));
 				e.fetchEventInfo();
 				global.setEventBuffer(e);
 			}

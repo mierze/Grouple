@@ -393,6 +393,7 @@ public class MessagesActivity extends ActionBarActivity
                             data.putString("my_action", "cs460.grouple.grouple.ECHO_NOW");
                             data.putString("CONTENT_TYPE", "USER_MESSAGE");
                             data.putString("sender", m.getSender());
+                            data.putString("receiver", m.getReceiver());
                             //This is where we put the recipients regID.
                             data.putString("recipient",getRecipientRegID());
                             //This is where we put our first and last name. That way the recipient knows who sent it.
