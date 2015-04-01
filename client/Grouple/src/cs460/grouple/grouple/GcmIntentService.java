@@ -45,6 +45,7 @@ public class GcmIntentService extends IntentService
 	String first;
 	String TYPE;
 	String NAME;
+	String to;
 	String ID;
 	String last;
 
@@ -60,9 +61,11 @@ public class GcmIntentService extends IntentService
 	{
 		Bundle extras = intent.getExtras();
 		String msg = extras.getString("msg");		from = extras.getString("sender");
+		to = extras.getString("recipient");
 		TYPE = extras.getString("CONTENT_TYPE");
 		first = extras.getString("first");
 		last = extras.getString("last");
+		
 
 		if (TYPE != null)
 			if (TYPE.equals("GROUP_MESSAGE") || TYPE.equals("EVENT_MESSAGE"))
@@ -142,6 +145,7 @@ public class GcmIntentService extends IntentService
 			intent = new Intent("USER_MESSAGE");
 			intent.putExtra("FROM", from);
 			intent.putExtra("NAME", first + " " + last);
+			intent.putExtra("TO", to);
 		}
 
 		// send broadcast

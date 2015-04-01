@@ -82,6 +82,43 @@ public class RecentMessagesActivity extends ActionBarActivity
     AtomicInteger msgId = new AtomicInteger();
     Context context;
 
+	//Must unregister onPause()
+	@Override
+	protected void onPause() {
+	    super.onPause();
+	    this.unregisterReceiver(mMessageReceiver);
+	}
+	
+    
+	//This is the handler that will manager to process the broadcast intent
+	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() 
+	{
+	    @Override
+	    public void onReceive(Context context, Intent intent) 
+	    {
+	        // Extract data included in the Intent
+	        String toEmail = intent.getStringExtra("TO");
+	        if (user.getEmail().equals(toEmail))
+	        {
+	        	//do this
+	        	System.out.println("READ THIS");
+	        	fetchRecentContacts();
+	        }
+	        /*
+	        for (Message m : recentMessages)
+	        {
+	        	if (m.getSender().equals(fromEmail) || m.getReceiver().equals(fromEmail))
+	        	{
+	        		//copy message over, add it to top of stack, adjust images accordingly
+	        		//for now just change message
+	        		//m.setMessage(message)
+	        		
+	        		//maybe for now just grab all
+	        	}
+	        }
+	        */
+	    }
+	};
 	
 	@Override
 	protected void onDestroy()
@@ -103,7 +140,7 @@ public class RecentMessagesActivity extends ActionBarActivity
 	{
 		
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_contact_list);
+		setContentView(R.layout.activity_recent_messages);
 		GLOBAL = ((Global) getApplicationContext());
 		user = GLOBAL.getCurrentUser();
 		/* Action bar */
@@ -131,6 +168,7 @@ public class RecentMessagesActivity extends ActionBarActivity
     protected void onResume() 
 	{
         super.onResume();
+	    this.registerReceiver(mMessageReceiver, new IntentFilter("USER_MESSAGE"));
         fetchRecentContacts();
         // Check device for Play Services APK.
     }
