@@ -173,18 +173,20 @@ public class User extends Entity
 			try
 			{
 				birthDate = raw.parse(birthday);
-			} catch (ParseException e)
+			} 
+			catch (ParseException e)
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			int ageInt;
 			Calendar dob = Calendar.getInstance();
 			dob.setTime(birthDate);
 			Calendar today = Calendar.getInstance();
-			if ((today.get(Calendar.MONTH) < dob.get(Calendar.MONTH))
+			//if current month is less than date of birth month
+			//or today month == dob month and today <= day of month
+			if ((today.get(Calendar.MONTH) > dob.get(Calendar.MONTH))
 					|| (today.get(Calendar.MONTH) == dob.get(Calendar.MONTH) && today
-							.get(Calendar.DAY_OF_MONTH) <= dob
+							.get(Calendar.DAY_OF_MONTH) >= dob
 							.get(Calendar.DAY_OF_MONTH)))
 			{
 				// year --
@@ -473,31 +475,20 @@ public class User extends Entity
 					setName(fName + " " + lName);
 					Object about = jsonArray.get(3);
 					if (about.toString().equals("null"))
-					{
 						setAbout("");
-					} else
-					{
+					else
 						setAbout(about.toString());
-					}
 					// set location
 					Object location = jsonArray.get(4);
 					if (location.toString().equals("null"))
-					{
 						setLocation("");
-					} else
-					{
+					else
 						setLocation(location.toString());
-					}
-					// set birthday (not yet implemented)
-					// for now do age
 					Object dob = jsonArray.get(2);
 					if (dob.toString().equals("null") || dob.toString().equals("0000-00-00"))
-					{
 						setBirthday("");
-					} else
-					{
+					else
 						setBirthday(dob.toString());// panda
-					}
 					Log.d("getUserInfoOnPost", "age: " + age);
 				}
 				// unsuccessful
@@ -721,8 +712,6 @@ public class User extends Entity
 				if (jsonObject.getString("success").toString().equals("2"))
 				{
 					Log.d("getGroups", "ERROR WITH JSON");
-					// setNumFriends(0); //PANDA need to set the user class not
-					// global
 				}
 			} 
 			catch (Exception e)

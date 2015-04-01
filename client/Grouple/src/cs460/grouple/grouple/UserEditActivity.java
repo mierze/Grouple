@@ -45,6 +45,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -56,7 +57,7 @@ import android.widget.Toast;
  * EditProfileActivity allows user to make changes to his/her profile.
  */
 public class UserEditActivity extends ActionBarActivity implements
-		View.OnClickListener 
+		OnClickListener 
 {
 	// Set up fields. Most are just for the camera.
 	private Button b;

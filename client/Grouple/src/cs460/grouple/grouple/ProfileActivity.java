@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -31,7 +32,7 @@ import android.widget.Toast;
 /*
  * UserActivity displays the profile page of any user
  */
-public class ProfileActivity extends ActionBarActivity
+public class ProfileActivity extends ActionBarActivity implements OnClickListener
 {
 	enum CONTENT_TYPE 
 	{
@@ -420,6 +421,7 @@ public class ProfileActivity extends ActionBarActivity
 		return super.onOptionsItemSelected(item);
 	}
 
+	@Override
 	public void onClick(View view)
 	{
 		//killBackgroundProcesses();

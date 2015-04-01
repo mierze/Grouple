@@ -184,8 +184,7 @@ public class InviteActivity extends ActionBarActivity {
 		}
 
 		if (users != null && users.size() != 0)
-		{
-			
+		{		
 			// looping thru json and adding to an array
 			int index = 0;
 			//setup for each friend
@@ -201,6 +200,10 @@ public class InviteActivity extends ActionBarActivity {
 				friendName.setId(index);
 				row.setId(index);
 
+				
+				//TODO: 
+				//if user is promoter, don't allow inviting people as anything above user level
+				//should save that mapping in the user
 				//onClickListeners
 				row.setOnClickListener(new OnClickListener() 
 				{
