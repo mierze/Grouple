@@ -367,13 +367,9 @@ public class EventAddGroupsActivity extends ActionBarActivity
 	}
 	
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent e)  
-	{
-	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-	    	loadDialog.show();
-	    	finish();
-	    }
-	    return true;
+	public void onBackPressed() {
+	    finish();
+	    return;
 	}
 	
 	public void initKillswitchListener()

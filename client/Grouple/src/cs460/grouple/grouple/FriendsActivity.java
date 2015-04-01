@@ -35,8 +35,8 @@ import android.widget.TextView;
 public class FriendsActivity extends ActionBarActivity
 {
 	private BroadcastReceiver broadcastReceiver;
-	private User user; //the current user
-	private Global GLOBAL;// = 
+	private User user; // the current user
+	private Global GLOBAL;// =
 	private Dialog loadDialog = null;
 
 	@Override
@@ -48,27 +48,24 @@ public class FriendsActivity extends ActionBarActivity
 		load();
 	}
 
-	protected void onStop() 
-	{ 
+	protected void onStop()
+	{
 		super.onStop();
-		 
+
 		loadDialog.hide();
 	}
-	
+
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event)  {
-	    if (keyCode == KeyEvent.KEYCODE_BACK) 
-	    {
-	    	loadDialog.show();
-	    	user.fetchEventsInvites();
-	    	user.fetchFriendRequests();
-	    	user.fetchGroupInvites();
-	    	GLOBAL.setCurrentUser(user);
-	    	finish();
-	    }
-	    return true;
-	   }
-	
+	public void onBackPressed()
+	{
+		user.fetchEventsInvites();
+		user.fetchFriendRequests();
+		user.fetchGroupInvites();
+		GLOBAL.setCurrentUser(user);
+		finish();
+		return;
+	}
+
 	public void initActionBar()
 	{
 		// Actionbar settings
@@ -78,23 +75,24 @@ public class FriendsActivity extends ActionBarActivity
 		ab.setDisplayHomeAsUpEnabled(false);
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
 		actionbarTitle.setText("Friends");
-		//ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);	
+		// ImageButton upButton = (ImageButton)
+		// findViewById(R.id.actionbarUpButton);
 	}
 
 	public void load()
 	{
 		GLOBAL = ((Global) getApplicationContext());
-		
-		//grabbing extras from intent
+
+		// grabbing extras from intent
 		Intent intent = getIntent();
-		Bundle extras = intent.getExtras(); 
-		
-		//grabbing the user with the given email in the extras
-	
-		user = GLOBAL.getCurrentUser();////loadUser(extras.getString("email"));
+		Bundle extras = intent.getExtras();
+
+		// grabbing the user with the given email in the extras
+
+		user = GLOBAL.getCurrentUser();// //loadUser(extras.getString("email"));
 
 		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
-        loadDialog.setOwnerActivity(this);
+		loadDialog.setOwnerActivity(this);
 		setNotifications();
 		initActionBar();
 	}
@@ -134,7 +132,7 @@ public class FriendsActivity extends ActionBarActivity
 		int id = item.getItemId();
 		if (id == R.id.action_logout)
 		{
-			
+
 			Intent login = new Intent(this, LoginActivity.class);
 			GLOBAL.destroySession();
 			startActivity(login);
@@ -151,15 +149,16 @@ public class FriendsActivity extends ActionBarActivity
 		return super.onOptionsItemSelected(item);
 	}
 
-	
 	private void setNotifications()
 	{
-		//setting notifications for the current view
+		// setting notifications for the current view
 		Button currentFriendsButton = (Button) findViewById(R.id.currentFriendsButtonFA);
 		currentFriendsButton.setText("My Friends (" + user.getNumUsers() + ")");
 		Button friendRequestsButton = (Button) findViewById(R.id.friendRequestsButtonFA);
-		friendRequestsButton.setText("Friend Requests (" + user.getNumFriendRequests() + ")"); 
+		friendRequestsButton.setText("Friend Requests ("
+				+ user.getNumFriendRequests() + ")");
 	}
+
 	/*
 	 * Start activity functions for friends sub activities, going back and
 	 * logging out

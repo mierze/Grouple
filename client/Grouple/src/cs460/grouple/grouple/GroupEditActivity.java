@@ -81,15 +81,12 @@ public class GroupEditActivity extends ActionBarActivity implements
 
 	
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent e)  
+	public void onBackPressed() 
 	{
-		
-	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-	    	loadDialog.show();
-	    	finish();
-	    }
-	    return true;
+		finish();
+	    return;
 	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{

@@ -602,45 +602,44 @@ public class ProfileActivity extends ActionBarActivity implements OnClickListene
 			}
 		}
 	}
+	
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent e)  {
-		
-	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-	    	loadDialog.show();
-	    	//do nothing
-	    	if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
-	    	{
-	    		//current friends case
-	    		GLOBAL.getCurrentUser().fetchFriends();
-	    		//friend requests case
-	    		GLOBAL.getCurrentUser().fetchFriendRequests();
-	    		//group members case
-	    		if (GLOBAL.getGroupBuffer() != null)
-	    			GLOBAL.getGroupBuffer().fetchMembers();
-	    		//event parts case
-	    		if (GLOBAL.getEventBuffer() != null)
-	    			GLOBAL.getEventBuffer().fetchParticipants();
-	    	}
-	    	else if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
-	    	{
-	    		//current groups case
-	    		GLOBAL.getCurrentUser().fetchGroups();
-	    		//group invites case
-	    		GLOBAL.getCurrentUser().fetchGroupInvites();
-	    	}
-	    	else if (CONTENT.equals(CONTENT_TYPE.EVENT.toString()))
-	    	{
-	    		//events pending case
-	    		GLOBAL.getCurrentUser().fetchEventsUpcoming();
-	    		//events pending case
-	    		GLOBAL.getCurrentUser().fetchEventsPending();
-	    		//event invites case
-	    		GLOBAL.getCurrentUser().fetchEventsInvites();
-	    	}
-	    	finish();
-	    }
-	    return true;
-	   }
+	public void onBackPressed() 
+	{
+    	//do nothing
+    	if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
+    	{
+    		//current friends case
+    		GLOBAL.getCurrentUser().fetchFriends();
+    		//friend requests case
+    		GLOBAL.getCurrentUser().fetchFriendRequests();
+    		//group members case
+    		if (GLOBAL.getGroupBuffer() != null)
+    			GLOBAL.getGroupBuffer().fetchMembers();
+    		//event parts case
+    		if (GLOBAL.getEventBuffer() != null)
+    			GLOBAL.getEventBuffer().fetchParticipants();
+    	}
+    	else if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
+    	{
+    		//current groups case
+    		GLOBAL.getCurrentUser().fetchGroups();
+    		//group invites case
+    		GLOBAL.getCurrentUser().fetchGroupInvites();
+    	}
+    	else if (CONTENT.equals(CONTENT_TYPE.EVENT.toString()))
+    	{
+    		//events pending case
+    		GLOBAL.getCurrentUser().fetchEventsUpcoming();
+    		//events pending case
+    		GLOBAL.getCurrentUser().fetchEventsPending();
+    		//event invites case
+    		GLOBAL.getCurrentUser().fetchEventsInvites();
+    	}
+    	finish();
+		// do something on back.
+		return;
+	}
 	
 	/*
 	 * Get profile executes get_profile.php. It uses the current users email

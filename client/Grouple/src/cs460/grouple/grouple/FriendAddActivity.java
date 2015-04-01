@@ -195,16 +195,14 @@ public class FriendAddActivity extends ActionBarActivity
 
 	
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event)  {
-	
-	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-	    	loadDialog.show();
-	    	user.fetchFriends();
-	    	user.fetchFriendRequests();
-	    	GLOBAL.setCurrentUser(user);
-	    	finish(); //preventing back-loop
-	    }
-	    return true;
+	public void onBackPressed() 
+	{
+    	loadDialog.show();
+    	user.fetchFriends();
+    	user.fetchFriendRequests();
+    	GLOBAL.setCurrentUser(user);
+    	finish(); //preventing back-loop
+	    return;
 	   }
 	
 	public void initKillswitchListener()

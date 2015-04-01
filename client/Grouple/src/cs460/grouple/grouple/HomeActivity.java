@@ -94,14 +94,7 @@ public class HomeActivity extends ActionBarActivity
 		
 	}
 
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event)  {
-	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-	    	//do nothing
-	    }
-	    return true;
-	   }
-	
+
 	
 	@Override
 	protected void onStop()
@@ -212,7 +205,6 @@ public class HomeActivity extends ActionBarActivity
 	public void onBackPressed()
 	{
 		Log.d("backPress", "Back was pressed on home screen.");
-		finish();
 	}
 
 	@Override

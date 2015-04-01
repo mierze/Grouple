@@ -243,15 +243,11 @@ public class LoginActivity extends Activity
 	}
 
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event)
+	public void onBackPressed() 
 	{
-		if (keyCode == KeyEvent.KEYCODE_BACK)
-		{
-			Intent intent = new Intent("CLOSE_ALL");
-			this.sendBroadcast(intent);
-			System.exit(0);
-		}
-		return false;
+		Intent intent = new Intent("CLOSE_ALL");
+		this.sendBroadcast(intent);
+		return;
 	}
 
 	public void initKillswitchListener()

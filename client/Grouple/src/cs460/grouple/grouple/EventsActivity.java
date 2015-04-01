@@ -169,20 +169,18 @@ public class EventsActivity extends ActionBarActivity
 		intent.putExtra("EMAIL", user.getEmail());
 	}
 	
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event)  {
-		
-	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-	    	loadDialog.show();
-	    	user.fetchEventsInvites();
-	    	user.fetchFriendRequests();
-	    	user.fetchGroupInvites();
-	    	GLOBAL.setCurrentUser(user);
-	    	finish(); //preventing back-loop
-	    }
-	    return true;
-	   }
 	
+	@Override
+	public void onBackPressed() 
+	{
+		user.fetchEventsInvites();
+    	user.fetchFriendRequests();
+    	user.fetchGroupInvites();
+    	GLOBAL.setCurrentUser(user);
+	    finish();
+	    return;
+	}
+
 	
 	private void initKillswitchListener()
 	{

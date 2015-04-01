@@ -73,17 +73,13 @@ public class UserEditActivity extends ActionBarActivity implements
 	private EditText aboutEditText;
 	private EditText locationEditText;
 	private EditText nameEditText;
-	
 	private String birthday;
 	
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent e)  
+	public void onBackPressed() 
 	{
-	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-	    	loadDialog.show();
-	    	finish();
-	    }
-	    return true;
+		finish();
+	    return;
 	}
 	
 	@Override

@@ -174,14 +174,10 @@ public class RecentMessagesActivity extends ActionBarActivity
     }
 	
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event)  
-	{
-	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-	    	loadDialog.show();
-	    	finish(); //preventing back-loop
-	    }
-	    return true;
-	   }
+	public void onBackPressed() {
+	    finish();
+	    return;
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)

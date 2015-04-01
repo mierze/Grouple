@@ -699,87 +699,83 @@ public class ListActivity extends ActionBarActivity
 		startActivity(intent);	
 	}
 
-	//Overrides the default system back button
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent e)  
-	{		
-	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-	    	loadDialog.show();
-	    	//refresh pertinent info
-	    	if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()) || CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
-	    	{
-	    		user.fetchFriends();
-	    		//FRIENDS
-	    		if (GLOBAL.isCurrentUser(user.getEmail()))
-	    			user.fetchFriendRequests();
-	    		if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
-				{
-	    			//USER PROFILE
-		    		//FRIEND PROFILE
-	    			user.fetchEventsUpcoming();
-	    			user.fetchGroups();
-				}
-	    	}
-	    	else if (CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString()) || CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
-	    	{
-	    		//GROUPS
-	    		user.fetchGroupInvites();
-	    		user.fetchGroups();
-	    		if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
-	    		{
-	    			user.fetchFriends();
-	    			user.fetchEventsUpcoming();
-	        		//USER PROFILE
-		    		//FRIEND PROFILE
-	    		}
-	    	}
-	    	else if (CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()))
-	    	{
-	    		//GROUP PROFILE
-	    		group.fetchMembers();
-	    	}
-	    	else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
-	    	{
-	    		//EVENTS
-	    		user.fetchEventsUpcoming();
-	    		if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
-	    		{
-	    			//profile case
-	        		user.fetchFriends();
-	        		user.fetchGroups();
-	    		}
-	    		if (GLOBAL.isCurrentUser(user.getEmail()))
-	    		{
-		    		user.fetchEventsInvites();
-		    		user.fetchEventsPending();
-	    		}
-	    	}
-	    	else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
-	    	{
-	    		//nothing yet
-	    		//user.fetchEventsInvites();
-	    		user.fetchEventsPast();
-	    	}
-	    	else if (CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()))
-	    	{
-	    		//EVENT PROFILE
-	    		event.fetchParticipants();
-	    	}	    	
-	    	//SETTING GLOBALS
-	    	if (user != null)
-	    		if (GLOBAL.isCurrentUser(user.getEmail()))
-	    		{
-	    			GLOBAL.setCurrentUser(user);
-	    		}
-	    		else
-	    			GLOBAL.setUserBuffer(user);
-	    	if (group != null)
-	    		GLOBAL.setGroupBuffer(group);
-	    	if (event != null)
-	    		GLOBAL.setEventBuffer(event);
-	    	finish();
-	    }
-	    return true;
+	public void onBackPressed() 
+	{
+    	//refresh pertinent info
+    	if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()) || CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
+    	{
+    		user.fetchFriends();
+    		//FRIENDS
+    		if (GLOBAL.isCurrentUser(user.getEmail()))
+    			user.fetchFriendRequests();
+    		if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
+			{
+    			//USER PROFILE
+	    		//FRIEND PROFILE
+    			user.fetchEventsUpcoming();
+    			user.fetchGroups();
+			}
+    	}
+    	else if (CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString()) || CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
+    	{
+    		//GROUPS
+    		user.fetchGroupInvites();
+    		user.fetchGroups();
+    		if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
+    		{
+    			user.fetchFriends();
+    			user.fetchEventsUpcoming();
+        		//USER PROFILE
+	    		//FRIEND PROFILE
+    		}
+    	}
+    	else if (CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()))
+    	{
+    		//GROUP PROFILE
+    		group.fetchMembers();
+    	}
+    	else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
+    	{
+    		//EVENTS
+    		user.fetchEventsUpcoming();
+    		if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
+    		{
+    			//profile case
+        		user.fetchFriends();
+        		user.fetchGroups();
+    		}
+    		if (GLOBAL.isCurrentUser(user.getEmail()))
+    		{
+	    		user.fetchEventsInvites();
+	    		user.fetchEventsPending();
+    		}
+    	}
+    	else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
+    	{
+    		//nothing yet
+    		//user.fetchEventsInvites();
+    		user.fetchEventsPast();
+    	}
+    	else if (CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()))
+    	{
+    		//EVENT PROFILE
+    		event.fetchParticipants();
+    	}	    	
+    	//SETTING GLOBALS
+    	if (user != null)
+    		if (GLOBAL.isCurrentUser(user.getEmail()))
+    		{
+    			GLOBAL.setCurrentUser(user);
+    		}
+    		else
+    			GLOBAL.setUserBuffer(user);
+    	if (group != null)
+    		GLOBAL.setGroupBuffer(group);
+    	if (event != null)
+    		GLOBAL.setEventBuffer(event);
+    	finish();
+	    return;
 	}
 
 	/* Gets the role of the current user in a group / event */

@@ -50,13 +50,10 @@ public class InviteActivity extends ActionBarActivity {
 	private Dialog loadDialog;
 	
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent e)  
+	public void onBackPressed() 
 	{
-	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-	    	loadDialog.show();
-	    	finish();
-	    }
-	    return true;
+		finish();
+	    return;
 	}
 	
 	@Override

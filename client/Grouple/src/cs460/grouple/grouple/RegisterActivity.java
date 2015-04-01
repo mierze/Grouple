@@ -34,14 +34,10 @@ public class RegisterActivity extends Activity
 	private Dialog loadDialog = null;
 	
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent e)  
+	public void onBackPressed() 
 	{
-		
-	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-	    	loadDialog.show();
-	    	finish();
-	    }
-	    return true;
+		finish();
+	    return;
 	}
 	
 	@Override
