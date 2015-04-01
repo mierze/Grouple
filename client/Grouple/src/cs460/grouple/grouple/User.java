@@ -58,6 +58,7 @@ public class User extends Entity
 	private String location;
 	private int age;
 	private String birthday;
+	private String birthdayText;
 	private ArrayList<Group> groups = new ArrayList<Group>();
 	private ArrayList<User> friendRequests = new ArrayList<User>();
 	private ArrayList<Group> groupInvites = new ArrayList<Group>();
@@ -164,7 +165,7 @@ public class User extends Entity
 	{
 		System.out.println(birthday);
 		this.birthday = birthday;
-		
+		this.birthdayText = GLOBAL.toYearTextFormatFromRawNoTime(birthday);
 		if (!birthday.equals(""))
 		{
 			SimpleDateFormat raw = new SimpleDateFormat("yyyy-M-d");
@@ -222,6 +223,11 @@ public class User extends Entity
 	protected String getBirthday()
 	{
 		return birthday;
+	}
+	
+	protected String getBirthdayText()
+	{
+		return birthdayText;
 	}
 
 	protected int getAge()

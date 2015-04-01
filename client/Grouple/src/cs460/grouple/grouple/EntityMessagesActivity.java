@@ -299,8 +299,6 @@ public class EntityMessagesActivity extends ActionBarActivity
 	
 	// Send an upstream message.
     public void onClick(final View view) {
-    	
-      	sendMessageButton.setClickable(false);
         if (view == findViewById(R.id.sendButton)) 
         {
             //Get message from edit text
@@ -308,6 +306,7 @@ public class EntityMessagesActivity extends ActionBarActivity
             //make sure message field is not blank
             if(!(msg.compareTo("") ==0))
             {
+            	sendMessageButton.setClickable(false);
                if (CONTENT_TYPE.equals("GROUP"))
             	   new storeMessageTask().execute("http://68.59.162.183/android_connect/send_group_message.php",msg, user.getEmail(), ID);
                else
@@ -349,6 +348,7 @@ public class EntityMessagesActivity extends ActionBarActivity
                         catch (IOException ex) 
                         {
                             msg = "Error :" + ex.getMessage();
+                            sendMessageButton.setClickable(true);
         					Toast toast = GLOBAL.getToast(EntityMessagesActivity.this, "Error sending message. Please try again");
         					toast.show();
                         }
@@ -497,7 +497,8 @@ public class EntityMessagesActivity extends ActionBarActivity
 					Toast toast = GLOBAL.getToast(EntityMessagesActivity.this, "Error sending message. Please try again.");
 					toast.show();
 				}
-			} catch (Exception e)
+			} 
+			catch (Exception e)
 			{
 				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 			}

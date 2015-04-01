@@ -404,6 +404,9 @@ public class MessagesActivity extends ActionBarActivity
                         } 
                         catch (IOException ex) 
                         {
+        					Toast toast = GLOBAL.getToast(MessagesActivity.this, "Error sending message. Please try again.");
+        					toast.show();
+        					sendMessageButton.setClickable(true);
                             message = "Error :" + ex.getMessage();
                         }
                         return message;

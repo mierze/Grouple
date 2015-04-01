@@ -294,6 +294,45 @@ public class Global extends Application
 		}
 		return date;
 	}
+	
+	protected String toYearTextFormatFromRaw(String dateString)
+	{
+		System.out.println("\n\nDATE IS FIRST: " + dateString);
+		String date = "";
+		SimpleDateFormat raw = new SimpleDateFormat("yyyy-M-d h:mm:ss");
+		SimpleDateFormat dateFormat = new SimpleDateFormat(
+				"MMMM d, yyyy");
+		try
+		{
+			Date parsedDate = (Date) raw.parse(dateString);
+			date = dateFormat.format(parsedDate);
+		} 
+		catch (ParseException ex)
+		{
+			System.out.println("Exception " + ex);
+		}
+		return date;
+	}
+	
+	protected String toYearTextFormatFromRawNoTime(String dateString)
+	{
+		System.out.println("\n\nDATE IS FIRST: " + dateString);
+		String date = "";
+		SimpleDateFormat raw = new SimpleDateFormat("yyyy-M-d");
+		SimpleDateFormat dateFormat = new SimpleDateFormat(
+				"MMMM d, yyyy");
+		try
+		{
+			Date parsedDate = (Date) raw.parse(dateString);
+			date = dateFormat.format(parsedDate);
+		} 
+		catch (ParseException ex)
+		{
+			System.out.println("Exception " + ex);
+		}
+		return date;
+	}
+	
 	//these below are in beta, not quite implemented, perhaps won't be at all
 	protected int addToUsers(User u)
 	{

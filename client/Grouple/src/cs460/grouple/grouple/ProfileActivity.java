@@ -583,9 +583,11 @@ public class ProfileActivity extends ActionBarActivity
 					toast.show();
 					profileButton4.setVisibility(View.INVISIBLE);		
 				} 
-				else if (jsonObject.getString("success").toString().equals("2"))
+				else if (jsonObject.getString("success").toString().equals("3"))
 				{
-					
+					Toast toast = GLOBAL.getToast(ProfileActivity.this, "A friend request with " + user.getFirstName() + " to is already active!");
+					toast.show();
+					profileButton4.setVisibility(View.INVISIBLE);		
 				} 
 				else
 				{

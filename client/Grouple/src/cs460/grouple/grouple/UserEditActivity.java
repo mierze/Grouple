@@ -67,8 +67,13 @@ public class UserEditActivity extends ActionBarActivity implements
 	private User user;
 	private BroadcastReceiver broadcastReceiver;
 	private Global GLOBAL;
-	private Dialog loadDialog = null;
-	private TextView birthdateTextView;
+	private Dialog loadDialog;
+	private EditText birthdayEditText;
+	private EditText aboutEditText;
+	private EditText locationEditText;
+	private EditText nameEditText;
+	
+	private String birthday;
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent e)  
@@ -93,6 +98,13 @@ public class UserEditActivity extends ActionBarActivity implements
 		// Set the activity layout to activity_edit_profile.
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_user_edit);
+		iv = (ImageView) findViewById(R.id.editUserImageView);
+		nameEditText = (EditText) findViewById(R.id.nameEditTextEPA);
+		birthdayEditText = (EditText)findViewById(R.id.birthdayEditTextEPA);
+		locationEditText = (EditText) findViewById(R.id.locationEditTextEPA);
+		aboutEditText = (EditText) findViewById(R.id.aboutEditTextEPA);
+		b = (Button) findViewById(R.id.editUserImageButton);
+		b.setOnClickListener(this);
 		load();		
 	}
 
@@ -110,8 +122,7 @@ public class UserEditActivity extends ActionBarActivity implements
 		System.out.println("In edit ACTIVITY NOW: loading");
 		if (user != null)
 			getProfile();
-		b = (Button) findViewById(R.id.editUserImageButton);
-		b.setOnClickListener(this);
+
 		initActionBar();
 		initKillswitchListener();
 	}
@@ -166,8 +177,6 @@ public class UserEditActivity extends ActionBarActivity implements
 				//json fetch was successful
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					if (iv == null)
-						iv = (ImageView) findViewById(R.id.profileImageUPA);
 					String image = jsonObject.getString("image").toString();
 					user.setImage(image);
 					iv.setImageBitmap(user.getImage());
@@ -181,8 +190,7 @@ public class UserEditActivity extends ActionBarActivity implements
 			} 
 			catch (Exception e)
 			{
-				Log.d("atherjsoninuserpost", "here");
-				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 			}
 			//do next thing here
 		}
@@ -195,21 +203,12 @@ public class UserEditActivity extends ActionBarActivity implements
 	 */
 	private void getProfile()
 	{
-		// Find the text views.
-		TextView nameTextView = (TextView) findViewById(R.id.nameEditTextEPA);
-		birthdateTextView = (TextView) findViewById(R.id.ageEditTextEPA);
-		TextView locationTextView = (TextView) findViewById(R.id.locationEditTextEPA);
-		TextView bioTextView = (TextView) findViewById(R.id.bioEditTextEPA);
-		if (iv == null)
-		{
-			Log.d("scott", "7th");
-			iv = (ImageView) findViewById(R.id.editUserImageView);
-		}
 		// Add the info to the textviews for editing.
-		nameTextView.setText(user.getName());
-		birthdateTextView.setText(user.getBirthday());
-		bioTextView.setText(user.getAbout());
-		locationTextView.setText(user.getLocation());
+		nameEditText.setText(user.getName());
+		birthdayEditText.setText(user.getBirthdayText());
+		birthday = user.getBirthday();
+		aboutEditText.setText(user.getAbout());
+		locationEditText.setText(user.getLocation());
 		if (user.getImage() == null)
 			new getImageTask();
 		else
@@ -256,13 +255,13 @@ public class UserEditActivity extends ActionBarActivity implements
 	{
 		int year, month, day;
 		//if a previous birthdate had been set, use that date when initializing datepicker
-		if(!birthdateTextView.getText().toString().equalsIgnoreCase(""))
+		if(!birthday.equalsIgnoreCase(""))
 		{
 			//parse the date out of textfield
-			year = Integer.parseInt(birthdateTextView.getText().toString().substring(0, 4));
-			month = Integer.parseInt(birthdateTextView.getText().toString().substring(5, 7));
+			year = Integer.parseInt(birthday.substring(0, 4));
+			month = Integer.parseInt(birthday.substring(5, 7));
 			
-			day = Integer.parseInt(birthdateTextView.getText().toString().substring(8, 10));
+			day = Integer.parseInt(birthday.substring(8, 10));
 			System.out.println(year+" "+month+" "+day);
 			new DatePickerDialog(this, myBirthdateListener, year, month-1, day).show();
 		}
@@ -284,12 +283,11 @@ public class UserEditActivity extends ActionBarActivity implements
 	{
 		// error checking:
 		// bio no more than 100 characters
-		TextView bioTextView = (TextView) findViewById(R.id.bioEditTextEPA);
-		String bio = bioTextView.getText().toString();
-		if (bio.length() > 100)
+		String about = aboutEditText.getText().toString();
+		if (about.length() > 100)
 		{
 			TextView errorTextView = (TextView) findViewById(R.id.errorTextViewEPA);
-			errorTextView.setText("Bio is too many characters.");
+			errorTextView.setText("About is too many characters.");
 			errorTextView.setVisibility(0);
 		} else
 		{
@@ -323,9 +321,6 @@ public class UserEditActivity extends ActionBarActivity implements
 			try
 			{
 				String email = user.getEmail();
-				EditText nameEditText = (EditText) findViewById(R.id.nameEditTextEPA);
-				EditText bioEditText = (EditText) findViewById(R.id.bioEditTextEPA);
-				EditText locationEditText = (EditText) findViewById(R.id.locationEditTextEPA);
 
 				String name = nameEditText.getText().toString();
 				// Split name by space because sleep.
@@ -333,9 +328,7 @@ public class UserEditActivity extends ActionBarActivity implements
 				String firstName = splitted[0];
 				String lastName = splitted[1];
 
-				String birthday = birthdateTextView.getText().toString();
-
-				String bio = bioEditText.getText().toString();
+				String about = aboutEditText.getText().toString();
 
 				String location = locationEditText.getText().toString();
 
@@ -365,7 +358,7 @@ public class UserEditActivity extends ActionBarActivity implements
 				builder.addTextBody("first", firstName, ContentType.TEXT_PLAIN);
 				builder.addTextBody("last", lastName, ContentType.TEXT_PLAIN);
 				builder.addTextBody("age", birthday, ContentType.TEXT_PLAIN);
-				builder.addTextBody("bio", bio, ContentType.TEXT_PLAIN);
+				builder.addTextBody("bio", about, ContentType.TEXT_PLAIN);
 				builder.addTextBody("location", location,
 						ContentType.TEXT_PLAIN);
 				builder.addTextBody("email", email, ContentType.TEXT_PLAIN); 
@@ -527,22 +520,23 @@ public class UserEditActivity extends ActionBarActivity implements
 			   //add missing '0' digit to months and day
 			   if(tmpMonth < 10 && day < 10)
 			   {
-				   birthdateTextView.setText(year+"-0"+tmpMonth+"-0"+day);
+				   birthday = year+"-0"+tmpMonth+"-0"+day;
 			   }
 			   //add missing '0' digit to just months
 			   else if(tmpMonth < 10)
 			   {
-				   birthdateTextView.setText(year+"-0"+tmpMonth+"-"+day);
+				   birthday = year+"-0"+tmpMonth+"-"+day;
 			   }
 			   //add missing '0' digit to just days
 			   else if(day < 10)
 			   {
-				   birthdateTextView.setText(year+"-"+tmpMonth+"-0"+day);
+				   birthday = year+"-"+tmpMonth+"-0"+day;
 			   }
 			   else
 			   {
-				   birthdateTextView.setText(year+"-"+tmpMonth+"-"+day);
+				   birthday = year+"-"+tmpMonth+"-"+day;
 			   }
+			   birthdayEditText.setText(GLOBAL.toYearTextFormatFromRawNoTime(birthday));
 		   }
 	   }
 	};
@@ -561,10 +555,8 @@ public class UserEditActivity extends ActionBarActivity implements
 				if (intent.getAction().equals("CLOSE_ALL"))
 				{
 					Log.d("app666", "we killin the login it");
-					// System.exit(1);
 					finish();
 				}
-
 			}
 		};
 		registerReceiver(broadcastReceiver, intentFilter);

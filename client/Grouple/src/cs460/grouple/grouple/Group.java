@@ -68,7 +68,7 @@ public class Group extends Entity
 	{
 		this.dateCreated = dateCreated;
 		// string is format from json, parsedate converts
-		dateCreatedText = GLOBAL.toDayTextFormatFromRaw(dateCreated);
+		dateCreatedText = GLOBAL.toYearTextFormatFromRaw(dateCreated);
 	}
 	
 	
