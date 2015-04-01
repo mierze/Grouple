@@ -262,7 +262,7 @@ public class EventCreateActivity extends ActionBarActivity
 		else
 		{
 			startCal = Calendar.getInstance();
-			startDate = startDateEditText.getText().toString();
+			//startDate = startDateEditText.getText().toString();
 			
 			//parse to our calendar object
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
@@ -296,7 +296,7 @@ public class EventCreateActivity extends ActionBarActivity
 			else
 			{
 				endCal = Calendar.getInstance();
-				endDate = startDateEditText.getText().toString();
+				endDate = startDate;
 				
 				//parse to our calendar object
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
@@ -319,7 +319,7 @@ public class EventCreateActivity extends ActionBarActivity
 		else
 		{
 			endCal = Calendar.getInstance();
-			endDate = endDateEditText.getText().toString();
+			//endDate = endDateEditText.getText().toString();
 			
 			//parse to our calendar object
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");

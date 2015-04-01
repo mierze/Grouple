@@ -12,8 +12,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -26,7 +24,6 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import android.support.v7.app.ActionBarActivity;
 import android.app.AlertDialog;
@@ -38,33 +35,28 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
-import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+
+//TODO: clean up the date formatting to one function / clean up in general
 
 /*
  * EventEditActivity allows user to make changes to his/her event.
@@ -420,7 +412,8 @@ public class EventEditActivity extends ActionBarActivity implements
 			{
 				new DatePickerDialog(this, myEndDateListener, year, month, day)
 						.show();
-			} else
+			} 
+			else
 			{
 				endCal = Calendar.getInstance();
 
@@ -451,7 +444,12 @@ public class EventEditActivity extends ActionBarActivity implements
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 			try
 			{
-				endCal.setTime(sdf.parse(endDate));
+				if (startDate.compareTo(endDate) > 0)
+				{
+					endCal.setTime(sdf.parse(startDate));
+				}
+				else
+					endCal.setTime(sdf.parse(endDate));
 				System.out.println("cal was parsed from tmpEndDate!");
 			} catch (ParseException e)
 			{
@@ -736,8 +734,6 @@ public class EventEditActivity extends ActionBarActivity implements
 				// close activity
 				if (intent.getAction().equals("CLOSE_ALL"))
 				{
-					Log.d("app666", "we killin the login it");
-					// System.exit(1);
 					finish();
 				}
 			}
@@ -817,6 +813,14 @@ public class EventEditActivity extends ActionBarActivity implements
 							myEndTimeListener,
 							endCal.get(Calendar.HOUR_OF_DAY),
 							endCal.get(Calendar.MINUTE), false).show();
+				}
+				//TODO: add check if start date changed greater than end date, make this start there
+				else if (startDate.compareTo(endDate) > 0)
+				{
+					new TimePickerDialog(EventEditActivity.this,
+							myEndTimeListener,
+							startCal.get(Calendar.HOUR_OF_DAY),
+							startCal.get(Calendar.MINUTE), false).show();
 				}
 				// start the TimePicker using current system time
 				else

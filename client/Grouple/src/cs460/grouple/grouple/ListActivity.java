@@ -158,9 +158,10 @@ public class ListActivity extends ActionBarActivity
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
 		{
-			System.out.println("in the if to call the pop");
+			//setting the bottom button gone
 			if (addNew != null)
-				addNew.setVisibility(View.GONE);//DOI?
+				addNew.setVisibility(View.GONE);
+			//setting the actionbar text
 			if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
 				actionBarTitle = user.getFirstName() + "'s Pending Events";
 			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()))
@@ -197,6 +198,7 @@ public class ListActivity extends ActionBarActivity
 			sadGuyText = "You do not have any group invites.";
 		}
 
+		//looping thru and populating list of groups
 		if (groups != null && !groups.isEmpty())
 		{
 			for (Group g : groups)
@@ -204,7 +206,8 @@ public class ListActivity extends ActionBarActivity
 				index = groups.indexOf(g);
 				id = groups.get(index).getID();
 				name = groups.get(index).getName();
-				//
+				
+				//GROUPS CURRENT
 				if  (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
 				{
 					if (GLOBAL.isCurrentUser(user.getEmail()))
@@ -242,7 +245,7 @@ public class ListActivity extends ActionBarActivity
 	private void populateUsers()
 	{	
 		String sadGuyText = "";
-		View row = null;
+		View row;
 		int index;
 		String email = "";
 		String name = "";
@@ -280,6 +283,7 @@ public class ListActivity extends ActionBarActivity
 			sadGuyText = "No one is attending event.";
 		}
 	
+		//looping thru and populating list of users
 		if (users != null && !users.isEmpty())
 		{
 			for (User u : users)
@@ -316,9 +320,9 @@ public class ListActivity extends ActionBarActivity
 		}
 		else
 		{		
+			// The user has no friend's so display the sad guy image / text
 			row = li.inflate(R.layout.listitem_sadguy, null);
 			TextView sadGuy = ((TextView) row.findViewById(R.id.sadGuyTextView));
-			// The user has no friend's so display the sad guy image.
 			sadGuy.setText(sadGuyText);
 			listLayout.addView(row);
 		}
@@ -328,16 +332,16 @@ public class ListActivity extends ActionBarActivity
 	//populates a list of events
 	private void populateEvents()
 	{
-		View row = null;
+		View row;
 		String sadGuyText = "";
-		TextView nameTextView = null;
-		Button removeEventButton = null;
-
+		TextView nameTextView;
+		Button removeEventButton;
 		int id;
 		int index;
 		String name = "";
+		
 		/*
-		 * Checking which CONTENT we need to inflate
+		 * Checking which CONTENT we need to get
 		 */
 		if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
 		{
@@ -357,11 +361,10 @@ public class ListActivity extends ActionBarActivity
 		else
 		{
 			events = user.getEventsPast();
-			System.out.println("GRABBING EVENTS PAST");
-			System.out.println("Size: " + user.getNumEventsPast());
 			sadGuyText = "You do not have any past events.";
 		}
 		
+		//looping thru and populating list of events
 		if (events != null && !events.isEmpty())
 		{
 			for (Event e : events) 
@@ -403,7 +406,7 @@ public class ListActivity extends ActionBarActivity
 		}
 		else
 		{
-			//no group requests were found
+			//no event invites were found, show sadguy image / text
 			row = li.inflate(R.layout.listitem_sadguy, null);
 			TextView sadTextView = (TextView) row.findViewById(R.id.sadGuyTextView);
 			//Set the sad guy text.
@@ -412,7 +415,7 @@ public class ListActivity extends ActionBarActivity
 		}	
 	}
 			
-	/* based on content type, gets the corresponding role */
+	// based on content type, gets the corresponding role
 	private void setRole()
 	{
 		ArrayList<User> users = new ArrayList<User>();
@@ -432,9 +435,8 @@ public class ListActivity extends ActionBarActivity
 		for (User u : users)
 			if (u.getEmail().equals(user.getEmail()))
 				inEntity = true;
-		if (inEntity)
+		if (inEntity) //user is in the group or event, grab their role
 		{
-			System.out.println("NOW IN SET ROLE");
 			if (CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()))
 				new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_group.php", Integer.toString(group.getID()));
 			else
@@ -442,7 +444,7 @@ public class ListActivity extends ActionBarActivity
 		}
 	}
 	
-	/* Default methods */
+	//DEFAULT METHODS BELOW
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -457,9 +459,14 @@ public class ListActivity extends ActionBarActivity
 		load();
 	}	
 	@Override
+	protected void onStop() 
+	{ 
+		super.onStop();	 
+		loadDialog.hide();
+	}
+	@Override
 	protected void onDestroy()
 	{
-		// TODO Auto-generated method stub
 		unregisterReceiver(broadcastReceiver);
 		super.onDestroy();
 	}
@@ -491,9 +498,7 @@ public class ListActivity extends ActionBarActivity
 		return super.onOptionsItemSelected(item);
 	}
 
-	/*
-	 * onClick methods
-	 */
+	//ONCLICK METHODS BELOW
 	public void onClick(View view)
 	{
 		View parent = (View)view.getParent();
@@ -632,12 +637,10 @@ public class ListActivity extends ActionBarActivity
 	public void startProfileActivity(View view)
 	{
 		loadDialog.show();
-		System.out.println("Just started dialog! CONTENT:" + CONTENT);
 		int id = view.getId();		
 		Intent intent = new Intent(this, ProfileActivity.class);
 		if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()) || CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString()) )
 		{
-			System.out.println("Loading group gid: " + id);
 			intent.putExtra("GID", id);
 			intent.putExtra("EMAIL", user.getEmail());
 			intent.putExtra("CONTENT", "GROUP");
@@ -648,7 +651,6 @@ public class ListActivity extends ActionBarActivity
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()))
 		{
-			System.out.println("Loading event, eid: " + id);
 			intent.putExtra("EID", id);
 			intent.putExtra("EMAIL", user.getEmail());
 			intent.putExtra("CONTENT", "EVENT");
@@ -675,16 +677,8 @@ public class ListActivity extends ActionBarActivity
 			}
 			else if (CONTENT.equals(CONTENT_TYPE.SELECT_FRIEND.toString()))//SELECT FRIEND
 			{
-				System.out.println("SHOULD BE CHANGING INTENT HERE");
 				friendEmail = users.get(id).getEmail();
-				//users.get(id).fetchUserInfo();
-				//users.get(id).fetchGroups();
-				///users.get(id).fetchEventsUpcoming();
-				//users.get(id).fetchFriends();
-				
 				intent = new Intent(this, MessagesActivity.class);
-				//View parent = (View)view.getParent();
-				//Button name = (Button) parent.findViewById(R.id.nameTextViewLI);
 				intent.putExtra("NAME", users.get(id).getName());
 			}
 			else
@@ -699,25 +693,16 @@ public class ListActivity extends ActionBarActivity
 				else
 					GLOBAL.setCurrentUser(users.get(id)); //reloading user
 			}
-			System.out.println("ADDING EMAIL AS " + friendEmail);
 			intent.putExtra("EMAIL", friendEmail);
 			intent.putExtra("CONTENT", "USER");	
-		}
-		
+		}		
 		startActivity(intent);	
 	}
-	
-	protected void onStop() 
-	{ 
-		super.onStop();
-		 
-		loadDialog.hide();
-	}
+
 	//Overrides the default system back button
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent e)  
-	{
-		
+	{		
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
 	    	loadDialog.show();
 	    	//refresh pertinent info
@@ -829,14 +814,10 @@ public class ListActivity extends ActionBarActivity
 						if (CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()))
 						{
 							if (!event.getEventState().equals("Ended"))
-							{
 								addNew.setVisibility(View.VISIBLE);
-							}
 						}
 						else
-						{
 							addNew.setVisibility(View.VISIBLE);
-						}
 				} 
 				//unsuccessful
 				else
@@ -936,18 +917,13 @@ public class ListActivity extends ActionBarActivity
 						message = "Past event removed!";
 						user.fetchEventsPast();
 					}
-					/*if (GLOBAL.isCurrentUser(user.getEmail()))
-						GLOBAL.setCurrentUser(user);
-					else
-						GLOBAL.setUserBuffer(user);
-					 */
 					Toast toast = GLOBAL.getToast(context, message);
 					toast.show();
+					//reset values, looking to move these 
 					PANDABUFFER = "";
 					bufferID = -1;
 					//removing all friend requests for refresh
 					listLayout.removeAllViews();
-					///refreshing views
 					
 					//CALLING CORRESPONDING METHOD TO REPOPULATE
 					if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()) || CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
@@ -968,7 +944,6 @@ public class ListActivity extends ActionBarActivity
 			}
 		}
 	}
-
 	
 	//to kill application
 	public void initKillswitchListener()
@@ -984,8 +959,6 @@ public class ListActivity extends ActionBarActivity
 				// close activity
 				if (intent.getAction().equals("CLOSE_ALL"))
 				{
-					Log.d("app666", "we killin the login it");
-					// System.exit(1);
 					finish();
 				}
 			}
