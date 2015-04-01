@@ -97,6 +97,7 @@ public class EventEditActivity extends ActionBarActivity implements
 	private Calendar endCal;
 	private int year, month, day, hour, minute;
 	private AlertDialog categoryDialog;
+	private Bundle EXTRAS;
 
 	@Override
 	protected void onStop()
@@ -104,17 +105,18 @@ public class EventEditActivity extends ActionBarActivity implements
 		super.onStop();
 		loadDialog.hide();
 	}
-	
+
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent e)  
+	public boolean onKeyDown(int keyCode, KeyEvent e)
 	{
-	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-	    	loadDialog.show();
-	    	finish();
-	    }
-	    return true;
+		if (keyCode == KeyEvent.KEYCODE_BACK)
+		{
+			loadDialog.show();
+			finish();
+		}
+		return true;
 	}
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -127,8 +129,7 @@ public class EventEditActivity extends ActionBarActivity implements
 	private void load()
 	{
 		GLOBAL = ((Global) getApplicationContext());
-		
-		//init variables
+		// init variables
 		currentCal = Calendar.getInstance();
 		year = currentCal.get(Calendar.YEAR);
 		month = currentCal.get(Calendar.MONTH);
@@ -138,10 +139,10 @@ public class EventEditActivity extends ActionBarActivity implements
 		// Resetting error text view
 		TextView errorTextView = (TextView) findViewById(R.id.errorTextViewEPA);
 		errorTextView.setVisibility(1);
-		Bundle extras = getIntent().getExtras();
+		EXTRAS = getIntent().getExtras();
 		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
-        loadDialog.setOwnerActivity(this);
-        iv = (ImageView)findViewById(R.id.editEventImageView);
+		loadDialog.setOwnerActivity(this);
+		iv = (ImageView) findViewById(R.id.editEventImageView);
 		event = GLOBAL.getEventBuffer();
 		if (event != null)
 			getEventProfile();
@@ -208,8 +209,7 @@ public class EventEditActivity extends ActionBarActivity implements
 				}
 			} catch (Exception e)
 			{
-				Log.d("atherjsoninuserpost", "here");
-				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 			}
 			// do next thing here
 		}
@@ -246,41 +246,6 @@ public class EventEditActivity extends ActionBarActivity implements
 		startDate = event.getStartDate();
 		endEditText.setText(event.getEndText());
 		endDate = event.getEndDate();
-	}
-
-	private String toRawDate(String date)
-	{
-		String rawDate = "";
-		SimpleDateFormat raw = new SimpleDateFormat("yyyy-M-d h:mm:ss");
-		SimpleDateFormat dateFormat = new SimpleDateFormat(
-				"EEEE, MMMM d, h:mma");
-		try
-		{
-			Date parsedDate = (Date) dateFormat.parse(date);
-			rawDate = raw.format(parsedDate);
-		} catch (ParseException ex)
-		{
-			System.out.println("Exception " + ex);
-		}
-		return rawDate;
-	}
-
-	private String fromRawDate(String dateString)
-	{
-		System.out.println("\n\nDATE IS FIRST: " + dateString);
-		String date = "";
-		SimpleDateFormat raw = new SimpleDateFormat("yyyy-M-d h:mm");
-		SimpleDateFormat dateFormat = new SimpleDateFormat(
-				"EEEE, MMMM d, h:mma");
-		try
-		{
-			Date parsedDate = (Date) raw.parse(dateString);
-			date = dateFormat.format(parsedDate);
-		} catch (ParseException ex)
-		{
-			System.out.println("Exception " + ex);
-		}
-		return date;
 	}
 
 	@Override
@@ -341,7 +306,8 @@ public class EventEditActivity extends ActionBarActivity implements
 			{
 				start = sdf.parse(startDate);
 				end = sdf.parse(endDate);
-			} catch (ParseException e1)
+			} 
+			catch (ParseException e1)
 			{
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -350,18 +316,14 @@ public class EventEditActivity extends ActionBarActivity implements
 			// startDate = sdf.format(start);
 			// endDate = sdf.format(end);
 			if (start.compareTo(end) > 0)
-			{
+
 				System.out.println("Start is after End");
-			} else if (start.compareTo(end) < 0)
-			{
+			else if (start.compareTo(end) < 0)
 				System.out.println("start is before end");
-			} else if (start.compareTo(end) == 0)
-			{
+			else if (start.compareTo(end) == 0)
 				System.out.println("start is equal to end");
-			} else
-			{
+			else
 				System.out.println("How to get here?");
-			}
 		}
 		// if empty group name, display error box
 		if (eventname.compareTo("") == 0)
@@ -417,26 +379,32 @@ public class EventEditActivity extends ActionBarActivity implements
 		System.out.println("clicked on startdate");
 		// startDate is not currently set. load datepicker set to current
 		// calendar date.
-		if(startEditText.getText().toString().compareTo("") ==0)
+		if (startEditText.getText().toString().compareTo("") == 0)
 		{
-			new DatePickerDialog(this, myStartDateListener, year, month, day).show();
+			new DatePickerDialog(this, myStartDateListener, year, month, day)
+					.show();
 		}
-		// load the datepicker using the date that was previously set in startDate
+		// load the datepicker using the date that was previously set in
+		// startDate
 		else
 		{
 			startCal = Calendar.getInstance();
-			
-			//parse to our calendar object
+
+			// parse to our calendar object
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-			try {
+			try
+			{
 				startCal.setTime(sdf.parse(startDate));
 				System.out.println("cal was parsed from tmpStartDate!");
-			} catch (ParseException e) {
+			} catch (ParseException e)
+			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}// all done
-		
-			new DatePickerDialog(this, myStartDateListener, startCal.get(Calendar.YEAR),startCal.get(Calendar.MONTH), startCal.get(Calendar.DAY_OF_MONTH)).show();
+
+			new DatePickerDialog(this, myStartDateListener,
+					startCal.get(Calendar.YEAR), startCal.get(Calendar.MONTH),
+					startCal.get(Calendar.DAY_OF_MONTH)).show();
 		}
 	}
 
@@ -446,58 +414,66 @@ public class EventEditActivity extends ActionBarActivity implements
 		System.out.println("clicked on enddate");
 		// endDate is not currently set. load datepicker set to current
 		// calendar date.
-		if(endEditText.getText().toString().compareTo("") ==0)
+		if (endEditText.getText().toString().compareTo("") == 0)
 		{
-			if(startEditText.getText().toString().compareTo("")==0)
+			if (startEditText.getText().toString().compareTo("") == 0)
 			{
-				new DatePickerDialog(this, myEndDateListener, year, month, day).show();
-			}
-			else
+				new DatePickerDialog(this, myEndDateListener, year, month, day)
+						.show();
+			} else
 			{
 				endCal = Calendar.getInstance();
-				
-				//parse to our calendar object
+
+				// parse to our calendar object
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-				try {
+				try
+				{
 					endCal.setTime(sdf.parse(endDate));
 					System.out.println("cal was parsed from tmpStartDate!");
-				} catch (ParseException e) {
+				} catch (ParseException e)
+				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}// all done
-			
-				new DatePickerDialog(this, myEndDateListener, endCal.get(Calendar.YEAR),endCal.get(Calendar.MONTH), endCal.get(Calendar.DAY_OF_MONTH)).show();
+
+				new DatePickerDialog(this, myEndDateListener,
+						endCal.get(Calendar.YEAR), endCal.get(Calendar.MONTH),
+						endCal.get(Calendar.DAY_OF_MONTH)).show();
 			}
-			
+
 		}
 		// load the datepicker using the date that was previously set in endDate
 		else
 		{
 			endCal = Calendar.getInstance();
-			
-			//parse to our calendar object
+
+			// parse to our calendar object
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-			try {
+			try
+			{
 				endCal.setTime(sdf.parse(endDate));
 				System.out.println("cal was parsed from tmpEndDate!");
-			} catch (ParseException e) {
+			} catch (ParseException e)
+			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}// all done
-		
-			new DatePickerDialog(this, myEndDateListener, endCal.get(Calendar.YEAR),endCal.get(Calendar.MONTH), endCal.get(Calendar.DAY_OF_MONTH)).show();
+
+			new DatePickerDialog(this, myEndDateListener,
+					endCal.get(Calendar.YEAR), endCal.get(Calendar.MONTH),
+					endCal.get(Calendar.DAY_OF_MONTH)).show();
 		}
 	}
 
 	// Button Listener for when user clicks on category.
 	public void selectCategoryButton(View view)
 	{
-		//THINKING OUT LOUD
-			//Food / Entertainment
-			//Sports / Games
-			//Party / Nightlife
-			//Professional / Education
-			//Community
+		// THINKING OUT LOUD
+		// Food / Entertainment
+		// Sports / Games
+		// Party / Nightlife ?SOCIAL?
+		// Professional / Education
+		// Community
 		// Strings to Show In Dialog with Radio Buttons
 		final CharSequence[] items =
 		{ "Food ", "Sports ", "Party ", "Work ", "School" };
@@ -505,31 +481,31 @@ public class EventEditActivity extends ActionBarActivity implements
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Select your category");
 		builder.setSingleChoiceItems(items, -1,
-			new DialogInterface.OnClickListener()
-			{
-				public void onClick(DialogInterface dialog, int item)
+				new DialogInterface.OnClickListener()
 				{
-					switch (item)
+					public void onClick(DialogInterface dialog, int item)
 					{
-					case 0:
-						categoryEditText.setText(items[0]);
-						break;
-					case 1:
-						categoryEditText.setText(items[1]);
-						break;
-					case 2:
-						categoryEditText.setText(items[2]);
-						break;
-					case 3:
-						categoryEditText.setText(items[3]);
-						break;
-					case 4:
-						categoryEditText.setText(items[4]);
-						break;
+						switch (item)
+						{
+						case 0:
+							categoryEditText.setText(items[0]);
+							break;
+						case 1:
+							categoryEditText.setText(items[1]);
+							break;
+						case 2:
+							categoryEditText.setText(items[2]);
+							break;
+						case 3:
+							categoryEditText.setText(items[3]);
+							break;
+						case 4:
+							categoryEditText.setText(items[4]);
+							break;
+						}
+						categoryDialog.cancel();
 					}
-					categoryDialog.cancel();
-				}
-			});
+				});
 		categoryDialog = builder.create();
 		categoryDialog.show();
 	}
@@ -781,20 +757,25 @@ public class EventEditActivity extends ActionBarActivity implements
 				int tmpMonth = month + 1;
 				startEditText.setText(year + "-" + tmpMonth + "-" + day);
 				startDate = year + "-" + tmpMonth + "-" + day;
-								
-				//start the TimePicker using hour and minute previously set in startCal
-				if(startCal != null)
+
+				// start the TimePicker using hour and minute previously set in
+				// startCal
+				if (startCal != null)
 				{
-					System.out.println("Hour:"+startCal.get(Calendar.HOUR_OF_DAY));
-					System.out.println("Minute:"+startCal.get(Calendar.MINUTE));
+					System.out.println("Hour:"
+							+ startCal.get(Calendar.HOUR_OF_DAY));
+					System.out.println("Minute:"
+							+ startCal.get(Calendar.MINUTE));
 					new TimePickerDialog(EventEditActivity.this,
-							myStartTimeListener, startCal.get(Calendar.HOUR_OF_DAY), startCal.get(Calendar.MINUTE), false).show();
+							myStartTimeListener,
+							startCal.get(Calendar.HOUR_OF_DAY),
+							startCal.get(Calendar.MINUTE), false).show();
 				}
-				//start the TimePicker using current system time
+				// start the TimePicker using current system time
 				else
 				{
 					new TimePickerDialog(EventEditActivity.this,
-						myStartTimeListener, hour, minute, false).show();
+							myStartTimeListener, hour, minute, false).show();
 				}
 			}
 		}
@@ -802,21 +783,20 @@ public class EventEditActivity extends ActionBarActivity implements
 
 	private TimePickerDialog.OnTimeSetListener myStartTimeListener = new TimePickerDialog.OnTimeSetListener()
 	{
-
 		@Override
 		public void onTimeSet(TimePicker view, int hourOfDay, int minute)
 		{
 			if (view.isShown())
 			{
 				startDate += " " + hourOfDay + ":" + minute;
-				startEditText.setText(fromRawDate(startDate));
+				startEditText.setText(GLOBAL
+						.toDayTextFormatFromRawNoSeconds(startDate));
 			}
 		}
 	};
 
 	private DatePickerDialog.OnDateSetListener myEndDateListener = new DatePickerDialog.OnDateSetListener()
 	{
-
 		@Override
 		public void onDateSet(DatePicker view, int year, int month, int day)
 		{
@@ -825,20 +805,24 @@ public class EventEditActivity extends ActionBarActivity implements
 				int tmpMonth = month + 1;
 				endEditText.setText(year + "-" + tmpMonth + "-" + day);
 				endDate = year + "-" + tmpMonth + "-" + day;
-								
-				//start the TimePicker using hour and minute previously set in startCal
-				if(endCal != null)
+
+				// start the TimePicker using hour and minute previously set in
+				// startCal
+				if (endCal != null)
 				{
-					System.out.println("Hour:"+endCal.get(Calendar.HOUR_OF_DAY));
-					System.out.println("Minute:"+endCal.get(Calendar.MINUTE));
+					System.out.println("Hour:"
+							+ endCal.get(Calendar.HOUR_OF_DAY));
+					System.out.println("Minute:" + endCal.get(Calendar.MINUTE));
 					new TimePickerDialog(EventEditActivity.this,
-							myEndTimeListener, endCal.get(Calendar.HOUR_OF_DAY), endCal.get(Calendar.MINUTE), false).show();
+							myEndTimeListener,
+							endCal.get(Calendar.HOUR_OF_DAY),
+							endCal.get(Calendar.MINUTE), false).show();
 				}
-				//start the TimePicker using current system time
+				// start the TimePicker using current system time
 				else
 				{
 					new TimePickerDialog(EventEditActivity.this,
-						myEndTimeListener, hour, minute, false).show();
+							myEndTimeListener, hour, minute, false).show();
 				}
 			}
 		}
@@ -853,7 +837,8 @@ public class EventEditActivity extends ActionBarActivity implements
 			if (view.isShown())
 			{
 				endDate += " " + hourOfDay + ":" + minute;
-				endEditText.setText(fromRawDate(endDate));
+				endEditText.setText(GLOBAL
+						.toDayTextFormatFromRawNoSeconds(endDate));
 			}
 		}
 	};

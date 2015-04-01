@@ -46,7 +46,9 @@ public class EntityMessagesActivity extends ActionBarActivity
 	private Group group;
 	private Event event;
 	private String NAME;
-	private Dialog loadDialog = null;
+	private Dialog loadDialog;
+	private Button sendMessageButton;
+	private EditText messageEditText;
     public static final String EXTRA_MESSAGE = "message";
     public static final String PROPERTY_REG_ID = "registration_id";
     private static final String PROPERTY_APP_VERSION = "appVersion";
@@ -139,6 +141,8 @@ public class EntityMessagesActivity extends ActionBarActivity
 	    context.registerReceiver(mMessageReceiver, new IntentFilter("ENTITY_MESSAGE"));
 		EXTRAS = getIntent().getExtras();
 		user = GLOBAL.getCurrentUser();
+    	messageEditText = (EditText)findViewById(R.id.messageEditText);
+    	sendMessageButton = (Button)findViewById(R.id.sendButton);
 		initActionBar();
 		gcm = GoogleCloudMessaging.getInstance(this);
 		CONTENT_TYPE = EXTRAS.getString("CONTENT_TYPE");
@@ -255,8 +259,7 @@ public class EntityMessagesActivity extends ActionBarActivity
 				} 
 				else
 				{
-					Context context = getApplicationContext();
-					Toast toast = Toast.makeText(context, "Error Storing Message. Message not sent. Contact Devs", Toast.LENGTH_LONG);
+					Toast toast = GLOBAL.getToast(EntityMessagesActivity.this, "Error sending message. Please try again");
 					toast.show();
 				}
 			} catch (Exception e)
@@ -296,13 +299,12 @@ public class EntityMessagesActivity extends ActionBarActivity
 	
 	// Send an upstream message.
     public void onClick(final View view) {
-
+    	
+      	sendMessageButton.setClickable(false);
         if (view == findViewById(R.id.sendButton)) 
         {
             //Get message from edit text
-            EditText mymessage   = (EditText)findViewById(R.id.messageEditText);
-            String msg = mymessage.getText().toString();
-            System.out.println("MESSAGE: " + msg);
+            String msg = messageEditText.getText().toString();
             //make sure message field is not blank
             if(!(msg.compareTo("") ==0))
             {
@@ -318,9 +320,7 @@ public class EntityMessagesActivity extends ActionBarActivity
                         {
                             Bundle data = new Bundle();
                             //Get message from edit text
-                            EditText mymessage   = (EditText)findViewById(R.id.messageEditText);
-                            msg = mymessage.getText().toString();
-        
+                            msg = messageEditText.getText().toString();
                             //print message to our screen
                             Message m = new Message(msg, new Date().toString(), user.getEmail(),
     								user.getName(), ID, null);
@@ -349,24 +349,30 @@ public class EntityMessagesActivity extends ActionBarActivity
                         catch (IOException ex) 
                         {
                             msg = "Error :" + ex.getMessage();
-        					Context context = getApplicationContext();
-        					Toast toast = Toast.makeText(context, "Error Sending Group Message. Contact Devs", Toast.LENGTH_LONG);
+        					Toast toast = GLOBAL.getToast(EntityMessagesActivity.this, "Error sending message. Please try again");
         					toast.show();
                         }
                         return msg;
                     }
+                    
                     @Override
-                    protected void onPostExecute(String msg) {
-                    	
-                    	EditText mymessage   = (EditText)findViewById(R.id.messageEditText);
-                    	mymessage.setText("");
+                    protected void onPostExecute(String msg) 
+                    {
+                    	messageEditText.setText("");
+                    	sendMessageButton.setClickable(true);
                     	populateMessages();
                     }
                 }.execute(null, null, null);
-            }      
+            }    
+            else
+            {
+            	Toast toast = GLOBAL.getToast(this, "Please enter a message!");
+            	toast.show();
+            }
         }
     }
 
+    //grabs from the database group or event messages, respectively
 	public int fetchMessages()
 	{
 		if (CONTENT_TYPE.equals("GROUP"))
@@ -454,7 +460,7 @@ public class EntityMessagesActivity extends ActionBarActivity
 		return super.onOptionsItemSelected(item);
 	}
 	
-	 //This task gets your singular friend's regid
+	//This task gets your singular friend's regid
     private class getRegIDsTask extends AsyncTask<String, Void, String>
 	{
 		@Override
@@ -488,8 +494,7 @@ public class EntityMessagesActivity extends ActionBarActivity
 				}
 				else
 				{
-					Context context = getApplicationContext();
-					Toast toast = Toast.makeText(context, "Error Getting GCM REGID. Contact Devs", Toast.LENGTH_LONG);
+					Toast toast = GLOBAL.getToast(EntityMessagesActivity.this, "Error sending message. Please try again.");
 					toast.show();
 				}
 			} catch (Exception e)

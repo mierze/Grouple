@@ -272,7 +272,7 @@ public class MessagesActivity extends ActionBarActivity
 			} catch (Exception e)
 			{
 				Log.d("readMessage", "exception caught");
-				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 			}
 		}
 	}

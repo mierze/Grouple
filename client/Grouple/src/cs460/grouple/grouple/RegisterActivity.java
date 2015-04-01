@@ -55,6 +55,7 @@ public class RegisterActivity extends Activity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_register);
+		GLOBAL = ((Global) getApplicationContext());
 		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
         loadDialog.setOwnerActivity(this);
 
@@ -179,7 +180,8 @@ public class RegisterActivity extends Activity
 					registerFail.setText(jsonObject.getString("message"));
 					registerFail.setVisibility(0);
 				}
-			} catch (Exception e)
+			} 
+			catch (Exception e)
 			{
 				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
 			}

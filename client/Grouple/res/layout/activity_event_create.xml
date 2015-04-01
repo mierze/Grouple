@@ -17,8 +17,6 @@
     	android:background="@color/layout_background_color"
         android:padding="0dp" >
 
-
-    
     <LinearLayout
         android:id="@+id/linearLayoutTitle"
         android:layout_width="match_parent"

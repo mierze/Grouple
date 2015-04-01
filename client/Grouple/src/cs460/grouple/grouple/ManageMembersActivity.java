@@ -48,7 +48,7 @@ public class ManageMembersActivity extends ActionBarActivity {
 	private SparseArray<String> toUpdate = new SparseArray<String>();    //holds list of name of all friend rows to be added
 	private SparseArray<String> toUpdateRole = new SparseArray<String>();   //holds list of role of all friend rows to be added
 	//private SparseArray<String> toRemove = new SparseArray<String>();    //holds list of name of all friend rows to be added
-	private Dialog loadDialog = null;
+	private Dialog loadDialog;
 	private ArrayList<User> members = new ArrayList<User>();   //holds list of all current friends
 	private static Global GLOBAL;
 	private static String CONTENT; //type of content to display

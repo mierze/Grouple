@@ -78,36 +78,13 @@ public class Event extends Entity
 	{
 		this.startDate = startDate;
 		// string is format from json, parsedate converts
-		startText = parseDate(startDate);
+		startText = GLOBAL.toDayTextFormatFromRaw(startDate);
 	}
 
 	public void setEndDate(String endDate)
 	{
 		this.endDate = endDate;
-		endText = parseDate(endDate);
-	}
-
-	private String parseDate(String dateString)
-	{
-		System.out.println("\n\nDATE IS FIRST: " + dateString);
-		String date = "";
-		SimpleDateFormat raw = new SimpleDateFormat("yyyy-M-d h:mm:ss");
-		SimpleDateFormat dateFormat = new SimpleDateFormat(
-				"EEEE, MMMM d, h:mma");
-		try
-		{
-			Date parsedDate = (Date) raw.parse(dateString);
-			date = dateFormat.format(parsedDate);
-			// date = raw.format(parsedDate);
-			System.out.println("\nDATE IN RAW TRANSLATION: "
-					+ raw.format(parsedDate));
-			System.out.println("\nDATE IN FINAL: "
-					+ dateFormat.format(parsedDate) + "\n\n");
-		} catch (ParseException ex)
-		{
-			System.out.println("Exception " + ex);
-		}
-		return date;
+		endText = GLOBAL.toDayTextFormatFromRaw(endDate);
 	}
 
 	// getters

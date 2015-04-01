@@ -23,7 +23,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.TextView;
@@ -50,7 +49,8 @@ public class ProfileActivity extends ActionBarActivity
 	private Button profileButton2;
 	private Button profileButton3;
 	private Button profileButton4;
-	private Dialog loadDialog = null;
+	private Dialog loadDialog;
+	private AsyncTask getImageTask;
 	
 	@Override
 	protected void onStart()
@@ -107,7 +107,7 @@ public class ProfileActivity extends ActionBarActivity
 		profileButton4.setVisibility(View.GONE);		
 		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
         loadDialog.setOwnerActivity(this);
-
+        
 		if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
 		{
 			System.out.println("NOW IN USER");
@@ -139,7 +139,7 @@ public class ProfileActivity extends ActionBarActivity
 			}
 			setRole();
 		}
-		new getImageTask().execute("http://68.59.162.183/android_connect/get_profile_image.php");
+		getImageTask = new getImageTask().execute("http://68.59.162.183/android_connect/get_profile_image.php");
 		populateProfile(); //populates a group / user profile
 		
 		// initializing the action bar and killswitch listener
@@ -147,20 +147,16 @@ public class ProfileActivity extends ActionBarActivity
 		
 	}
 
-	public void loadImage(View view) {
-
+	public void loadImage(View view) 
+	{
         ImageView tempImageView = (ImageView) view;
-
-
         AlertDialog.Builder imageDialog = new AlertDialog.Builder(this);
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
-
         View layout = inflater.inflate(R.layout.image_dialog,
                 (ViewGroup) findViewById(R.id.layout_root));
-        ImageView image = (ImageView) layout.findViewById(R.id.fullimage);
+        ImageView image = (ImageView) layout.findViewById(R.id.fullImage);
         image.setImageDrawable(tempImageView.getDrawable());
         imageDialog.setView(layout);
-
         imageDialog.create();
         imageDialog.show();     
     }
@@ -218,8 +214,7 @@ public class ProfileActivity extends ActionBarActivity
 		}
 	}
 
-
-	/* TASK FOR GRABBING IMAGE OF EVENT/USER/GROUP */
+	// TASK FOR GRABBING IMAGE OF EVENT/USER/GROUP 
 	private class getImageTask extends AsyncTask<String, Void, String>
 	{
 		@Override
@@ -260,12 +255,10 @@ public class ProfileActivity extends ActionBarActivity
 						if (user.getImage() != null)
 							iv.setImageBitmap(user.getImage());
 						else
-							iv.setImageResource(R.drawable.user_image_default);
-						
+							iv.setImageResource(R.drawable.user_image_default);				
 					}
 					else if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
 					{
-						
 						group.setImage(image);
 						if (group.getImage() != null)
 							iv.setImageBitmap(group.getImage());
@@ -307,7 +300,6 @@ public class ProfileActivity extends ActionBarActivity
 			String type = (CONTENT.equals(CONTENT_TYPE.EVENT.toString())) ? "eid" : "gid";
 			String email = user.getEmail();
 			String id = urls[1];
-			
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
 			nameValuePairs.add(new BasicNameValuePair("email", email));
 			nameValuePairs.add(new BasicNameValuePair(type, id));
@@ -378,7 +370,7 @@ public class ProfileActivity extends ActionBarActivity
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.EVENT.toString()))
 		{
-		//	if (event.getUsers().contains(user.getEmail()))
+			if (event.inUsers(user.getEmail()))
 				profileButton2.setVisibility(View.VISIBLE);
 			profileButton1.setText("Attending (" + event.getNumUsers() + ")");	
 			profileButton2.setText("Messages");
@@ -431,6 +423,7 @@ public class ProfileActivity extends ActionBarActivity
 	public void onClick(View view)
 	{
 		//killBackgroundProcesses();
+		getImageTask.cancel(true);
 		loadDialog.show();
 		boolean noIntent = false;
 		Intent intent = new Intent(this, ListActivity.class);
@@ -560,12 +553,9 @@ public class ProfileActivity extends ActionBarActivity
 			intent.putExtra("EID", Integer.toString(event.getID()));
 		iv = null;
 		if (!noIntent) //TODO, move buttons elsewhere that dont start list
-		{
 			startActivity(intent);
-				System.out.println("Now did intent");
-		}
 		else
-			loadDialog.hide();
+			loadDialog.hide(); //did not launch intent, cancel load dialog
 	}
 
 	
@@ -587,13 +577,6 @@ public class ProfileActivity extends ActionBarActivity
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
-				System.out.println(jsonObject.getString("success"));
-
-				EditText emailEditText = (EditText) findViewById(R.id.emailEditTextAFA);
-				emailEditText.setText("");
-				TextView addFriendMessage = (TextView) findViewById(R.id.addFriendMessageTextViewAFA);
-				addFriendMessage.setText(jsonObject.getString("message"));
-
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					Toast toast = GLOBAL.getToast(ProfileActivity.this, "Successfully invited " + user.getFirstName() + " to friends!");
@@ -608,8 +591,6 @@ public class ProfileActivity extends ActionBarActivity
 				{
 					
 				}
-			
-
 			} 
 			catch (Exception e)
 			{
@@ -670,7 +651,8 @@ public class ProfileActivity extends ActionBarActivity
 		{
 			aboutTitle.setText("About Group:");
 			//iv.setImageBitmap(group.getImage());
-			info.setText("Creator: " +group.getEmail());
+			info.setText("Creator: " +group.getEmail()
+					+"\nCreated: " + group.getDateCreatedText());
 			about.setText(group.getAbout());
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
@@ -716,7 +698,6 @@ public class ProfileActivity extends ActionBarActivity
 				if (intent.getAction().equals("CLOSE_ALL"))
 				{
 					Log.d("app666", "we killin the login it");
-					// System.exit(1);
 					finish();
 				}
 			}
@@ -737,7 +718,6 @@ public class ProfileActivity extends ActionBarActivity
 			nameValuePairs.add(new BasicNameValuePair("email", urls[1]));
 			nameValuePairs.add(new BasicNameValuePair("role", urls[2]));
 			nameValuePairs.add(new BasicNameValuePair(type, urls[3]));
-
 			//pass url and nameValuePairs off to GLOBAL to do the JSON call.  Code continues at onPostExecute when JSON returns.
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
@@ -749,7 +729,6 @@ public class ProfileActivity extends ActionBarActivity
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
-
 				// member has been successfully added
 				if (jsonObject.getString("success").toString().equals("1"))
 				{

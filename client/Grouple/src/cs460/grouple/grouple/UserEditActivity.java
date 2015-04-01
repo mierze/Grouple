@@ -10,9 +10,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -25,39 +23,31 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import android.support.v7.app.ActionBarActivity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.app.TimePickerDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
-import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -343,7 +333,7 @@ public class UserEditActivity extends ActionBarActivity implements
 				String firstName = splitted[0];
 				String lastName = splitted[1];
 
-				String age = birthdateTextView.getText().toString();
+				String birthday = birthdateTextView.getText().toString();
 
 				String bio = bioEditText.getText().toString();
 
@@ -370,13 +360,11 @@ public class UserEditActivity extends ActionBarActivity implements
 					bos.close();
 					System.out.println("WE PROCESSED IT");
 				}
-				
-				System.out.println(firstName+"\n"+lastName+"\n"+age+"\n"+bio+"\n"+location+"\n"+email);
 
 				// add remaining fields to builder, then execute
 				builder.addTextBody("first", firstName, ContentType.TEXT_PLAIN);
 				builder.addTextBody("last", lastName, ContentType.TEXT_PLAIN);
-				builder.addTextBody("age", age, ContentType.TEXT_PLAIN);
+				builder.addTextBody("age", birthday, ContentType.TEXT_PLAIN);
 				builder.addTextBody("bio", bio, ContentType.TEXT_PLAIN);
 				builder.addTextBody("location", location,
 						ContentType.TEXT_PLAIN);
@@ -403,11 +391,13 @@ public class UserEditActivity extends ActionBarActivity implements
 					reader.close();
 					bmp = null;
 					builder = null;
-				} else
+				} 
+				else
 				{
 					Log.d("JSON", "Failed to download file");
 				}
-			} catch (Exception e)
+			} 
+			catch (Exception e)
 			{
 				Log.d("readJSONFeed", e.getLocalizedMessage());
 			}
@@ -426,8 +416,7 @@ public class UserEditActivity extends ActionBarActivity implements
 				{
 					System.out.println("IN SUCCESS PROFILE EDIT");
 					// Success
-					Context context = getApplicationContext();
-					Toast toast = GLOBAL.getToast(context, "User profile changed successfully!");
+					Toast toast = GLOBAL.getToast(UserEditActivity.this, "User profile changed successfully!");
 					toast.show();
 					System.out.println("Success");
 					finish();
@@ -444,9 +433,10 @@ public class UserEditActivity extends ActionBarActivity implements
 				}
 				user.fetchUserInfo();
 				GLOBAL.setCurrentUser(user);
-			} catch (Exception e)
+			} 
+			catch (Exception e)
 			{
-				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 			}
 		}
 	}
@@ -490,7 +480,6 @@ public class UserEditActivity extends ActionBarActivity implements
 				}
 			});
 			builder.show();
-			
 			break;
 		}
 	}
@@ -533,6 +522,7 @@ public class UserEditActivity extends ActionBarActivity implements
 	   {
 		   if (view.isShown()) 
 		   {
+			   //TODO: make a formatter in GLOBAL for this
 			   int tmpMonth = month+1;
 			   //add missing '0' digit to months and day
 			   if(tmpMonth < 10 && day < 10)

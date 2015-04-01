@@ -36,6 +36,8 @@ import android.util.Log;
 public class Group extends Entity 
 {
 	private int id; //id of the group
+	private String dateCreated;
+	private String dateCreatedText;
 	/*
 	 * Constructor for Group class
 	 */
@@ -46,15 +48,28 @@ public class Group extends Entity
 	}
 	
 	
-	/*
-	 * Getters for group class below
-	 */
+	//GETTERS
 	public int getID()
 	{
 		return id;
 	}
-
-
+	protected String getDateCreated()
+	{
+		return dateCreated;
+	}
+	protected String getDateCreatedText()
+	{
+		return dateCreatedText;
+	}
+	
+	
+	//SETTERS
+	protected void setDateCreated(String dateCreated)
+	{
+		this.dateCreated = dateCreated;
+		// string is format from json, parsedate converts
+		dateCreatedText = GLOBAL.toDayTextFormatFromRaw(dateCreated);
+	}
 	
 	
 	/*
@@ -63,7 +78,7 @@ public class Group extends Entity
 	 * 
 	 */
 	// Get numFriends, TODO: work on returning the integer
-	public int fetchMembers()
+	protected int fetchMembers()
 	{
 		
 		AsyncTask<String, Void, String> task = new getMembersTask()
@@ -143,7 +158,7 @@ public class Group extends Entity
 	 * 
 	 */
 	// Get numFriends, TODO: work on returning the integer
-	public int fetchGroupInfo()
+	protected int fetchGroupInfo()
 	{
 		AsyncTask<String, Void, String> task = new getGroupInfoTask()
 		.execute("http://68.59.162.183/android_connect/get_group_info.php", Integer.toString(getID()));
@@ -151,15 +166,18 @@ public class Group extends Entity
        try
 	{
 		task.get(10000, TimeUnit.MILLISECONDS);
-	} catch (InterruptedException e)
+	} 
+       catch (InterruptedException e)
 	{
 		// TODO Auto-generated catch block
 		e.printStackTrace();
-	} catch (ExecutionException e)
+	} 
+       catch (ExecutionException e)
 	{
 		// TODO Auto-generated catch block
 		e.printStackTrace();
-	} catch (TimeoutException e)
+	} 
+       catch (TimeoutException e)
 	{
 		// TODO Auto-generated catch block
 		e.printStackTrace();
@@ -208,6 +226,9 @@ public class Group extends Entity
 					
 					int pub = (Integer) jsonArray.get(3);
 					setPub(pub); 
+					
+					String dateCreated = (String) jsonArray.get(4);
+					setDateCreated(dateCreated);
 				}
 				//unsuccessful
 				if (jsonObject.getString("success").toString().equals("2"))
@@ -217,7 +238,7 @@ public class Group extends Entity
 				}
 			} catch (Exception e)
 			{
-				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 			}
 		}
 	}

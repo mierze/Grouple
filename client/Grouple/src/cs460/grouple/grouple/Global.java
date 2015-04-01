@@ -3,7 +3,10 @@ package cs460.grouple.grouple;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -50,20 +53,13 @@ public class Global extends Application
 	private static Group groupBuffer;
 	private static User userBuffer;
 	private static Event eventBuffer;
-	private static Context context;
-	
 	
 	@Override
 	public void onCreate()
 	{
 		super.onCreate();
-		context = getApplicationContext();
-		
 	}
-	protected static Context getContext()
-	{
-		return context;
-	}
+	
 	//SETTERS
 	protected void setCurrentUser(User u)
 	{
@@ -108,39 +104,7 @@ public class Global extends Application
 		else 
 			return false;
 	}
-	protected int addToUsers(User u)
-	{
-		int size = users.size();
-		if (!containsUser(u.getEmail()))
-		{
-			users.add(u);
-			if (users.size() == size+1)
-				return 1;
-			else
-				return -1;
-		}
-		else
-		{
-			//TODO: think over before saving
-		}
-		return 0;
-	}
-	protected User getUser(String email)
-	{
-		for (User u : users)
-			if (u.getEmail().equals(email))
-				return u;
-		return null;
-	}
-	protected boolean containsUser(String email)
-	{
-		if (!users.isEmpty())
-			for (User u : users)
-				if (u.getEmail().equals(email))
-					return true;
-		return false;
-	}
-	
+
 	//destroy session is used when logging out to clear all data
 	protected int destroySession()
 	{
@@ -273,4 +237,94 @@ public class Global extends Application
 		}
 		return stringBuilder.toString();
 	}//end readJSONFeed
+	
+	//date formatting methods
+	protected String toRawFormatFromDayText(String date)
+	{
+		String rawDate = "";
+		SimpleDateFormat raw = new SimpleDateFormat("yyyy-M-d h:mm:ss");
+		SimpleDateFormat dateFormat = new SimpleDateFormat(
+				"EEEE, MMMM d, h:mma");
+		try
+		{
+			Date parsedDate = (Date) dateFormat.parse(date);
+			rawDate = raw.format(parsedDate);
+		} 
+		catch (ParseException ex)
+		{
+			System.out.println("Exception " + ex);
+		}
+		return rawDate;
+	}
+
+	protected String toDayTextFormatFromRaw(String dateString)
+	{
+		System.out.println("\n\nDATE IS FIRST: " + dateString);
+		String date = "";
+		SimpleDateFormat raw = new SimpleDateFormat("yyyy-M-d h:mm:ss");
+		SimpleDateFormat dateFormat = new SimpleDateFormat(
+				"EEEE, MMMM d, h:mma");
+		try
+		{
+			Date parsedDate = (Date) raw.parse(dateString);
+			date = dateFormat.format(parsedDate);
+		} 
+		catch (ParseException ex)
+		{
+			System.out.println("Exception " + ex);
+		}
+		return date;
+	}
+	
+	protected String toDayTextFormatFromRawNoSeconds(String dateString)
+	{
+		System.out.println("\n\nDATE IS FIRST: " + dateString);
+		String date = "";
+		SimpleDateFormat raw = new SimpleDateFormat("yyyy-M-d h:mm");
+		SimpleDateFormat dateFormat = new SimpleDateFormat(
+				"EEEE, MMMM d, h:mma");
+		try
+		{
+			Date parsedDate = (Date) raw.parse(dateString);
+			date = dateFormat.format(parsedDate);
+		} 
+		catch (ParseException ex)
+		{
+			System.out.println("Exception " + ex);
+		}
+		return date;
+	}
+	//these below are in beta, not quite implemented, perhaps won't be at all
+	protected int addToUsers(User u)
+	{
+		int size = users.size();
+		if (!containsUser(u.getEmail()))
+		{
+			users.add(u);
+			if (users.size() == size+1)
+				return 1;
+			else
+				return -1;
+		}
+		else
+		{
+			//TODO: think over before saving
+		}
+		return 0;
+	}
+	protected User getUser(String email)
+	{
+		for (User u : users)
+			if (u.getEmail().equals(email))
+				return u;
+		return null;
+	}
+	protected boolean containsUser(String email)
+	{
+		if (!users.isEmpty())
+			for (User u : users)
+				if (u.getEmail().equals(email))
+					return true;
+		return false;
+	}
 }//end Global class
