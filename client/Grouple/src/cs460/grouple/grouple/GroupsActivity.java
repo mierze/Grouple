@@ -39,7 +39,6 @@ public class GroupsActivity extends BaseActivity
 	
 	public void load()
 	{
-		GLOBAL = ((Global) getApplicationContext());
 		user = GLOBAL.getCurrentUser();//loadUser(global.getCurrentUser().getEmail());
 		setNotifications();
 		initActionBar("Groups");

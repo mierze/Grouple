@@ -630,6 +630,7 @@ public class ListActivity extends BaseActivity
 	@Override
 	public void onBackPressed() 
 	{
+		super.onBackPressed();
     	//refresh pertinent info
     	if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()) || CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
     	{
@@ -702,8 +703,6 @@ public class ListActivity extends BaseActivity
     		GLOBAL.setGroupBuffer(group);
     	if (event != null)
     		GLOBAL.setEventBuffer(event);
-    	finish();
-	    return;
 	}
 
 	/* Gets the role of the current user in a group / event */
