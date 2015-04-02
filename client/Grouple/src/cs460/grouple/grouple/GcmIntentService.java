@@ -16,7 +16,6 @@
 
 package cs460.grouple.grouple;
 
-import com.google.android.gms.gcm.GoogleCloudMessaging;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -28,6 +27,8 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 /**
  * This {@code IntentService} does the actual handling of the GCM message.
@@ -227,6 +228,27 @@ public class GcmIntentService extends IntentService
 					.setContentText(msg);
 			notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP
 					| Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(),
+					0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+			mBuilder.setAutoCancel(true);
+
+			// null check
+			mBuilder.setContentIntent(contentIntent);
+			mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+		}
+		else if(TYPE.equals("FRIEND_REQUEST"))
+		{
+			//Send friend request.
+			Intent notificationIntent = new Intent(getApplicationContext(),MessagesActivity.class);
+			notificationIntent.putExtra("EMAIL", from);
+			notificationIntent.putExtra("NAME", first + " " + last);
+			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
+					.setContentTitle("Friend request from")
+					.setStyle(new NotificationCompat.BigTextStyle()
+					.bigText(first+ " "+last))
+					.setSmallIcon(R.drawable.grouple_icon).setSound(soundUri)
+					.setContentText(msg);
+			notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP| Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(),
 					0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 			mBuilder.setAutoCancel(true);

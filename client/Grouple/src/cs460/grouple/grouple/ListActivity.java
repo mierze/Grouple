@@ -6,23 +6,14 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -32,7 +23,7 @@ import android.widget.Toast;
  * ListActivity is an activity that displays lists of different types, 
  * and performs relevant functions based on the situation
  */
-public class ListActivity extends ActionBarActivity
+public class ListActivity extends BaseActivity
 {
 	/*
 	 * All possible content types that list activity supports
@@ -45,14 +36,12 @@ public class ListActivity extends ActionBarActivity
 	}	
 	
 	//CLASS-WIDE DECLARATIONS
-	private BroadcastReceiver broadcastReceiver;
 	private User user; //user whose current groups displayed
 	private Group group;
 	private Event event;
 	private Bundle EXTRAS; //extras passed in from the activity that called ListActivity
 	private String CONTENT; //type of content to display in list, passed in from other activities
 	private LinearLayout listLayout; //layout for list activity (scrollable layout to inflate into)
-	private Global GLOBAL;// = thinking making few static and do some null checks and regrabs
 	private LayoutInflater li;
 	private String ROLE = "U";//defaulting to lowest level
 	private String PANDABUFFER = ""; //same
@@ -62,18 +51,6 @@ public class ListActivity extends ActionBarActivity
 	private ArrayList<User> users;
 	private ArrayList<Group> groups;
 	private ArrayList<Event> events;
-	private Dialog loadDialog =  null;
-
-	/* loading actionbar */
-	public void initActionBar(String actionBarTitle)
-	{
-		ActionBar ab = getSupportActionBar();
-		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-		ab.setCustomView(R.layout.actionbar);
-		ab.setDisplayHomeAsUpEnabled(false);
-		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
-		actionbarTitle.setText(actionBarTitle);
-	}
 
 	/* loading in everything needed to generate the list */
 	public void load()
@@ -81,7 +58,6 @@ public class ListActivity extends ActionBarActivity
 		//clearing any previous views populated, for refresh
 		listLayout = ((LinearLayout)findViewById(R.id.listLayout));
 		//INSTANTIATIONS
-		GLOBAL = ((Global) getApplicationContext());
 		EXTRAS =  getIntent().getExtras();
 		CONTENT = EXTRAS.getString("CONTENT");
 		listLayout = ((LinearLayout)findViewById(R.id.listLayout));
@@ -89,9 +65,6 @@ public class ListActivity extends ActionBarActivity
 		String actionBarTitle = "";
 		addNew = (Button)findViewById(R.id.addNewButtonLiA);
 		addNew.setVisibility(View.GONE); //GONE FOR NOW
-		
-		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
-        loadDialog.setOwnerActivity(this);
 			
 		//GRABBING A USER
 		if (EXTRAS.getString("EMAIL") != null)
@@ -338,11 +311,8 @@ public class ListActivity extends ActionBarActivity
 		Button removeEventButton;
 		int id;
 		int index;
-		String name = "";
 		
-		/*
-		 * Checking which CONTENT we need to get
-		 */
+		//Checking which CONTENT we need to get
 		if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
 		{
 			events = user.getEventsPending();
@@ -450,7 +420,6 @@ public class ListActivity extends ActionBarActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list);
-		initKillswitchListener();
 	}
 	@Override
 	protected void onResume()
@@ -458,52 +427,11 @@ public class ListActivity extends ActionBarActivity
 		super.onResume();
 		load();
 	}	
-	@Override
-	protected void onStop() 
-	{ 
-		super.onStop();	 
-		loadDialog.hide();
-	}
-	@Override
-	protected void onDestroy()
-	{
-		unregisterReceiver(broadcastReceiver);
-		super.onDestroy();
-	}
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.navigation_actions, menu);
-		return true;
-	}
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item)
-	{
-		int id = item.getItemId();
-		if (id == R.id.action_logout)
-		{
-			GLOBAL.destroySession();
-			Intent login = new Intent(this, LoginActivity.class);
-			startActivity(login);
-			Intent intent = new Intent("CLOSE_ALL");
-			this.sendBroadcast(intent);
-			return true;
-		}
-		if (id == R.id.action_home)
-		{
-			Intent intent = new Intent(this, HomeActivity.class);
-			startActivity(intent);
-		}
-		return super.onOptionsItemSelected(item);
-	}
 
 	//ONCLICK METHODS BELOW
 	public void onClick(View view)
 	{
 		View parent = (View)view.getParent();
-		Button name = (Button) parent
-				.findViewById(R.id.nameTextViewAD);
 		switch (view.getId())
 		{
 		case R.id.declineButton:
@@ -934,32 +862,11 @@ public class ListActivity extends ActionBarActivity
 					// failed
 					System.out.println("fail!");
 				}
-			} catch (Exception e)
+			} 
+			catch (Exception e)
 			{
 				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 			}
 		}
-	}
-	
-	//to kill application
-	public void initKillswitchListener()
-	{
-		// START KILL SWITCH LISTENER
-		IntentFilter intentFilter = new IntentFilter();
-		intentFilter.addAction("CLOSE_ALL");
-		broadcastReceiver = new BroadcastReceiver()
-		{
-			@Override
-			public void onReceive(Context context, Intent intent)
-			{
-				// close activity
-				if (intent.getAction().equals("CLOSE_ALL"))
-				{
-					finish();
-				}
-			}
-		};
-		registerReceiver(broadcastReceiver, intentFilter);
-		// End Kill switch listener
 	}
 }

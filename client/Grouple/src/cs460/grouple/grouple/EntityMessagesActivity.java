@@ -1,34 +1,22 @@
 package cs460.grouple.grouple;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import com.google.android.gms.gcm.GoogleCloudMessaging;
-import android.app.Activity;
-import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -36,65 +24,38 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 
-public class EntityMessagesActivity extends ActionBarActivity
-{
-	
-	private BroadcastReceiver broadcastReceiver;
-	private Global GLOBAL;
+public class EntityMessagesActivity extends BaseActivity
+{ 
 	private User user; //will be null for now
 	private Group group;
 	private Event event;
 	private String NAME;
-	private Dialog loadDialog;
 	private Button sendMessageButton;
 	private EditText messageEditText;
-    public static final String EXTRA_MESSAGE = "message";
-    public static final String PROPERTY_REG_ID = "registration_id";
-    private static final String PROPERTY_APP_VERSION = "appVersion";
-    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private ArrayList<String> regIDList = new ArrayList<String>();
     private Bundle EXTRAS;
     private String ID;
-    //Tag to search for when logging info.
-    static final String TAG = "GCM";
     private String CONTENT_TYPE;
-    //Sender ID is the project number from API console. Needs to be secret.
-    String SENDER_ID = "957639483805"; 
-    private ArrayList<Message> messages = new ArrayList<Message>();
+    private String SENDER_ID = "957639483805"; 
+    private ArrayList<Message> messages = new ArrayList<Message>();  
+    private GoogleCloudMessaging gcm;
+    private AtomicInteger msgId = new AtomicInteger();
     
-    GoogleCloudMessaging gcm;
-    AtomicInteger msgId = new AtomicInteger();
-    Context context;
-    String regid;
-    String recipientRegID = "";
-    
-	@Override
-	protected void onStop()
-	{
-		super.onStop();
-		loadDialog.hide();
-	}
-	
 	@Override
 	protected void onDestroy()
 	{
-		// TODO Auto-generated method stub
-		unregisterReceiver(broadcastReceiver);
-	    context.unregisterReceiver(mMessageReceiver);
 		super.onDestroy();
+	    unregisterReceiver(mMessageReceiver);
 	}
 	
-	//Must unregister onPause()
-	@Override
-	protected void onPause() {
-	    super.onPause();
-	}
-
 	//This is the handler that will manager to process the broadcast intent
-	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() 
+	{
 	    @Override
-	    public void onReceive(Context context, Intent intent) {
+	    public void onReceive(Context context, Intent intent) 
+	    {
 	        // Extract data included in the Intent
 	    	String type = intent.getStringExtra("TYPE");
 	        String id = intent.getStringExtra("ID");
@@ -117,33 +78,17 @@ public class EntityMessagesActivity extends ActionBarActivity
 	    }
 	};
 	
-	
-	private void initActionBar()
-	{
-		/* Action bar */
-		ActionBar ab = getSupportActionBar();
-		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-		ab.setCustomView(R.layout.actionbar);
-		ab.setDisplayHomeAsUpEnabled(false);
-		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
-		String name = EXTRAS.getString("NAME");
-		//String first = name.split(" ")[0];
-		actionbarTitle.setText(name);
-	}
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_messages);
-		GLOBAL = ((Global) getApplicationContext());
-		context = getApplicationContext();
-	    context.registerReceiver(mMessageReceiver, new IntentFilter("ENTITY_MESSAGE"));
+		registerReceiver(mMessageReceiver, new IntentFilter("ENTITY_MESSAGE"));
 		EXTRAS = getIntent().getExtras();
 		user = GLOBAL.getCurrentUser();
     	messageEditText = (EditText)findViewById(R.id.messageEditText);
     	sendMessageButton = (Button)findViewById(R.id.sendButton);
-		initActionBar();
+		initActionBar(EXTRAS.getString("NAME"));
 		gcm = GoogleCloudMessaging.getInstance(this);
 		CONTENT_TYPE = EXTRAS.getString("CONTENT_TYPE");
 		if (CONTENT_TYPE.equals("GROUP"))
@@ -158,11 +103,6 @@ public class EntityMessagesActivity extends ActionBarActivity
 			NAME = event.getName();
 			ID = EXTRAS.getString("EID");
 		}
-
-		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
-        loadDialog.setOwnerActivity(this);
-
-		initKillswitchListener();
 		//Get the recipient 
 		//new getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php", recipient);
 		new getRegIDsTask().execute("http://68.59.162.183/android_connect/get_chat_ids_by_gid.php",ID ,user.getEmail());
@@ -179,7 +119,6 @@ public class EntityMessagesActivity extends ActionBarActivity
 		TextView messageBody, messageDate;
 		Button contactName;
 		View row = null;
-		String message = "";
 		
 		int index = 0;
 		for (Message m : messages)
@@ -211,25 +150,23 @@ public class EntityMessagesActivity extends ActionBarActivity
 	}
 	
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent e)  
+	public void onBackPressed() 
 	{
-	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-	    	loadDialog.show();
-	    	if (CONTENT_TYPE.equals("GROUP"))
-	    	{
-	    		group.fetchGroupInfo();
-	    		group.fetchMembers();
-	    		GLOBAL.setGroupBuffer(group);
-	    	}
-	    	else
-	    	{
-	    		event.fetchEventInfo();
-	    		event.fetchParticipants();
-	    		GLOBAL.setEventBuffer(event);
-	    	}
-	    	finish();
-	    }
-	    return true;
+    	super.onBackPressed();
+    	if (CONTENT_TYPE.equals("GROUP"))
+    	{
+    		group.fetchGroupInfo();
+    		group.fetchMembers();
+    		GLOBAL.setGroupBuffer(group);
+    	}
+    	else
+    	{
+    		event.fetchEventInfo();
+    		event.fetchParticipants();
+    		GLOBAL.setEventBuffer(event);
+    	}
+    	//finish();
+	    return;
 	}
 	
     //Stores the message in the database.
@@ -323,9 +260,6 @@ public class EntityMessagesActivity extends ActionBarActivity
                             //print message to our screen
                             Message m = new Message(msg, new Date().toString(), user.getEmail(),
     								user.getName(), ID, null);
-    			       		SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE h:mma");
-    						String dateString = dateFormat.format(new Date());
-                    		m.setDateString(dateString);
                             messages.add(m);
                             data.putString("msg", msg);
                             data.putString("my_action", "cs460.grouple.grouple.ECHO_NOW");
@@ -428,38 +362,6 @@ public class EntityMessagesActivity extends ActionBarActivity
 			}
 		}
 	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.navigation_actions, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item)
-	{
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_logout)
-		{
-			Intent login = new Intent(this, LoginActivity.class);
-			GLOBAL.destroySession();
-			startActivity(login);
-			Intent intent = new Intent("CLOSE_ALL");
-			this.sendBroadcast(intent);		
-			return true;
-		}
-		if (id == R.id.action_home)
-		{
-			Intent intent = new Intent(this, HomeActivity.class);
-			startActivity(intent);
-		}
-		return super.onOptionsItemSelected(item);
-	}
 	
 	//This task gets your singular friend's regid
     private class getRegIDsTask extends AsyncTask<String, Void, String>
@@ -495,7 +397,7 @@ public class EntityMessagesActivity extends ActionBarActivity
 				}
 				else
 				{
-					Toast toast = GLOBAL.getToast(EntityMessagesActivity.this, "Error sending message. Please try again.");
+					Toast toast = GLOBAL.getToast(EntityMessagesActivity.this, "Error getting regID list.");
 					toast.show();
 				}
 			} 
@@ -504,26 +406,5 @@ public class EntityMessagesActivity extends ActionBarActivity
 				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 			}
 		}
-	}
-    
-	public void initKillswitchListener()
-	{
-		// START KILL SWITCH LISTENER
-		IntentFilter intentFilter = new IntentFilter();
-		intentFilter.addAction("CLOSE_ALL");
-		broadcastReceiver = new BroadcastReceiver()
-		{
-			@Override
-			public void onReceive(Context context, Intent intent)
-			{
-				// close activity
-				if (intent.getAction().equals("CLOSE_ALL"))
-				{
-					Log.d("app666", "we killin the login it");
-					finish();
-				}
-			}
-		};
-		registerReceiver(broadcastReceiver, intentFilter);
 	}
 }

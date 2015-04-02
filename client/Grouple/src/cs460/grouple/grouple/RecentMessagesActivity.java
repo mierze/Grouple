@@ -1,10 +1,6 @@
 package cs460.grouple.grouple;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -13,81 +9,35 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.gcm.GoogleCloudMessaging;
-
-import cs460.grouple.grouple.MessagesActivity.getMessagesTask;
-import cs460.grouple.grouple.ProfileActivity.CONTENT_TYPE;
-
-
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
-import android.util.Base64;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.GridLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.ImageView.ScaleType;
+
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 /*
  * MessagesActivity has not been implemented yet.
  */
-public class RecentMessagesActivity extends ActionBarActivity
+public class RecentMessagesActivity extends BaseActivity
 {
-	private BroadcastReceiver broadcastReceiver;
-	private Global GLOBAL;
 	private int IMAGE_INDEX = 0;//holy shit
 	private User user; //will be null for now
 	private ArrayList<ImageView> images = new ArrayList<ImageView>();
-	private Dialog loadDialog;
 	private ArrayList<Message> recentMessages = new ArrayList<Message>();
-    private static final String EXTRA_MESSAGE = "message";
-    private static final String PROPERTY_REG_ID = "registration_id";
-    private static final String PROPERTY_APP_VERSION = "appVersion";
-    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
-    private static final String TAG = "GCM";
-    //Sender ID is the project number from API console. Needs to be secret.
-    private String SENDER_ID = "957639483805";
-
-    
     GoogleCloudMessaging gcm;
     AtomicInteger msgId = new AtomicInteger();
-    Context context;
-
-	//Must unregister onPause()
-	@Override
-	protected void onPause() {
-	    super.onPause();
-	    this.unregisterReceiver(mMessageReceiver);
-	}
 	
     
 	//This is the handler that will manager to process the broadcast intent
@@ -119,20 +69,12 @@ public class RecentMessagesActivity extends ActionBarActivity
 	        */
 	    }
 	};
-	
-	@Override
-	protected void onDestroy()
-	{
-		// TODO Auto-generated method stub
-		unregisterReceiver(broadcastReceiver);
-		super.onDestroy();
-	}
     
 	@Override
 	protected void onStop()
 	{
 		super.onStop();
-		loadDialog.hide();
+		unregisterReceiver(mMessageReceiver);
 	}
 
 	@Override
@@ -141,72 +83,35 @@ public class RecentMessagesActivity extends ActionBarActivity
 		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_recent_messages);
-		GLOBAL = ((Global) getApplicationContext());
 		user = GLOBAL.getCurrentUser();
 		/* Action bar */
-		initActionBar();		
-		initKillswitchListener();
-		context = getApplicationContext();
-		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
-        loadDialog.setOwnerActivity(this);
+		initActionBar("Messages");		
 		//new getContactsTask().execute("http://68.59.162.183/android_connect/get_chat_id.php");
         // Check device for Play Services APK. If check succeeds, proceed with GCM registration.
 	}
 	
-	private void initActionBar()
+	@Override
+	protected void onStart()
 	{
-		ActionBar ab = getSupportActionBar();
-		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-		ab.setCustomView(R.layout.actionbar);
-		ab.setDisplayHomeAsUpEnabled(false);
-		populateRecentContacts();
-		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
-		actionbarTitle.setText("Messages");
+		super.onStart();
+	    registerReceiver(mMessageReceiver, new IntentFilter("USER_MESSAGE"));
 	}
 	
 	@Override
     protected void onResume() 
 	{
         super.onResume();
-	    this.registerReceiver(mMessageReceiver, new IntentFilter("USER_MESSAGE"));
         fetchRecentContacts();
         // Check device for Play Services APK.
     }
-	
-	@Override
-	public void onBackPressed() {
-	    finish();
-	    return;
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.navigation_actions, menu);
-		return true;
-	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_logout)
+		if (id == R.id.action_messages)
 		{
-			Intent login = new Intent(this, LoginActivity.class);
-			GLOBAL.destroySession();
-			startActivity(login);
-			Intent intent = new Intent("CLOSE_ALL");
-			this.sendBroadcast(intent);
-			return true;
-		}
-		if (id == R.id.action_home)
-		{
-			Intent intent = new Intent(this, HomeActivity.class);
-			startActivity(intent);
+			//already here
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -219,8 +124,7 @@ public class RecentMessagesActivity extends ActionBarActivity
 		intent.putExtra("NAME", recentMessages.get(view.getId()).getSenderName());
 		startActivity(intent);
 	}
-	
-	
+		
 	//onClick for items to bring
 	public void newMessageButton(View view)
 	{
@@ -342,26 +246,6 @@ public class RecentMessagesActivity extends ActionBarActivity
 		intent.putExtra("CONTENT", "USER");	
 		startActivity(intent);
 	}
-	public void initKillswitchListener()
-	{
-		// START KILL SWITCH LISTENER
-		IntentFilter intentFilter = new IntentFilter();
-		intentFilter.addAction("CLOSE_ALL");
-		broadcastReceiver = new BroadcastReceiver()
-		{
-			@Override
-			public void onReceive(Context context, Intent intent)
-			{
-				// close activity
-				if (intent.getAction().equals("CLOSE_ALL"))
-				{
-					Log.d("app666", "we killin the login it");
-					finish();
-				}
-			}
-		};
-		registerReceiver(broadcastReceiver, intentFilter);
-	}
 
 	public int fetchRecentContacts()
 	{
@@ -432,7 +316,8 @@ public class RecentMessagesActivity extends ActionBarActivity
 				{
 					Log.d("fetchRecentContacts", "failed = 2 return");
 				}
-			} catch (Exception e)
+			} 
+			catch (Exception e)
 			{
 				Log.d("fetchRecentContacts", "exception caught");
 				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());

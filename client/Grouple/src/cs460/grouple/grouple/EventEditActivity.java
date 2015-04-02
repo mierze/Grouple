@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -25,28 +26,22 @@ import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
-import android.support.v7.app.ActionBarActivity;
+
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.app.TimePickerDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v7.app.ActionBar;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -61,19 +56,14 @@ import android.widget.Toast;
 /*
  * EventEditActivity allows user to make changes to his/her event.
  */
-public class EventEditActivity extends ActionBarActivity implements
-		View.OnClickListener
+public class EventEditActivity extends BaseActivity
 {
-	private Dialog loadDialog = null;
 	// Set up fields. Most are just for the camera.
 	private Button b;
 	private ImageView iv;
-	private final static int CAMERA_DATA = 0;
 	private Bitmap bmp;
 	private Intent i;
 	private Event event;
-	private BroadcastReceiver broadcastReceiver;
-	private Global GLOBAL;
 	private String startDate;
 	private String endDate;
 	private EditText nameEditText;
@@ -92,20 +82,6 @@ public class EventEditActivity extends ActionBarActivity implements
 	private Bundle EXTRAS;
 
 	@Override
-	protected void onStop()
-	{
-		super.onStop();
-		loadDialog.hide();
-	}
-
-	@Override
-	public void onBackPressed() 
-	{
-	    finish();
-	    return;
-	}
-
-	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		// Set the activity layout to activity_edit_profile.
@@ -116,7 +92,6 @@ public class EventEditActivity extends ActionBarActivity implements
 
 	private void load()
 	{
-		GLOBAL = ((Global) getApplicationContext());
 		// init variables
 		currentCal = Calendar.getInstance();
 		year = currentCal.get(Calendar.YEAR);
@@ -128,40 +103,15 @@ public class EventEditActivity extends ActionBarActivity implements
 		TextView errorTextView = (TextView) findViewById(R.id.errorTextViewEPA);
 		errorTextView.setVisibility(1);
 		EXTRAS = getIntent().getExtras();
-		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
-		loadDialog.setOwnerActivity(this);
 		iv = (ImageView) findViewById(R.id.editEventImageView);
 		event = GLOBAL.getEventBuffer();
 		if (event != null)
 			getEventProfile();
 		b = (Button) findViewById(R.id.editEventImageButton);
-		b.setOnClickListener(this);
-		initActionBar();
-		initKillswitchListener();
+		b.setOnClickListener((OnClickListener) this);
+		initActionBar("Edit " + event.getName());
 	}
-
-	private void initActionBar()
-	{
-		// Set up the action bar.
-		ActionBar ab = getSupportActionBar();
-		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-		ab.setCustomView(R.layout.actionbar);
-		ab.setDisplayHomeAsUpEnabled(false);
-		// ImageButton upButton = (ImageButton)
-		// findViewById(R.id.actionbarUpButton);
-		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
-		// ImageButton upButton = (ImageButton)
-		// findViewById(R.id.actionbarUpButton);
-		actionbarTitle.setText(event.getName() + "'s Profile");
-	}
-
-	@Override
-	protected void onDestroy()
-	{
-		// TODO Auto-generated method stub
-		unregisterReceiver(broadcastReceiver);
-		super.onDestroy();
-	}
+	
 
 	/* TASK FOR GRABBING IMAGE OF EVENT/USER/GROUP */
 	private class getImageTask extends AsyncTask<String, Void, String>
@@ -193,7 +143,7 @@ public class EventEditActivity extends ActionBarActivity implements
 				} else
 				{
 					// failed
-					Log.d("FETCH ROLE FAILED", "FAILED");
+					Log.d("getImage", "FAILED");
 				}
 			} catch (Exception e)
 			{
@@ -235,46 +185,12 @@ public class EventEditActivity extends ActionBarActivity implements
 		endEditText.setText(event.getEndText());
 		endDate = event.getEndDate();
 	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.navigation_actions, menu);
-		// Set up the edit button and image view
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item)
-	{
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_logout)
-		{
-			GLOBAL.destroySession();
-			Intent login = new Intent(this, LoginActivity.class);
-			startActivity(login);
-			Intent intent = new Intent("CLOSE_ALL");
-			this.sendBroadcast(intent);
-			return true;
-		}
-		if (id == R.id.action_home)
-		{
-			Intent intent = new Intent(this, HomeActivity.class);
-			startActivity(intent);
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
+	
 	// Button Listener for submit changes.
 	public void submitButton(View view)
 	{
 		// Checking user inputs on event name, category, start date, end date,
 		// and min_part
-		String location = locationEditText.getText().toString();
 		String eventname = nameEditText.getText().toString();
 		startDate.concat(":00");
 		endDate.concat(":00");
@@ -284,7 +200,6 @@ public class EventEditActivity extends ActionBarActivity implements
 		String maximum = maxEditText.getText().toString();
 		Date start = null;
 		Date end = null;
-		String date = "";
 		if (!(startDate.compareTo("") == 0) && !(endDate.compareTo("") == 0))
 		{
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d hh:mm");
@@ -463,7 +378,8 @@ public class EventEditActivity extends ActionBarActivity implements
 	public void selectCategoryButton(View view)
 	{
 		// THINKING OUT LOUD
-		// Food / Entertainment
+		// Food
+		// Entertainment
 		// Sports / Games
 		// Party / Nightlife ?SOCIAL?
 		// Professional / Education
@@ -639,7 +555,6 @@ public class EventEditActivity extends ActionBarActivity implements
 		}
 	}
 
-	@Override
 	public void onClick(View v)
 	{
 		// TODO Auto-generated method stub
@@ -715,27 +630,6 @@ public class EventEditActivity extends ActionBarActivity implements
 				iv.setImageURI(selectedImageUri);
 			}
 		}
-	}
-
-	public void initKillswitchListener()
-	{
-		// START KILL SWITCH LISTENER
-		IntentFilter intentFilter = new IntentFilter();
-		intentFilter.addAction("CLOSE_ALL");
-		broadcastReceiver = new BroadcastReceiver()
-		{
-			@Override
-			public void onReceive(Context context, Intent intent)
-			{
-				// close activity
-				if (intent.getAction().equals("CLOSE_ALL"))
-				{
-					finish();
-				}
-			}
-		};
-		registerReceiver(broadcastReceiver, intentFilter);
-		// End Kill switch listener
 	}
 
 	private DatePickerDialog.OnDateSetListener myStartDateListener = new DatePickerDialog.OnDateSetListener()
@@ -830,7 +724,6 @@ public class EventEditActivity extends ActionBarActivity implements
 
 	private TimePickerDialog.OnTimeSetListener myEndTimeListener = new TimePickerDialog.OnTimeSetListener()
 	{
-
 		@Override
 		public void onTimeSet(TimePicker view, int hourOfDay, int minute)
 		{

@@ -1,57 +1,22 @@
 package cs460.grouple.grouple;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import cs460.grouple.grouple.ListActivity.CONTENT_TYPE;
-import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.util.SparseArray;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -59,17 +24,13 @@ import android.widget.Toast;
 /*
  * EventAddGroupsActivity allows a user to invite groups to a created event.
  */
-
-public class EventAddGroupsActivity extends ActionBarActivity
+public class EventAddGroupsActivity extends BaseActivity
 {
-	private BroadcastReceiver broadcastReceiver;
 	private SparseArray<String> added = new SparseArray<String>();    //holds list of name of all group rows to be added
 	private ArrayList<Group> allGroups = new ArrayList<Group>();   //holds list of all current groups
 	private User user;
 	private String email;
 	private String ID;
-	private Global GLOBAL;
-	private Dialog loadDialog;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -79,24 +40,13 @@ public class EventAddGroupsActivity extends ActionBarActivity
 		load();	
 	}
 	
-	@Override
-	protected void onStop()
-	{
-		super.onStop();
-		loadDialog.hide();
-	}
-	
 	private void load()
 	{
-		GLOBAL = ((Global) getApplicationContext());
 		//grab the email of current users from our global class
 		user = GLOBAL.getCurrentUser();
-		
 		Bundle extras = getIntent().getExtras();
 		//grab the e_id from extras
 		ID = Integer.toString(extras.getInt("EID"));
-		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
-        loadDialog.setOwnerActivity(this);
 		//load our list of current groups.  key is group id -> value is group name
 		allGroups = user.getGroups();
 		if (allGroups != null)
@@ -104,16 +54,7 @@ public class EventAddGroupsActivity extends ActionBarActivity
 		else
 			System.out.println("IT IS NULL AT THIS TIME ALLGROUPS");
 		populateGroupCreate();
-		initActionBar();
-		initKillswitchListener();
-	}
-	
-	@Override
-	protected void onDestroy()
-	{
-		// TODO Auto-generated method stub
-		unregisterReceiver(broadcastReceiver);
-		super.onDestroy();
+		initActionBar("Invite Groups to Event");
 	}
 	
 	private void populateGroupCreate()
@@ -133,11 +74,9 @@ public class EventAddGroupsActivity extends ActionBarActivity
 			membersToAdd.addView(row);
 		}
 		
-		
 		//setup for each group
 		for(int i=0; i<allGroups.size(); i++)
 		{
-		
 			row = li.inflate(
 					R.layout.list_row_eventinvitegroup, null);
 
@@ -211,16 +150,6 @@ public class EventAddGroupsActivity extends ActionBarActivity
 		}
 	}
 	
-	private void initActionBar()
-	{
-		ActionBar ab = getSupportActionBar();
-		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-		ab.setCustomView(R.layout.actionbar);
-		ab.setDisplayHomeAsUpEnabled(false);
-		TextView actionBarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
-		actionBarTitle.setText("Add Groups");
-	}
-	
 	//onClick for Confirm add groups button
 	public void addGroupsButton(View view)
 	{		
@@ -258,7 +187,6 @@ public class EventAddGroupsActivity extends ActionBarActivity
 		@Override
 		protected void onPostExecute(String result)
 		{
-			Map<String, String> allMembers = new HashMap<String, String>();   //list of all current members
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
@@ -279,9 +207,8 @@ public class EventAddGroupsActivity extends ActionBarActivity
 								+ "android_connect/add_eventmember.php", memberToAdd, email, ID);
 					}
 					//making a success toast
-					Context context = getApplicationContext();
 					String message = "Successfully invited groups!";
-					Toast toast = GLOBAL.getToast(context, message);
+					Toast toast = GLOBAL.getToast(EventAddGroupsActivity.this, message);
 					toast.show();
 					finish();		
 				}
@@ -292,7 +219,7 @@ public class EventAddGroupsActivity extends ActionBarActivity
 			} 
 			catch (Exception e)
 			{
-				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 			}
 		}		
 	}
@@ -332,66 +259,5 @@ public class EventAddGroupsActivity extends ActionBarActivity
 				Log.d("readJSONFeed", e.getLocalizedMessage());
 			}
 		}		
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.navigation_actions, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item)
-	{
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_logout)
-		{
-			Intent login = new Intent(this, LoginActivity.class);
-			GLOBAL.destroySession();
-			startActivity(login);
-			Intent intent = new Intent("CLOSE_ALL");
-			this.sendBroadcast(intent);
-			return true;
-		}
-		if (id == R.id.action_home)
-		{
-			Intent intent = new Intent(this, HomeActivity.class);
-			startActivity(intent);
-		}
-		return super.onOptionsItemSelected(item);
-	}
-	
-	@Override
-	public void onBackPressed() {
-	    finish();
-	    return;
-	}
-	
-	public void initKillswitchListener()
-	{
-		// START KILL SWITCH LISTENER
-		IntentFilter intentFilter = new IntentFilter();
-		intentFilter.addAction("CLOSE_ALL");
-		broadcastReceiver = new BroadcastReceiver()
-		{
-			@Override
-			public void onReceive(Context context, Intent intent)
-			{
-				// close activity
-				if (intent.getAction().equals("CLOSE_ALL"))
-				{
-					Log.d("app666", "we killin the login it");
-					// System.exit(1);
-					finish();
-				}
-			}
-		};
-		registerReceiver(broadcastReceiver, intentFilter);
-		// End Kill switch listener
 	}
 }

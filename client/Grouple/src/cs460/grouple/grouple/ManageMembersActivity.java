@@ -1,66 +1,38 @@
 package cs460.grouple.grouple;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
-
-import android.app.Activity;
-import android.app.Dialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.util.SparseArray;
-import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ManageMembersActivity extends ActionBarActivity {
+public class ManageMembersActivity extends BaseActivity {
 
 	private User user;
 	private Group group;
-	private BroadcastReceiver broadcastReceiver;
 	private SparseArray<String> toUpdate = new SparseArray<String>();    //holds list of name of all friend rows to be added
 	private SparseArray<String> toUpdateRole = new SparseArray<String>();   //holds list of role of all friend rows to be added
 	//private SparseArray<String> toRemove = new SparseArray<String>();    //holds list of name of all friend rows to be added
-	private Dialog loadDialog;
 	private ArrayList<User> members = new ArrayList<User>();   //holds list of all current friends
-	private static Global GLOBAL;
 	private static String CONTENT; //type of content to display
 	private static Bundle EXTRAS; //type of content to display
 	private ArrayList<String> roles = new ArrayList<String>();
-	
-	@Override
-	public void onBackPressed() 
-	{
-		finish();
-	    return;
-	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -69,96 +41,15 @@ public class ManageMembersActivity extends ActionBarActivity {
 		load();
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.navigation_actions, menu);
-		return true;
-	}
-
-	@Override
-	protected void onStop()
-	{
-		super.onStop();
-		loadDialog.hide();
-	}
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_logout)
-		{
-			GLOBAL.destroySession();
-			Intent login = new Intent(this, LoginActivity.class);
-			startActivity(login);
-			Intent intent = new Intent("CLOSE_ALL");
-	
-			this.sendBroadcast(intent);
-			return true;
-		}
-		if (id == R.id.action_home)
-		{
-			Intent intent = new Intent(this, HomeActivity.class);
-			startActivity(intent);
-		}
-		return super.onOptionsItemSelected(item);
-	}
-	
-	@Override
-	protected void onDestroy()
-	{
-		// TODO Auto-generated method stub
-		unregisterReceiver(broadcastReceiver);
-		super.onDestroy();
-	}
-
 	private void load()
 	{
-		GLOBAL = (Global)getApplicationContext();
 		EXTRAS = getIntent().getExtras();
 		CONTENT = EXTRAS.getString("CONTENT");
 		//should always be current user
 		user = GLOBAL.getCurrentUser();
 		group = GLOBAL.getGroupBuffer();
-		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
-        loadDialog.setOwnerActivity(this);
 		setRoles();
-		initActionBar();
-		initKillswitchListener();
-	}
-	
-	private void initActionBar()
-	{
-		ActionBar ab = getSupportActionBar();
-		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-		ab.setCustomView(R.layout.actionbar);
-		ab.setDisplayHomeAsUpEnabled(false);
-		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
-		actionbarTitle.setText("Manage " + group.getName() + " Members");
-	}
-
-	private void initKillswitchListener()
-	{
-		// START KILL SWITCH LISTENER
-		IntentFilter intentFilter = new IntentFilter();
-		intentFilter.addAction("CLOSE_ALL");
-		broadcastReceiver = new BroadcastReceiver()
-		{
-			@Override
-			public void onReceive(Context context, Intent intent)
-			{
-				// close activity
-				if (intent.getAction().equals("CLOSE_ALL"))
-				{
-					Log.d("app666", "we killin the login it");
-					finish();
-				}
-			}
-		};
-		registerReceiver(broadcastReceiver, intentFilter);
+		initActionBar("Manage " + group.getName() + " Members");
 	}
 	
 	private void setRoles()
@@ -193,7 +84,6 @@ public class ManageMembersActivity extends ActionBarActivity {
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					String ROLE = jsonObject.getString("role").toString();
-					System.out.println("ROLE IS BEING SET TO " + ROLE);
 					roles.add(ROLE);
 					if (roles.size() == members.size()) //done with all
 						populateManageMembers();
@@ -229,7 +119,6 @@ public class ManageMembersActivity extends ActionBarActivity {
 				final RelativeLayout row = (RelativeLayout) view.findViewById(R.id.friendManageLayout);
 				final Button makeAdminButton = (Button) view.findViewById(R.id.removeFriendButtonNoAccess);
 				final TextView friendNameButton = (TextView) view.findViewById(R.id.friendNameTextView);
-				final String friendName = friendNameButton.getText().toString();
 				final CheckBox cb = (CheckBox) view.findViewById(R.id.addToGroupBox);
 				row.setId(index);
 				makeAdminButton.setId(index);
@@ -398,18 +287,8 @@ public class ManageMembersActivity extends ActionBarActivity {
 				new UpdateGroupMembersTask().execute("http://68.59.162.183/android_connect/update_group_member.php", friendsEmail, "no", friendsRole, Integer.toString(g_id));
 			}
 		}
-	
-			
-		
-		//group.fetchGroupInfo();
 		group.fetchMembers();
-		//user.fetchGroupInvites();
-		//user.fetchGroups();
-		//GLOBAL.setCurrentUser(user);
-		//GLOBAL.setGroupBuffer(group);
-		
-		Context context = getApplicationContext();
-		Toast toast = GLOBAL.getToast(context, "Group members have been updated.");
+		Toast toast = GLOBAL.getToast(this, "Group members have been updated.");
 		toast.show();
 		
 		//remove this activity from back-loop by calling finish().
@@ -451,7 +330,8 @@ public class ManageMembersActivity extends ActionBarActivity {
 					//a particular user was unable to be added to database for some reason...
 					//Don't tell the user!
 				}
-			} catch (Exception e)
+			} 
+			catch (Exception e)
 			{
 				Log.d("readJSONFeed", e.getLocalizedMessage());
 			}

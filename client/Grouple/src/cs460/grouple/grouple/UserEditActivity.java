@@ -11,6 +11,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -24,26 +25,19 @@ import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
-import android.support.v7.app.ActionBarActivity;
+
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v7.app.ActionBar;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -56,38 +50,19 @@ import android.widget.Toast;
 /*
  * EditProfileActivity allows user to make changes to his/her profile.
  */
-public class UserEditActivity extends ActionBarActivity implements
-		OnClickListener 
+public class UserEditActivity extends BaseActivity
 {
 	// Set up fields. Most are just for the camera.
 	private Button b;
 	private ImageView iv;
-
 	private Bitmap bmp;
 	private Intent i;
 	private User user;
-	private BroadcastReceiver broadcastReceiver;
-	private Global GLOBAL;
-	private Dialog loadDialog;
 	private EditText birthdayEditText;
 	private EditText aboutEditText;
 	private EditText locationEditText;
 	private EditText nameEditText;
 	private String birthday;
-	
-	@Override
-	public void onBackPressed() 
-	{
-		finish();
-	    return;
-	}
-	
-	@Override
-	protected void onStop()
-	{
-		super.onStop();
-		loadDialog.hide();
-	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -101,64 +76,31 @@ public class UserEditActivity extends ActionBarActivity implements
 		locationEditText = (EditText) findViewById(R.id.locationEditTextEPA);
 		aboutEditText = (EditText) findViewById(R.id.aboutEditTextEPA);
 		b = (Button) findViewById(R.id.editUserImageButton);
-		b.setOnClickListener(this);
+		b.setOnClickListener((OnClickListener) this);
 		load();		
 	}
 
 	private void load()
 	{
-		GLOBAL = ((Global) getApplicationContext());
 		// Resetting error text view
 		TextView errorTextView = (TextView) findViewById(R.id.errorTextViewEPA);
 		errorTextView.setVisibility(1);
 
-		Bundle extras = getIntent().getExtras();
 		user = GLOBAL.getCurrentUser();
-		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
-        loadDialog.setOwnerActivity(this);
-		System.out.println("In edit ACTIVITY NOW: loading");
 		if (user != null)
 			getProfile();
 
-		initActionBar();
-		initKillswitchListener();
+		initActionBar("Edit Profile");
 	}
-	
-	private void initActionBar()
-	{
-		// Set up the action bar.
-		ActionBar ab = getSupportActionBar();
-		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-		ab.setCustomView(R.layout.actionbar);
-		ab.setDisplayHomeAsUpEnabled(false);
-		//ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);		
-		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
-		//ImageButton upButton = (ImageButton) findViewById(R.id.actionbarUpButton);
-		actionbarTitle.setText(user.getFirstName() + "'s Profile");
-	}
-	
-	@Override
-	protected void onDestroy()
-	{
-		// TODO Auto-generated method stub
-		unregisterReceiver(broadcastReceiver);
-		super.onDestroy();
-	}
-	
 
-	/* TASK FOR GRABBING IMAGE OF EVENT/USER/GROUP */
+	// TASK FOR GRABBING IMAGE OF EVENT/USER/GROUP 
 	private class getImageTask extends AsyncTask<String, Void, String>
 	{
 		@Override
 		protected String doInBackground(String... urls)
 		{
-			String type;
-			String id;
-	
-				type = "email";
-				id = user.getEmail();
-			
-			
+			String type = "email";
+			String id = user.getEmail();
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair(type, id));
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
@@ -177,7 +119,6 @@ public class UserEditActivity extends ActionBarActivity implements
 					String image = jsonObject.getString("image").toString();
 					user.setImage(image);
 					iv.setImageBitmap(user.getImage());
-	
 				} 
 				else
 				{
@@ -212,41 +153,6 @@ public class UserEditActivity extends ActionBarActivity implements
 			iv.setImageBitmap(user.getImage());
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.navigation_actions, menu);
-		// Set up the edit button and image view
-
-
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item)
-	{
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_logout)
-		{
-			GLOBAL.destroySession();
-			Intent login = new Intent(this, LoginActivity.class);
-			startActivity(login);
-			Intent intent = new Intent("CLOSE_ALL");
-			this.sendBroadcast(intent);
-			return true;
-		}
-		if (id == R.id.action_home)
-		{
-			Intent intent = new Intent(this, HomeActivity.class);
-			startActivity(intent);
-		}
-		return super.onOptionsItemSelected(item);
-	}
-	
 	//Button Listener for selecting birthdate.
 	public void selectBirthdate(View view)
 	{
@@ -431,7 +337,6 @@ public class UserEditActivity extends ActionBarActivity implements
 		}
 	}
 
-	@Override
 	public void onClick(View v) 
 	{
 		// TODO Auto-generated method stub
@@ -537,26 +442,4 @@ public class UserEditActivity extends ActionBarActivity implements
 		   }
 	   }
 	};
-	
-	private void initKillswitchListener()
-	{
-		// START KILL SWITCH LISTENER
-		IntentFilter intentFilter = new IntentFilter();
-		intentFilter.addAction("CLOSE_ALL");
-		broadcastReceiver = new BroadcastReceiver()
-		{
-			@Override
-			public void onReceive(Context context, Intent intent)
-			{
-				// close activity
-				if (intent.getAction().equals("CLOSE_ALL"))
-				{
-					Log.d("app666", "we killin the login it");
-					finish();
-				}
-			}
-		};
-		registerReceiver(broadcastReceiver, intentFilter);
-		// End Kill switch listener
-	}
 }

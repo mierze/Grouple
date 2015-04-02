@@ -5,23 +5,18 @@ import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -32,12 +27,13 @@ import android.widget.Toast;
 /*
  * UserActivity displays the profile page of any user
  */
-public class ProfileActivity extends ActionBarActivity implements OnClickListener
+public class ProfileActivity extends BaseActivity
 {
-	enum CONTENT_TYPE 
+	private enum CONTENT_TYPE 
 	{
 		USER, GROUP, EVENT
 	}
+	
 	private ImageView iv;
 	private BroadcastReceiver broadcastReceiver;
 	private User user; //user who's profile this is
@@ -45,26 +41,17 @@ public class ProfileActivity extends ActionBarActivity implements OnClickListene
 	private Event event;
 	private Bundle EXTRAS;
 	private String CONTENT; //type of content to display in profile, passed in from other activities
-	private Global GLOBAL;
 	private Button profileButton1;
 	private Button profileButton2;
 	private Button profileButton3;
 	private Button profileButton4;
-	private Dialog loadDialog;
 	private AsyncTask getImageTask;
-	
-	@Override
-	protected void onStart()
-	{
-		super.onStart();
-	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_profile);
-		initKillswitchListener();
 	}
 
 	@Override
@@ -74,26 +61,8 @@ public class ProfileActivity extends ActionBarActivity implements OnClickListene
 		load();
 	}
 	
-	@Override
-	protected void onStop()
-	{
-		super.onStop();
-		loadDialog.hide();
-	}
-	
-	public void initActionBar(String title)
-	{
-		/* Action bar */
-		ActionBar ab = getSupportActionBar();
-		ab.setCustomView(R.layout.actionbar);
-		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
-		actionbarTitle.setText(title);
-	}
-
 	public void load()
 	{
-		GLOBAL = ((Global) getApplicationContext());
 		EXTRAS = getIntent().getExtras();
 		CONTENT = EXTRAS.getString("CONTENT");
 		String title = "";
@@ -106,8 +75,6 @@ public class ProfileActivity extends ActionBarActivity implements OnClickListene
 		profileButton2.setVisibility(View.GONE);
 		profileButton3.setVisibility(View.GONE);
 		profileButton4.setVisibility(View.GONE);		
-		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
-        loadDialog.setOwnerActivity(this);
         
 		if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
 		{
@@ -245,7 +212,6 @@ public class ProfileActivity extends ActionBarActivity implements OnClickListene
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
-				 
 				//json fetch was successful
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
@@ -312,8 +278,7 @@ public class ProfileActivity extends ActionBarActivity implements OnClickListene
 		{
 			try
 			{
-				JSONObject jsonObject = new JSONObject(result);
-				 
+				JSONObject jsonObject = new JSONObject(result); 
 				//json fetch was successful
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
@@ -379,49 +344,18 @@ public class ProfileActivity extends ActionBarActivity implements OnClickListene
 				profileButton4.setVisibility(View.VISIBLE);
 		}	
 	}
-	
-	@Override
-	protected void onDestroy()
-	{
-		// TODO Auto-generated method stub
-		unregisterReceiver(broadcastReceiver);
-		super.onDestroy();
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.navigation_actions, menu);
-		return true;
-	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_logout)
+		if (id == R.id.action_profile)
 		{
-			GLOBAL.destroySession();
-			Intent login = new Intent(this, LoginActivity.class);
-			startActivity(login);
-			iv = null;
-			Intent intent = new Intent("CLOSE_ALL");
-			this.sendBroadcast(intent);
-			return true;
-		}
-		if (id == R.id.action_home)
-		{
-			Intent intent = new Intent(this, HomeActivity.class);
-			startActivity(intent);
+			//do nothing, already here
 		}
 		return super.onOptionsItemSelected(item);
 	}
 
-	@Override
 	public void onClick(View view)
 	{
 		//killBackgroundProcesses();
@@ -606,7 +540,7 @@ public class ProfileActivity extends ActionBarActivity implements OnClickListene
 	@Override
 	public void onBackPressed() 
 	{
-    	//do nothing
+    	super.onBackPressed();
     	if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
     	{
     		//current friends case
@@ -636,9 +570,6 @@ public class ProfileActivity extends ActionBarActivity implements OnClickListene
     		//event invites case
     		GLOBAL.getCurrentUser().fetchEventsInvites();
     	}
-    	finish();
-		// do something on back.
-		return;
 	}
 	
 	/*
@@ -685,27 +616,6 @@ public class ProfileActivity extends ActionBarActivity implements OnClickListene
 				infoText += "\n(" + event.getNumUsers() + " confirmed / " + event.getMinPart() + " required)";
 			info.setText(infoText);
 		}		
-	}
-
-	public void initKillswitchListener()
-	{
-		// START KILL SWITCH LISTENER
-		IntentFilter intentFilter = new IntentFilter();
-		intentFilter.addAction("CLOSE_ALL");
-		broadcastReceiver = new BroadcastReceiver()
-		{
-			@Override
-			public void onReceive(Context context, Intent intent)
-			{
-				// close activity
-				if (intent.getAction().equals("CLOSE_ALL"))
-				{
-					Log.d("app666", "we killin the login it");
-					finish();
-				}
-			}
-		};
-		registerReceiver(broadcastReceiver, intentFilter);
 	}
 	
 	//aSynch task to add individual member to group.
@@ -759,7 +669,8 @@ public class ProfileActivity extends ActionBarActivity implements OnClickListene
 					//a particular user was unable to be added to database for some reason...
 					//Don't tell the user!
 				}
-			} catch (Exception e)
+			} 
+			catch (Exception e)
 			{
 				Log.d("readJSONFeed", e.getLocalizedMessage());
 			}

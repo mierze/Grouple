@@ -1,30 +1,16 @@
 package cs460.grouple.grouple;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
+
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -35,27 +21,18 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.util.SparseArray;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.GridLayout;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -64,7 +41,7 @@ import android.widget.TimePicker;
  * GroupCreateActivity allows a user to create a new group.
  */
 
-public class EventCreateActivity extends ActionBarActivity
+@SuppressLint("SimpleDateFormat") public class EventCreateActivity extends ActionBarActivity
 {
 	private BroadcastReceiver broadcastReceiver;
 	private User user;
@@ -85,11 +62,9 @@ public class EventCreateActivity extends ActionBarActivity
 	private Button toBringButton;
 	private View toBringLayout;
 	private Dialog loadDialog;
-	private DatePicker datePicker;
 	private Calendar currentCal;
 	private Calendar startCal;
 	private Calendar endCal;
-	private TextView dateView;
 	private LayoutInflater inflater;
 	private final ArrayList<EditText> toBringEditTexts = new ArrayList<EditText>();
 	private int year, month, day, hour, minute;

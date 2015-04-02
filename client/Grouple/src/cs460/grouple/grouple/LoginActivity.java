@@ -1,7 +1,7 @@
 package cs460.grouple.grouple;
 
 import org.json.JSONObject;
-import android.app.ActionBar;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
@@ -9,18 +9,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.RadioButton;
 import android.widget.TextView;
 
 /*
@@ -174,6 +171,8 @@ public class LoginActivity extends Activity
 						EditText emailEditText = (EditText) findViewById(R.id.emailEditTextLA);
 						//get the email
 						email = emailEditText.getText().toString();
+						User u = new User(email);
+						GLOBAL.setCurrentUser(u);
 						
 						if(rememberLogin.isChecked())
 						{

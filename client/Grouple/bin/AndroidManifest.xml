@@ -253,6 +253,10 @@
             android:name=".EventMessagesActivity"
             android:label="@string/title_activity_event_messaging" >
         </activity>
+        <activity
+            android:name=".BaseActivity"
+            android:label="@string/title_activity_base" >
+        </activity>
     </application>
 
 </manifest>

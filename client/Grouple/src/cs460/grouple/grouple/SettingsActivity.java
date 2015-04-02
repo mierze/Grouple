@@ -7,84 +7,51 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
-import com.google.android.gms.gcm.GoogleCloudMessaging;
-
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
-import android.text.Layout;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class SettingsActivity extends ActionBarActivity
+public class SettingsActivity extends BaseActivity
 {
-	private BroadcastReceiver broadcastReceiver;
-	private Dialog loadDialog = null;
-	private static Global GLOBAL;
-    ArrayList<String> settingsArray;
-    ArrayList<String> settingsNameArray;
-    ArrayList<Switch> switchArray;
-    User user;
-    SharedPreferences.Editor editor;
+    private ArrayList<String> settingsArray;
+    private ArrayList<String> settingsNameArray;
+    private ArrayList<Switch> switchArray;
+    private User user;
+    private SharedPreferences.Editor editor;
     //use sharedpreferences info that was filled during login to set initial switches to their correct positions
-    SharedPreferences prefs;  
+    private SharedPreferences prefs;  
     
     //edittexts for changeemail dialog
-	EditText CEDoldPassword;
-	EditText CEDnewEmail;
-	EditText CEDconfirmEmail;
+    private EditText CEDoldPassword;
+    private EditText CEDnewEmail;
+    private EditText CEDconfirmEmail;
 	
 	//edittexts for changepassword dialog
-	EditText CPDoldPassword;
-	EditText CPDnewPassword;
-	EditText CPDconfirmPassword;
+    private EditText CPDoldPassword;
+    private EditText CPDnewPassword;
+    private EditText CPDconfirmPassword;
 	
 	//edittext for deleteAccount dialog
-	EditText DADoldPassword;
+    private EditText DADoldPassword;
 
-	AlertDialog emailAlertDialog;
-	AlertDialog passwordAlertDialog;
-	AlertDialog deleteAccountDialog;
-	
-	@Override
-	protected void onStop()
-	{
-		super.onStop();
-		loadDialog.hide();
-	}
-	
-	@Override
-	public void onBackPressed() 
-	{
-		finish();
-	    return;
-	}
+    private AlertDialog emailAlertDialog;
+    private AlertDialog passwordAlertDialog;
+    private AlertDialog deleteAccountDialog;
 	
 	@Override
 	public void onPause() {
@@ -100,21 +67,9 @@ public class SettingsActivity extends ActionBarActivity
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		
-		initKillswitchListener();
-		GLOBAL = ((Global) getApplicationContext());
 		user = GLOBAL.getCurrentUser();
 		setContentView(R.layout.activity_settings);
-		/* Action bar */
-		ActionBar ab = getSupportActionBar();
-		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-		ab.setCustomView(R.layout.actionbar);
-		ab.setDisplayHomeAsUpEnabled(false);
-		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
-		actionbarTitle.setText("Settings");
-		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
-        loadDialog.setOwnerActivity(this);
-        
+		initActionBar("Setting");
         settingsArray = new ArrayList<String>();
         switchArray = new ArrayList<Switch>();
         settingsNameArray = new ArrayList<String>();
@@ -484,74 +439,14 @@ public class SettingsActivity extends ActionBarActivity
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.navigation_actions, menu);
-		return true;
-	}
-
-	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_logout)
+		if (id == R.id.action_settings)
 		{
-			GLOBAL.destroySession();
-			Intent login = new Intent(this, LoginActivity.class);
-			startActivity(login);
-			Intent intent = new Intent("CLOSE_ALL");
-			this.sendBroadcast(intent);
-			return true;
-		}
-		if (id == R.id.action_home)
-		{
-			Intent intent = new Intent(this, HomeActivity.class);
-			startActivity(intent);
+			//do nothing, already here
 		}
 		return super.onOptionsItemSelected(item);
-	}
-
-	public void startParentActivity(View view)
-	{
-		String className = "HomeActivity";
-		Intent newIntent = null;
-		try
-		{
-			newIntent = new Intent(this, Class.forName("cs460.grouple.grouple."
-					+ className));
-		} catch (ClassNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		startActivity(newIntent);
-		finish();
-	}
-
-	public void initKillswitchListener()
-	{
-		// START KILL SWITCH LISTENER
-		IntentFilter intentFilter = new IntentFilter();
-		intentFilter.addAction("CLOSE_ALL");
-		broadcastReceiver = new BroadcastReceiver()
-		{
-			@Override
-			public void onReceive(Context context, Intent intent)
-			{
-				// close activity
-				if (intent.getAction().equals("CLOSE_ALL"))
-				{
-					Log.d("app666", "we killin the login it");
-					// System.exit(1);
-					finish();
-				}
-			}
-		};
-		registerReceiver(broadcastReceiver, intentFilter);
-		// End Kill switch listener
 	}
 	
 	//aSynch class to update user settings in database 

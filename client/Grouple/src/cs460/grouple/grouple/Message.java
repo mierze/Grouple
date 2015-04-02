@@ -120,12 +120,9 @@ public class Message
   			image = null;
   		}
   	}
-    
-    
-
+ 
 	private String parseDate(String rawDateString)
 	{
-		System.out.println("\n\nDATE IS FIRST: " + rawDateString);
 		String dateString = "";
 		SimpleDateFormat raw = new SimpleDateFormat("yyyy-M-d h:mm:ss");
 		SimpleDateFormat dateFormat = new SimpleDateFormat(
@@ -142,28 +139,5 @@ public class Message
 			System.out.println("Exception " + ex);
 		}
 		return dateString;
-	}
-	
-    private String parseDateMessage(String dateString)
-	{
-		System.out.println("\n\nDATE IS FIRST: " + dateString);
-		String date = "";
-		SimpleDateFormat raw = new SimpleDateFormat("yyyy-M-d h:mm:ss");
-		SimpleDateFormat dateFormat = new SimpleDateFormat(
-				"EEEE h:mma");
-		try
-		{
-			Date parsedDate = (Date) raw.parse(dateString);
-			date = dateFormat.format(parsedDate);
-			// date = raw.format(parsedDate);
-			System.out.println("\nDATE IN RAW TRANSLATION: "
-					+ raw.format(parsedDate));
-			System.out.println("\nDATE IN FINAL: "
-					+ dateFormat.format(parsedDate) + "\n\n");
-		} catch (ParseException ex)
-		{
-			System.out.println("Exception " + ex);
-		}
-		return date;
 	}
 }
