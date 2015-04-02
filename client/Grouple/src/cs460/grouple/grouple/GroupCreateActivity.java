@@ -37,6 +37,7 @@ public class GroupCreateActivity extends BaseActivity
 	private ArrayList<User> allFriends = new ArrayList<User>();   //holds list of all current friends
 	private User user;
 	private String g_id;
+	Group g;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -393,8 +394,14 @@ public class GroupCreateActivity extends BaseActivity
 								+ "android_connect/add_groupmember.php", friendsEmail, user.getEmail(), friendsRole, g_id);
 					}
 					
+					g = new Group(Integer.parseInt(g_id));
+					g.fetchMembers();
+					g.fetchGroupInfo();
+					GLOBAL.getCurrentUser().fetchFriends();
+					GLOBAL.setGroupBuffer(g);
+					
 					//display confirmation box
-					new AlertDialog.Builder(GroupCreateActivity.this)
+					AlertDialog dialog = new AlertDialog.Builder(GroupCreateActivity.this)
 					.setMessage("Nice work, you've successfully created a group!")
 					.setCancelable(true)
 					.setPositiveButton("View Group Profile", new DialogInterface.OnClickListener()
@@ -405,17 +412,13 @@ public class GroupCreateActivity extends BaseActivity
 							//add code here to take user to newly created group profile page.  (pass g_id as extra so correct group profile can be loaded)
 							loadDialog.show();
 							Intent intent = new Intent(GroupCreateActivity.this, ProfileActivity.class);
-							Group g = new Group(Integer.parseInt(g_id));
-							g.fetchMembers();
-							g.fetchGroupInfo();
-							GLOBAL.getCurrentUser().fetchFriends();
 							intent.putExtra("EMAIL", user.getEmail());
 							intent.putExtra("GID", g.getID());
 							intent.putExtra("CONTENT", "GROUP");
-							GLOBAL.setGroupBuffer(g);
 							startActivity(intent);	
+							finish();
 						}
-					}).setPositiveButton("Invite More Friends", new DialogInterface.OnClickListener()
+					}).setNegativeButton("Invite More Friends", new DialogInterface.OnClickListener()
 					{
 						@Override
 						public void onClick(DialogInterface dialog, int which) 
@@ -423,25 +426,25 @@ public class GroupCreateActivity extends BaseActivity
 							//add code here to take user to groupaddmembersactivity page.  (pass g_id as extra so invites can be sent to correct group id)
 							loadDialog.show();
 							Intent intent = new Intent(GroupCreateActivity.this, InviteActivity.class);
-							Group g = new Group(Integer.parseInt(g_id));
-							g.fetchMembers();
-							g.fetchGroupInfo();
-							GLOBAL.getCurrentUser().fetchFriends();
 							intent.putExtra("EMAIL", user.getEmail());
 							intent.putExtra("GID", g.getID());
-							GLOBAL.setGroupBuffer(g);
-							startActivity(intent);	
+							startActivity(intent);
+							finish();
 						}
-					}).setNegativeButton("Cancel", null).show(); //PROBLEM HERE
+					}).show();
+					// if user dimisses the confirmation box, gets sent to back
+					// to groupsActivity.class
+					dialog.setOnCancelListener(new DialogInterface.OnCancelListener()
+					{
+
+						@Override
+						public void onCancel(DialogInterface dialog)
+						{
+							finish();
+						}
+					});
 					user.fetchGroupInvites();
 					user.fetchGroups();
-					Group g = new Group(Integer.parseInt(g_id));
-					g.fetchGroupInfo();
-					g.fetchMembers();
-					GLOBAL.setCurrentUser(user);
-					GLOBAL.setGroupBuffer(g);
-					//remove this activity from back-loop by calling finish().
-					finish();
 				} 
 				//Create group failed for some reasons.
 				else if (jsonObject.getString("success").toString().equals("0"))

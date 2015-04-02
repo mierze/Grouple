@@ -69,7 +69,7 @@ public class SettingsActivity extends BaseActivity
 		super.onCreate(savedInstanceState);
 		user = GLOBAL.getCurrentUser();
 		setContentView(R.layout.activity_settings);
-		initActionBar("Setting");
+		initActionBar("Settings");
         settingsArray = new ArrayList<String>();
         switchArray = new ArrayList<Switch>();
         settingsNameArray = new ArrayList<String>();
