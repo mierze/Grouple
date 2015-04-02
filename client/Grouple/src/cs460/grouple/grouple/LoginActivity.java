@@ -1,8 +1,15 @@
 package cs460.grouple.grouple;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
+
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -13,12 +20,14 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /*
  * HomeActivity is Launcher activity and allows the user to log in to his/her acccount.
@@ -34,6 +43,11 @@ public class LoginActivity extends Activity
 	boolean tokenFlag;
 	SharedPreferences prefs;
 	CheckBox rememberLogin;
+	AlertDialog forgetPasswordAlertDialog, createPasswordAlertDialog;
+	EditText forgetEmail, forgetCode, newPassword, confirmPassword;
+	String forgetEmailString;
+	Button requestButton, confirmButton,changePasswordButton;
+	
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		
@@ -171,8 +185,6 @@ public class LoginActivity extends Activity
 						EditText emailEditText = (EditText) findViewById(R.id.emailEditTextLA);
 						//get the email
 						email = emailEditText.getText().toString();
-						User u = new User(email);
-						GLOBAL.setCurrentUser(u);
 						
 						if(rememberLogin.isChecked())
 						{
@@ -240,7 +252,274 @@ public class LoginActivity extends Activity
 			}
 		}
 	}
+	
+	public void ForgetPasswordButton(View view)
+	{
+		System.out.println("Forget Password Button was activated.");
+		// Removes any previous error message from previous failed login
+		loginFail.setVisibility(View.GONE);
+		
+		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+		dialogBuilder.setTitle("Forget Password");
+		LayoutInflater inflater = this.getLayoutInflater();
+		View dialogView = inflater.inflate(R.layout.forgetpassword_dialog, null);
+		dialogBuilder.setView(dialogView);
 
+		forgetEmail = (EditText) dialogView.findViewById(R.id.emailFPD);
+		forgetCode  = (EditText) dialogView.findViewById(R.id.resetCodeFPD);
+		requestButton = (Button) dialogView.findViewById(R.id.resetButtonFPD);
+		confirmButton = (Button) dialogView.findViewById(R.id.confirmFPD);
+		
+		forgetPasswordAlertDialog = dialogBuilder.create();
+		forgetPasswordAlertDialog.show();
+	}
+	
+	public void RequestResetCodeButton(View view)
+	{
+		System.out.println("Request Reset Code Button was activated.");
+		//set button to unclickable to prevent spamming until finished
+		requestButton.setEnabled(false);
+		
+		Context context = getApplicationContext();
+		
+		//make sure user has specified an email address to be reset
+		if(forgetEmail.getText().toString().compareTo("") == 0)
+		{
+			Toast toast = GLOBAL.getToast(context, "Must specify an email address to be reset.");
+			toast.show();
+			//make button clickable again
+			requestButton.setEnabled(true);
+		}
+		else
+		{
+			//attempt to request a reset code.
+			new RequestResetCodeTask().execute("http://68.59.162.183/"
+					+ "android_connect/request_resetcode.php");
+		}
+		
+	}
+	
+	//aSynch class to generate a reset code for an account to reset their password
+	private class RequestResetCodeTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected String doInBackground(String... urls)
+		{
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+				
+			//add all pairs
+			nameValuePairs.add(new BasicNameValuePair("email", forgetEmail.getText().toString()));
+			
+			//pass url and nameValuePairs off to global to do the JSON call.  Code continues at onPostExecute when JSON returns.
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+		}
+			@Override
+		protected void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+				// check json response for whether reset code was created
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					System.out.println("request code was successfully generated!");
+					Context context = getApplicationContext();
+					Toast toast = GLOBAL.getToast(context, jsonObject.getString("message"));
+					toast.show();
+				}
+				else if (jsonObject.getString("success").toString().equals("0"))
+				{
+					System.out.println("request code failed to generate!");
+					Context context = getApplicationContext();
+					Toast toast = GLOBAL.getToast(context, jsonObject.getString("message"));
+					toast.show();
+				}
+				//make button clickable again
+				requestButton.setEnabled(true);
+			} 
+			catch (Exception e)
+			{
+				Log.d("readJSONFeed", e.getLocalizedMessage());
+			}
+		}
+	}
+
+	public void ConfirmResetCodeButton(View view)
+	{
+		System.out.println("Confirm Reset Code Button was activated.");
+		//set button to unclickable to prevent spamming until finished
+		confirmButton.setEnabled(false);
+		Context context = getApplicationContext();
+		
+		//make sure user has specified a reset code
+		if(forgetCode.getText().toString().compareTo("") == 0)
+		{
+			Toast toast = GLOBAL.getToast(context, "Please type your reset code you received by email.");
+			toast.show();
+			//make button clickable again
+			confirmButton.setEnabled(true);
+		}
+		//make sure user has specified their email address
+		else if(forgetEmail.getText().toString().compareTo("") == 0)
+		{
+			Toast toast = GLOBAL.getToast(context, "Must specify an email address to be reset.");
+			toast.show();
+			//make button clickable again
+			confirmButton.setEnabled(true);
+		}
+		else
+		{
+			//attempt to confirm the reset code
+			new ConfirmResetCodeTask().execute("http://68.59.162.183/"
+					+ "android_connect/confirm_resetcode.php");
+		}
+	}
+	
+	//aSynch class to generate a reset code for an account to reset their password
+	private class ConfirmResetCodeTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected String doInBackground(String... urls)
+		{
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+				
+			//add all pairs
+			nameValuePairs.add(new BasicNameValuePair("code", forgetCode.getText().toString()));
+			nameValuePairs.add(new BasicNameValuePair("email", forgetEmail.getText().toString()));
+			forgetEmailString = forgetEmail.getText().toString();
+			
+			//pass url and nameValuePairs off to global to do the JSON call.  Code continues at onPostExecute when JSON returns.
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+		}
+			@Override
+		protected void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+				// check json response for whether reset code was a match
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					System.out.println("request code was successfully matched to code in database!");
+					
+					//Allow user to create new password.
+						
+					AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(LoginActivity.this);
+					dialogBuilder.setTitle("Create New Password");
+					LayoutInflater inflater = LoginActivity.this.getLayoutInflater();
+					View dialogView = inflater.inflate(R.layout.changepassword_dialog, null);
+					dialogBuilder.setView(dialogView);
+					
+					EditText passwordOld = (EditText) dialogView.findViewById(R.id.passwordOldTextCPD);
+					passwordOld.setVisibility(View.GONE);
+					
+					newPassword = (EditText) dialogView.findViewById(R.id.passwordNewTextCPD);
+					confirmPassword = (EditText) dialogView.findViewById(R.id.passwordConfirmTextCPD);
+					changePasswordButton = (Button) dialogView.findViewById(R.id.loginButtonLA);
+					
+					createPasswordAlertDialog = dialogBuilder.create();
+					createPasswordAlertDialog.show();
+				}
+				else if (jsonObject.getString("success").toString().equals("0"))
+				{
+					System.out.println("request code failed to match!");
+					Context context = getApplicationContext();
+					Toast toast = GLOBAL.getToast(context, jsonObject.getString("message"));
+					toast.show();
+				}
+				//make button clickable again
+				confirmButton.setEnabled(true);
+			} 
+			catch (Exception e)
+			{
+				Log.d("readJSONFeed", e.getLocalizedMessage());
+			}
+		}
+	}
+	
+	public void ConfirmPasswordChangeButton(View view)
+	{
+		Context context = getApplicationContext();
+		System.out.println("confirmpasswordchangebutton was activated.");
+		//set button to unclickable to prevent spamming until finished
+				changePasswordButton.setEnabled(false);
+			
+		//error if new password does not match confirm new password
+		if(newPassword.getText().toString().compareTo(confirmPassword.getText().toString()) != 0)
+		{			
+			Toast toast = GLOBAL.getToast(context, "'New password' must match 'Confirm new password'");
+			toast.show();
+			newPassword.setText("");
+			confirmPassword.setText("");
+			//make button clickable again
+			changePasswordButton.setEnabled(true);
+		}
+		//error if empty new password field
+		else if(newPassword.getText().toString().compareTo("") == 0)
+		{
+			Toast toast = GLOBAL.getToast(context, "Enter a new password first.");
+			toast.show();
+			//make button clickable again
+			changePasswordButton.setEnabled(true);
+		}
+		//attempt to change password
+		else
+		{
+		    new ChangePasswordTask().execute("http://68.59.162.183/"
+					+ "android_connect/update_password_by_code.php");
+		}
+	}
+	
+	//aSynch class to update account password
+	private class ChangePasswordTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected String doInBackground(String... urls)
+		{
+			System.out.println("updating password...");
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("email", forgetEmailString));
+			nameValuePairs.add(new BasicNameValuePair("newPassword", newPassword.getText().toString()));
+			nameValuePairs.add(new BasicNameValuePair("code", forgetCode.getText().toString()));
+				
+			//pass url and nameValuePairs off to global to do the JSON call.  Code continues at onPostExecute when JSON returns.
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);					
+		}
+		
+		@Override
+		protected void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+				// profile settings have been successfully updated
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					System.out.println("updating password complete!");
+					Context context = getApplicationContext();
+					Toast toast = GLOBAL.getToast(context, jsonObject.getString("message"));
+					toast.show();
+					createPasswordAlertDialog.cancel();
+					forgetPasswordAlertDialog.cancel();
+				}
+				else if (jsonObject.getString("success").toString().equals("0"))
+				{
+					System.out.println("Failed to update password!");
+					Context context = getApplicationContext();
+					Toast toast = GLOBAL.getToast(context, jsonObject.getString("message"));
+					toast.show();
+					//failed to update user password for some reason. see error in toast.
+					//make button clickable again
+					changePasswordButton.setEnabled(true);
+				}
+			} 
+			catch (Exception e)
+			{
+				Log.d("readJSONFeed", e.getLocalizedMessage());
+			}
+		}
+	}
+	
 	@Override
 	public void onBackPressed() 
 	{
