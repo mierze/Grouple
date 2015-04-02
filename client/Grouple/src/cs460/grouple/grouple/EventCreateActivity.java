@@ -41,9 +41,8 @@ import android.widget.TimePicker;
  * GroupCreateActivity allows a user to create a new group.
  */
 
-@SuppressLint("SimpleDateFormat") public class EventCreateActivity extends ActionBarActivity
+@SuppressLint("SimpleDateFormat") public class EventCreateActivity extends BaseActivity
 {
-	private BroadcastReceiver broadcastReceiver;
 	private User user;
 	private String ID;
 	private String startDate = "";
@@ -61,21 +60,12 @@ import android.widget.TimePicker;
 	private Button addToBringRowButton;
 	private Button toBringButton;
 	private View toBringLayout;
-	private Dialog loadDialog;
 	private Calendar currentCal;
 	private Calendar startCal;
 	private Calendar endCal;
 	private LayoutInflater inflater;
 	private final ArrayList<EditText> toBringEditTexts = new ArrayList<EditText>();
 	private int year, month, day, hour, minute;
-	private Global GLOBAL;
-
-	@Override
-	public void onBackPressed() 
-	{
-	    finish();
-	    return;
-	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -87,7 +77,6 @@ import android.widget.TimePicker;
 
 	private void load()
 	{
-		GLOBAL = ((Global) getApplicationContext());
 		currentCal = Calendar.getInstance();
 		year = currentCal.get(Calendar.YEAR);
 		month = currentCal.get(Calendar.MONTH);
@@ -100,30 +89,8 @@ import android.widget.TimePicker;
 		endDateEditText = (EditText) findViewById(R.id.endTimeButton);
 		// grab the email of current users from our GLOBAL class
 		user = GLOBAL.getCurrentUser();
-		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
-		loadDialog.setOwnerActivity(this);
-		initActionBar();
-		initKillswitchListener();
+		initActionBar("Create Event");
 	}
-
-	private void initActionBar()
-	{
-		ActionBar ab = getSupportActionBar();
-		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-		ab.setCustomView(R.layout.actionbar);
-		ab.setDisplayHomeAsUpEnabled(false);
-		TextView actionBarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
-		actionBarTitle.setText("Create Event");
-	}
-
-	@Override
-	protected void onDestroy()
-	{
-		// TODO Auto-generated method stub
-		unregisterReceiver(broadcastReceiver);
-		super.onDestroy();
-	}
-
 	// onClick for items to bring
 	public void toBringButton(View view)
 	{
@@ -580,61 +547,6 @@ import android.widget.TimePicker;
 				Log.d("onPostreadJSONFeed", e.getLocalizedMessage());
 			}
 		}
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.navigation_actions, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item)
-	{
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_logout)
-		{
-
-			Intent login = new Intent(this, LoginActivity.class);
-			GLOBAL.destroySession();
-			startActivity(login);
-			Intent intent = new Intent("CLOSE_ALL");
-			this.sendBroadcast(intent);
-
-			return true;
-		}
-		if (id == R.id.action_home)
-		{
-			Intent intent = new Intent(this, HomeActivity.class);
-			startActivity(intent);
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
-	public void initKillswitchListener()
-	{
-		// START KILL SWITCH LISTENER
-		IntentFilter intentFilter = new IntentFilter();
-		intentFilter.addAction("CLOSE_ALL");
-		broadcastReceiver = new BroadcastReceiver()
-		{
-			@Override
-			public void onReceive(Context context, Intent intent)
-			{
-				// close activity
-				if (intent.getAction().equals("CLOSE_ALL"))
-				{
-					Log.d("app666", "we killin the login it");
-					finish();
-				}
-			}
-		};
-		registerReceiver(broadcastReceiver, intentFilter);
 	}
 
 	private DatePickerDialog.OnDateSetListener myStartDateListener = new DatePickerDialog.OnDateSetListener()

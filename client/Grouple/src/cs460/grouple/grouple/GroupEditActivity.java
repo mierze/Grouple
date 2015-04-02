@@ -49,7 +49,6 @@ import android.widget.Toast;
 public class GroupEditActivity extends BaseActivity
 {
 	// Set up fields. Most are just for the camera.
-	private Button b;
 	private ImageView iv;
 	private Bitmap bmp;
 	private Intent i;
@@ -61,8 +60,6 @@ public class GroupEditActivity extends BaseActivity
 		// Set the activity layout to activity_edit_profile.
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_group_edit);
-		b = (Button) findViewById(R.id.editGroupImageButton);
-		b.setOnClickListener((OnClickListener) this);
 		load();		
 	}
 	
@@ -359,7 +356,7 @@ public class GroupEditActivity extends BaseActivity
 		// TODO Auto-generated method stub
 		switch (v.getId()) 
 		{
-		case R.id.editGroupImageView:
+		case R.id.editGroupImageButton:
 			final CharSequence[] items = {"Take Photo", "Choose from Gallery",
 					"Cancel" };
 

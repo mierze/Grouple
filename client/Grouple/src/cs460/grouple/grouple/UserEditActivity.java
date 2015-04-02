@@ -53,7 +53,6 @@ import android.widget.Toast;
 public class UserEditActivity extends BaseActivity
 {
 	// Set up fields. Most are just for the camera.
-	private Button b;
 	private ImageView iv;
 	private Bitmap bmp;
 	private Intent i;
@@ -75,8 +74,6 @@ public class UserEditActivity extends BaseActivity
 		birthdayEditText = (EditText)findViewById(R.id.birthdayEditTextEPA);
 		locationEditText = (EditText) findViewById(R.id.locationEditTextEPA);
 		aboutEditText = (EditText) findViewById(R.id.aboutEditTextEPA);
-		b = (Button) findViewById(R.id.editUserImageButton);
-		b.setOnClickListener((OnClickListener) this);
 		load();		
 	}
 

@@ -43,7 +43,7 @@
                 android:layout_gravity="center|top"
                 android:background="@drawable/button_border"
                 android:fontFamily="sans-serif-condensed"
-                android:onClick="startEditPhotoButton"
+                android:onClick="onClick"
                 android:text="Edit Image"
                 android:textColor="@color/button_text_color"
                 android:textSize="14sp" />
