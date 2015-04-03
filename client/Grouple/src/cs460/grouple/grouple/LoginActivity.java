@@ -41,13 +41,13 @@ public class LoginActivity extends Activity
 	private Global GLOBAL;// = 
 	private Dialog loadDialog;
 	private EditText emailEditText;
-	boolean tokenFlag;
-	SharedPreferences prefs;
-	CheckBox rememberLogin;
-	AlertDialog forgotPasswordAlertDialog, createPasswordAlertDialog;
-	EditText forgotEmail, forgotCode, newPassword, confirmPassword;
-	String forgotEmailString;
-	Button requestButton, confirmButton,changePasswordButton;
+	private boolean tokenFlag;
+	private SharedPreferences prefs;
+	private CheckBox rememberLogin;
+	private AlertDialog forgotPasswordAlertDialog, createPasswordAlertDialog;
+	private EditText forgotEmail, forgotCode, newPassword, confirmPassword;
+	private String forgotEmailString;
+	private Button requestButton, confirmButton,changePasswordButton;
 	
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -250,7 +250,6 @@ public class LoginActivity extends Activity
 	public void forgotPasswordButton(View view)
 	{
 		String email = emailEditText.getText().toString();
-		System.out.println("Forgot Password Button was activated.");
 		// Removes any previous error message from previous failed login
 		loginFail.setVisibility(View.GONE);
 		
@@ -273,16 +272,12 @@ public class LoginActivity extends Activity
 	
 	public void RequestResetCodeButton(View view)
 	{
-		System.out.println("Request Reset Code Button was activated.");
 		//set button to unclickable to prevent spamming until finished
 		requestButton.setEnabled(false);
-		
-		Context context = getApplicationContext();
-		
 		//make sure user has specified an email address to be reset
 		if(forgotEmail.getText().toString().compareTo("") == 0)
 		{
-			Toast toast = GLOBAL.getToast(context, "Must specify an email address to be reset.");
+			Toast toast = GLOBAL.getToast(this, "Must specify an email address to be reset.");
 			toast.show();
 			//make button clickable again
 			requestButton.setEnabled(true);
@@ -342,7 +337,6 @@ public class LoginActivity extends Activity
 
 	public void ConfirmResetCodeButton(View view)
 	{
-		System.out.println("Confirm Reset Code Button was activated.");
 		//set button to unclickable to prevent spamming until finished
 		confirmButton.setEnabled(false);
 		Context context = getApplicationContext();
@@ -395,24 +389,18 @@ public class LoginActivity extends Activity
 				JSONObject jsonObject = new JSONObject(result);
 				// check json response for whether reset code was a match
 				if (jsonObject.getString("success").toString().equals("1"))
-				{
-					System.out.println("request code was successfully matched to code in database!");
-					
+				{	
 					//Allow user to create new password.
-						
 					AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(LoginActivity.this);
 					dialogBuilder.setTitle("Create New Password");
 					LayoutInflater inflater = LoginActivity.this.getLayoutInflater();
 					View dialogView = inflater.inflate(R.layout.changepassword_dialog, null);
 					dialogBuilder.setView(dialogView);
-					
 					EditText passwordOld = (EditText) dialogView.findViewById(R.id.passwordOldTextCPD);
 					passwordOld.setVisibility(View.GONE);
-					
 					newPassword = (EditText) dialogView.findViewById(R.id.passwordNewTextCPD);
 					confirmPassword = (EditText) dialogView.findViewById(R.id.passwordConfirmTextCPD);
-					changePasswordButton = (Button) dialogView.findViewById(R.id.loginButtonLA);
-					
+					changePasswordButton = (Button) dialogView.findViewById(R.id.loginButtonLA);					
 					createPasswordAlertDialog = dialogBuilder.create();
 					createPasswordAlertDialog.show();
 				}

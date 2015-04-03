@@ -62,6 +62,7 @@ public class UserEditActivity extends BaseActivity
 	private EditText locationEditText;
 	private EditText nameEditText;
 	private String birthday;
+	private Button submitButton;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -74,6 +75,7 @@ public class UserEditActivity extends BaseActivity
 		birthdayEditText = (EditText)findViewById(R.id.birthdayEditTextEPA);
 		locationEditText = (EditText) findViewById(R.id.locationEditTextEPA);
 		aboutEditText = (EditText) findViewById(R.id.aboutEditTextEPA);
+		submitButton = (Button) findViewById(R.id.submitButtonEPA);
 		load();		
 	}
 
@@ -181,6 +183,7 @@ public class UserEditActivity extends BaseActivity
 	// Button Listener for submit changes. It updates the profile in the database.
 	public void submitButton(View view) throws InterruptedException, ExecutionException, TimeoutException
 	{
+		submitButton.setEnabled(false);
 		// error checking:
 		// bio no more than 100 characters
 		String about = aboutEditText.getText().toString();
@@ -189,6 +192,7 @@ public class UserEditActivity extends BaseActivity
 			TextView errorTextView = (TextView) findViewById(R.id.errorTextViewEPA);
 			errorTextView.setText("About is too many characters.");
 			errorTextView.setVisibility(0);
+			submitButton.setEnabled(true);
 		} else
 		{
 			new setProfileTask()
@@ -202,18 +206,15 @@ public class UserEditActivity extends BaseActivity
 	 */
 	private class setProfileTask extends AsyncTask<String, Void, String>
 	{
-
 		@Override
 		protected String doInBackground(String... urls)
 		{
-
 			return readJSONFeed(urls[0]);
 		}
 
 		// Grab the data from the textviews and push it to the database.
 		public String readJSONFeed(String URL)
 		{
-
 			StringBuilder stringBuilder = new StringBuilder();
 			HttpClient httpClient = new DefaultHttpClient();
 			// kaboom
@@ -221,24 +222,17 @@ public class UserEditActivity extends BaseActivity
 			try
 			{
 				String email = user.getEmail();
-
 				String name = nameEditText.getText().toString();
 				// Split name by space because sleep.
 				String[] splitted = name.split("\\s+");
 				String firstName = splitted[0];
 				String lastName = splitted[1];
-
 				String about = aboutEditText.getText().toString();
-
 				String location = locationEditText.getText().toString();
-
 				MultipartEntityBuilder builder = MultipartEntityBuilder
 						.create();
-
 				builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-
 				byte[] data;
-
 				// process photo if set and add it to builder
 				if (bmp != null)
 				{
@@ -284,6 +278,7 @@ public class UserEditActivity extends BaseActivity
 					reader.close();
 					bmp = null;
 					builder = null;
+					submitButton.setEnabled(true);
 				} 
 				else
 				{

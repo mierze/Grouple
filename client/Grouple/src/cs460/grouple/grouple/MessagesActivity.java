@@ -287,13 +287,6 @@ public class MessagesActivity extends BaseActivity
                     protected void onPostExecute(String msg) {
                     	messageEditText.setText("");
                     	sendMessageButton.setClickable(true);
-                        //add to an array of some sort
-                    	//ideal to store if it is being received / sent, date, message body
-                    	//assuming to start just 1 person to 1 person manually set up
-                    	//repopulate messages for now
-                    	//GOAL, oncreate pull all messages from server for you and the user you want to see messages of
-                    	//if new messages get beamed in add them to that array with their timestamp and all and repopulate the messages
-                    	//also when you send a message, add it to the array and repopulate messages
                     	populateMessages();
                     }
                 }.execute(null, null, null);
@@ -312,11 +305,10 @@ public class MessagesActivity extends BaseActivity
 		@Override
 		protected String doInBackground(String... urls)
 		{
-			Global global = ((Global) getApplicationContext());
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			//The recipient's email is urls[1]
 			nameValuePairs.add(new BasicNameValuePair("email", urls[1]));
-			return global.readJSONFeed(urls[0], nameValuePairs);
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
 
 		@Override
