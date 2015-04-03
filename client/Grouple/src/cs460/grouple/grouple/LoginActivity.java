@@ -39,7 +39,8 @@ public class LoginActivity extends Activity
 	private ProgressBar progBar;
 	private TextView loginFail;
 	private Global GLOBAL;// = 
-	private Dialog loadDialog = null;
+	private Dialog loadDialog;
+	private EditText emailEditText;
 	boolean tokenFlag;
 	SharedPreferences prefs;
 	CheckBox rememberLogin;
@@ -86,6 +87,7 @@ public class LoginActivity extends Activity
 			loginFail.setVisibility(View.GONE);
 			initKillswitchListener();
 		}	
+		emailEditText = (EditText) findViewById(R.id.emailEditTextLA);
 	}
 	
 	@Override
@@ -128,8 +130,6 @@ public class LoginActivity extends Activity
 
 		// Makes progress bar visible during processing of login
 		progBar.setVisibility(View.VISIBLE);
-
-		EditText emailEditText = (EditText) findViewById(R.id.emailEditTextLA);
 		EditText passwordEditText = (EditText) findViewById(R.id.passwordEditTextLA);
 		String email = emailEditText.getText().toString();
 		String password = passwordEditText.getText().toString();
@@ -179,8 +179,6 @@ public class LoginActivity extends Activity
 						loginFail.setTextColor(getResources().getColor(
 								R.color.light_green));
 						loginFail.setVisibility(View.VISIBLE);
-
-						EditText emailEditText = (EditText) findViewById(R.id.emailEditTextLA);
 						//get the email
 						email = emailEditText.getText().toString();
 						
@@ -226,8 +224,6 @@ public class LoginActivity extends Activity
 						// login/pass.
 						loginFail = (TextView) findViewById(R.id.loginFailTextViewLA);
 						loginFail.setVisibility(View.GONE);
-
-						Log.d("app666", "we created");
 						initKillswitchListener();
 					}
 					//failed email/password login
@@ -241,18 +237,19 @@ public class LoginActivity extends Activity
 						loginFail.setText(jsonObject.getString("message"));
 						loginFail.setTextColor(getResources().getColor(R.color.red));
 						loginFail.setVisibility(View.VISIBLE);
-					}
-					
+					}	
 				}
-			} catch (Exception e)
+			} 
+			catch (Exception e)
 			{
-				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 			}
 		}
 	}
 	
 	public void forgotPasswordButton(View view)
 	{
+		String email = emailEditText.getText().toString();
 		System.out.println("Forgot Password Button was activated.");
 		// Removes any previous error message from previous failed login
 		loginFail.setVisibility(View.GONE);
@@ -264,6 +261,8 @@ public class LoginActivity extends Activity
 		dialogBuilder.setView(dialogView);
 
 		forgotEmail = (EditText) dialogView.findViewById(R.id.emailFPD);
+		if (!email.equals(""))
+			forgotEmail.setText(email);
 		forgotCode  = (EditText) dialogView.findViewById(R.id.resetCodeFPD);
 		requestButton = (Button) dialogView.findViewById(R.id.resetButtonFPD);
 		confirmButton = (Button) dialogView.findViewById(R.id.confirmFPD);
