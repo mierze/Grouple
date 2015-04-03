@@ -4,21 +4,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
-
 import android.app.Application;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 public class GcmUtility extends Application 
 {
-	
 	private String SENDER_ID = "957639483805"; 
 	private GoogleCloudMessaging gcm;
 	private String recipientRegID = "";

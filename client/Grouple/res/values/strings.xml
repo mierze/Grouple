@@ -7,7 +7,7 @@
     <string name="loginTextView">Login</string>
     <string name="registerTextView">Register</string>
     <string name="homeTextView">Grouple</string>
-    <string name="introMessage">Check \'✓\' the friends you want to add.\nToggle \'A\' to make admin.</string>
+    <string name="inviteMembersMessage">Click on the name or the \'✓\' of friends you want to add. Tap to toggle their role [U]ser, [P]romoter, [A]dmin.</string>
     <string name="userTextView">User Profile</string>
     <string name="groupsTextView">Groups</string>
     <string name="emailEditText">Enter email</string>

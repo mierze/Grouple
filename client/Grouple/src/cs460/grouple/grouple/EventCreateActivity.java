@@ -51,10 +51,13 @@ import android.widget.TimePicker;
 	private String maximum = "";
 	private String category = "";
 	private String location = "";
+	private String name = "";
 	private EditText categoryEditText;
 	private EditText startDateEditText;
 	private EditText endDateEditText;
 	private EditText locationEditText;
+	private EditText aboutEditText;
+	private EditText nameEditText;
 	private AlertDialog categoryDialog;
 	private AlertDialog toBringDialog;
 	private Button addToBringRowButton;
@@ -83,10 +86,13 @@ import android.widget.TimePicker;
 		day = currentCal.get(Calendar.DAY_OF_MONTH);
 		hour = currentCal.get(Calendar.HOUR_OF_DAY);
 		minute = currentCal.get(Calendar.MINUTE);
-		categoryEditText = (EditText) findViewById(R.id.category);
+		categoryEditText = (EditText) findViewById(R.id.eventCategoryEditText);
 		toBringButton = (Button) findViewById(R.id.toBringButton);
 		startDateEditText = (EditText) findViewById(R.id.startTimeButton);
+		locationEditText = (EditText) findViewById(R.id.eventLocationEditText);
 		endDateEditText = (EditText) findViewById(R.id.endTimeButton);
+		aboutEditText = (EditText) findViewById(R.id.eventAboutEditText);
+		nameEditText = (EditText) findViewById(R.id.eventNameEditText);
 		// grab the email of current users from our GLOBAL class
 		user = GLOBAL.getCurrentUser();
 		initActionBar("Create Event", true);
@@ -280,10 +286,8 @@ import android.widget.TimePicker;
 	{
 		// Checking user inputs on event name, category, start date, end date,
 		// and min_part
-		EditText eventNameEditText = (EditText) findViewById(R.id.eventName);
-		locationEditText = (EditText) findViewById(R.id.locationEditTextECA);
 		location = locationEditText.getText().toString();
-		String eventname = eventNameEditText.getText().toString();
+		name = nameEditText.getText().toString();
 		//TODO: not grab right from here
 		System.out.println("startdate to be used is: " + startDate);
 		category = categoryEditText.getText().toString();
@@ -327,7 +331,7 @@ import android.widget.TimePicker;
 		}
 
 		// if empty group name, display error box
-		if (eventname.compareTo("") == 0)
+		if (name.compareTo("") == 0)
 		{
 			new AlertDialog.Builder(this)
 					.setMessage(
@@ -395,16 +399,13 @@ import android.widget.TimePicker;
 		@Override
 		protected String doInBackground(String... urls)
 		{
-			EditText eventNameEditText = (EditText) findViewById(R.id.eventName);
-			EditText eventBioEditText = (EditText) findViewById(R.id.eventBio);
-
 			// grab group name and bio from textviews
-			String eventname = eventNameEditText.getText().toString();
-			String eventbio = eventBioEditText.getText().toString();
+			String name = nameEditText.getText().toString();
+			String about = aboutEditText.getText().toString();
 		
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair("e_name", eventname));
-			nameValuePairs.add(new BasicNameValuePair("about", eventbio));
+			nameValuePairs.add(new BasicNameValuePair("e_name", name));
+			nameValuePairs.add(new BasicNameValuePair("about", about));
 			nameValuePairs.add(new BasicNameValuePair("creator", user.getEmail()));
 			nameValuePairs.add(new BasicNameValuePair("start_date", startDate));
 			nameValuePairs.add(new BasicNameValuePair("end_date", endDate));

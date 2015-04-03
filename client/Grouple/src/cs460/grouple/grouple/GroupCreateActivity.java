@@ -37,6 +37,8 @@ public class GroupCreateActivity extends BaseActivity
 	private ArrayList<User> allFriends = new ArrayList<User>();   //holds list of all current friends
 	private User user;
 	private String g_id;
+	private EditText nameEditText;
+	private EditText aboutEditText;
 	Group g;
 	
 	@Override
@@ -53,7 +55,8 @@ public class GroupCreateActivity extends BaseActivity
 		user = GLOBAL.getCurrentUser();
 		//load our list of current friends.  key is friend email -> value is full names
 		allFriends = user.getUsers();
-		
+		nameEditText = (EditText) findViewById(R.id.groupNameEditText);
+		aboutEditText = (EditText) findViewById(R.id.groupAboutEditText);
 		populateGroupCreate();
 		initActionBar("Create Group", true);
 	}
@@ -255,14 +258,13 @@ public class GroupCreateActivity extends BaseActivity
 	public void createGroupButton(View view)
 	{		
 		//first check to make sure a group name has been typed by the user
-		EditText groupNameEditText = (EditText) findViewById(R.id.groupName);
 		//Check that a radio button was checked too.
 		RadioButton publicButton = (RadioButton) findViewById(R.id.publicButton);
 		RadioButton privateButton = (RadioButton) findViewById(R.id.privateButton);
-		String groupname = groupNameEditText.getText().toString();
+		String name = nameEditText.getText().toString();
 		
 		//if empty group name, display error box
-		if(groupname.compareTo("") == 0)
+		if(name.compareTo("") == 0)
 		{
 			new AlertDialog.Builder(this)
 			.setMessage("Please give your group a name before creating.")
@@ -326,13 +328,11 @@ public class GroupCreateActivity extends BaseActivity
 		@Override
 		protected String doInBackground(String... urls)
 		{
-			EditText groupNameEditText = (EditText) findViewById(R.id.groupName);
-			EditText groupBioEditText = (EditText) findViewById(R.id.groupBio);
 			RadioButton privateButton = (RadioButton) findViewById(R.id.privateButton);
 			
 			//grab group name and bio from textviews
-			String groupname = groupNameEditText.getText().toString();
-			String groupbio = groupBioEditText.getText().toString();	
+			String groupname = nameEditText.getText().toString();
+			String groupbio = aboutEditText.getText().toString();	
 			
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("g_name", groupname));

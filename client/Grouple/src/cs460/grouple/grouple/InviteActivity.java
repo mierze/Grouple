@@ -27,6 +27,7 @@ public class InviteActivity extends BaseActivity {
 	private User user;
 	private ArrayList<User> users;
 	private Group group;
+	private String userRole;
 	private SparseArray<String> role = new SparseArray<String>();   
 	//holds list of role of all friend rows to be added
 	private String CONTENT; //type of content to display
@@ -46,6 +47,7 @@ public class InviteActivity extends BaseActivity {
 		//should always be current user
 		user = GLOBAL.getCurrentUser();
 		group = GLOBAL.getGroupBuffer();
+		userRole = user.getGroupRole(group.getID());
 		populateInviteMembers();
 		initActionBar("Invite to " + group.getName(), true);
 	}
@@ -111,7 +113,7 @@ public class InviteActivity extends BaseActivity {
 							makeAdminButton.setTextColor(getResources().getColor(
 									R.color.orange));
 						} 
-						else if (makeAdminButton.getText().toString().equals("U")) 
+						else if (makeAdminButton.getText().toString().equals("U") && userRole.equals("A")) 
 						{
 							makeAdminButton.setText("P");
 							role.put(view.getId(), "P");
@@ -127,7 +129,7 @@ public class InviteActivity extends BaseActivity {
 							makeAdminButton.setTextColor(getResources().getColor(
 									R.color.light_green));
 						}
-						else if (makeAdminButton.getText().toString().equals("A")) 
+						else if (makeAdminButton.getText().toString().equals("A") || makeAdminButton.getText().toString().equals("U")) 
 						{
 							makeAdminButton.setText("-");
 							cb.setChecked(false);
@@ -151,7 +153,7 @@ public class InviteActivity extends BaseActivity {
 							makeAdminButton.setTextColor(getResources().getColor(
 									R.color.orange));
 						} 
-						else if (makeAdminButton.getText().toString().equals("U")) 
+						else if (makeAdminButton.getText().toString().equals("U") && userRole.equals("A")) 
 						{
 							makeAdminButton.setText("P");
 							role.put(view.getId(), "P");
@@ -168,7 +170,7 @@ public class InviteActivity extends BaseActivity {
 							makeAdminButton.setTextColor(getResources().getColor(
 									R.color.light_green));
 						}
-						else if (makeAdminButton.getText().toString().equals("A")) 
+						else if (makeAdminButton.getText().toString().equals("A") || makeAdminButton.getText().toString().equals("U")) 
 						{
 							makeAdminButton.setText("-");
 							cb.setChecked(false);

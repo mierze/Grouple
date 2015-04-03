@@ -259,11 +259,11 @@ public class LoginActivity extends Activity
 		View dialogView = inflater.inflate(R.layout.forgotpassword_dialog, null);
 		dialogBuilder.setView(dialogView);
 
-		forgotEmail = (EditText) dialogView.findViewById(R.id.emailFPD);
+		forgotEmail = (EditText) dialogView.findViewById(R.id.confirmEditText);
 		if (!email.equals(""))
 			forgotEmail.setText(email);
 		forgotCode  = (EditText) dialogView.findViewById(R.id.resetCodeFPD);
-		requestButton = (Button) dialogView.findViewById(R.id.resetButtonFPD);
+		requestButton = (Button) dialogView.findViewById(R.id.confirmDeleteButton);
 		confirmButton = (Button) dialogView.findViewById(R.id.confirmFPD);
 		
 		forgotPasswordAlertDialog = dialogBuilder.create();

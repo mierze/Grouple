@@ -281,15 +281,12 @@ public class ProfileActivity extends BaseActivity
 				//json fetch was successful
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
+					//adding role to users array of roles for future reference
 					String role = jsonObject.getString("role").toString();
 					if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
-					{
 						user.addToGroupRoles(group.getID(), role);
-					}
 					else
-					{
 						user.addToEventRoles(event.getID(), role);
-					}
 					setNotifications(); //for group / event
 				} 
 				else
@@ -350,8 +347,8 @@ public class ProfileActivity extends BaseActivity
 		int id = item.getItemId();
 		if (id == R.id.action_profile)
 		{
-			return true;
-			//do nothing, already here
+			if (CONTENT.equals(CONTENT_TYPE.USER.toString()) && user.getEmail().equals(GLOBAL.getCurrentUser().getEmail()))
+				return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}

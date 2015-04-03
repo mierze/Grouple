@@ -63,6 +63,7 @@ public class UserEditActivity extends BaseActivity
 	private EditText nameEditText;
 	private String birthday;
 	private Button submitButton;
+	private TextView errorTextView;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -76,14 +77,15 @@ public class UserEditActivity extends BaseActivity
 		locationEditText = (EditText) findViewById(R.id.locationEditTextEPA);
 		aboutEditText = (EditText) findViewById(R.id.aboutEditTextEPA);
 		submitButton = (Button) findViewById(R.id.submitButtonEPA);
+		errorTextView = (TextView) findViewById(R.id.errorTextView);
 		load();		
 	}
 
 	private void load()
 	{
 		// Resetting error text view
-		TextView errorTextView = (TextView) findViewById(R.id.errorTextViewEPA);
-		errorTextView.setVisibility(1);
+		
+		errorTextView.setVisibility(View.GONE);
 
 		user = GLOBAL.getCurrentUser();
 		if (user != null)
@@ -122,7 +124,7 @@ public class UserEditActivity extends BaseActivity
 				else
 				{
 					// failed
-					Log.d("FETCH ROLE FAILED", "FAILED");
+					Log.d("getImage", "FAILED");
 				}
 			} 
 			catch (Exception e)
@@ -189,9 +191,8 @@ public class UserEditActivity extends BaseActivity
 		String about = aboutEditText.getText().toString();
 		if (about.length() > 100)
 		{
-			TextView errorTextView = (TextView) findViewById(R.id.errorTextViewEPA);
 			errorTextView.setText("About is too many characters.");
-			errorTextView.setVisibility(0);
+			errorTextView.setVisibility(View.VISIBLE);
 			submitButton.setEnabled(true);
 		} else
 		{

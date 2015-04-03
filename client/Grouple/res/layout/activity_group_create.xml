@@ -3,125 +3,135 @@
     android:id="@+id/groupCreateLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="5dp"
     android:background="@color/background_color"
-    android:orientation="vertical" >
-    
-    <LinearLayout
-        android:id="@+id/linearLayoutTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-    	android:background="@color/layout_background_color"
-        android:orientation="vertical" >
+    android:orientation="vertical"
+    android:padding="5dp" >
 
-        <EditText
-            android:id="@+id/groupName"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:maxLength="40"
-            android:inputType="textCapWords"
-            android:minLines="1"
-            android:maxLines="1"
-            android:textColor="@color/text_color"
-            android:textColorHint="@color/hint_text_color"
-            android:gravity="center"
-            android:hint="@string/groupNameMessage" />
-        
-        <TextView
-            android:id="@+id/createbioMessage"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-        	android:layout_marginTop="5dp"
-        	android:padding="5dp"
-    		android:gravity="left"
-            android:text="@string/bioMessage"
-        	android:background="@color/black"
-            android:textColor="@color/white" />
-        
-        <EditText
-            android:id="@+id/groupBio"
-            android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:inputType="textCapSentences"
-        	android:layout_weight="1"
-            android:textColor="@color/text_color"
-            android:textColorHint="@color/hint_text_color"
-    		android:background="@color/layout_background_color"
-            android:gravity="left"
-            android:padding="5dp"
-            android:maxLength="255"
-            android:minLines="3"
-            android:maxLines="3"
-            android:hint="@string/groupBioMessage" />
-    
-    </LinearLayout>
-    
-    <TextView
-        android:id="@+id/createIntroMessage"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="left"
-        android:text="@string/introMessage"
-        android:background="@color/black"
-        android:textColor="@color/white" />
-        
     <ScrollView
-        android:id="@+id/scrollViewPickMembers"
+        android:id="@+id/scrollViewEntire"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.77"
-        android:background="@color/layout_background_color"
+        android:layout_weight="2"
         android:padding="0dp" >
 
         <LinearLayout
-            android:id="@+id/linearLayoutNested1"
+            android:id="@+id/linearLayoutTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:orientation="vertical" >
+
+            <EditText
+                android:id="@+id/groupNameEditText"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:background="@color/layout_background_color"
+                android:gravity="center"
+                android:hint="@string/groupNameMessage"
+                android:inputType="textCapWords"
+                android:maxLength="40"
+                android:maxLines="1"
+                android:minLines="1"
+                android:padding="5dp"
+                android:textColor="@color/text_color"
+                android:textColorHint="@color/hint_text_color" />
+
+            <TextView
+                android:id="@+id/groupAboutLabelTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:background="@color/black"
+                android:gravity="left"
+                android:padding="5dp"
+                android:text="@string/bioMessage"
+                android:textColor="@color/white" />
+
+            <EditText
+                android:id="@+id/groupAboutEditText"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                android:background="@color/layout_background_color"
+                android:gravity="left"
+                android:hint="@string/groupBioMessage"
+                android:inputType="textCapSentences"
+                android:maxLength="255"
+                android:maxLines="3"
+                android:padding="5dp"
+                android:textColor="@color/text_color"
+                android:textColorHint="@color/hint_text_color" />
+
+            <TextView
+                android:id="@+id/inviteMembersLabelTextView"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/black"
+                android:gravity="left"
+                android:text="@string/inviteMembersMessage"
+                android:textColor="@color/white" />
+
+            <ScrollView
+                android:id="@+id/scrollViewPickMembers"
+                android:layout_width="match_parent"
+                android:layout_height="500dp"
+                android:layout_weight="1"
+                android:background="@color/layout_background_color"
+                android:padding="0dp" >
+
+                <LinearLayout
+                    android:id="@+id/linearLayoutNested1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+            </ScrollView>
+
+            <TextView
+                android:id="@+id/publicLabelTextViewEPA"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/black"
+                android:padding="5dp"
+                android:text="Group privacy settings:"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/white" />
+
+            <LinearLayout
+                android:id="@+id/publicButtonContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/layout_background_color"
+                android:orientation="horizontal" >
+
+                <RadioButton
+                    android:id="@+id/publicButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:onClick="radio"
+                    android:text="Public" />
+
+                <RadioButton
+                    android:id="@+id/privateButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:onClick="radio"
+                    android:text="Private" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/confirmButton"
+                android:layout_width="match_parent"
+                android:layout_height="50sp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/button_border"
+                android:onClick="createGroupButton"
+                android:text="@string/confirm"
+                android:textColor="@color/button_text_color"
+                android:textSize="20sp" />
+        </LinearLayout>
     </ScrollView>
-    
-    	    <LinearLayout
 
-		    android:id="@+id/publicButtonContainer"
-		    android:background="@color/background_color"
-		    android:layout_height="wrap_content"
-		    android:layout_width="match_parent"
-		    android:orientation="horizontal"
-		    tools:context="cs460.grouple.grouple.GroupEditActivity" >
-    
-	         <RadioButton
-	             android:id="@+id/publicButton"
-	             android:layout_width="wrap_content"
-	             android:layout_height="wrap_content"
-	             android:layout_weight="2"
-	             android:onClick="radio"
-	             android:text="Public" />
-
-		    <RadioButton
-		        android:id="@+id/privateButton"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_weight="2"
-		        android:onClick="radio"
-		        android:text="Private" />
-	        
-	      </LinearLayout>
-    
-    <LinearLayout
-        android:layout_width="match_parent"
-        
-        android:layout_height="wrap_content" >
-        
-        <Button
-            android:id="@+id/confirmButton"
-            android:layout_width="match_parent"
-            android:layout_height="50sp"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/button_border"
-            android:onClick="createGroupButton"
-            android:text="@string/confirm"
-            android:textColor="@color/button_text_color"
-            android:textSize="20sp" />
-
-    </LinearLayout>
 </LinearLayout>

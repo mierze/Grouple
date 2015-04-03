@@ -34,6 +34,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -53,16 +54,21 @@ public class GroupEditActivity extends BaseActivity
 	private Bitmap bmp;
 	private Intent i;
 	private Group group;
-	
+	private EditText aboutEditText;
+	private EditText nameEditText;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		// Set the activity layout to activity_edit_profile.
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_group_edit);
-		load();		
+		iv = (ImageView) findViewById(R.id.groupEditImageView);
+		aboutEditText = (EditText) findViewById(R.id.groupAboutEditText);
+		nameEditText = (EditText) findViewById(R.id.groupNameEditText);
+		load();
 	}
-	
+
 	private void load()
 	{
 		// Resetting error text view
@@ -72,26 +78,46 @@ public class GroupEditActivity extends BaseActivity
 		initActionBar("Edit " + group.getName(), true);
 	}
 
+	public void deleteGroup(View view)
+	{
+		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+		dialogBuilder.setTitle("Confirm Delete Group");
+		LayoutInflater inflater = this.getLayoutInflater();
+		View dialogView = inflater.inflate(R.layout.deleteentity_dialog, null);
+		dialogBuilder.setView(dialogView);
+
+		Button confirmDeleteButton = (Button) dialogView
+				.findViewById(R.id.confirmDeleteButton);
+		EditText confirmEditText = (EditText) dialogView
+				.findViewById(R.id.confirmEditText);
+		confirmDeleteButton.setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View view)
+			{
+
+				System.out.println("DELETE THID BITCH");
+				// call delete task
+			}
+
+		});
+		AlertDialog deleteGroupDialog = dialogBuilder.create();
+		deleteGroupDialog.show();
+
+	}
+
 	/*
 	 * Get profile executes get_groupprofile.php. It uses the current groups gid
 	 * to retrieve the groups name, about, and other info.
 	 */
 	private void getGroupProfile()
 	{
-		// Find the text views.
-		TextView nameTextView = (TextView) findViewById(R.id.nameEditTextEPA);
-		TextView aboutTextView = (TextView) findViewById(R.id.aboutEditTextEPA);
-		if (iv == null)
-		{
-			Log.d("scott", "7th");
-			iv = (ImageView) findViewById(R.id.editGroupImageView);
-		}
 		// Add the info to the textviews for editing.
-		nameTextView.setText(group.getName());
-		aboutTextView.setText(group.getAbout());
+		nameEditText.setText(group.getName());
+		aboutEditText.setText(group.getAbout());
 		RadioButton publicButton = (RadioButton) findViewById(R.id.publicButton);
 		RadioButton privateButton = (RadioButton) findViewById(R.id.privateButton);
-		System.out.println("group.getpub() value is: "+group.getPub());
+		System.out.println("group.getpub() value is: " + group.getPub());
 		if (group.getPub() == 1)
 			publicButton.setChecked(true);
 		else
@@ -115,32 +141,25 @@ public class GroupEditActivity extends BaseActivity
 	// This executes the
 	public void submitButton(View view)
 	{
-		// error checking
-
-		// bio no more than
-		EditText aboutEditText = (EditText) findViewById(R.id.aboutEditTextEPA);
-		EditText nameEditText = (EditText) findViewById(R.id.nameEditTextEPA);
 		TextView errorTextView = (TextView) findViewById(R.id.errorTextViewEPA);
 		String about = aboutEditText.getText().toString();
-		String name = nameEditText.getText().toString(); 
+		String name = nameEditText.getText().toString();
 		if (about.length() > 100)
 		{
 			errorTextView.setText("About is too many characters.");
-			errorTextView.setVisibility(0);
-		}
-		else if(name.isEmpty() || name.compareTo("") == 0 )
+			errorTextView.setVisibility(View.VISIBLE);
+		} else if (name.isEmpty() || name.compareTo("") == 0)
 		{
 			errorTextView.setText("Please enter a name.");
-			errorTextView.setVisibility(0);
-		}
-		else
+			errorTextView.setVisibility(View.VISIBLE);
+		} else
 		{
-			new setProfileTask().execute("http://68.59.162.183/android_connect/update_group.php");
-		
+			new setProfileTask()
+					.execute("http://68.59.162.183/android_connect/update_group.php");
 		}
 	}
 
-	public void radio (View view)
+	public void radio(View view)
 	{
 		RadioButton publicButton = (RadioButton) findViewById(R.id.publicButton);
 		RadioButton privateButton = (RadioButton) findViewById(R.id.privateButton);
@@ -152,10 +171,8 @@ public class GroupEditActivity extends BaseActivity
 				System.out.println("Case public button and is checked.");
 				privateButton.setChecked(false);
 			}
-			
 			break;
 		case R.id.privateButton:
-			
 			if (privateButton.isChecked())
 			{
 				System.out.println("Case private button and is checked.");
@@ -164,7 +181,6 @@ public class GroupEditActivity extends BaseActivity
 			break;
 		}
 	}
-	
 
 	/* TASK FOR GRABBING IMAGE OF EVENT/USER/GROUP */
 	private class getImageTask extends AsyncTask<String, Void, String>
@@ -174,11 +190,9 @@ public class GroupEditActivity extends BaseActivity
 		{
 			String type;
 			String id;
-	
-				type = "gid";
-				id = Integer.toString(group.getID());
-			
-			
+			type = "gid";
+			id = Integer.toString(group.getID());
+
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair(type, id));
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
@@ -190,15 +204,13 @@ public class GroupEditActivity extends BaseActivity
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
-				 
-				//json fetch was successful
+				// json fetch was successful
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					String image = jsonObject.getString("image").toString();
 					group.setImage(image);
 					iv.setImageBitmap(group.getImage());
-				} 
-				else
+				} else
 				{
 					// failed
 					Log.d("FETCH ROLE FAILED", "FAILED");
@@ -206,14 +218,12 @@ public class GroupEditActivity extends BaseActivity
 			} 
 			catch (Exception e)
 			{
-				Log.d("atherjsoninuserpost", "here");
-				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 			}
-			//do next thing here
+			// do next thing here
 		}
 	}
-	
-	
+
 	/*
 	 * Set profile executes update_profile.php. It uses the current users email
 	 * address to update the users name, age, and bio.
@@ -231,36 +241,28 @@ public class GroupEditActivity extends BaseActivity
 		// Grab the data from the textviews and push it to the database.
 		public String readJSONFeed(String URL)
 		{
-
 			StringBuilder stringBuilder = new StringBuilder();
 			HttpClient httpClient = new DefaultHttpClient();
 			// kaboom
-			//update_group.php using name/value pair
+			// update_group.php using name/value pair
 			HttpPost httpPost = new HttpPost(URL);
 			try
 			{
-				//Get g_name
-				EditText nameEditText = (EditText) findViewById(R.id.nameEditTextEPA);
-				//Get about
-				EditText aboutEditText = (EditText) findViewById(R.id.aboutEditTextEPA);
-				//If private is not checked, then assume public. yes that means if the user selects nothing then it is assumed public.
+				// If private is not checked, then assume public. yes that means
+				// if the user selects nothing then it is assumed public.
 				RadioButton privateRadioButton = (RadioButton) findViewById(R.id.privateButton);
 				int publicStatus = 1;
-				if(privateRadioButton.isChecked())
-				{	
-					//Set the public column in the database to false.
+				if (privateRadioButton.isChecked())
+				{
+					// Set the public column in the database to false.
 					publicStatus = 0;
 				}
-				
-				MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-
+				MultipartEntityBuilder builder = MultipartEntityBuilder
+						.create();
 				builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-
 				byte[] data;
-				
-
 				System.out.println("about to process photo...");
-				
+
 				// process photo if set and add it to builder
 				if (bmp != null)
 				{
@@ -274,19 +276,23 @@ public class GroupEditActivity extends BaseActivity
 					bab = null;
 					bos.close();
 				}
-				
-				System.out.println("Finished with photo. Moving on to remaining fields...");
-				// add remaining fields to builder (g_name, about, public, g_id), then execute
-				builder.addTextBody("g_name", nameEditText.getText().toString(), ContentType.TEXT_PLAIN);
-				builder.addTextBody("about", aboutEditText.getText().toString(), ContentType.TEXT_PLAIN);
-				builder.addTextBody("public", Integer.toString(publicStatus), ContentType.TEXT_PLAIN);
-				builder.addTextBody("g_id", Integer.toString(group.getID()), ContentType.TEXT_PLAIN);
-	
-				
-				System.out.println("Done building.");
-				
-				httpPost.setEntity(builder.build());
 
+				System.out
+						.println("Finished with photo. Moving on to remaining fields...");
+				// add remaining fields to builder (g_name, about, public,
+				// g_id), then execute
+				builder.addTextBody("g_name",
+						nameEditText.getText().toString(),
+						ContentType.TEXT_PLAIN);
+				builder.addTextBody("about",
+						aboutEditText.getText().toString(),
+						ContentType.TEXT_PLAIN);
+				builder.addTextBody("public", Integer.toString(publicStatus),
+						ContentType.TEXT_PLAIN);
+				builder.addTextBody("g_id", Integer.toString(group.getID()),
+						ContentType.TEXT_PLAIN);
+				System.out.println("Done building.");
+				httpPost.setEntity(builder.build());
 				HttpResponse response = httpClient.execute(httpPost);
 				StatusLine statusLine = response.getStatusLine();
 				int statusCode = statusLine.getStatusCode();
@@ -324,13 +330,17 @@ public class GroupEditActivity extends BaseActivity
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
-				//success: group profile was either successfully updated in database or no changes were necesssary
-				if (jsonObject.getString("success").toString().equals("1") || jsonObject.getString("success").toString().equals("2"))
+				// success: group profile was either successfully updated in
+				// database or no changes were necesssary
+				if (jsonObject.getString("success").toString().equals("1")
+						|| jsonObject.getString("success").toString()
+								.equals("2"))
 				{
-					//loadDialog.show();
-					// Success			
+					// loadDialog.show();
+					// Success
 					Context context = getApplicationContext();
-					Toast toast = GLOBAL.getToast(context, "Group profile changed successfully.");
+					Toast toast = GLOBAL.getToast(context,
+							"Group profile changed successfully.");
 					toast.show();
 					group.fetchGroupInfo();
 					group.fetchMembers();
@@ -340,7 +350,8 @@ public class GroupEditActivity extends BaseActivity
 				{
 					// Fail
 					Context context = getApplicationContext();
-					Toast toast = GLOBAL.getToast(context, "Failed to update group profile.");
+					Toast toast = GLOBAL.getToast(context,
+							"Failed to update group profile.");
 					toast.show();
 					System.out.println("Fail");
 				}
@@ -351,29 +362,28 @@ public class GroupEditActivity extends BaseActivity
 		}
 	}
 
-	public void onClick(View v) 
+	public void onClick(View v)
 	{
 		super.onClick(v);
-		switch (v.getId()) 
+		switch (v.getId())
 		{
-		case R.id.editGroupImageButton:
-			final CharSequence[] items = {"Take Photo", "Choose from Gallery",
-					"Cancel" };
+		case R.id.groupEditImageButton:
+			final CharSequence[] items =
+			{ "Take Photo", "Choose from Gallery", "Cancel" };
 
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle("Choose your profile picture:");
-			builder.setItems(items, new DialogInterface.OnClickListener() 
+			builder.setItems(items, new DialogInterface.OnClickListener()
 			{
 				@Override
-				public void onClick(DialogInterface dialog, int item) 
+				public void onClick(DialogInterface dialog, int item)
 				{
-					if (items[item].equals("Take Photo")) 
+					if (items[item].equals("Take Photo"))
 					{
 						i = new Intent(
 								android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
 						startActivityForResult(i, 1);
-					}
-					else if (items[item].equals("Choose from Gallery")) 
+					} else if (items[item].equals("Choose from Gallery"))
 					{
 						Intent intent = new Intent(
 								Intent.ACTION_PICK,
@@ -381,15 +391,13 @@ public class GroupEditActivity extends BaseActivity
 						intent.setType("image/*");
 						startActivityForResult(
 								Intent.createChooser(intent, "Select Photo"), 2);
-					} 
-					else if (items[item].equals("Cancel")) 
+					} else if (items[item].equals("Cancel"))
 					{
 						dialog.dismiss();
 					}
 				}
 			});
 			builder.show();
-			
 			break;
 		}
 	}
@@ -398,22 +406,26 @@ public class GroupEditActivity extends BaseActivity
 	protected void onActivityResult(int reqCode, int resCode, Intent data)
 	{
 		super.onActivityResult(reqCode, resCode, data);
-		if (resCode == RESULT_OK) 
+		if (resCode == RESULT_OK)
 		{
-			if (reqCode == 1) 
+			if (reqCode == 1)
 			{
 				Bundle extras = data.getExtras();
 				bmp = (Bitmap) extras.get("data");
 				iv.setImageBitmap(bmp);
-			} else if (reqCode == 2) 
+			} else if (reqCode == 2)
 			{
 				Uri selectedImageUri = data.getData();
-				try {
-					bmp= MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
-				} catch (FileNotFoundException e) {
+				try
+				{
+					bmp = MediaStore.Images.Media.getBitmap(
+							this.getContentResolver(), selectedImageUri);
+				} catch (FileNotFoundException e)
+				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				} catch (IOException e) {
+				} catch (IOException e)
+				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}

@@ -63,9 +63,11 @@
                 android:id="@+id/nameEditTextEPA"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
                 android:layout_weight="1"
                 android:background="@color/layout_background_color"
                 android:inputType="textCapSentences"
+                android:padding="5dp"
                 android:textColor="@color/text_color" />
 
             <TextView
@@ -83,11 +85,13 @@
                 android:id="@+id/categoryEditTextEPA"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
                 android:layout_weight="1"
                 android:background="@color/layout_background_color"
                 android:focusable="false"
                 android:maxLines="1"
                 android:onClick="selectCategoryButton"
+                android:padding="5dp"
                 android:textColor="@color/text_color" />
 
             <TextView
@@ -105,9 +109,11 @@
                 android:id="@+id/aboutEditTextEPA"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
                 android:layout_weight="1"
                 android:background="@color/layout_background_color"
                 android:inputType="textCapSentences"
+                android:padding="5dp"
                 android:textColor="@color/text_color"
                 android:textColorHint="@color/text_color" />
 
@@ -126,6 +132,7 @@
                 android:id="@+id/publicButtonContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
                 android:background="@color/background_color"
                 android:orientation="horizontal"
                 tools:context="cs460.grouple.grouple.UserEditActivity" >
@@ -181,9 +188,11 @@
                 android:id="@+id/locationEditTextEPA"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
                 android:layout_weight="1"
                 android:background="@color/layout_background_color"
                 android:inputType="textCapSentences"
+                android:padding="5dp"
                 android:textColor="@color/text_color"
                 android:textColorHint="@color/text_color" />
 
@@ -241,8 +250,8 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@android:color/holo_red_dark"
-                android:visibility="invisible" />
+                android:textColor="@color/red"
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/manageEventButton"
