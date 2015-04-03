@@ -34,7 +34,7 @@ public class FriendsActivity extends BaseActivity
 	{
 		user = GLOBAL.getCurrentUser();
 		setNotifications();
-		initActionBar("Friends");
+		initActionBar("Friends", true);
 	}
 
 	@Override
@@ -50,6 +50,7 @@ public class FriendsActivity extends BaseActivity
 		int id = item.getItemId();
 		if (id == R.id.action_friends)
 		{
+			return true;
 			//do nothing, already there
 		}
 		return super.onOptionsItemSelected(item);

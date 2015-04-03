@@ -44,7 +44,7 @@ public class ManageParticipantsActivity extends BaseActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_manage_members);
-		initActionBar("Manage Event Participants");
+		initActionBar("Manage Event Participants", true);
 		load();
 	}
 

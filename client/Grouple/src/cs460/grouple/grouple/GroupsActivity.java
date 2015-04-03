@@ -41,7 +41,7 @@ public class GroupsActivity extends BaseActivity
 	{
 		user = GLOBAL.getCurrentUser();//loadUser(global.getCurrentUser().getEmail());
 		setNotifications();
-		initActionBar("Groups");
+		initActionBar("Groups", true);
 	}
 
 	private void setNotifications()
@@ -69,7 +69,7 @@ public class GroupsActivity extends BaseActivity
 		int id = item.getItemId();
 		if (id == R.id.action_groups)
 		{
-			//
+			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}

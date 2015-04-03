@@ -67,7 +67,7 @@ public class MessagesActivity extends BaseActivity
 		//initializing the variables for the send button / message edit text
 		sendMessageButton = (Button) findViewById(R.id.sendButton);
 		messageEditText = (EditText) findViewById(R.id.messageEditText);
-		initActionBar(EXTRAS.getString("NAME"));
+		initActionBar(EXTRAS.getString("NAME"), true);
 		gcm = GoogleCloudMessaging.getInstance(this);
 		recipient = EXTRAS.getString("EMAIL"); 
 		//Get the recipient 
@@ -233,8 +233,9 @@ public class MessagesActivity extends BaseActivity
 	}
 	
     // Send an upstream message.
-    public void onClick(final View view) {
-
+    public void onClick(final View view) 
+    {
+    	super.onClick(view);
         if (view == findViewById(R.id.sendButton)) 
         {
         	sendMessageButton.setClickable(false);
@@ -353,7 +354,6 @@ public class MessagesActivity extends BaseActivity
 			nameValuePairs.add(new BasicNameValuePair("msg", urls[1]));
 			nameValuePairs.add(new BasicNameValuePair("sender", urls[2]));
 			nameValuePairs.add(new BasicNameValuePair("receiver", urls[3]));
-			
 			return global.readJSONFeed(urls[0], nameValuePairs);
 		}
 
@@ -382,8 +382,7 @@ public class MessagesActivity extends BaseActivity
                         msg = "Sent message";
                     } catch (IOException ex) {
                         msg = "Error :" + ex.getMessage();
-                    }*/
-					
+                    }*/			
 				} 
 				else
 				{		

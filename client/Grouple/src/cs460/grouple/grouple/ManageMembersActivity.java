@@ -49,7 +49,7 @@ public class ManageMembersActivity extends BaseActivity {
 		user = GLOBAL.getCurrentUser();
 		group = GLOBAL.getGroupBuffer();
 		setRoles();
-		initActionBar("Manage " + group.getName() + " Members");
+		initActionBar("Manage " + group.getName() + " Members", true);
 	}
 	
 	private void setRoles()

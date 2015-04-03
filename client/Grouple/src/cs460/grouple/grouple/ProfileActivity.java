@@ -35,7 +35,6 @@ public class ProfileActivity extends BaseActivity
 	}
 	
 	private ImageView iv;
-	private BroadcastReceiver broadcastReceiver;
 	private User user; //user who's profile this is
 	private Group group;
 	private Event event;
@@ -111,7 +110,7 @@ public class ProfileActivity extends BaseActivity
 		populateProfile(); //populates a group / user profile
 		
 		// initializing the action bar and killswitch listener
-		initActionBar(title);
+		initActionBar(title, true);
 		
 	}
 
@@ -351,6 +350,7 @@ public class ProfileActivity extends BaseActivity
 		int id = item.getItemId();
 		if (id == R.id.action_profile)
 		{
+			return true;
 			//do nothing, already here
 		}
 		return super.onOptionsItemSelected(item);
@@ -358,10 +358,12 @@ public class ProfileActivity extends BaseActivity
 
 	public void onClick(View view)
 	{
+		super.onClick(view);
+		
 		//killBackgroundProcesses();
-		getImageTask.cancel(true);
 		loadDialog.show();
-		boolean noIntent = false;
+		boolean noIntent = view.getId() == R.id.backButton ? true : false;
+		
 		Intent intent = new Intent(this, ListActivity.class);
 		switch (view.getId())
 		{

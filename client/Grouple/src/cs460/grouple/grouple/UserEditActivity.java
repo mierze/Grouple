@@ -87,7 +87,7 @@ public class UserEditActivity extends BaseActivity
 		if (user != null)
 			getProfile();
 
-		initActionBar("Edit Profile");
+		initActionBar("Edit Profile", true);
 	}
 
 	// TASK FOR GRABBING IMAGE OF EVENT/USER/GROUP 
@@ -336,7 +336,7 @@ public class UserEditActivity extends BaseActivity
 
 	public void onClick(View v) 
 	{
-		// TODO Auto-generated method stub
+		super.onClick(v);
 		switch (v.getId()) 
 		{
 		case R.id.editUserImageButton:

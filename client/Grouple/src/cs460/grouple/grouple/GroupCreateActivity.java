@@ -55,7 +55,7 @@ public class GroupCreateActivity extends BaseActivity
 		allFriends = user.getUsers();
 		
 		populateGroupCreate();
-		initActionBar("Create Group");
+		initActionBar("Create Group", true);
 	}
 		
 	private void populateGroupCreate()

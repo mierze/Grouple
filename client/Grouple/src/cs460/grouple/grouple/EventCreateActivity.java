@@ -89,7 +89,7 @@ import android.widget.TimePicker;
 		endDateEditText = (EditText) findViewById(R.id.endTimeButton);
 		// grab the email of current users from our GLOBAL class
 		user = GLOBAL.getCurrentUser();
-		initActionBar("Create Event");
+		initActionBar("Create Event", true);
 	}
 	// onClick for items to bring
 	public void toBringButton(View view)

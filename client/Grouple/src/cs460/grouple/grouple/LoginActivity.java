@@ -43,9 +43,9 @@ public class LoginActivity extends Activity
 	boolean tokenFlag;
 	SharedPreferences prefs;
 	CheckBox rememberLogin;
-	AlertDialog forgetPasswordAlertDialog, createPasswordAlertDialog;
-	EditText forgetEmail, forgetCode, newPassword, confirmPassword;
-	String forgetEmailString;
+	AlertDialog forgotPasswordAlertDialog, createPasswordAlertDialog;
+	EditText forgotEmail, forgotCode, newPassword, confirmPassword;
+	String forgotEmailString;
 	Button requestButton, confirmButton,changePasswordButton;
 	
 	protected void onCreate(Bundle savedInstanceState)
@@ -84,8 +84,6 @@ public class LoginActivity extends Activity
 			// login/pass.
 			loginFail = (TextView) findViewById(R.id.loginFailTextViewLA);
 			loginFail.setVisibility(View.GONE);
-
-			Log.d("app666", "we created");
 			initKillswitchListener();
 		}	
 	}
@@ -253,25 +251,25 @@ public class LoginActivity extends Activity
 		}
 	}
 	
-	public void ForgetPasswordButton(View view)
+	public void forgotPasswordButton(View view)
 	{
-		System.out.println("Forget Password Button was activated.");
+		System.out.println("Forgot Password Button was activated.");
 		// Removes any previous error message from previous failed login
 		loginFail.setVisibility(View.GONE);
 		
 		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-		dialogBuilder.setTitle("Forget Password");
+		dialogBuilder.setTitle("Forgot Password");
 		LayoutInflater inflater = this.getLayoutInflater();
-		View dialogView = inflater.inflate(R.layout.forgetpassword_dialog, null);
+		View dialogView = inflater.inflate(R.layout.forgotpassword_dialog, null);
 		dialogBuilder.setView(dialogView);
 
-		forgetEmail = (EditText) dialogView.findViewById(R.id.emailFPD);
-		forgetCode  = (EditText) dialogView.findViewById(R.id.resetCodeFPD);
+		forgotEmail = (EditText) dialogView.findViewById(R.id.emailFPD);
+		forgotCode  = (EditText) dialogView.findViewById(R.id.resetCodeFPD);
 		requestButton = (Button) dialogView.findViewById(R.id.resetButtonFPD);
 		confirmButton = (Button) dialogView.findViewById(R.id.confirmFPD);
 		
-		forgetPasswordAlertDialog = dialogBuilder.create();
-		forgetPasswordAlertDialog.show();
+		forgotPasswordAlertDialog = dialogBuilder.create();
+		forgotPasswordAlertDialog.show();
 	}
 	
 	public void RequestResetCodeButton(View view)
@@ -283,7 +281,7 @@ public class LoginActivity extends Activity
 		Context context = getApplicationContext();
 		
 		//make sure user has specified an email address to be reset
-		if(forgetEmail.getText().toString().compareTo("") == 0)
+		if(forgotEmail.getText().toString().compareTo("") == 0)
 		{
 			Toast toast = GLOBAL.getToast(context, "Must specify an email address to be reset.");
 			toast.show();
@@ -295,8 +293,7 @@ public class LoginActivity extends Activity
 			//attempt to request a reset code.
 			new RequestResetCodeTask().execute("http://68.59.162.183/"
 					+ "android_connect/request_resetcode.php");
-		}
-		
+		}	
 	}
 	
 	//aSynch class to generate a reset code for an account to reset their password
@@ -308,7 +305,7 @@ public class LoginActivity extends Activity
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 				
 			//add all pairs
-			nameValuePairs.add(new BasicNameValuePair("email", forgetEmail.getText().toString()));
+			nameValuePairs.add(new BasicNameValuePair("email", forgotEmail.getText().toString()));
 			
 			//pass url and nameValuePairs off to global to do the JSON call.  Code continues at onPostExecute when JSON returns.
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
@@ -352,7 +349,7 @@ public class LoginActivity extends Activity
 		Context context = getApplicationContext();
 		
 		//make sure user has specified a reset code
-		if(forgetCode.getText().toString().compareTo("") == 0)
+		if(forgotCode.getText().toString().compareTo("") == 0)
 		{
 			Toast toast = GLOBAL.getToast(context, "Please type your reset code you received by email.");
 			toast.show();
@@ -360,7 +357,7 @@ public class LoginActivity extends Activity
 			confirmButton.setEnabled(true);
 		}
 		//make sure user has specified their email address
-		else if(forgetEmail.getText().toString().compareTo("") == 0)
+		else if(forgotEmail.getText().toString().compareTo("") == 0)
 		{
 			Toast toast = GLOBAL.getToast(context, "Must specify an email address to be reset.");
 			toast.show();
@@ -384,9 +381,9 @@ public class LoginActivity extends Activity
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 				
 			//add all pairs
-			nameValuePairs.add(new BasicNameValuePair("code", forgetCode.getText().toString()));
-			nameValuePairs.add(new BasicNameValuePair("email", forgetEmail.getText().toString()));
-			forgetEmailString = forgetEmail.getText().toString();
+			nameValuePairs.add(new BasicNameValuePair("code", forgotCode.getText().toString()));
+			nameValuePairs.add(new BasicNameValuePair("email", forgotEmail.getText().toString()));
+			forgotEmailString = forgotEmail.getText().toString();
 			
 			//pass url and nameValuePairs off to global to do the JSON call.  Code continues at onPostExecute when JSON returns.
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
@@ -478,9 +475,9 @@ public class LoginActivity extends Activity
 		{
 			System.out.println("updating password...");
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair("email", forgetEmailString));
+			nameValuePairs.add(new BasicNameValuePair("email", forgotEmailString));
 			nameValuePairs.add(new BasicNameValuePair("newPassword", newPassword.getText().toString()));
-			nameValuePairs.add(new BasicNameValuePair("code", forgetCode.getText().toString()));
+			nameValuePairs.add(new BasicNameValuePair("code", forgotCode.getText().toString()));
 				
 			//pass url and nameValuePairs off to global to do the JSON call.  Code continues at onPostExecute when JSON returns.
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);					
@@ -500,7 +497,7 @@ public class LoginActivity extends Activity
 					Toast toast = GLOBAL.getToast(context, jsonObject.getString("message"));
 					toast.show();
 					createPasswordAlertDialog.cancel();
-					forgetPasswordAlertDialog.cancel();
+					forgotPasswordAlertDialog.cancel();
 				}
 				else if (jsonObject.getString("success").toString().equals("0"))
 				{
@@ -541,15 +538,10 @@ public class LoginActivity extends Activity
 				// close activity
 				if (intent.getAction().equals("CLOSE_ALL"))
 				{
-					Log.d("app666", "we killin the login it");
-					// System.exit(1);
 					finish();
 				}
-
 			}
 		};
 		registerReceiver(broadcastReceiver, intentFilter);
-		// End Kill switch listener
 	}
-
 }

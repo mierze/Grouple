@@ -69,7 +69,7 @@ public class SettingsActivity extends BaseActivity
 		super.onCreate(savedInstanceState);
 		user = GLOBAL.getCurrentUser();
 		setContentView(R.layout.activity_settings);
-		initActionBar("Settings");
+		initActionBar("Settings", true);
         settingsArray = new ArrayList<String>();
         switchArray = new ArrayList<Switch>();
         settingsNameArray = new ArrayList<String>();
@@ -444,6 +444,7 @@ public class SettingsActivity extends BaseActivity
 		int id = item.getItemId();
 		if (id == R.id.action_settings)
 		{
+			return true;
 			//do nothing, already here
 		}
 		return super.onOptionsItemSelected(item);

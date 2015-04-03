@@ -47,7 +47,7 @@ public class InviteActivity extends BaseActivity {
 		user = GLOBAL.getCurrentUser();
 		group = GLOBAL.getGroupBuffer();
 		populateInviteMembers();
-		initActionBar("Invite to " + group.getName());
+		initActionBar("Invite to " + group.getName(), true);
 	}
 
 	private void populateInviteMembers()

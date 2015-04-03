@@ -88,7 +88,7 @@ public class EntityMessagesActivity extends BaseActivity
 		user = GLOBAL.getCurrentUser();
     	messageEditText = (EditText)findViewById(R.id.messageEditText);
     	sendMessageButton = (Button)findViewById(R.id.sendButton);
-		initActionBar(EXTRAS.getString("NAME"));
+		initActionBar(EXTRAS.getString("NAME"), true);
 		gcm = GoogleCloudMessaging.getInstance(this);
 		CONTENT_TYPE = EXTRAS.getString("CONTENT_TYPE");
 		if (CONTENT_TYPE.equals("GROUP"))

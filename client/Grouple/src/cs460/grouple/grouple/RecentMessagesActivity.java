@@ -85,7 +85,7 @@ public class RecentMessagesActivity extends BaseActivity
 		setContentView(R.layout.activity_recent_messages);
 		user = GLOBAL.getCurrentUser();
 		/* Action bar */
-		initActionBar("Messages");		
+		initActionBar("Messages", true);		
 		//new getContactsTask().execute("http://68.59.162.183/android_connect/get_chat_id.php");
         // Check device for Play Services APK. If check succeeds, proceed with GCM registration.
 	}
@@ -111,6 +111,7 @@ public class RecentMessagesActivity extends BaseActivity
 		int id = item.getItemId();
 		if (id == R.id.action_messages)
 		{
+			return true;
 			//already here
 		}
 		return super.onOptionsItemSelected(item);

@@ -3,167 +3,153 @@
     android:id="@+id/eventCreateLayout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:padding="30dp"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp"
     android:background="@color/background_color"
-    android:orientation="vertical" >
-    
-    
-    
+    android:orientation="vertical"
+    android:padding="30dp"
+    android:paddingBottom="10dp"
+    android:paddingTop="10dp" >
+
     <ScrollView
         android:id="@+id/scrollViewEntire"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2"
-    	 android:background="@color/background_color"
+        android:background="@color/background_color"
         android:padding="0dp" >
 
-         
-    <LinearLayout
-        android:id="@+id/linearLayoutTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-    	android:background="@color/background_color"
-        android:orientation="vertical" >
-    
-         <TextView
-        android:id="@+id/loginTextViewLA"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:text="@string/loginTextView"
-        android:textColor="@color/header_text_color"
-        android:textStyle="bold"
-        android:textSize="50sp" />
-        
-        <EditText 
-        android:id="@+id/emailEditTextLA"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="29dp"
-       	android:layout_marginBottom="5dp"
-       	android:padding="10dp"
-       	android:paddingTop="0dp"
-       	android:paddingBottom="0dp"
-        android:background="@drawable/border"
-        android:ems="10"
-        android:fontFamily="sans-serif"
-        android:hint="@string/emailEditText"
-        android:layout_gravity="center"
-        android:inputType="textEmailAddress"
-        android:textColor="@color/text_color"
-        android:textColorHint="@color/hint_text_color" >
- 	<requestFocus/></EditText>
+        <LinearLayout
+            android:id="@+id/linearLayoutTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/background_color"
+            android:orientation="vertical" >
 
-    <EditText
-        android:id="@+id/passwordEditTextLA"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:background="@drawable/border"
-        android:layout_gravity="center"
-        android:ems="10"
-        android:fontFamily="sans-serif"
-        android:hint="@string/passwordEditText"
-        android:inputType="textPassword"
-        android:padding="10dp"
-        android:textColor="@color/text_color"
-        android:textColorHint="@color/hint_text_color" />
-         
-        <TextView
-        android:id="@+id/loginFailTextViewLA"
-        android:layout_width="fill_parent"
+            <TextView
+                android:id="@+id/loginTextViewLA"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/loginTextView"
+                android:textColor="@color/header_text_color"
+                android:textSize="50sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/emailEditTextLA"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="29dp"
+                android:background="@drawable/border"
+                android:ems="10"
+                android:fontFamily="sans-serif"
+                android:hint="@string/emailEditText"
+                android:inputType="textEmailAddress"
+                android:padding="10dp"
+                android:paddingBottom="0dp"
+                android:paddingTop="0dp"
+                android:textColor="@color/text_color"
+                android:textColorHint="@color/hint_text_color" >
+
+                <requestFocus />
+            </EditText>
+
+            <EditText
+                android:id="@+id/passwordEditTextLA"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/border"
+                android:ems="10"
+                android:fontFamily="sans-serif"
+                android:hint="@string/passwordEditText"
+                android:inputType="textPassword"
+                android:padding="10dp"
+                android:textColor="@color/text_color"
+                android:textColorHint="@color/hint_text_color" />
+
+            <TextView
+                android:id="@+id/loginFailTextViewLA"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:layout_marginTop="5dp"
-        android:fontFamily="sans-serif-condensed"
-        android:text="@string/loginFailString"
-        android:textColor="@color/red"/>
-    
-        
-		  <CheckBox
-        android:id="@+id/rememberLoginCB"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/text_color"
-     	android:layout_marginBottom="5dp"
-     	android:layout_gravity="center"
-     	android:gravity="center"
-        android:fontFamily="sans-serif-condensed"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Keep Me Logged In" />
-    
-    <Button
-        android:id="@+id/loginButtonLA"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:background="@drawable/button_border"
-        android:layout_marginBottom="10dp"
-        android:fontFamily="sans-serif-condensed"
-        android:onClick="loginButton"
-        android:text="@string/loginButton"
-        android:textColor="@color/button_text_color" />
-    
-    <Button
-        android:id="@+id/ForgetPasswordButtonLA"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:background="@drawable/button_border"
-        android:fontFamily="sans-serif-condensed"
-        android:onClick="ForgetPasswordButton"
-        android:text="Forget Password?"
-        android:textColor="@color/button_text_color" />
+                android:layout_marginTop="5dp"
+                android:fontFamily="sans-serif-condensed"
+                android:gravity="center"
+                android:text="@string/loginFailString"
+                android:textColor="@color/red" />
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center" />	
-    
-    
-   
-     <TextView
-        android:id="@+id/addFriendMessageTextViewAFA"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_gravity="center"
-        android:textColor="@color/text_color"
-     	android:layout_marginBottom="5dp"
-        android:fontFamily="sans-serif-condensed"
-        android:layout_centerHorizontal="true"
-        android:text="Don&apos;t have a Grouple account?"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
-    
-    
-    <Button
-        android:id="@+id/registerButtonLA"
-           android:layout_width="fill_parent"
-        android:background="@drawable/button_border"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:fontFamily="sans-serif-condensed"
-	   	android:textColor="@color/button_text_color"
-        android:onClick="startRegisterActivity"
-        android:text="@string/registerButton" />
+            <CheckBox
+                android:id="@+id/rememberLoginCB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="5dp"
+                android:fontFamily="sans-serif-condensed"
+                android:gravity="center"
+                android:text="Keep Me Logged In"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/text_color" />
 
-   
+            <Button
+                android:id="@+id/loginButtonLA"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/button_border"
+                android:fontFamily="sans-serif-condensed"
+                android:onClick="loginButton"
+                android:text="@string/loginButton"
+                android:textColor="@color/button_text_color" />
 
-   
-    
+            <Button
+                android:id="@+id/ForgotPasswordButtonLA"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/button_border"
+                android:fontFamily="sans-serif-condensed"
+                android:onClick="forgotPasswordButton"
+                android:text="Forgot Password?"
+                android:textColor="@color/button_text_color" />
 
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
 
-    
-	    
-	    </LinearLayout>
-	</ScrollView>
+            <TextView
+                android:id="@+id/addFriendMessageTextViewAFA"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center"
+                android:layout_marginBottom="5dp"
+                android:fontFamily="sans-serif-condensed"
+                android:gravity="center"
+                android:text="Don&apos;t have a Grouple account?"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/text_color" />
 
- </LinearLayout>
+            <Button
+                android:id="@+id/registerButtonLA"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/button_border"
+                android:fontFamily="sans-serif-condensed"
+                android:onClick="startRegisterActivity"
+                android:text="@string/registerButton"
+                android:textColor="@color/button_text_color" />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

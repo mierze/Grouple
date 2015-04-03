@@ -105,7 +105,7 @@ public class EventEditActivity extends BaseActivity
 		event = GLOBAL.getEventBuffer();
 		if (event != null)
 			getEventProfile();
-		initActionBar("Edit " + event.getName());
+		initActionBar("Edit " + event.getName(), true);
 	}
 	
 
@@ -553,7 +553,7 @@ public class EventEditActivity extends BaseActivity
 
 	public void onClick(View v)
 	{
-		// TODO Auto-generated method stub
+		super.onClick(v);
 		switch (v.getId())
 		{
 		case R.id.editEventImageButton:
@@ -571,7 +571,8 @@ public class EventEditActivity extends BaseActivity
 						i = new Intent(
 								android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
 						startActivityForResult(i, 1);
-					} else if (items[item].equals("Choose from Gallery"))
+					} 
+					else if (items[item].equals("Choose from Gallery"))
 					{
 						Intent intent = new Intent(
 								Intent.ACTION_PICK,
@@ -579,7 +580,8 @@ public class EventEditActivity extends BaseActivity
 						intent.setType("image/*");
 						startActivityForResult(
 								Intent.createChooser(intent, "Select Photo"), 2);
-					} else if (items[item].equals("Cancel"))
+					} 
+					else if (items[item].equals("Cancel"))
 					{
 						dialog.dismiss();
 					}
@@ -607,7 +609,8 @@ public class EventEditActivity extends BaseActivity
 				Bundle extras = data.getExtras();
 				bmp = (Bitmap) extras.get("data");
 				iv.setImageBitmap(bmp);
-			} else if (reqCode == 2)
+			} 
+			else if (reqCode == 2)
 			{
 				Uri selectedImageUri = data.getData();
 				try

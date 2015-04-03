@@ -55,15 +55,7 @@ public class ListActivity extends BaseActivity
 	/* loading in everything needed to generate the list */
 	public void load()
 	{
-		//clearing any previous views populated, for refresh
-		listLayout = ((LinearLayout)findViewById(R.id.listLayout));
-		//INSTANTIATIONS
-		EXTRAS =  getIntent().getExtras();
-		CONTENT = EXTRAS.getString("CONTENT");
-		listLayout = ((LinearLayout)findViewById(R.id.listLayout));
-		li = getLayoutInflater();	
 		String actionBarTitle = "";
-		addNew = (Button)findViewById(R.id.addNewButtonLiA);
 		addNew.setVisibility(View.GONE); //GONE FOR NOW
 			
 		//GRABBING A USER
@@ -99,7 +91,6 @@ public class ListActivity extends BaseActivity
 			}
 			else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
 			{
-		
 				System.out.println("Load 5 now setting action bar title to : " + user.getFirstName());
 				actionBarTitle = user.getFirstName() + "'s Friend Requests";
 			}
@@ -121,7 +112,6 @@ public class ListActivity extends BaseActivity
 		{
 			if (CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString()))
 				actionBarTitle = user.getFirstName() + "'s Group Invites";
-	
 			if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
 			{
 				actionBarTitle = user.getFirstName() + "'s Groups";
@@ -146,7 +136,7 @@ public class ListActivity extends BaseActivity
 			populateEvents();
 		}
 		//calling next functions to execute
-		initActionBar(actionBarTitle);
+		initActionBar(actionBarTitle, true);
 
 	}
 	
@@ -420,6 +410,14 @@ public class ListActivity extends BaseActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list);
+		//clearing any previous views populated, for refresh
+		listLayout = ((LinearLayout)findViewById(R.id.listLayout));
+		//INSTANTIATIONS
+		EXTRAS =  getIntent().getExtras();
+		CONTENT = EXTRAS.getString("CONTENT");
+		listLayout = ((LinearLayout)findViewById(R.id.listLayout));
+		li = getLayoutInflater();	
+		addNew = (Button)findViewById(R.id.addNewButtonLiA);
 	}
 	@Override
 	protected void onResume()
@@ -431,6 +429,7 @@ public class ListActivity extends BaseActivity
 	//ONCLICK METHODS BELOW
 	public void onClick(View view)
 	{
+		super.onClick(view);
 		View parent = (View)view.getParent();
 		switch (view.getId())
 		{

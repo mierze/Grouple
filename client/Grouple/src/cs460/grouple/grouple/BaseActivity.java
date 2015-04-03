@@ -10,9 +10,12 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
-public class BaseActivity extends ActionBarActivity
+public class BaseActivity extends ActionBarActivity implements OnClickListener
 {
 	protected Global GLOBAL;
 	protected Dialog loadDialog;
@@ -22,7 +25,7 @@ public class BaseActivity extends ActionBarActivity
 	public void onBackPressed() 
 	{
 		finish();
-	    return;
+		return;
 	}
 	
 	@Override
@@ -51,16 +54,18 @@ public class BaseActivity extends ActionBarActivity
 		return true;
 	}
 
-	protected void initActionBar(String title)
+	protected void initActionBar(String title, boolean back)
 	{
-
 		ActionBar ab = getSupportActionBar();
 		ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
 		ab.setCustomView(R.layout.actionbar);
 		ab.setDisplayHomeAsUpEnabled(false);
+		ImageButton backButton = (ImageButton) findViewById(R.id.backButton);
+		backButton.setOnClickListener(this);
+		if (!back)
+			backButton.setVisibility(View.INVISIBLE);
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
-
-		actionbarTitle.setText(title); // PANDA
+		actionbarTitle.setText(title);
 	}
 	
 	@Override
@@ -106,9 +111,9 @@ public class BaseActivity extends ActionBarActivity
 			break;
 		case R.id.action_logout:
 			GLOBAL.destroySession();
-			Intent login = new Intent(this, LoginActivity.class);
-			startActivity(login);
-			intent = new Intent("CLOSE_ALL");
+			intent = new Intent(this, LoginActivity.class);
+			Intent CLOSE_ALL = new Intent("CLOSE_ALL");
+			sendBroadcast(CLOSE_ALL);
 			break;
 		}
 		if (intent != null)
@@ -123,7 +128,6 @@ public class BaseActivity extends ActionBarActivity
 	@Override
 	protected void onDestroy()
 	{
-		// TODO Auto-generated method stub
 		unregisterReceiver(broadcastReceiver);
 		super.onDestroy();
 	}
@@ -146,5 +150,16 @@ public class BaseActivity extends ActionBarActivity
 			}
 		};
 		registerReceiver(broadcastReceiver, intentFilter);
+	}
+
+	@Override
+	public void onClick(View v)
+	{
+		int id = v.getId();
+		if (id == R.id.backButton)
+		{
+			onBackPressed();
+		}
+		
 	}
 }

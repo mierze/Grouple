@@ -69,7 +69,7 @@ public class GroupEditActivity extends BaseActivity
 		group = GLOBAL.getGroupBuffer();
 		if (group != null)
 			getGroupProfile();
-		initActionBar("Edit " + group.getName());
+		initActionBar("Edit " + group.getName(), true);
 	}
 
 	/*
@@ -353,7 +353,7 @@ public class GroupEditActivity extends BaseActivity
 
 	public void onClick(View v) 
 	{
-		// TODO Auto-generated method stub
+		super.onClick(v);
 		switch (v.getId()) 
 		{
 		case R.id.editGroupImageButton:

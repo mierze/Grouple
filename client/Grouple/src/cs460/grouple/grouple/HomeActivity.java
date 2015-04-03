@@ -86,7 +86,7 @@ public class HomeActivity extends BaseActivity
 				+ "android_connect/get_userssettings.php");
 
 		// initializing action bar and killswitch listener
-		initActionBar("Welcome, " + user.getFirstName() + "!");
+		initActionBar("Welcome, " + user.getFirstName() + "!", false);
 	}
 
 
@@ -106,6 +106,7 @@ public class HomeActivity extends BaseActivity
 		int id = item.getItemId();
 		if (id == R.id.action_home)
 		{
+			return true;
 			//already here do nothing
 		}
 		return super.onOptionsItemSelected(item);

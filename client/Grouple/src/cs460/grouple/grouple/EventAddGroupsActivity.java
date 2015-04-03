@@ -54,7 +54,7 @@ public class EventAddGroupsActivity extends BaseActivity
 		else
 			System.out.println("IT IS NULL AT THIS TIME ALLGROUPS");
 		populateGroupCreate();
-		initActionBar("Invite Groups to Event");
+		initActionBar("Invite Groups to Event", true);
 	}
 	
 	private void populateGroupCreate()

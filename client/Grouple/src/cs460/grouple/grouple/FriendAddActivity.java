@@ -34,7 +34,7 @@ public class FriendAddActivity extends BaseActivity
 		GLOBAL = ((Global) getApplicationContext());
 		user = GLOBAL.getCurrentUser();
         gcmUtil = new GcmUtility();
-        initActionBar("Add Friend");
+        initActionBar("Add Friend", true);
 	}
 	
 	// Adds a friend.
