@@ -63,7 +63,7 @@
                 android:id="@+id/groupNameEditText"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                  android:layout_marginBottom="5dp"
+                android:layout_marginBottom="5dp"
                 android:layout_weight="1"
                 android:background="@color/layout_background_color"
                 android:inputType="textCapSentences"
@@ -84,13 +84,13 @@
                 android:id="@+id/groupAboutEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
                 android:layout_weight="1"
-                android:maxLines="3"
-                android:singleLine="false"
                 android:background="@color/layout_background_color"
                 android:inputType="textCapSentences"
+                android:maxLines="3"
                 android:padding="5dp"
-                  android:layout_marginBottom="5dp"
+                android:singleLine="false"
                 android:textColor="@color/text_color"
                 android:textColorHint="@color/text_color" />
 
@@ -141,18 +141,7 @@
                 android:text="Manage Members"
                 android:textColor="@color/button_text_color" />
 
-            <Button
-                android:id="@+id/deleteGroupButton"
-                android:layout_width="fill_parent"
-                android:layout_height="60dp"
-                android:layout_marginBottom="5dp"
-                android:layout_weight="1"
-                android:background="@drawable/background_red"
-                android:onClick="deleteGroup"
-                android:text="Delete Group"
-                android:textColor="@color/button_text_color" />
-
-        	<TextView
+            <TextView
                 android:id="@+id/errorTextViewEPA"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -160,6 +149,7 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/red"
                 android:visibility="gone" />
+
             <Button
                 android:id="@+id/submitButton"
                 android:layout_width="fill_parent"
@@ -169,6 +159,17 @@
                 android:background="@drawable/selector_button"
                 android:onClick="submitButton"
                 android:text="Submit Changes"
+                android:textColor="@color/button_text_color" />
+
+            <Button
+                android:id="@+id/deleteGroupButton"
+                android:layout_width="fill_parent"
+                android:layout_height="60dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/background_red"
+                android:onClick="deleteGroup"
+                android:text="Delete Group"
                 android:textColor="@color/button_text_color" />
         </LinearLayout>
     </ScrollView>

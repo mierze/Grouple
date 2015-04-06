@@ -323,7 +323,10 @@ public class ProfileActivity extends BaseActivity
 			profileButton1.setText("Members\n(" + group.getNumUsers() + ")");
 			profileButton2.setText("Messages");
 			if (user.getGroupRole(group.getID()) != null && user.getGroupRole(group.getID()).equals("A"))
+			{
+				profileButton5.setText("Edit Group");
 				profileButton5.setVisibility(View.VISIBLE);		
+			}
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
 		{
@@ -348,7 +351,10 @@ public class ProfileActivity extends BaseActivity
 			profileButton1.setText("Attending (" + event.getNumUsers() + ")");	
 			profileButton2.setText("Messages");
 			if (user.getEventRole(event.getID()) != null && user.getEventRole(event.getID()).equals("A") && !event.getEventState().equals("Ended"))
+			{
+				profileButton5.setText("Edit Event");
 				profileButton5.setVisibility(View.VISIBLE);
+			}
 		}	
 	}
 
@@ -367,8 +373,6 @@ public class ProfileActivity extends BaseActivity
 	public void onClick(View view)
 	{
 		super.onClick(view);
-		
-		//killBackgroundProcesses();
 		loadDialog.show();
 		boolean noIntent = view.getId() == R.id.backButton ? true : false;
 		

@@ -491,7 +491,7 @@ int id datetimeLabelTextViewEPA 0x7f0c007b
 int id declineButton 0x7f0c012e
 int id default_activity_button 0x7f0c003d
 int id deleteAccount_layout 0x7f0c0112
-int id deleteGroupButton 0x7f0c00a1
+int id deleteGroupButton 0x7f0c00a2
 int id dialog 0x7f0c002a
 int id disableHome 0x7f0c001f
 int id donate_with_google 0x7f0c0019
@@ -706,7 +706,7 @@ int id split_action_bar 0x7f0c0033
 int id startTimeButton 0x7f0c0069
 int id startTimeButtonEEA 0x7f0c007c
 int id strict_sandbox 0x7f0c0011
-int id submitButton 0x7f0c00a2
+int id submitButton 0x7f0c00a1
 int id submitButtonEEA 0x7f0c0086
 int id submitButtonEPA 0x7f0c0101
 int id submit_area 0x7f0c004e

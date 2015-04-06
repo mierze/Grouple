@@ -1679,7 +1679,7 @@ containing a value of this type.
         public static final int declineButton=0x7f0c012e;
         public static final int default_activity_button=0x7f0c003d;
         public static final int deleteAccount_layout=0x7f0c0112;
-        public static final int deleteGroupButton=0x7f0c00a1;
+        public static final int deleteGroupButton=0x7f0c00a2;
         public static final int dialog=0x7f0c002a;
         public static final int disableHome=0x7f0c001f;
         public static final int donate_with_google=0x7f0c0019;
@@ -1894,7 +1894,7 @@ containing a value of this type.
         public static final int startTimeButton=0x7f0c0069;
         public static final int startTimeButtonEEA=0x7f0c007c;
         public static final int strict_sandbox=0x7f0c0011;
-        public static final int submitButton=0x7f0c00a2;
+        public static final int submitButton=0x7f0c00a1;
         public static final int submitButtonEEA=0x7f0c0086;
         public static final int submitButtonEPA=0x7f0c0101;
         public static final int submit_area=0x7f0c004e;

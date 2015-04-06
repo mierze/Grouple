@@ -54,8 +54,10 @@ public class GroupEditActivity extends BaseActivity
 	private Bitmap bmp;
 	private Intent i;
 	private Group group;
+	private User user;
 	private EditText aboutEditText;
 	private EditText nameEditText;
+	private TextView errorTextView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -66,12 +68,14 @@ public class GroupEditActivity extends BaseActivity
 		iv = (ImageView) findViewById(R.id.groupEditImageView);
 		aboutEditText = (EditText) findViewById(R.id.groupAboutEditText);
 		nameEditText = (EditText) findViewById(R.id.groupNameEditText);
+		errorTextView = (TextView) findViewById(R.id.errorTextViewEPA);
 		load();
 	}
 
 	private void load()
 	{
 		// Resetting error text view
+		user = GLOBAL.getCurrentUser();
 		group = GLOBAL.getGroupBuffer();
 		if (group != null)
 			getGroupProfile();
@@ -88,20 +92,34 @@ public class GroupEditActivity extends BaseActivity
 
 		Button confirmDeleteButton = (Button) dialogView
 				.findViewById(R.id.confirmDeleteButton);
-		EditText confirmEditText = (EditText) dialogView
+		final EditText confirmEditText = (EditText) dialogView
 				.findViewById(R.id.confirmEditText);
+		final AlertDialog deleteGroupDialog = dialogBuilder.create();
 		confirmDeleteButton.setOnClickListener(new OnClickListener()
 		{
 			@Override
 			public void onClick(View view)
 			{
-
-				System.out.println("DELETE THID BITCH");
+				if (confirmEditText.getText().toString().equals("Yes"))
+				{
+					System.out.println("DELETE THID BITCH");
+					new deleteGroupTask().execute("http://68.59.162.183/android_connect/update_group.php");
+				}
+				else if (confirmEditText.getText().toString().equals("No"))
+				{
+					//dismiss 
+					deleteGroupDialog.cancel();
+				}
+				else
+				{
+					Toast toast = GLOBAL.getToast(GroupEditActivity.this, "Please enter 'Yes' or 'No'!");
+					toast.show();
+				}
 				// call delete task
 			}
 
 		});
-		AlertDialog deleteGroupDialog = dialogBuilder.create();
+		
 		deleteGroupDialog.show();
 
 	}
@@ -141,7 +159,6 @@ public class GroupEditActivity extends BaseActivity
 	// This executes the
 	public void submitButton(View view)
 	{
-		TextView errorTextView = (TextView) findViewById(R.id.errorTextViewEPA);
 		String about = aboutEditText.getText().toString();
 		String name = nameEditText.getText().toString();
 		if (about.length() > 100)
@@ -179,6 +196,48 @@ public class GroupEditActivity extends BaseActivity
 				publicButton.setChecked(false);
 			}
 			break;
+		}
+	}
+	
+	//task to delete the group
+	private class deleteGroupTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected String doInBackground(String... urls)
+		{
+			String id = Integer.toString(group.getID());
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("g_id", id));
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+		}
+
+		@Override
+		protected void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+				// json fetch was successful
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					Toast toast = GLOBAL.getToast(GroupEditActivity.this, jsonObject.getString("message"));
+					toast.show();
+					//TODO: switch activities?
+					user.removeGroup(group.getID());
+					user.fetchGroups();
+					Intent i = new Intent(GroupEditActivity.this, GroupsActivity.class);
+					startActivity(i);;
+				} else
+				{
+					// failed
+					Log.d("deleteGroup", "FAILED");
+				}
+			} 
+			catch (Exception e)
+			{
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
+			}
+			// do next thing here
 		}
 	}
 
