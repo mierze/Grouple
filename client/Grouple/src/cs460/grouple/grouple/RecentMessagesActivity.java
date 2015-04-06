@@ -153,7 +153,7 @@ public class RecentMessagesActivity extends BaseActivity
 			for (int index = recentMessages.size()-1; index >= 0; index--)
 			{
 				//loop through messages, maybe a map String String with messagebody, date
-				row =  li.inflate(R.layout.contact_row, null); //inflate this message row
+				row =  li.inflate(R.layout.list_row_contact, null); //inflate this message row
 				row.setId(index);
 				messageBody = (TextView) row.findViewById(R.id.messageBody);
 				messageDate = (TextView) row.findViewById(R.id.messageDate);

@@ -34,7 +34,7 @@
                 android:fontFamily="sans-serif-condensed"
                 android:gravity="left"
                 android:padding="5dp"
-                android:text="To reset your password, type your email in the box below and then hit the &apos;Request Reset By Email&apos; Button.  Then check your email for a &apos;Reset Code&apos; from Grouple."
+                android:text="Are you sure you wish to delete this group? All members will be removed, any points / awards will not be taken away. Enter 'Yes' to delete, 'No' or back to exit."
                 android:textColor="@color/text_color" />
 
             <EditText
@@ -45,7 +45,8 @@
                 android:background="@drawable/border"
                 android:ems="10"
                 android:fontFamily="sans-serif"
-                android:hint="Enter email of your account"
+                android:gravity="center"
+                android:hint="&apos;Yes&apos; / &apos;No&apos;"
                 android:inputType="textEmailAddress"
                 android:textColor="@color/text_color"
                 android:textColorHint="@color/hint_text_color" />
@@ -55,35 +56,10 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:background="@drawable/button_border"
+                android:background="@drawable/background_purple"
                 android:fontFamily="sans-serif-condensed"
                 android:onClick="RequestResetCodeButton"
-                android:text="Request Reset By Email"
-                android:textColor="@color/button_text_color" />
-
-            <EditText
-                android:id="@+id/resetCodeFPD"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="3dp"
-                android:layout_marginTop="3dp"
-                android:background="@drawable/border"
-                android:ems="10"
-                android:fontFamily="sans-serif"
-                android:hint="Enter Reset Code"
-                android:inputType="textEmailAddress"
-                android:textColor="@color/text_color"
-                android:textColorHint="@color/hint_text_color" />
-
-            <Button
-                android:id="@+id/confirmFPD"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@drawable/button_border"
-                android:fontFamily="sans-serif-condensed"
-                android:onClick="ConfirmResetCodeButton"
-                android:text="Confirm Reset Code"
+                android:text="Confirm Delete"
                 android:textColor="@color/button_text_color" />
         </LinearLayout>
     </ScrollView>

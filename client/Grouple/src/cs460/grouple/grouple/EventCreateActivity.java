@@ -104,12 +104,12 @@ import android.widget.TimePicker;
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Add Items To Bring");
 		inflater = EventCreateActivity.this.getLayoutInflater();
-		toBringLayout = inflater.inflate(R.layout.tobring_dialog, null);
+		toBringLayout = inflater.inflate(R.layout.dialog_tobring, null);
 		final LinearLayout layout = (LinearLayout) toBringLayout
 				.findViewById(R.id.toBringInnerLayout);
 		this.addToBringRowButton = (Button) toBringLayout
 				.findViewById(R.id.toBringAddRowButton);
-		View editTextLayout = inflater.inflate(R.layout.tobring_edittext, null);
+		View editTextLayout = inflater.inflate(R.layout.list_item_edittext, null);
 		EditText toBringEditText = (EditText) editTextLayout
 				.findViewById(R.id.toBringEditText);
 		toBringEditTexts.add(toBringEditText);
@@ -121,7 +121,7 @@ import android.widget.TimePicker;
 				try
 				{
 					View editTextLayout = inflater.inflate(
-							R.layout.tobring_edittext, null);
+							R.layout.list_item_edittext, null);
 					EditText toBringEditText = (EditText) editTextLayout
 							.findViewById(R.id.toBringEditText);
 					toBringEditTexts.add(toBringEditText);
@@ -157,7 +157,7 @@ import android.widget.TimePicker;
 
 		// Strings to Show In Dialog with Radio Buttons
 		final CharSequence[] items =
-		{ "Food ", "Sports ", "Party ", "Work ", "School" };
+			{ "Social ", "Sports + Games ", "Professional ", "Entertainment ", "Food" };
 
 		// Creating and Building the Dialog
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);

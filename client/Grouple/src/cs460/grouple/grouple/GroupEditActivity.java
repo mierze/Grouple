@@ -83,7 +83,7 @@ public class GroupEditActivity extends BaseActivity
 		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
 		dialogBuilder.setTitle("Confirm Delete Group");
 		LayoutInflater inflater = this.getLayoutInflater();
-		View dialogView = inflater.inflate(R.layout.deleteentity_dialog, null);
+		View dialogView = inflater.inflate(R.layout.dialog_delete_entity, null);
 		dialogBuilder.setView(dialogView);
 
 		Button confirmDeleteButton = (Button) dialogView
@@ -368,35 +368,7 @@ public class GroupEditActivity extends BaseActivity
 		switch (v.getId())
 		{
 		case R.id.groupEditImageButton:
-			final CharSequence[] items =
-			{ "Take Photo", "Choose from Gallery", "Cancel" };
-
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle("Choose your profile picture:");
-			builder.setItems(items, new DialogInterface.OnClickListener()
-			{
-				@Override
-				public void onClick(DialogInterface dialog, int item)
-				{
-					if (items[item].equals("Take Photo"))
-					{
-						i = new Intent(
-								android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-						startActivityForResult(i, 1);
-					} else if (items[item].equals("Choose from Gallery"))
-					{
-						Intent intent = new Intent(
-								Intent.ACTION_PICK,
-								android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-						intent.setType("image/*");
-						startActivityForResult(
-								Intent.createChooser(intent, "Select Photo"), 2);
-					} else if (items[item].equals("Cancel"))
-					{
-						dialog.dismiss();
-					}
-				}
-			});
+			AlertDialog.Builder builder = getImageBuilder(this);
 			builder.show();
 			break;
 		}

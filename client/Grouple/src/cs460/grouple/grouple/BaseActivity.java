@@ -1,8 +1,10 @@
 package cs460.grouple.grouple;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -39,7 +41,7 @@ public class BaseActivity extends ActionBarActivity implements OnClickListener
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_base);
+		//setContentView(R.layout.activity_base);
 		GLOBAL = ((Global) getApplicationContext());
 		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
 		loadDialog.setOwnerActivity(this);
@@ -161,5 +163,42 @@ public class BaseActivity extends ActionBarActivity implements OnClickListener
 			onBackPressed();
 		}
 		
+	}
+	
+	protected AlertDialog.Builder getImageBuilder(Context c)
+	{
+		//final Intent i;
+		AlertDialog.Builder builder = new AlertDialog.Builder(c);
+		final CharSequence[] items =
+		{ "Take Photo", "Choose from Gallery", "Cancel" };
+		builder.setTitle("Choose your profile picture:");
+		builder.setItems(items, new DialogInterface.OnClickListener()
+		{
+			@Override
+			public void onClick(DialogInterface dialog, int item)
+			{
+				if (items[item].equals("Take Photo"))
+				{
+					Intent i = new Intent(
+							android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+					startActivityForResult(i, 1);
+				} 
+				else if (items[item].equals("Choose from Gallery"))
+				{
+					Intent intent = new Intent(
+							Intent.ACTION_PICK,
+							android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+					intent.setType("image/*");
+					startActivityForResult(
+							Intent.createChooser(intent, "Select Photo"), 2);
+				} 
+				else if (items[item].equals("Cancel"))
+				{
+					dialog.dismiss();
+				}
+			}
+		});
+		
+		return builder;
 	}
 }

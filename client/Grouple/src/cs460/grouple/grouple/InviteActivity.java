@@ -210,7 +210,7 @@ public class InviteActivity extends BaseActivity {
 		else
 		{		
 			//no friends that are not already in group
-			view = li.inflate(R.layout.listitem_sadguy, null);
+			view = li.inflate(R.layout.list_item_sadguy, null);
 			((TextView) view.findViewById(R.id.sadGuyTextView))
 				.setText("All of your friends are already in this group.");
 			pickFriendsLayout.addView(view);

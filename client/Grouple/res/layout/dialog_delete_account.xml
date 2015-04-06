@@ -42,7 +42,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="@drawable/button_border"
+        android:background="@drawable/background_purple"
         android:fontFamily="sans-serif-condensed"
         android:onClick="ConfirmDeleteAccountButton"
         android:text="Delete Account"

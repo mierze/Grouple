@@ -198,7 +198,7 @@ public class ListActivity extends BaseActivity
 		else
 		{
 			// The user has no groups so display the sad guy
-			row = li.inflate(R.layout.listitem_sadguy, null);
+			row = li.inflate(R.layout.list_item_sadguy, null);
 			((TextView) row.findViewById(R.id.sadGuyTextView)).setText(sadGuyText);
 			listLayout.addView(row);
 		}	
@@ -284,7 +284,7 @@ public class ListActivity extends BaseActivity
 		else
 		{		
 			// The user has no friend's so display the sad guy image / text
-			row = li.inflate(R.layout.listitem_sadguy, null);
+			row = li.inflate(R.layout.list_item_sadguy, null);
 			TextView sadGuy = ((TextView) row.findViewById(R.id.sadGuyTextView));
 			sadGuy.setText(sadGuyText);
 			listLayout.addView(row);
@@ -367,7 +367,7 @@ public class ListActivity extends BaseActivity
 		else
 		{
 			//no event invites were found, show sadguy image / text
-			row = li.inflate(R.layout.listitem_sadguy, null);
+			row = li.inflate(R.layout.list_item_sadguy, null);
 			TextView sadTextView = (TextView) row.findViewById(R.id.sadGuyTextView);
 			//Set the sad guy text.
 			sadTextView.setText(sadGuyText);

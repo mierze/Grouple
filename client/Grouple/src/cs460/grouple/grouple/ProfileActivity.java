@@ -18,9 +18,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,10 +43,13 @@ public class ProfileActivity extends BaseActivity
 	private Event event;
 	private Bundle EXTRAS;
 	private String CONTENT; //type of content to display in profile, passed in from other activities
+	private LinearLayout profileLayout;
+	private View xpBar;
 	private Button profileButton1;
 	private Button profileButton2;
 	private Button profileButton3;
 	private Button profileButton4;
+	private Button profileButton5;
 	private AsyncTask getImageTask;
 	
 	@Override
@@ -51,6 +57,14 @@ public class ProfileActivity extends BaseActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_profile);
+		profileLayout = (LinearLayout) findViewById(R.id.profileLayout);
+		xpBar = findViewById(R.id.xpBar);
+		profileButton1 = (Button)findViewById(R.id.profileButton1);
+		profileButton2 = (Button)findViewById(R.id.profileButton2);
+		profileButton3 = (Button)findViewById(R.id.profileButton3);
+		profileButton4 = (Button)findViewById(R.id.profileButton4);
+		profileButton5 = (Button)findViewById(R.id.profileEditButton);
+		iv = (ImageView) findViewById(R.id.profileImageUPA);	
 	}
 
 	@Override
@@ -65,18 +79,12 @@ public class ProfileActivity extends BaseActivity
 		EXTRAS = getIntent().getExtras();
 		CONTENT = EXTRAS.getString("CONTENT");
 		String title = "";
-		System.out.println("CONTENT IS SET TO " + CONTENT);
-		profileButton1 = (Button)findViewById(R.id.profileButton1);
-		profileButton2 = (Button)findViewById(R.id.profileButton2);
-		profileButton3 = (Button)findViewById(R.id.profileButton3);
-		profileButton4 = (Button)findViewById(R.id.profileEditButton);
-		iv = (ImageView) findViewById(R.id.profileImageUPA);
-		profileButton2.setVisibility(View.GONE);
-		profileButton3.setVisibility(View.GONE);
-		profileButton4.setVisibility(View.GONE);		
+		System.out.println("CONTENT IS SET TO " + CONTENT);		
         
 		if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
 		{
+			xpBar.setVisibility(View.VISIBLE);
+			profileButton4.setVisibility(View.VISIBLE);
 			System.out.println("NOW IN USER");
 			//grabbing the user with the given email in the EXTRAS
 			if (!GLOBAL.isCurrentUser(EXTRAS.getString("EMAIL")))
@@ -96,12 +104,15 @@ public class ProfileActivity extends BaseActivity
 			user = GLOBAL.getCurrentUser();
 			if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
 			{
+				xpBar.setVisibility(View.VISIBLE);
 				group = GLOBAL.getGroupBuffer();
 				title = group.getName();
 			}
 			else
 			{
 				event = GLOBAL.getEventBuffer();
+				//TODO: testing different colors based on event types to bring some spice and push the color association
+				profileLayout.setBackgroundColor(getResources().getColor(R.color.sports_background_color));
 				title = event.getName();
 			}
 			setRole();
@@ -119,7 +130,7 @@ public class ProfileActivity extends BaseActivity
         ImageView tempImageView = (ImageView) view;
         AlertDialog.Builder imageDialog = new AlertDialog.Builder(this);
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
-        View layout = inflater.inflate(R.layout.image_dialog,
+        View layout = inflater.inflate(R.layout.dialog_image,
                 (ViewGroup) findViewById(R.id.layout_root));
         ImageView image = (ImageView) layout.findViewById(R.id.fullImage);
         image.setImageDrawable(tempImageView.getDrawable());
@@ -312,7 +323,7 @@ public class ProfileActivity extends BaseActivity
 			profileButton1.setText("Members\n(" + group.getNumUsers() + ")");
 			profileButton2.setText("Messages");
 			if (user.getGroupRole(group.getID()) != null && user.getGroupRole(group.getID()).equals("A"))
-				profileButton4.setVisibility(View.VISIBLE);		
+				profileButton5.setVisibility(View.VISIBLE);		
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
 		{
@@ -320,15 +331,15 @@ public class ProfileActivity extends BaseActivity
 			profileButton3.setVisibility(View.VISIBLE);
 			profileButton1.setText("Friends\n(" + user.getNumUsers() + ")");
 			profileButton2.setText("Groups\n(" + user.getNumGroups() + ")");	
-			profileButton3.setText("Events\n(" + user.getNumEventsUpcoming() + ")");	
+			profileButton3.setText("Upcoming Events\n(" + user.getNumEventsUpcoming() + ")");	
 			if (!GLOBAL.isCurrentUser(user.getEmail()))
 			{
 				if (user.inUsers(GLOBAL.getCurrentUser().getEmail()))
-					profileButton4.setText("Send " + user.getFirstName() + " a Message");
+					profileButton5.setText("Send " + user.getFirstName() + " a Message");
 				else
-					profileButton4.setText("Invite " + user.getFirstName() + " to Friends");
+					profileButton5.setText("Invite " + user.getFirstName() + " to Friends");
 			}
-			profileButton4.setVisibility(View.VISIBLE);
+			profileButton5.setVisibility(View.VISIBLE);
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.EVENT.toString()))
 		{
@@ -337,7 +348,7 @@ public class ProfileActivity extends BaseActivity
 			profileButton1.setText("Attending (" + event.getNumUsers() + ")");	
 			profileButton2.setText("Messages");
 			if (user.getEventRole(event.getID()) != null && user.getEventRole(event.getID()).equals("A") && !event.getEventState().equals("Ended"))
-				profileButton4.setVisibility(View.VISIBLE);
+				profileButton5.setVisibility(View.VISIBLE);
 		}	
 	}
 
@@ -431,6 +442,31 @@ public class ProfileActivity extends BaseActivity
 			intent.putExtra("CONTENT", "EVENTS_UPCOMING");
 		}
 			break;
+		case R.id.profileButton4:
+			noIntent = true;
+			//TODO: display badges if user
+			AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+			dialogBuilder.setTitle(user.getFirstName() + "'s Badges");
+			LayoutInflater inflater = this.getLayoutInflater();
+			View dialogView = inflater.inflate(R.layout.dialog_badges, null);		
+			LinearLayout layout = (LinearLayout) dialogView.findViewById(R.id.badgesLayout);
+			for (int i = 0; i < 10; i++)
+			{
+				LinearLayout row = (LinearLayout) inflater.inflate(R.layout.list_row_badges, null);
+			
+				int col = 0;
+				while (col < 3)
+				{
+					View item = inflater.inflate(R.layout.list_item_badge, null);
+					row.addView(item);
+					col++;
+				}
+				layout.addView(row);
+			}		
+			dialogBuilder.setView(dialogView);
+			AlertDialog badgesDialog = dialogBuilder.create();
+			badgesDialog.show();
+			break;
 		case R.id.profileEditButton:
 			if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
 				intent = new Intent(this, GroupEditActivity.class);
@@ -441,7 +477,6 @@ public class ProfileActivity extends BaseActivity
 					if (user.inUsers(GLOBAL.getCurrentUser().getEmail()))
 					{
 						System.out.println("\n\nSEND USER A MESSAGE");
-						
 						intent = new Intent(this, MessagesActivity.class);
 						//View parent = (View)view.getParent();
 						//Button name = (Button) parent.findViewById(R.id.nameTextViewLI);
@@ -450,9 +485,7 @@ public class ProfileActivity extends BaseActivity
 					else
 					{
 						System.out.println("\n\nINVITE TO FRIENDS");
-
 						new addFriendTask().execute("http://68.59.162.183/android_connect/add_friend.php");
-						
 						//call a json task here
 						//in onpost toast and change refresh the page with that button gone
 						//we need a check for pending requests
@@ -486,7 +519,6 @@ public class ProfileActivity extends BaseActivity
 		}
 		if (event != null)
 			intent.putExtra("EID", Integer.toString(event.getID()));
-		iv = null;
 		if (!noIntent) //TODO, move buttons elsewhere that dont start list
 			startActivity(intent);
 		else
@@ -516,13 +548,13 @@ public class ProfileActivity extends BaseActivity
 				{
 					Toast toast = GLOBAL.getToast(ProfileActivity.this, "Successfully invited " + user.getFirstName() + " to friends!");
 					toast.show();
-					profileButton4.setVisibility(View.INVISIBLE);		
+					profileButton5.setVisibility(View.INVISIBLE);		
 				} 
 				else if (jsonObject.getString("success").toString().equals("3"))
 				{
 					Toast toast = GLOBAL.getToast(ProfileActivity.this, "A friend request with " + user.getFirstName() + " to is already active!");
 					toast.show();
-					profileButton4.setVisibility(View.INVISIBLE);		
+					profileButton5.setVisibility(View.INVISIBLE);		
 				} 
 				else
 				{
@@ -599,9 +631,9 @@ public class ProfileActivity extends BaseActivity
 			if (age == -1)
 				infoT = location;
 			else
-				infoT = age + " yrs young\n" + location;
+				infoT = age + " yrs young\n" + location + "\n";
 			info.setText(infoT);
-			about.setText(user.getAbout());
+			about.setText(infoT + user.getAbout());
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.EVENT.toString()))
 		{

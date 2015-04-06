@@ -251,7 +251,7 @@ public class ManageMembersActivity extends BaseActivity {
 		else
 		{		
 			// Group has no members, display sad guy
-			View row = li.inflate(R.layout.listitem_sadguy, null);
+			View row = li.inflate(R.layout.list_item_sadguy, null);
 			((TextView) row.findViewById(R.id.sadGuyTextView))
 				.setText("No members to manage.");
 			pickFriendsLayout.addView(row);

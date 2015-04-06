@@ -12,14 +12,14 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2"
-        android:background="@color/layout_background_color"
+        android:background="@color/background_color"
         android:padding="0dp" >
 
         <LinearLayout
             android:id="@+id/linearLayoutTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/layout_background_color"
+            android:background="@color/background_color"
             android:orientation="vertical" >
 
             <EditText
@@ -31,6 +31,7 @@
                 android:inputType="textCapWords"
                 android:maxLength="40"
                 android:maxLines="1"
+                android:background="@color/layout_background_color"
                 android:minLines="1"
                 android:padding="5dp"
                 android:textColor="@color/text_color"
@@ -38,7 +39,7 @@
 
             <TextView
                 android:id="@+id/eventCategoryLabelTextView"
-                android:layout_width="fill_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:background="@color/black"
@@ -67,9 +68,8 @@
 
             <TextView
                 android:id="@+id/eventAboutLabelTextView"
-                android:layout_width="fill_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
                 android:background="@color/black"
                 android:gravity="left"
                 android:padding="5dp"
@@ -94,7 +94,7 @@
 
             <TextView
                 android:id="@+id/dateTimeLabelTextView"
-                android:layout_width="fill_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/black"
                 android:gravity="left"
@@ -103,7 +103,7 @@
                 android:textColor="@color/white" />
 
             <LinearLayout
-                android:id="@+id/publicButtonContainer"
+                android:id="@+id/dateTimeContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
@@ -148,9 +148,8 @@
 
             <TextView
                 android:id="@+id/eventLocationLabelTextView"
-                android:layout_width="fill_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
                 android:background="@color/black"
                 android:gravity="left"
                 android:padding="5dp"
@@ -177,7 +176,7 @@
 
             <TextView
                 android:id="@+id/eventSizeLabelTextView"
-                android:layout_width="fill_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/black"
                 android:gravity="left"
@@ -225,10 +224,10 @@
             <Button
                 android:id="@+id/toBringButton"
                 android:layout_width="match_parent"
-                android:layout_height="50sp"
+                android:layout_height="60sp"
                 android:layout_marginBottom="5dp"
                 android:layout_marginTop="5dp"
-                android:background="@drawable/button_border"
+                android:background="@drawable/selector_button"
                 android:onClick="toBringButton"
                 android:text="Add Items To Bring"
                 android:textColor="@color/button_text_color"
@@ -237,9 +236,8 @@
             <Button
                 android:id="@+id/confirmButton"
                 android:layout_width="match_parent"
-                android:layout_height="50sp"
-                android:layout_marginTop="5dp"
-                android:background="@drawable/button_border"
+                android:layout_height="60sp"
+                android:background="@drawable/selector_button"
                 android:onClick="createEventButton"
                 android:text="Confirm Create Event"
                 android:textColor="@color/button_text_color"

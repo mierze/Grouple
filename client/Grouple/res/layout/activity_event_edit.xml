@@ -1,6 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/eventCreateLayout"
+    android:id="@+id/eventEditLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_color"
@@ -41,9 +41,10 @@
                 android:layout_width="250dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center|top"
-                android:background="@drawable/button_border"
+                android:background="@drawable/background_purple"
                 android:fontFamily="sans-serif-condensed"
                 android:onClick="onClick"
+                android:layout_marginBottom="5dp"
                 android:text="Edit Image"
                 android:textColor="@color/button_text_color"
                 android:textSize="14sp" />
@@ -129,13 +130,12 @@
                 android:textColor="@color/white" />
 
             <LinearLayout
-                android:id="@+id/publicButtonContainer"
+                android:id="@+id/dateTimeContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
                 android:background="@color/background_color"
-                android:orientation="horizontal"
-                tools:context="cs460.grouple.grouple.UserEditActivity" >
+                android:orientation="horizontal" >
 
                 <EditText
                     android:id="@+id/startTimeButtonEEA"
@@ -175,7 +175,7 @@
 
             <TextView
                 android:id="@+id/locationLabelTextViewEPA"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/black"
                 android:gravity="left"
@@ -198,7 +198,7 @@
 
             <TextView
                 android:id="@+id/sizeLabelTextViewEPA"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/black"
                 android:gravity="left"
@@ -256,10 +256,10 @@
             <Button
                 android:id="@+id/manageEventButton"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="60dp"
                 android:layout_marginBottom="5dp"
                 android:layout_weight="1"
-                android:background="@drawable/button_border"
+                android:background="@drawable/selector_button"
                 android:onClick="onClick"
                 android:text="Manage Participants"
                 android:textColor="@color/button_text_color" />
@@ -267,10 +267,10 @@
             <Button
                 android:id="@+id/submitButtonEEA"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="60dp"
                 android:layout_marginBottom="5dp"
                 android:layout_weight="1"
-                android:background="@drawable/button_border"
+                android:background="@drawable/selector_button"
                 android:onClick="submitButton"
                 android:text="Submit Changes"
                 android:textColor="@color/button_text_color" />

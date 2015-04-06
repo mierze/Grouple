@@ -11,6 +11,8 @@
 
  </shape>
    </item>
-       <item android:drawable="@drawable/user_icon"/>
+       <item android:drawable="@drawable/icon_events"
+           android:paddingTop="5dp" 
+           android:layout_marginTop="10dp"/>
 
 </layer-list>

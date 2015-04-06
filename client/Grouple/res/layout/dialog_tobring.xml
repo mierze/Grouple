@@ -32,7 +32,7 @@
 	            android:layout_height="50sp" 
 	            android:layout_marginTop="5dp" 
 	            android:layout_marginBottom="5dp"
-	            android:background="@drawable/button_border" 
+	            android:background="@drawable/background_purple" 
 	            android:text="Add More Items" 
 	            android:textColor="@color/button_text_color" 
 	            android:textSize="20sp" />
@@ -42,7 +42,7 @@
 	            android:layout_height="50sp" 
 	            android:layout_marginTop="5dp" 
 	            android:layout_marginBottom="5dp"
-	            android:background="@drawable/button_border" 
+	            android:background="@drawable/background_purple" 
 	            android:onClick="saveToBringListButton" 
 	            android:text="Save" 
 	            android:textColor="@color/button_text_color" 

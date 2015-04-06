@@ -11,6 +11,6 @@
 
  </shape>
    </item>
-       <item android:drawable="@drawable/settings_icon"/>
+       <item android:drawable="@drawable/icon_settings"/>
 
 </layer-list>

@@ -3,7 +3,7 @@
     android:id="@+id/friendGridLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/top_bottom_border"
+    android:background="@drawable/selector_listrow"
     android:clickable="true"
     android:onClick="startProfileActivity" >
 
@@ -18,7 +18,6 @@
   	    android:background="@android:color/transparent"
   	    android:fontFamily="sans-serif-condensed"
   	    android:gravity="center_vertical"
-  	    android:onClick="startProfileActivity"
   	    android:text="Friend"
   	    android:textColor="@color/text_color"
   	    android:textStyle="bold" />

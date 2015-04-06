@@ -51,9 +51,9 @@
         <Button
             android:id="@+id/confirmButton"
             android:layout_width="match_parent"
-            android:layout_height="50sp"
+            android:layout_height="60sp"
             android:layout_marginTop="5dp"
-            android:background="@drawable/button_border"
+            android:background="@drawable/selector_button"
             android:onClick="addGroupsButton"
             android:text="Confirm Invites"
             android:textColor="@color/button_text_color"

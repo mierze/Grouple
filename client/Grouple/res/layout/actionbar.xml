@@ -18,7 +18,7 @@
         android:onClick="backButton"
         android:background="@color/actionbar_background_color"
         android:padding="5dp"
-        android:src="@drawable/back_icon" />
+        android:src="@drawable/icon_back" />
         
 	   <TextView
 	    android:layout_width="fill_parent"
@@ -29,9 +29,9 @@
 		android:layout_centerVertical="true"
 		android:gravity="center"
 		android:layout_gravity="center"
-		android:layout_toRightOf="@+id/actionbarUpButton"
+		android:layout_toRightOf="@+id/backButton"
         android:id="@+id/actionbarTitleTextView"
-        android:textSize="22sp" />
+        android:textSize="20sp" />
 
       
 

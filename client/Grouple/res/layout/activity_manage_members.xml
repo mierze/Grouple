@@ -61,11 +61,11 @@
     <Button
         android:id="@+id/confirmButton"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="60dp"
         android:layout_margin="5dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/button_border"
+        android:background="@drawable/selector_button"
         android:onClick="confirmButton"
         android:text="Confirm Changes"
         android:textColor="@color/button_text_color"

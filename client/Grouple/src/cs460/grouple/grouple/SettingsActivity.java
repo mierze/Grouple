@@ -257,7 +257,7 @@ public class SettingsActivity extends BaseActivity
 		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
 		dialogBuilder.setTitle("Change Account Password");
 		LayoutInflater inflater = this.getLayoutInflater();
-		View dialogView = inflater.inflate(R.layout.changepassword_dialog, null);
+		View dialogView = inflater.inflate(R.layout.dialog_change_password, null);
 		dialogBuilder.setView(dialogView);
 
 		CPDoldPassword = (EditText) dialogView.findViewById(R.id.passwordOldTextCPD);
@@ -317,7 +317,7 @@ public class SettingsActivity extends BaseActivity
 		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
 		dialogBuilder.setTitle("Change Account Email");
 		LayoutInflater inflater = this.getLayoutInflater();
-		View dialogView = inflater.inflate(R.layout.changeemail_dialog, null);
+		View dialogView = inflater.inflate(R.layout.dialog_change_email, null);
 		dialogBuilder.setView(dialogView);
 
 		TextView currentEmail = (TextView) dialogView.findViewById(R.id.currentEmailCED);
@@ -385,7 +385,7 @@ public class SettingsActivity extends BaseActivity
 		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
 		dialogBuilder.setTitle("Delete Account");
 		LayoutInflater inflater = this.getLayoutInflater();
-		View dialogView = inflater.inflate(R.layout.deleteaccount_dialog, null);
+		View dialogView = inflater.inflate(R.layout.dialog_delete_account, null);
 		dialogBuilder.setView(dialogView);
 
 		DADoldPassword = (EditText) dialogView.findViewById(R.id.passwordOldTextDAD);

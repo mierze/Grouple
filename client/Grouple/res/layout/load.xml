@@ -14,7 +14,7 @@
   	    android:layout_width="wrap_content"
   	     android:background="@android:color/transparent"
   	    android:layout_height="wrap_content"
-  	    android:src="@drawable/load_icon"
+  	    android:src="@drawable/icon_load"
   	    android:gravity="center" 
   	    android:layout_margin="0dp"
   	    android:padding="5dp" />

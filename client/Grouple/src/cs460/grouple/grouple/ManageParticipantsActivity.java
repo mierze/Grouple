@@ -288,7 +288,7 @@ public class ManageParticipantsActivity extends BaseActivity
 		{
 			// user has no friends
 			// The user has no friend's so display the sad guy image.
-			View row = li.inflate(R.layout.listitem_sadguy, null);
+			View row = li.inflate(R.layout.list_item_sadguy, null);
 			((TextView) row.findViewById(R.id.sadGuyTextView))
 					.setText("No participants to manage.");
 			pickFriendsLayout.addView(row);

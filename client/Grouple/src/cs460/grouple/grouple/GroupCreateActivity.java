@@ -70,7 +70,7 @@ public class GroupCreateActivity extends BaseActivity
 		if(allFriends.isEmpty())
 		{
 			View row = inflater.inflate(
-					R.layout.listitem_sadguy, null);
+					R.layout.list_item_sadguy, null);
 			//SADGUY
 			((TextView) row.findViewById(R.id.sadGuyTextView))
 					.setText("You don't have any friends to add!");

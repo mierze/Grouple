@@ -256,7 +256,7 @@ public class LoginActivity extends Activity
 		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
 		dialogBuilder.setTitle("Forgot Password");
 		LayoutInflater inflater = this.getLayoutInflater();
-		View dialogView = inflater.inflate(R.layout.forgotpassword_dialog, null);
+		View dialogView = inflater.inflate(R.layout.dialog_forgot_password, null);
 		dialogBuilder.setView(dialogView);
 
 		forgotEmail = (EditText) dialogView.findViewById(R.id.confirmEditText);
@@ -394,7 +394,7 @@ public class LoginActivity extends Activity
 					AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(LoginActivity.this);
 					dialogBuilder.setTitle("Create New Password");
 					LayoutInflater inflater = LoginActivity.this.getLayoutInflater();
-					View dialogView = inflater.inflate(R.layout.changepassword_dialog, null);
+					View dialogView = inflater.inflate(R.layout.dialog_change_password, null);
 					dialogBuilder.setView(dialogView);
 					EditText passwordOld = (EditText) dialogView.findViewById(R.id.passwordOldTextCPD);
 					passwordOld.setVisibility(View.GONE);

@@ -68,7 +68,7 @@ public class EventAddGroupsActivity extends BaseActivity
 		{
 			// user has no friends
 			// The user has no friend's so display the sad guy image.
-			row = li.inflate(R.layout.listitem_sadguy, null);
+			row = li.inflate(R.layout.list_item_sadguy, null);
 			((TextView) row.findViewById(R.id.sadGuyTextView))
 				.setText("You don't have any groups to add yet!");
 			membersToAdd.addView(row);

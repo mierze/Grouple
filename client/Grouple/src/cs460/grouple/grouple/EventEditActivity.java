@@ -60,7 +60,6 @@ public class EventEditActivity extends BaseActivity
 	// Set up fields. Most are just for the camera.
 	private ImageView iv;
 	private Bitmap bmp;
-	private Intent i;
 	private Event event;
 	private String startDate;
 	private String endDate;
@@ -78,6 +77,7 @@ public class EventEditActivity extends BaseActivity
 	private int year, month, day, hour, minute;
 	private AlertDialog categoryDialog;
 	private Bundle EXTRAS;
+	private TextView errorTextView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -98,8 +98,7 @@ public class EventEditActivity extends BaseActivity
 		hour = currentCal.get(Calendar.HOUR_OF_DAY);
 		minute = currentCal.get(Calendar.MINUTE);
 		// Resetting error text view
-		TextView errorTextView = (TextView) findViewById(R.id.errorTextViewEPA);
-		errorTextView.setVisibility(1);
+		errorTextView = (TextView) findViewById(R.id.errorTextViewEPA);
 		EXTRAS = getIntent().getExtras();
 		iv = (ImageView) findViewById(R.id.editEventImageView);
 		event = GLOBAL.getEventBuffer();
@@ -382,7 +381,7 @@ public class EventEditActivity extends BaseActivity
 		// Community
 		// Strings to Show In Dialog with Radio Buttons
 		final CharSequence[] items =
-		{ "Food ", "Sports ", "Party ", "Work ", "School" };
+		{ "Social ", "Sports + Games ", "Professional ", "Entertainment ", "Food" };
 		// Creating and Building the Dialog
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Select your category");
@@ -538,10 +537,8 @@ public class EventEditActivity extends BaseActivity
 				} else
 				{
 					// Fail
-					Context context = getApplicationContext();
-					Toast toast = Toast.makeText(context,
-							"Failed to update event profile.",
-							Toast.LENGTH_SHORT);
+					Toast toast = GLOBAL.getToast(EventEditActivity.this,
+							"Failed to update event profile.");
 					toast.show();
 				}
 			} catch (Exception e)
@@ -557,36 +554,8 @@ public class EventEditActivity extends BaseActivity
 		switch (v.getId())
 		{
 		case R.id.editEventImageButton:
-			final CharSequence[] items =
-			{ "Take Photo", "Choose from Gallery", "Cancel" };
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle("Choose your profile picture:");
-			builder.setItems(items, new DialogInterface.OnClickListener()
-			{
-				@Override
-				public void onClick(DialogInterface dialog, int item)
-				{
-					if (items[item].equals("Take Photo"))
-					{
-						i = new Intent(
-								android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-						startActivityForResult(i, 1);
-					} 
-					else if (items[item].equals("Choose from Gallery"))
-					{
-						Intent intent = new Intent(
-								Intent.ACTION_PICK,
-								android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-						intent.setType("image/*");
-						startActivityForResult(
-								Intent.createChooser(intent, "Select Photo"), 2);
-					} 
-					else if (items[item].equals("Cancel"))
-					{
-						dialog.dismiss();
-					}
-				}
-			});
+			AlertDialog.Builder builder = getImageBuilder(this);
+			//builder 
 			builder.show();
 			break;
 		case R.id.manageEventButton:
