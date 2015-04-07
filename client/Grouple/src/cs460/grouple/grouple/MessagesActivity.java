@@ -256,7 +256,7 @@ public class MessagesActivity extends BaseActivity
                             Bundle data = new Bundle();
                             //Get message from edit text
                             message = messageEditText.getText().toString();
-    						Message m = new Message(message, new Date().toString(), user.getEmail(),
+    						Message m = new Message(message, new Date(), user.getEmail(),
     								user.getName(), recipient, null);
                             messages.add(m);
                             data.putString("msg", m.getMessage());

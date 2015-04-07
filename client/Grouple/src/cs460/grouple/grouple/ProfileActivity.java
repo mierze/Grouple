@@ -106,8 +106,7 @@ public class ProfileActivity extends BaseActivity
 				user = GLOBAL.getCurrentUser();
 			}
 			title = user.getFirstName() + "'s Profile";
-			new getUserExperienceTask().execute("http://68.59.162.183/"
-					+ "android_connect/get_user_experience.php");
+			new getUserExperienceTask().execute("http://68.59.162.183/android_connect/get_user_experience.php");
 			setNotifications();
 		}
 		else 

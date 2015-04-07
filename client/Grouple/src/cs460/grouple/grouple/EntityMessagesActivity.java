@@ -258,7 +258,7 @@ public class EntityMessagesActivity extends BaseActivity
                             //Get message from edit text
                             msg = messageEditText.getText().toString();
                             //print message to our screen
-                            Message m = new Message(msg, new Date().toString(), user.getEmail(),
+                            Message m = new Message(msg, new Date(), user.getEmail(),
     								user.getName(), ID, null);
                             messages.add(m);
                             data.putString("msg", msg);

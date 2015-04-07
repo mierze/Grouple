@@ -53,7 +53,9 @@
    		    android:layout_marginRight="5dp"
    		    android:hint="Enter a message"
    		    android:layout_weight="1"
-   		    android:ems="10" />
+   		    android:ems="10" >
+	                <requestFocus />
+	                </EditText>
 
    		<Button
    		    android:id="@+id/sendButton"
