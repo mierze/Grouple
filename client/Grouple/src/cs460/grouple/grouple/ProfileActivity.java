@@ -55,6 +55,7 @@ public class ProfileActivity extends BaseActivity
 	private Button profileButton6;
 	private AsyncTask getImageTask;
 	private ProgressBar xpProgressBar;
+	private TextView xpTextView;
 	private TextView levelTextView;
 	
 	@Override
@@ -73,6 +74,7 @@ public class ProfileActivity extends BaseActivity
 		profileButton6 = (Button)findViewById(R.id.profileEditButton);
 		pastEventsBadgesLayout = findViewById(R.id.profilePastEventsBadgesLayout);
 		levelTextView = (TextView) findViewById(R.id.levelTextView);
+		xpTextView = (TextView) findViewById(R.id.xpTextView);
 		iv = (ImageView) findViewById(R.id.profileImageUPA);	
 	}
 
@@ -308,6 +310,7 @@ public class ProfileActivity extends BaseActivity
 						}
 						else if (userPoints < 25)
 						{
+							xpProgressBar.setMax(25);
 							levelTextView.setText("Level 2");
 						}
 						else if (userPoints < 25)
@@ -325,6 +328,7 @@ public class ProfileActivity extends BaseActivity
 						else if (userPoints < 200)
 							levelTextView.setText("Level 6");
 						xpProgressBar.setProgress(userPoints);
+						xpTextView.setText(userPoints + " / 50");
 					} 
 					else
 					{

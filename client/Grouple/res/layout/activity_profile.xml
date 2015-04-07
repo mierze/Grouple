@@ -64,10 +64,11 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <RelativeLayout
+            <LinearLayout
                 android:id="@+id/xpBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:visibility="gone" >
 
                 <ProgressBar
@@ -82,11 +83,8 @@
                     android:id="@+id/levelTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/xpProgressBar"
-                    android:layout_alignLeft="@+id/xpProgressBar"
-                    android:layout_alignRight="@+id/xpProgressBar"
-                    android:layout_alignTop="@+id/xpProgressBar"
                     android:layout_gravity="center"
+                    android:layout_marginBottom="5dp"
                     android:background="#00000000"
                     android:gravity="center"
                     android:text="Level 1"
@@ -97,14 +95,11 @@
                     android:id="@+id/xpTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignLeft="@+id/xpProgressBar"
-                    android:layout_alignRight="@+id/xpProgressBar"
-                    android:layout_alignTop="@+id/levelTextView"
                     android:layout_gravity="center"
                     android:background="#00000000"
                     android:gravity="center"
                     android:textColor="@color/yellow" />
-            </RelativeLayout>
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/profilePastEventsBadgesLayout"

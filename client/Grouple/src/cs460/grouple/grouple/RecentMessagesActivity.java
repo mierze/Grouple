@@ -237,6 +237,7 @@ public class RecentMessagesActivity extends BaseActivity
 		User u = new User(friendEmail);
 		u.fetchEventsUpcoming();
 		u.fetchFriends();
+		u.fetchEventsPast();
 		u.fetchGroups();
 		u.fetchUserInfo();
 		if (!GLOBAL.isCurrentUser(friendEmail))

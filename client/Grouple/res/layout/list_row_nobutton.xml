@@ -3,7 +3,7 @@
     android:id="@+id/friendGridLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/top_bottom_border"
+    android:background="@drawable/selector_listrow"
     android:clickable="true" 
     android:onClick="startProfileActivity" >
 
@@ -19,7 +19,6 @@
         android:layout_width="fill_parent"
         android:paddingLeft="10dp"
         android:layout_marginTop="0dp"
-        android:paddingRight="10dp" 
-        android:onClick="startProfileActivity" />
+        android:paddingRight="10dp"  />
 
 </RelativeLayout>

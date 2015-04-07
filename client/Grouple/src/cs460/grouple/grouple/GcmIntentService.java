@@ -48,6 +48,8 @@ public class GcmIntentService extends IntentService
 	String NAME;
 	String to;
 	String last;
+	String groupName;
+	String eventName;
 
 	public GcmIntentService()
 	{
@@ -66,7 +68,8 @@ public class GcmIntentService extends IntentService
 		TYPE = extras.getString("CONTENT_TYPE");
 		first = extras.getString("first");
 		last = extras.getString("last");
-		
+		groupName = extras.getString("group_name");
+		eventName = extras.getString("event_name");
 
 		if (TYPE != null)
 		{
@@ -79,7 +82,10 @@ public class GcmIntentService extends IntentService
 			}
 		}
 		else
+		{
 			TYPE = "USER_MESSAGE";
+		}
+			
 		//String test = extras.getString("my_action");
 
 		GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
@@ -175,14 +181,10 @@ public class GcmIntentService extends IntentService
 
 		mNotificationManager = (NotificationManager) this
 				.getSystemService(Context.NOTIFICATION_SERVICE);
-
-
-
 		if (TYPE.equals("GROUP_MESSAGE") || TYPE.equals("EVENT_MESSAGE"))
 		{
 			Intent notificationIntent = new Intent(this,
 					EntityMessagesActivity.class);
-
 			if (TYPE.equals("GROUP_MESSAGE"))
 			{
 				notificationIntent.putExtra("CONTENT_TYPE", "GROUP");
@@ -199,8 +201,7 @@ public class GcmIntentService extends IntentService
 				global.setEventBuffer(e);
 			}
 			notificationIntent.putExtra("EMAIL", from);
-			notificationIntent.putExtra("NAME", NAME);
-			
+			notificationIntent.putExtra("NAME", NAME);	
 			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
 					.setContentTitle(NAME)
 					.setStyle(new NotificationCompat.BigTextStyle()
@@ -244,20 +245,51 @@ public class GcmIntentService extends IntentService
 		else if(TYPE.equals("FRIEND_REQUEST"))
 		{
 			//Send friend request.
-			Intent notificationIntent = new Intent(getApplicationContext(),MessagesActivity.class);
-			notificationIntent.putExtra("EMAIL", from);
+			Intent notificationIntent = new Intent(getApplicationContext(),ListActivity.class);
+			notificationIntent.putExtra("EMAIL", global.getCurrentUser().getEmail());
 			notificationIntent.putExtra("NAME", first + " " + last);
+			notificationIntent.putExtra("CONTENT", "FRIENDS_REQUESTS");
+			global.getCurrentUser().fetchFriendRequests();
+			global.getCurrentUser().fetchUserInfo();
+			
 			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
-			.setContentTitle("Friend request from "+first+" "+last)
-					.setStyle(new NotificationCompat.BigTextStyle()
-					.bigText(first+ " "+last))
-					.setSmallIcon(R.drawable.icon_grouple).setSound(soundUri)
-					.setContentText(msg);
+			.setContentTitle("Friend request from "+first+" "+last+"!")
+			.setStyle(new NotificationCompat.BigTextStyle()
+			.bigText(first+ " "+last))
+			.setSmallIcon(R.drawable.icon_grouple).setSound(soundUri)
+			.setContentText(msg);
+			
 			notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP| Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(),
 					0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 			mBuilder.setAutoCancel(true);
-
+			
+			// null check
+			mBuilder.setContentIntent(contentIntent);
+			mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+		}
+		else if(TYPE.equals("GROUP_INVITE"))
+		{
+			//Send friend request.
+			Intent notificationIntent = new Intent(getApplicationContext(),ListActivity.class);
+			notificationIntent.putExtra("EMAIL", global.getCurrentUser().getEmail());
+			notificationIntent.putExtra("NAME", first + " " + last);
+			notificationIntent.putExtra("CONTENT", "GROUPS_INVITES");
+			global.getCurrentUser().fetchFriendRequests();
+			global.getCurrentUser().fetchUserInfo();
+			
+			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
+			.setContentTitle("Group Invite To "+groupName+" From: " +first+" "+last+"!")
+			.setStyle(new NotificationCompat.BigTextStyle()
+			.bigText(first+ " "+last))
+			.setSmallIcon(R.drawable.icon_grouple).setSound(soundUri)
+			.setContentText(msg);
+			
+			notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP| Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(),
+					0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+			mBuilder.setAutoCancel(true);
+			
 			// null check
 			mBuilder.setContentIntent(contentIntent);
 			mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());

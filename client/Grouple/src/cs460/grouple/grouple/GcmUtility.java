@@ -6,13 +6,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
-
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-
 import android.app.Application;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -35,7 +32,7 @@ public class GcmUtility extends Application {
 		GLOBAL = g;
 		user = GLOBAL.getCurrentUser();	
 	}
-	
+	//This is for sending friend request notifications. 
 	public void sendNotification(String recipient, String notificationType) 
 	{
 		//Get Recipient's RegID
@@ -46,12 +43,36 @@ public class GcmUtility extends Application {
 			//Send a friend request to the
 			sendFriendRequest();
 		}
-		else if(notificationType.equals("GROUP_INVITE"))
-		{
-			
-		}
-		
 	}
+	/*
+	 * This is for sending group notifications. Only implemented invite for now..
+	 * The naming convention is weird, but that's because we have to send the additional param, group name.
+	 * So for now, this is for all group type notifications.
+	 */
+	public void sendGroupNotification(String recipient, String gName, String notificationType) 
+	{
+		//Get Recipient's RegID
+		new getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php", recipient);
+			
+		if(notificationType.equals("GROUP_INVITE"))
+		{
+			sendGroupInvite(gName);
+		}
+		//Here we can implement other types of Group Notifications.
+	}
+	
+	public void sendEventNotification(String recipient, String eName, String notificationType) 
+	{
+		//Get Recipient's RegID
+		new getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php", recipient);
+			
+		if(notificationType.equals("EVENT_INVITE"))
+		{
+			sendEventInvite(eName);
+		}
+		//Here we can implement other types of Event Notifications.
+	}
+
 
 	private void sendFriendRequest() 
 	{
@@ -91,6 +112,86 @@ public class GcmUtility extends Application {
         }.execute(null, null, null);
 
 	}
+	private void sendGroupInvite(final String gName) 
+	{
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... params) {
+                String message = "";
+                try 
+                {
+                   Bundle data = new Bundle();
+                   //Set bundle
+                   data.putString("my_action", "cs460.grouple.grouple.ECHO_NOW");
+                   data.putString("CONTENT_TYPE", "GROUP_INVITE");
+                   data.putString("sender", user.getEmail());
+                   data.putString("recipient",recipientRegID);
+                   data.putString("group_name", gName);
+                   //This is where we put our first and last name. That way the recipient knows who sent it.
+                   data.putString("first", user.getFirstName());
+                   data.putString("last", user.getLastName());
+                   String id = Integer.toString(msgId.incrementAndGet());
+                   gcm.send(SENDER_ID + "@gcm.googleapis.com", id, data);
+                   message = "Sent message";
+                } 
+                catch (IOException ex) 
+                {
+					//Toast toast = GLOBAL.getToast(MessagesActivity.this, "Error sending message. Please try again.");
+					//toast.show();
+					//sendMessageButton.setClickable(true);
+                    //message = "Error :" + ex.getMessage();
+                }
+                return message;
+            }
+
+            @Override
+            protected void onPostExecute(String msg) {
+            	
+            }
+        }.execute(null, null, null);
+
+	}
+	
+	private void sendEventInvite(final String eName) 
+	{
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... params) {
+                String message = "";
+                try 
+                {
+                   Bundle data = new Bundle();
+                   //Set bundle
+                   data.putString("my_action", "cs460.grouple.grouple.ECHO_NOW");
+                   data.putString("CONTENT_TYPE", "EVENT_INVITE");
+                   data.putString("sender", user.getEmail());
+                   data.putString("recipient",recipientRegID);
+                   data.putString("event_name", eName);
+                   //This is where we put our first and last name. That way the recipient knows who sent it.
+                   data.putString("first", user.getFirstName());
+                   data.putString("last", user.getLastName());
+                   String id = Integer.toString(msgId.incrementAndGet());
+                   gcm.send(SENDER_ID + "@gcm.googleapis.com", id, data);
+                   message = "Sent message";
+                } 
+                catch (IOException ex) 
+                {
+					//Toast toast = GLOBAL.getToast(MessagesActivity.this, "Error sending message. Please try again.");
+					//toast.show();
+					//sendMessageButton.setClickable(true);
+                    //message = "Error :" + ex.getMessage();
+                }
+                return message;
+            }
+
+            @Override
+            protected void onPostExecute(String msg) {
+            	
+            }
+        }.execute(null, null, null);
+
+	}
+	
 	//This task gets your friend's regid
     private class getRegIDTask extends AsyncTask<String, Void, String>
 	{

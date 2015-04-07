@@ -32,6 +32,8 @@ public class InviteActivity extends BaseActivity {
 	//holds list of role of all friend rows to be added
 	private String CONTENT; //type of content to display
 	private Bundle EXTRAS; //type of content to display
+	private GcmUtility gcmUtil;
+	private String receiver = "";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +50,7 @@ public class InviteActivity extends BaseActivity {
 		user = GLOBAL.getCurrentUser();
 		group = GLOBAL.getGroupBuffer();
 		userRole = user.getGroupRole(group.getID());
+		gcmUtil = new GcmUtility(GLOBAL);
 		populateInviteMembers();
 		initActionBar("Invite to " + group.getName(), true);
 	}
@@ -231,8 +234,14 @@ public class InviteActivity extends BaseActivity {
 			//grab the role of friend to add
 			String friendsRole = role.get(key);
 			if (!(friendsRole.equals("-")))
-				new AddGroupMembersTask().execute("http://68.59.162.183/"
-					+ "android_connect/add_groupmember.php", friendsEmail, user.getEmail(), friendsRole, Integer.toString(group.getID()));
+			{
+				new AddGroupMembersTask().execute("http://68.59.162.183/"+ "android_connect/add_groupmember.php", friendsEmail, user.getEmail(), friendsRole, Integer.toString(group.getID()));
+				//Send Push Notification
+				gcmUtil.sendGroupNotification(friendsEmail,group.getName(),"GROUP_INVITE");
+			}
+				
+			
+			
 		}
 		group.fetchGroupInfo();
 		group.fetchMembers();

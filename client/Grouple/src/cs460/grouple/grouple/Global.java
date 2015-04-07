@@ -110,8 +110,7 @@ public class Global extends Application
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 		SharedPreferences.Editor editor = preferences.edit();
 		editor.remove("session_email");
-		editor.remove("session_token");
-		
+		editor.remove("session_token");		
 		//Get rid of sharepreferences for usersettings
 		editor.remove("emailFriendReq");
 		editor.remove("emailGroupReq");
@@ -120,8 +119,7 @@ public class Global extends Application
 		editor.remove("emailGroupMessage");
 		editor.remove("emailEventMessage");
 		editor.remove("emailEventUpcoming");
-		editor.remove("emailUmbrella");
-		
+		editor.remove("emailUmbrella");		
 		editor.remove("androidFriendReq");
 		editor.remove("androidGroupReq");
 		editor.remove("androidEventReq");
@@ -129,8 +127,7 @@ public class Global extends Application
 		editor.remove("androidGroupMessage");
 		editor.remove("androidEventMessage");
 		editor.remove("androidEventUpcoming");
-		editor.remove("androidUmbrella");
-		
+		editor.remove("androidUmbrella");	
 		editor.commit();
 		System.out.println("session destroyed!");
 		return 1;
