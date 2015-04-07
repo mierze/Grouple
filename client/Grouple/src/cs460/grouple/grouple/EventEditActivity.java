@@ -372,16 +372,9 @@ public class EventEditActivity extends BaseActivity
 	// Button Listener for when user clicks on category.
 	public void selectCategoryButton(View view)
 	{
-		// THINKING OUT LOUD
-		// Food
-		// Entertainment
-		// Sports / Games
-		// Party / Nightlife ?SOCIAL?
-		// Professional / Education
-		// Community
 		// Strings to Show In Dialog with Radio Buttons
 		final CharSequence[] items =
-		{ "Social ", "Sports + Games ", "Professional ", "Entertainment ", "Food" };
+		{ "Social ", "Entertainment / Games ", "Professional / Education ", "Sports / Fitness ", "Nature" };
 		// Creating and Building the Dialog
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Select your category");

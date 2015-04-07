@@ -24,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,12 +46,16 @@ public class ProfileActivity extends BaseActivity
 	private String CONTENT; //type of content to display in profile, passed in from other activities
 	private LinearLayout profileLayout;
 	private View xpBar;
+	private View pastEventsBadgesLayout;
 	private Button profileButton1;
 	private Button profileButton2;
 	private Button profileButton3;
-	private Button profileButton4;
+	private Button profileButton4;//for user profile, is past events
 	private Button profileButton5;
+	private Button profileButton6;
 	private AsyncTask getImageTask;
+	private ProgressBar xpProgressBar;
+	private TextView levelTextView;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -59,11 +64,15 @@ public class ProfileActivity extends BaseActivity
 		setContentView(R.layout.activity_profile);
 		profileLayout = (LinearLayout) findViewById(R.id.profileLayout);
 		xpBar = findViewById(R.id.xpBar);
+		xpProgressBar = (ProgressBar) findViewById(R.id.xpProgressBar);
 		profileButton1 = (Button)findViewById(R.id.profileButton1);
 		profileButton2 = (Button)findViewById(R.id.profileButton2);
 		profileButton3 = (Button)findViewById(R.id.profileButton3);
 		profileButton4 = (Button)findViewById(R.id.profileButton4);
-		profileButton5 = (Button)findViewById(R.id.profileEditButton);
+		profileButton5 = (Button)findViewById(R.id.profileButton5);
+		profileButton6 = (Button)findViewById(R.id.profileEditButton);
+		pastEventsBadgesLayout = findViewById(R.id.profilePastEventsBadgesLayout);
+		levelTextView = (TextView) findViewById(R.id.levelTextView);
 		iv = (ImageView) findViewById(R.id.profileImageUPA);	
 	}
 
@@ -84,7 +93,7 @@ public class ProfileActivity extends BaseActivity
 		if (CONTENT.equals(CONTENT_TYPE.USER.toString()))
 		{
 			xpBar.setVisibility(View.VISIBLE);
-			profileButton4.setVisibility(View.VISIBLE);
+			pastEventsBadgesLayout.setVisibility(View.VISIBLE);
 			System.out.println("NOW IN USER");
 			//grabbing the user with the given email in the EXTRAS
 			if (!GLOBAL.isCurrentUser(EXTRAS.getString("EMAIL")))
@@ -97,6 +106,8 @@ public class ProfileActivity extends BaseActivity
 				user = GLOBAL.getCurrentUser();
 			}
 			title = user.getFirstName() + "'s Profile";
+			new getUserExperienceTask().execute("http://68.59.162.183/"
+					+ "android_connect/get_user_experience.php");
 			setNotifications();
 		}
 		else 
@@ -267,6 +278,68 @@ public class ProfileActivity extends BaseActivity
 			//do next thing here
 		}
 	}
+	
+	// TASK FOR GRABBING IMAGE OF EVENT/USER/GROUP 
+		private class getUserExperienceTask extends AsyncTask<String, Void, String>
+		{
+			@Override
+			protected String doInBackground(String... urls)
+			{
+				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+				nameValuePairs.add(new BasicNameValuePair("email", user.getEmail()));
+				return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+			}
+
+			@Override
+			protected void onPostExecute(String result)
+			{
+				try
+				{
+					JSONObject jsonObject = new JSONObject(result);
+					//json fetch was successful
+					if (jsonObject.getString("success").toString().equals("1"))
+					{
+						int eventsIn = Integer.parseInt(jsonObject.getString("eventsIn").toString());
+						int eventsCreated = Integer.parseInt(jsonObject.getString("eventsCreated").toString());
+						int userPoints = (eventsCreated*2) + eventsIn;
+						if (userPoints < 10)
+						{
+							levelTextView.setText("Level 1");
+							xpProgressBar.setMax(10);
+						}
+						else if (userPoints < 25)
+						{
+							levelTextView.setText("Level 2");
+						}
+						else if (userPoints < 25)
+						{
+							levelTextView.setText("Level 3");
+						}
+						else if (userPoints < 50)
+						{
+							levelTextView.setText("Level 4");
+						}
+						else if (userPoints < 100)
+						{
+							levelTextView.setText("Level 5");
+						}
+						else if (userPoints < 200)
+							levelTextView.setText("Level 6");
+						xpProgressBar.setProgress(userPoints);
+					} 
+					else
+					{
+						// failed
+						Log.d("getUserExperience", "FAILED");
+					}
+				} 
+				catch (Exception e)
+				{
+					Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
+				}
+				//do next thing here
+			}
+		}
 
 	/* CLASS TO FETCH THE ROLE OF THE USER IN GROUP / EVENT */
 	private class getRoleTask extends AsyncTask<String, Void, String>
@@ -315,7 +388,6 @@ public class ProfileActivity extends BaseActivity
 	
 	private void setNotifications()
 	{
-		System.out.println("NOW IN SET NOTIFICATIONS");
 		if (CONTENT.equals(CONTENT_TYPE.GROUP.toString()))
 		{
 			if (group.inUsers(user.getEmail()))
@@ -334,15 +406,16 @@ public class ProfileActivity extends BaseActivity
 			profileButton3.setVisibility(View.VISIBLE);
 			profileButton1.setText("Friends\n(" + user.getNumUsers() + ")");
 			profileButton2.setText("Groups\n(" + user.getNumGroups() + ")");	
-			profileButton3.setText("Upcoming Events\n(" + user.getNumEventsUpcoming() + ")");	
+			profileButton3.setText("Upcoming Events\n(" + user.getNumEventsUpcoming() + ")");
+			profileButton4.setText("Past Events\n(" + user.getNumEventsPast() + ")");
 			if (!GLOBAL.isCurrentUser(user.getEmail()))
 			{
 				if (user.inUsers(GLOBAL.getCurrentUser().getEmail()))
-					profileButton5.setText("Send " + user.getFirstName() + " a Message");
+					profileButton6.setText("Message " + user.getFirstName());
 				else
-					profileButton5.setText("Invite " + user.getFirstName() + " to Friends");
+					profileButton6.setText("Invite " + user.getFirstName() + " to Friends");
 			}
-			profileButton5.setVisibility(View.VISIBLE);
+			profileButton6.setVisibility(View.VISIBLE);
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.EVENT.toString()))
 		{
@@ -352,8 +425,8 @@ public class ProfileActivity extends BaseActivity
 			profileButton2.setText("Messages");
 			if (user.getEventRole(event.getID()) != null && user.getEventRole(event.getID()).equals("A") && !event.getEventState().equals("Ended"))
 			{
-				profileButton5.setText("Edit Event");
-				profileButton5.setVisibility(View.VISIBLE);
+				profileButton6.setText("Edit Event");
+				profileButton6.setVisibility(View.VISIBLE);
 			}
 		}	
 	}
@@ -447,6 +520,10 @@ public class ProfileActivity extends BaseActivity
 		}
 			break;
 		case R.id.profileButton4:
+			user.fetchEventsPast();
+			intent.putExtra("CONTENT", "EVENTS_PAST");
+			break;
+		case R.id.profileButton5:
 			noIntent = true;
 			//TODO: display badges if user
 			AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
@@ -552,13 +629,13 @@ public class ProfileActivity extends BaseActivity
 				{
 					Toast toast = GLOBAL.getToast(ProfileActivity.this, "Successfully invited " + user.getFirstName() + " to friends!");
 					toast.show();
-					profileButton5.setVisibility(View.INVISIBLE);		
+					profileButton6.setVisibility(View.INVISIBLE);		
 				} 
 				else if (jsonObject.getString("success").toString().equals("3"))
 				{
 					Toast toast = GLOBAL.getToast(ProfileActivity.this, "A friend request with " + user.getFirstName() + " to is already active!");
 					toast.show();
-					profileButton5.setVisibility(View.INVISIBLE);		
+					profileButton6.setVisibility(View.INVISIBLE);		
 				} 
 				else
 				{

@@ -33,7 +33,7 @@ public class FriendAddActivity extends BaseActivity
 		setContentView(R.layout.activity_add_friend);
 		GLOBAL = ((Global) getApplicationContext());
 		user = GLOBAL.getCurrentUser();
-        gcmUtil = new GcmUtility();
+        gcmUtil = new GcmUtility(GLOBAL);
         initActionBar("Add Friend", true);
 	}
 	

@@ -1,20 +1,27 @@
 package cs460.grouple.grouple;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
+
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+
 import android.app.Application;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import com.google.android.gms.gcm.GoogleCloudMessaging;
+import android.widget.Toast;
 
-public class GcmUtility extends Application 
-{
+public class GcmUtility extends Application {
+	
 	private String SENDER_ID = "957639483805"; 
 	private GoogleCloudMessaging gcm;
 	private String recipientRegID = "";
@@ -22,10 +29,10 @@ public class GcmUtility extends Application
 	private User user;
 	private AtomicInteger msgId = new AtomicInteger();
 	
-	public GcmUtility() 
+	public GcmUtility(Global g) 
 	{		
 		gcm = GoogleCloudMessaging.getInstance(this);
-		GLOBAL = ((Global) getApplicationContext());
+		GLOBAL = g;
 		user = GLOBAL.getCurrentUser();	
 	}
 	
@@ -39,16 +46,18 @@ public class GcmUtility extends Application
 			//Send a friend request to the
 			sendFriendRequest();
 		}
+		else if(notificationType.equals("GROUP_INVITE"))
+		{
+			
+		}
 		
 	}
 
 	private void sendFriendRequest() 
 	{
-        new AsyncTask<Void, Void, String>() 
-        {
+        new AsyncTask<Void, Void, String>() {
             @Override
-            protected String doInBackground(Void... params) 
-            {
+            protected String doInBackground(Void... params) {
                 String message = "";
                 try 
                 {
@@ -74,6 +83,7 @@ public class GcmUtility extends Application
                 }
                 return message;
             }
+
             @Override
             protected void onPostExecute(String msg) {
             	
@@ -110,8 +120,7 @@ public class GcmUtility extends Application
 					//Toast toast = GLOBAL.getToast(MessagesActivity.this, "Error getting GCM REG_ID.");
 					//toast.show();
 				}
-			} 
-			catch (Exception e)
+			} catch (Exception e)
 			{
 				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 			}

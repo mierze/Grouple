@@ -594,6 +594,7 @@ public class ListActivity extends BaseActivity
 				friendEmail = users.get(id).getEmail();
 				User u = new User(friendEmail);
 				u.fetchEventsUpcoming();
+				u.fetchEventsPast();
 				u.fetchFriends();
 				u.fetchGroups();
 				u.fetchUserInfo();

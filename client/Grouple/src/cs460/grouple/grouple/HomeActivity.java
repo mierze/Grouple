@@ -151,6 +151,7 @@ public class HomeActivity extends BaseActivity
 			break;
 		case R.id.userButtonHA:
 			user.fetchUserInfo();
+			user.fetchEventsPast();
 			user.fetchEventsUpcoming();
 			user.fetchFriends();
 			user.fetchGroups();

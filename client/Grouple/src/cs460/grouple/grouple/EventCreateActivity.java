@@ -157,7 +157,7 @@ import android.widget.TimePicker;
 
 		// Strings to Show In Dialog with Radio Buttons
 		final CharSequence[] items =
-			{ "Social ", "Sports + Games ", "Professional ", "Entertainment ", "Food" };
+			{ "Social ", "Entertainment / Games ", "Professional / Education ", "Sports / Fitness ", "Nature" };
 
 		// Creating and Building the Dialog
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);

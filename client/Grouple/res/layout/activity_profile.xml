@@ -21,33 +21,6 @@
             android:background="@color/layout_background_color"
             android:orientation="vertical" >
 
-            <RelativeLayout
-                android:id="@+id/xpBar"
-                android:visibility="gone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
-
-                <ProgressBar
-                    android:id="@+id/PROGRESS_BAR"
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:background="@drawable/border"
-                    android:layout_width="match_parent"
-                    android:layout_height="30dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="center"
-                    android:textColor="@color/light_green"
-                    android:textStyle="bold"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/PROGRESS_BAR"
-                    android:layout_alignLeft="@+id/PROGRESS_BAR"
-                    android:layout_alignRight="@+id/PROGRESS_BAR"
-                    android:layout_alignTop="@+id/PROGRESS_BAR"
-                    android:background="#00000000"
-                    android:text="Level 1" />
-            </RelativeLayout>
-
             <LinearLayout
                 android:id="@+id/userProfileInnerLayout1"
                 android:layout_width="match_parent"
@@ -91,6 +64,83 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <RelativeLayout
+                android:id="@+id/xpBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone" >
+
+                <ProgressBar
+                    android:id="@+id/xpProgressBar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:minHeight="20dp"
+                    android:maxHeight="20dp"
+                    android:layout_height="30dp" />
+
+                <TextView
+                    android:id="@+id/levelTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/xpProgressBar"
+                    android:layout_alignLeft="@+id/xpProgressBar"
+                    android:layout_alignRight="@+id/xpProgressBar"
+                    android:layout_alignTop="@+id/xpProgressBar"
+                    android:layout_gravity="center"
+                    android:background="#00000000"
+                    android:gravity="center"
+                    android:text="Level 1"
+                    android:textColor="@color/light_green"
+                    android:textStyle="bold" />
+                
+                                <TextView
+                    android:id="@+id/xpTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@+id/xpProgressBar"
+                    android:layout_alignRight="@+id/xpProgressBar"
+                    android:layout_alignTop="@+id/levelTextView"
+                    android:layout_gravity="center"
+                    android:background="#00000000"
+                    android:gravity="center"
+                    android:textColor="@color/yellow" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/profilePastEventsBadgesLayout"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal"
+                android:visibility="gone" >
+
+                <Button
+                    android:id="@+id/profileButton4"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/background_yellow"
+                    android:fontFamily="sans-serif-condensed"
+                    android:onClick="onClick"
+                    android:text="Past Events"
+                    android:textColor="@color/text_color"
+                    android:textSize="18sp" />
+
+                <Button
+                    android:id="@+id/profileButton5"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/background_yellow"
+                    android:fontFamily="sans-serif-condensed"
+                    android:onClick="onClick"
+                    android:text="Badges\n(1)"
+                    android:textColor="@color/text_color"
+                    android:textSize="18sp" />
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/aboutTitlePA"
                 android:layout_width="wrap_content"
@@ -131,7 +181,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="10dp"
-           android:background="@drawable/selector_button"
+                android:background="@drawable/selector_button"
                 android:fontFamily="sans-serif-condensed"
                 android:onClick="onClick"
                 android:text=""
@@ -142,53 +192,40 @@
                 android:id="@+id/profileButton2"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:visibility="gone"
                 android:layout_marginTop="10dp"
-       android:background="@drawable/selector_button"
+                android:background="@drawable/selector_button"
                 android:fontFamily="sans-serif-condensed"
                 android:onClick="onClick"
                 android:text=""
                 android:textColor="@color/button_text_color"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/profileButton3"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="10dp"
-                android:visibility="gone"
-       android:background="@drawable/selector_button"
+                android:background="@drawable/selector_button"
                 android:fontFamily="sans-serif-condensed"
                 android:onClick="onClick"
                 android:text=""
                 android:textColor="@color/button_text_color"
-                android:textSize="18sp" />
-
-            <Button
-                android:id="@+id/profileButton4"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="10dp"
-                android:visibility="gone"
-       android:background="@drawable/selector_button"
-                android:fontFamily="sans-serif-condensed"
-                android:onClick="onClick"
-                android:text="Badges"
-                android:textColor="@color/button_text_color"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/profileEditButton"
                 android:layout_width="match_parent"
-                android:layout_marginTop="10dp"
                 android:layout_height="60dp"
-                android:visibility="gone"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/selector_button"
                 android:fontFamily="sans-serif-condensed"
                 android:onClick="onClick"
                 android:text="Edit Profile"
                 android:textColor="@color/button_text_color"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:visibility="gone" />
         </LinearLayout>
     </ScrollView>
 

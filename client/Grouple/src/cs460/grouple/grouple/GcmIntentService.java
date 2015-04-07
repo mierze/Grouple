@@ -151,9 +151,14 @@ public class GcmIntentService extends IntentService
 			intent.putExtra("NAME", first + " " + last);
 			intent.putExtra("TO", to);
 		}
+		else if (TYPE.equals("FRIEND_REQUEST"))
+		{
+			//intent = new I
+		}
 
 		// send broadcast
-		context.sendBroadcast(intent);
+		if (intent != null)
+			context.sendBroadcast(intent);
 	}
 
 	// Put the message into a notification and post it.
@@ -162,7 +167,7 @@ public class GcmIntentService extends IntentService
 	private void sendNotification(String msg)
 	{
 		Global global = (Global) getApplicationContext();
-		updateMyActivity(this);
+		updateMyActivity(this);//crash seems to be here
 		// TODO: take this message and send it to the MessageActivity, possibly
 		// call a function to populate the new message
 		Uri soundUri = RingtoneManager
@@ -243,7 +248,7 @@ public class GcmIntentService extends IntentService
 			notificationIntent.putExtra("EMAIL", from);
 			notificationIntent.putExtra("NAME", first + " " + last);
 			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
-					.setContentTitle("Friend request from")
+			.setContentTitle("Friend request from "+first+" "+last)
 					.setStyle(new NotificationCompat.BigTextStyle()
 					.bigText(first+ " "+last))
 					.setSmallIcon(R.drawable.icon_grouple).setSound(soundUri)
