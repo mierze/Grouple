@@ -236,7 +236,7 @@ public class InviteActivity extends BaseActivity {
 			if (!(friendsRole.equals("-")))
 			{
 				new AddGroupMembersTask().execute("http://68.59.162.183/"+ "android_connect/add_groupmember.php", friendsEmail, user.getEmail(), friendsRole, Integer.toString(group.getID()));
-				//Send Push Notification
+				//Send Push Notification TODO: move this to onpost somehow
 				gcmUtil.sendGroupNotification(friendsEmail,group.getName(),"GROUP_INVITE");
 			}
 				

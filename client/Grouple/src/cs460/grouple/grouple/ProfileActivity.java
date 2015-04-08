@@ -57,6 +57,7 @@ public class ProfileActivity extends BaseActivity
 	private ProgressBar xpProgressBar;
 	private TextView xpTextView;
 	private TextView levelTextView;
+	private GcmUtility gcmUtil;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -76,6 +77,7 @@ public class ProfileActivity extends BaseActivity
 		levelTextView = (TextView) findViewById(R.id.levelTextView);
 		xpTextView = (TextView) findViewById(R.id.xpTextView);
 		iv = (ImageView) findViewById(R.id.profileImageUPA);	
+        gcmUtil = new GcmUtility(GLOBAL);
 	}
 
 	@Override
@@ -632,6 +634,7 @@ public class ProfileActivity extends BaseActivity
 				{
 					Toast toast = GLOBAL.getToast(ProfileActivity.this, "Successfully invited " + user.getFirstName() + " to friends!");
 					toast.show();
+					gcmUtil.sendNotification(user.getEmail(),"FRIEND_REQUEST");
 					profileButton6.setVisibility(View.INVISIBLE);		
 				} 
 				else if (jsonObject.getString("success").toString().equals("3"))

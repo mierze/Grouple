@@ -7,7 +7,7 @@
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
+ * Unless required by applicable law or agreed RECEIVER in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
@@ -30,63 +30,70 @@ import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
+
 /**
  * This {@code IntentService} does the actual handling of the GCM message.
  * {@code GcmBroadcastReceiver} (a {@code WakefulBroadcastReceiver}) holds a
  * partial wake lock for this service while the service does its work. When the
- * service is finished, it calls {@code completeWakefulIntent()} to release the
+ * service is finished, it calls {@code completeWakefulIntent()} RECEIVER release the
  * wake lock.
  */
 public class GcmIntentService extends IntentService
 {
-	public static final int NOTIFICATION_ID = 1;
+	private static final int NOTIFICATION_ID = 1;
+	private static final String TAG = "GCM_Intent_Service";
 	private NotificationManager mNotificationManager;
-	NotificationCompat.Builder builder;
-	String from;
-	String first;
-	String TYPE;
-	String NAME;
-	String to;
-	String last;
-	String groupName;
-	String eventName;
+	private Bundle EXTRAS;
+	private NotificationCompat.Builder builder;
+	private String SENDER;
+	private String FIRST;
+	private String TYPE;
+	private String NAME;
+	private String RECEIVER;
+	private String LAST;
+	private Global GLOBAL;
+	
+	enum CONTENT_TYPE 
+	{
+		FRIEND_REQUEST, USER_MESSAGE, GROUP_MESSAGE, EVENT_MESSAGE, GROUP_INVITE, EVENT_INVITE, EVENT_UPDATE;   
+	}
 
+	// construcRECEIVERr
 	public GcmIntentService()
 	{
 		super("GcmIntentService");
 	}
 
-	public static final String TAG = "GCM Demo";
-
+	/*
+	 * Intents come in SENDER other devices, this parses the bundle and sets all
+	 * variables
+	 */
 	@Override
 	protected void onHandleIntent(Intent intent)
 	{
-		Bundle extras = intent.getExtras();
-		String msg = extras.getString("msg");		
-		from = extras.getString("sender");
-		to = extras.getString("receiver");
-		TYPE = extras.getString("CONTENT_TYPE");
-		first = extras.getString("first");
-		last = extras.getString("last");
-		groupName = extras.getString("group_name");
-		eventName = extras.getString("event_name");
+		GLOBAL = ((Global)getApplicationContext());
+		EXTRAS = intent.getExtras();
+		String msg = EXTRAS.getString("msg");
+		SENDER = EXTRAS.getString("sender");
+		RECEIVER = EXTRAS.getString("receiver");
+		TYPE = EXTRAS.getString("content");
+		FIRST = EXTRAS.getString("first");
+		LAST = EXTRAS.getString("last");
+		NAME = EXTRAS.getString("name");
 
 		if (TYPE != null)
 		{
-			if (TYPE.equals("GROUP_MESSAGE") || TYPE.equals("EVENT_MESSAGE"))
+			if (TYPE.equals(CONTENT_TYPE.GROUP_MESSAGE.toString()) || TYPE.equals(CONTENT_TYPE.EVENT_MESSAGE.toString()))
 			{
-				NAME = extras.getString("NAME");
-			} else if (TYPE.equals("USER_MESSAGE"))
+			
+			}
+			else if (TYPE.equals(CONTENT_TYPE.USER_MESSAGE.toString()))
 			{
 
 			}
 		}
-		else
-		{
-			TYPE = "USER_MESSAGE";
-		}
-			
-		//String test = extras.getString("my_action");
+
+		// String test = EXTRAS.getString("my_action");
 
 		GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
 
@@ -94,7 +101,7 @@ public class GcmIntentService extends IntentService
 		// in your BroadcastReceiver.
 		String messageType = gcm.getMessageType(intent);
 
-		if (!extras.isEmpty())
+		if (!EXTRAS.isEmpty())
 		{ // has effect of unparcelling Bundle
 			/*
 			 * Filter messages based on message type. Since it is likely that
@@ -102,198 +109,170 @@ public class GcmIntentService extends IntentService
 			 * ignore any message types you're not interested in, or that you
 			 * don't recognize.
 			 */
-			if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR
-					.equals(messageType))
+			if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR.equals(messageType))
 			{
-				sendNotification("Send error: " + extras.toString());
-			} else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED
-					.equals(messageType))
+				sendNotification("Send error: " + EXTRAS.toString());
+			}
+			else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED.equals(messageType))
 			{
-				sendNotification("Deleted messages on server: "
-						+ extras.toString());
+				sendNotification("Deleted messages on server: " + EXTRAS.toString());
 				// If it's a regular GCM message, do some work.
-			} else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE
-					.equals(messageType))
+			}
+			else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType))
 			{
-				// This loop represents the service doing some work.
-				// for (int i = 0; i < 5; i++) {
-				// Log.i(TAG, "Working... " + (i + 1)
-				// + "/5 @ " + SystemClock.elapsedRealtime());
-				// try {
-				// Thread.sleep(5000);
-				// } catch (InterruptedException e) {
-				// }
-				// }
 				Log.i(TAG, "Completed work @ " + SystemClock.elapsedRealtime());
 				// Post notification of received message.
 				sendNotification(msg);
-				// DemoActivity demoActivity = (DemoActivity)
-				// getApplicationContext();
-				// demoActivity.injectMessage(msg);
-				Log.i(TAG, "Received: " + extras.toString());
+				Log.i(TAG, "Received: " + EXTRAS.toString());
 			}
 		}
 		// Release the wake lock provided by the WakefulBroadcastReceiver.
 		GcmBroadcastReceiver.completeWakefulIntent(intent);
 	}
 
+
+
+	// Put the message inRECEIVER a notification and post it.
+	// This is just one simple example of what you might choose RECEIVER do with
+	// a GCM message.
+	private void sendNotification(String msg)
+	{
+		updateMyActivity(this);// crash seems RECEIVER be here
+		// RECEIVERDO: take this message and send it RECEIVER the MessageActivity, possibly
+		// call a function RECEIVER populate the new message
+		Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+		mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+		if (TYPE.equals(CONTENT_TYPE.GROUP_MESSAGE.toString()) || TYPE.equals(CONTENT_TYPE.EVENT_MESSAGE.toString()))
+		{
+			Intent notificationIntent = new Intent(this, EntityMessagesActivity.class);
+			if (TYPE.equals(CONTENT_TYPE.GROUP_MESSAGE.toString()))
+			{
+				notificationIntent.putExtra("CONTENT_TYPE", "GROUP");
+				notificationIntent.putExtra("GID", RECEIVER);
+				Group g = new Group(Integer.parseInt(RECEIVER));
+				g.fetchGroupInfo();
+				GLOBAL.setGroupBuffer(g);
+			}
+			else
+			{
+				notificationIntent.putExtra("CONTENT_TYPE", "EVENT");
+				notificationIntent.putExtra("EID", RECEIVER);
+				Event e = new Event(Integer.parseInt(RECEIVER));
+				e.fetchEventInfo();
+				GLOBAL.setEventBuffer(e);
+			}
+			notificationIntent.putExtra("EMAIL", SENDER);
+			notificationIntent.putExtra("NAME", NAME);
+			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this).setContentTitle(NAME)
+					.setStyle(new NotificationCompat.BigTextStyle()
+					// .bigText(msg))
+							.bigText(FIRST + " " + LAST + ": " + msg)).setSmallIcon(R.drawable.icon_grouple)
+					.setSound(soundUri).setContentText(msg);
+			notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent,
+					PendingIntent.FLAG_UPDATE_CURRENT);
+			mBuilder.setAutoCancel(true);
+
+			// null check
+			mBuilder.setContentIntent(contentIntent);
+			mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+		}
+		else if (TYPE.equals(CONTENT_TYPE.USER_MESSAGE.toString()))
+		{
+			Intent notificationIntent = new Intent(getApplicationContext(), MessagesActivity.class);
+			notificationIntent.putExtra("EMAIL", SENDER);
+			notificationIntent.putExtra("NAME", FIRST + " " + LAST);
+			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
+					.setContentTitle(FIRST + " " + LAST).setStyle(new NotificationCompat.BigTextStyle()
+					// .bigText(msg))
+							.bigText(msg)).setSmallIcon(R.drawable.icon_grouple).setSound(soundUri).setContentText(msg);
+			notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent,
+					PendingIntent.FLAG_UPDATE_CURRENT);
+			mBuilder.setAutoCancel(true);
+
+			// null check
+			mBuilder.setContentIntent(contentIntent);
+			mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+		}
+		else if (TYPE.equals(CONTENT_TYPE.FRIEND_REQUEST.toString()))
+		{
+			// Send friend request.
+			Intent notificationIntent = new Intent(getApplicationContext(), ListActivity.class);
+			notificationIntent.putExtra("EMAIL", GLOBAL.getCurrentUser().getEmail());
+			notificationIntent.putExtra("NAME", FIRST + " " + LAST);
+			notificationIntent.putExtra("CONTENT", CONTENT_TYPE.FRIEND_REQUEST.toString());
+			GLOBAL.getCurrentUser().fetchFriendRequests();
+			GLOBAL.getCurrentUser().fetchUserInfo();
+
+			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
+					.setContentTitle("New friend request from " + FIRST + " " + LAST + "!")
+					.setStyle(new NotificationCompat.BigTextStyle().bigText(FIRST + " " + LAST))
+					.setSmallIcon(R.drawable.icon_grouple).setSound(soundUri).setContentText(msg);
+
+			notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent,
+					PendingIntent.FLAG_UPDATE_CURRENT);
+			mBuilder.setAutoCancel(true);
+
+			// null check
+			mBuilder.setContentIntent(contentIntent);
+			mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+		}
+		else if (TYPE.equals(CONTENT_TYPE.GROUP_INVITE.toString()))
+		{
+			// Send friend request.
+			Intent notificationIntent = new Intent(getApplicationContext(), ListActivity.class);
+			notificationIntent.putExtra("EMAIL", GLOBAL.getCurrentUser().getEmail());
+			notificationIntent.putExtra("NAME", FIRST + " " + LAST);
+			notificationIntent.putExtra("CONTENT", "GROUPS_INVITES");
+			GLOBAL.getCurrentUser().fetchFriendRequests();
+			GLOBAL.getCurrentUser().fetchUserInfo();
+			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
+					.setContentTitle("New group invite to " + NAME + " from " + FIRST + " " + LAST + "!")
+					.setStyle(new NotificationCompat.BigTextStyle().bigText(FIRST + " " + LAST))
+					.setSmallIcon(R.drawable.icon_grouple).setSound(soundUri).setContentText(msg);
+
+			notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent,
+					PendingIntent.FLAG_UPDATE_CURRENT);
+			mBuilder.setAutoCancel(true);
+
+			// null check
+			mBuilder.setContentIntent(contentIntent);
+			mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+		}
+	}
+	
 	// This function will create an intent. This intent must take as parameter
 	// the "unique_name" that you registered your activity with
 	private void updateMyActivity(Context context)
 	{
 		Intent intent = null;
 		// change intent based on type
-		if (TYPE.equals("GROUP_MESSAGE") || TYPE.equals("EVENT_MESSAGE"))
+		if (TYPE.equals(CONTENT_TYPE.GROUP_MESSAGE.toString()) || TYPE.equals(CONTENT_TYPE.EVENT_MESSAGE.toString()))
 		{
 			intent = new Intent("ENTITY_MESSAGE");
-			intent.putExtra("ID", to);
+			intent.putExtra("ID", RECEIVER);
 			intent.putExtra("TYPE", TYPE);
-			intent.putExtra("FROM", from);
-			intent.putExtra("NAME", first + " " + last);
-		} else if (TYPE.equals("USER_MESSAGE"))
+			intent.putExtra("SENDER", SENDER);
+			intent.putExtra("NAME", FIRST + " " + LAST);
+		}
+		else if (TYPE.equals(CONTENT_TYPE.USER_MESSAGE.toString()))
 		{
 			intent = new Intent("USER_MESSAGE");
-			intent.putExtra("FROM", from);
-			intent.putExtra("NAME", first + " " + last);
-			intent.putExtra("TO", to);
+			intent.putExtra("SENDER", SENDER);
+			intent.putExtra("NAME", FIRST + " " + LAST);
+			intent.putExtra("RECEIVER", RECEIVER);
 		}
-		else if (TYPE.equals("FRIEND_REQUEST"))
+		else if (TYPE.equals(CONTENT_TYPE.FRIEND_REQUEST.toString()))
 		{
-			//intent = new I
+			// intent = new I
 		}
 
 		// send broadcast
 		if (intent != null)
 			context.sendBroadcast(intent);
-	}
-
-	// Put the message into a notification and post it.
-	// This is just one simple example of what you might choose to do with
-	// a GCM message.
-	private void sendNotification(String msg)
-	{
-		Global global = (Global) getApplicationContext();
-		updateMyActivity(this);//crash seems to be here
-		// TODO: take this message and send it to the MessageActivity, possibly
-		// call a function to populate the new message
-		Uri soundUri = RingtoneManager
-				.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-
-		mNotificationManager = (NotificationManager) this
-				.getSystemService(Context.NOTIFICATION_SERVICE);
-		if (TYPE.equals("GROUP_MESSAGE") || TYPE.equals("EVENT_MESSAGE"))
-		{
-			Intent notificationIntent = new Intent(this,
-					EntityMessagesActivity.class);
-			if (TYPE.equals("GROUP_MESSAGE"))
-			{
-				notificationIntent.putExtra("CONTENT_TYPE", "GROUP");
-				notificationIntent.putExtra("GID", to);
-				Group g = new Group(Integer.parseInt(to));
-				g.fetchGroupInfo();
-				global.setGroupBuffer(g);
-			} else
-			{
-				notificationIntent.putExtra("CONTENT_TYPE", "EVENT");
-				notificationIntent.putExtra("EID", to);
-				Event e = new Event(Integer.parseInt(to));
-				e.fetchEventInfo();
-				global.setEventBuffer(e);
-			}
-			notificationIntent.putExtra("EMAIL", from);
-			notificationIntent.putExtra("NAME", NAME);	
-			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
-					.setContentTitle(NAME)
-					.setStyle(new NotificationCompat.BigTextStyle()
-					// .bigText(msg))
-							.bigText(first + " " + last + ": " + msg))
-					.setSmallIcon(R.drawable.icon_grouple).setSound(soundUri)
-					.setContentText(msg);
-			notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP
-					| Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(),
-					0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-			mBuilder.setAutoCancel(true);
-
-			// null check
-			mBuilder.setContentIntent(contentIntent);
-			mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
-		} 
-		else if (TYPE.equals("USER_MESSAGE"))
-		{
-			Intent notificationIntent = new Intent(getApplicationContext(),
-					MessagesActivity.class);
-			notificationIntent.putExtra("EMAIL", from);
-			notificationIntent.putExtra("NAME", first + " " + last);
-			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
-					.setContentTitle(first + " " + last)
-					.setStyle(new NotificationCompat.BigTextStyle()
-					// .bigText(msg))
-							.bigText(msg))
-					.setSmallIcon(R.drawable.icon_grouple).setSound(soundUri)
-					.setContentText(msg);
-			notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP
-					| Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(),
-					0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-			mBuilder.setAutoCancel(true);
-
-			// null check
-			mBuilder.setContentIntent(contentIntent);
-			mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
-		}
-		else if(TYPE.equals("FRIEND_REQUEST"))
-		{
-			//Send friend request.
-			Intent notificationIntent = new Intent(getApplicationContext(),ListActivity.class);
-			notificationIntent.putExtra("EMAIL", global.getCurrentUser().getEmail());
-			notificationIntent.putExtra("NAME", first + " " + last);
-			notificationIntent.putExtra("CONTENT", "FRIENDS_REQUESTS");
-			global.getCurrentUser().fetchFriendRequests();
-			global.getCurrentUser().fetchUserInfo();
-			
-			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
-			.setContentTitle("Friend request from "+first+" "+last+"!")
-			.setStyle(new NotificationCompat.BigTextStyle()
-			.bigText(first+ " "+last))
-			.setSmallIcon(R.drawable.icon_grouple).setSound(soundUri)
-			.setContentText(msg);
-			
-			notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP| Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(),
-					0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-			mBuilder.setAutoCancel(true);
-			
-			// null check
-			mBuilder.setContentIntent(contentIntent);
-			mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
-		}
-		else if(TYPE.equals("GROUP_INVITE"))
-		{
-			//Send friend request.
-			Intent notificationIntent = new Intent(getApplicationContext(),ListActivity.class);
-			notificationIntent.putExtra("EMAIL", global.getCurrentUser().getEmail());
-			notificationIntent.putExtra("NAME", first + " " + last);
-			notificationIntent.putExtra("CONTENT", "GROUPS_INVITES");
-			global.getCurrentUser().fetchFriendRequests();
-			global.getCurrentUser().fetchUserInfo();
-			
-			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
-			.setContentTitle("Group Invite To "+groupName+" From: " +first+" "+last+"!")
-			.setStyle(new NotificationCompat.BigTextStyle()
-			.bigText(first+ " "+last))
-			.setSmallIcon(R.drawable.icon_grouple).setSound(soundUri)
-			.setContentText(msg);
-			
-			notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP| Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(),
-					0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-			mBuilder.setAutoCancel(true);
-			
-			// null check
-			mBuilder.setContentIntent(contentIntent);
-			mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
-		}
-
 	}
 }

@@ -83,8 +83,7 @@ public class FriendAddActivity extends BaseActivity
 
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					Context context = getApplicationContext();
-					Toast toast = GLOBAL.getToast(context, jsonObject.getString("message"));
+					Toast toast = GLOBAL.getToast(FriendAddActivity.this, jsonObject.getString("message"));
 					toast.show();
 					//Send the push notification.
 					gcmUtil.sendNotification(receiver,"FRIEND_REQUEST");

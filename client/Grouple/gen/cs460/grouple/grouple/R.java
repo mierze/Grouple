@@ -1693,9 +1693,9 @@ containing a value of this type.
         public static final int editUserImageView=0x7f0c0101;
         public static final int edit_query=0x7f0c0045;
         public static final int emailConfirmTextCED=0x7f0c010f;
+        public static final int emailEditText=0x7f0c00ba;
         public static final int emailEditTextAFA=0x7f0c0054;
         public static final int emailEditTextCPD=0x7f0c0116;
-        public static final int emailEditTextLA=0x7f0c00ba;
         public static final int emailEditTextRA=0x7f0c00e4;
         public static final int emailEventSwitch=0x7f0c00f3;
         public static final int emailFriendSwitch=0x7f0c00f1;

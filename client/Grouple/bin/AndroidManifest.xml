@@ -119,6 +119,9 @@
             android:configChanges="orientation"
             android:label="@string/title_activity_events"
             android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.HomeActivity" />
         </activity>
         <activity
             android:name=".RegisterActivity"
@@ -165,6 +168,9 @@
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
             android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.HomeActivity" />
         </activity>
         <activity
             android:name=".MessagesActivity"
@@ -172,18 +178,15 @@
             android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="cs460.grouple.grouple.HomeActivity" />
+                android:value="cs460.grouple.grouple.RecentMessagesActivity" />
         </activity>
         <activity
             android:name=".UserEditActivity"
             android:label="@string/title_activity_edit_profile"
             android:screenOrientation="portrait" >
-        </activity>
-        <activity
-            android:name=".FriendProfileActivity"
-            android:configChanges="orientation"
-            android:label="@string/title_activity_friend_profile"
-            android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.ProfileActivity" />
         </activity>
         <activity android:name=".User" >
         </activity>
@@ -192,6 +195,9 @@
         <activity
             android:name=".EventCreateActivity"
             android:label="@string/title_activity_event_create" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.EventsActivity" />
         </activity>
         <activity
             android:name=".ListActivity"
@@ -204,21 +210,37 @@
         <activity
             android:name=".InviteActivity"
             android:label="@string/title_activity_invite" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.ListActivity" />
         </activity>
         <activity
             android:name=".EventAddGroupsActivity"
-            android:label="@string/title_activity_event_addgroups" />
+            android:label="@string/title_activity_event_addgroups" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.ListActivity" />
+        </activity>
         <activity
             android:name=".EventEditActivity"
             android:label="@string/title_activity_event_edit" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.ProfileActivity" />
         </activity>
         <activity
             android:name=".ManageMembersActivity"
             android:label="@string/title_activity_manage_members" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.GroupEditActivity" />
         </activity>
         <activity
             android:name=".ManageParticipantsActivity"
             android:label="@string/title_activity_manage_attending_event" >
+              <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.EventEditActivity" />
         </activity>
         <!--
           WakefulBroadcastReceiver that will receive intents from GCM
@@ -244,14 +266,16 @@
         <activity
             android:name=".RecentMessagesActivity"
             android:label="@string/title_activity_contact_list" >
+              <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.HomeActivity" />
         </activity>
         <activity
             android:name=".EntityMessagesActivity"
             android:label="@string/title_activity_group_messages" >
-        </activity>
-        <activity
-            android:name=".EventMessagesActivity"
-            android:label="@string/title_activity_event_messaging" >
+                <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.ProfileActivity" />
         </activity>
         <activity
             android:name=".BaseActivity"

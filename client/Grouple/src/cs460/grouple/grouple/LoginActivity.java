@@ -53,13 +53,21 @@ public class LoginActivity extends Activity
 	{
 		
 		super.onCreate(savedInstanceState);
-		GLOBAL = (Global) getApplicationContext();
+		GLOBAL = ((Global) getApplicationContext());
 		//before showing login screen, attempt to login user using session token stored in SharedPreferences
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		String token = prefs.getString("session_token", null);
 		String email = prefs.getString("session_email", null);
 		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
         loadDialog.setOwnerActivity(this);
+		emailEditText = (EditText) findViewById(R.id.emailEditText);
+		if (emailEditText == null) 
+			System.out.println("THIS IS NULL WTF");
+		else
+			System.out.println("WE ARE GOOD");
+		rememberLogin = (CheckBox) findViewById(R.id.rememberLoginCB);
+		loginFail = (TextView) findViewById(R.id.loginFailTextViewLA);
+		progBar = (ProgressBar) findViewById(R.id.progressBar);
 		if(token !=null && email != null)
 		{
 			System.out.println("token was found... initiating login with email: "+email + ", token: "+token);
@@ -77,17 +85,14 @@ public class LoginActivity extends Activity
 			setContentView(R.layout.activity_login);
 			// sets up an progress bar spinner that will appear when user hits
 			// login.
-			progBar = (ProgressBar) findViewById(R.id.progressBar);
+
 			progBar.setVisibility(View.INVISIBLE);
 
-			rememberLogin = (CheckBox) findViewById(R.id.rememberLoginCB);
-			// sets up error message that will appear if user enters invalid
-			// login/pass.
-			loginFail = (TextView) findViewById(R.id.loginFailTextViewLA);
+
 			loginFail.setVisibility(View.GONE);
 			initKillswitchListener();
 		}	
-		emailEditText = (EditText) findViewById(R.id.emailEditTextLA);
+
 	}
 	
 	@Override

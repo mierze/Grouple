@@ -26,12 +26,18 @@ public class GcmUtility extends Application {
 	private User user;
 	private AtomicInteger msgId = new AtomicInteger();
 	
+	enum CONTENT_TYPE 
+	{
+		FRIEND_REQUEST, USER_MESSAGE, GROUP_MESSAGE, EVENT_MESSAGE, GROUP_INVITE, EVENT_INVITE, EVENT_UPDATE;   
+	}
+	
 	public GcmUtility(Global g) 
 	{		
 		gcm = GoogleCloudMessaging.getInstance(this);
 		GLOBAL = g;
 		user = GLOBAL.getCurrentUser();	
 	}
+	
 	//This is for sending friend request notifications. 
 	public void sendNotification(String recipient, String notificationType) 
 	{
@@ -85,7 +91,7 @@ public class GcmUtility extends Application {
                    Bundle data = new Bundle();
                    //Set bundle
                    data.putString("my_action", "cs460.grouple.grouple.ECHO_NOW");
-                   data.putString("CONTENT_TYPE", "FRIEND_REQUEST");
+                   data.putString("content", "FRIEND_REQUEST");
                    data.putString("sender", user.getEmail());
                    data.putString("recipient",recipientRegID);
                    //This is where we put our first and last name. That way the recipient knows who sent it.
@@ -123,10 +129,10 @@ public class GcmUtility extends Application {
                    Bundle data = new Bundle();
                    //Set bundle
                    data.putString("my_action", "cs460.grouple.grouple.ECHO_NOW");
-                   data.putString("CONTENT_TYPE", "GROUP_INVITE");
+                   data.putString("content", "GROUP_INVITE");
                    data.putString("sender", user.getEmail());
                    data.putString("recipient",recipientRegID);
-                   data.putString("group_name", gName);
+                   data.putString("name", gName);
                    //This is where we put our first and last name. That way the recipient knows who sent it.
                    data.putString("first", user.getFirstName());
                    data.putString("last", user.getLastName());
@@ -163,10 +169,10 @@ public class GcmUtility extends Application {
                    Bundle data = new Bundle();
                    //Set bundle
                    data.putString("my_action", "cs460.grouple.grouple.ECHO_NOW");
-                   data.putString("CONTENT_TYPE", "EVENT_INVITE");
+                   data.putString("content", "EVENT_INVITE");
                    data.putString("sender", user.getEmail());
                    data.putString("recipient",recipientRegID);
-                   data.putString("event_name", eName);
+                   data.putString("name", eName);
                    //This is where we put our first and last name. That way the recipient knows who sent it.
                    data.putString("first", user.getFirstName());
                    data.putString("last", user.getLastName());
@@ -227,6 +233,4 @@ public class GcmUtility extends Application {
 			}
 		}
 	}
-    
-
 }

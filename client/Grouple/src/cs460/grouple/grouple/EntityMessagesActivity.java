@@ -90,7 +90,7 @@ public class EntityMessagesActivity extends BaseActivity
     	sendMessageButton = (Button)findViewById(R.id.sendButton);
 		initActionBar(EXTRAS.getString("NAME"), true);
 		gcm = GoogleCloudMessaging.getInstance(this);
-		CONTENT_TYPE = EXTRAS.getString("CONTENT_TYPE");
+		CONTENT_TYPE = EXTRAS.getString("CONTENT");
 		if (CONTENT_TYPE.equals("GROUP"))
 		{
 			group = GLOBAL.getGroupBuffer();
@@ -263,11 +263,11 @@ public class EntityMessagesActivity extends BaseActivity
                             messages.add(m);
                             data.putString("msg", msg);
                             data.putString("my_action", "cs460.grouple.grouple.ECHO_NOW");
-                            data.putString("CONTENT_TYPE", CONTENT_TYPE + "_MESSAGE");
+                            data.putString("content", CONTENT_TYPE + "_MESSAGE");
                             data.putString("receiver", ID);//may want to just use receiver for all instead of ID
                             data.putString("sender", user.getEmail());
-                            data.putString("ID", ID);
-                            data.putString("NAME", NAME);
+                            data.putString("id", ID);
+                            data.putString("name", NAME);
                             data.putString("first", user.getFirstName());
                             data.putString("last", user.getLastName());
                             
@@ -284,6 +284,7 @@ public class EntityMessagesActivity extends BaseActivity
                         {
                             msg = "Error :" + ex.getMessage();
                             sendMessageButton.setClickable(true);
+                            messageEditText.requestFocus();
         					Toast toast = GLOBAL.getToast(EntityMessagesActivity.this, "Error sending message. Please try again");
         					toast.show();
                         }
@@ -295,6 +296,7 @@ public class EntityMessagesActivity extends BaseActivity
                     {
                     	messageEditText.setText("");
                     	sendMessageButton.setClickable(true);
+                    	messageEditText.requestFocus();
                     	populateMessages();
                     }
                 }.execute(null, null, null);

@@ -505,9 +505,9 @@ int id editUserImageButton 0x7f0c0102
 int id editUserImageView 0x7f0c0101
 int id edit_query 0x7f0c0045
 int id emailConfirmTextCED 0x7f0c010f
+int id emailEditText 0x7f0c00ba
 int id emailEditTextAFA 0x7f0c0054
 int id emailEditTextCPD 0x7f0c0116
-int id emailEditTextLA 0x7f0c00ba
 int id emailEditTextRA 0x7f0c00e4
 int id emailEventSwitch 0x7f0c00f3
 int id emailFriendSwitch 0x7f0c00f1

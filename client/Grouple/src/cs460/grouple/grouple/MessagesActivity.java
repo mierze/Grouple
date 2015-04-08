@@ -261,7 +261,7 @@ public class MessagesActivity extends BaseActivity
                             messages.add(m);
                             data.putString("msg", m.getMessage());
                             data.putString("my_action", "cs460.grouple.grouple.ECHO_NOW");
-                            data.putString("CONTENT_TYPE", "USER_MESSAGE");
+                            data.putString("content", "USER_MESSAGE");
                             data.putString("sender", m.getSender());
                             data.putString("receiver", m.getReceiver());
                             //This is where we put the recipients regID.
@@ -278,6 +278,7 @@ public class MessagesActivity extends BaseActivity
         					Toast toast = GLOBAL.getToast(MessagesActivity.this, "Error sending message. Please try again.");
         					toast.show();
         					sendMessageButton.setClickable(true);
+        					messageEditText.requestFocus();
                             message = "Error :" + ex.getMessage();
                         }
                         return message;
@@ -287,6 +288,7 @@ public class MessagesActivity extends BaseActivity
                     protected void onPostExecute(String msg) {
                     	messageEditText.setText("");
                     	sendMessageButton.setClickable(true);
+                    	messageEditText.requestFocus();
                     	populateMessages();
                     }
                 }.execute(null, null, null);
