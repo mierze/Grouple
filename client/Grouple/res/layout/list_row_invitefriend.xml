@@ -16,7 +16,6 @@
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:textSize="18sp"
-        android:background="@android:color/transparent"
         android:fontFamily="sans-serif-condensed"
         android:gravity="center_vertical"
         android:textColor="@color/text_color"

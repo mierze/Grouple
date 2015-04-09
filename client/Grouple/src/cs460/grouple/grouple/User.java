@@ -994,8 +994,7 @@ import android.util.SparseArray;
 	protected  int fetchEventsUpcoming()
 	{
 		AsyncTask<String, Void, String> task = new getEventsUpcomingTask()
-				.execute("http://68.59.162.183/android_connect/get_events_upcoming.php?email="
-						+ getEmail());
+				.execute("http://68.59.162.183/android_connect/get_events_upcoming.php");
 		try
 		{
 			task.get(10000, TimeUnit.MILLISECONDS);
@@ -1020,7 +1019,9 @@ import android.util.SparseArray;
 		@Override
 		protected String doInBackground(String... urls)
 		{
-			return GLOBAL.readJSONFeed(urls[0], null);
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("email", getEmail()));
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
 
 		@Override
@@ -1041,6 +1042,7 @@ import android.util.SparseArray;
 						Event e = new Event(
 								Integer.parseInt(o.getString("eid")));
 						e.setName(o.getString("name"));
+						e.setStartDate(o.getString("startDate"));
 						addToEventsUpcoming(e);
 					}
 				}

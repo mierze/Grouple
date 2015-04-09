@@ -1,6 +1,7 @@
 package cs460.grouple.grouple;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -324,11 +325,27 @@ public class ListActivity extends BaseActivity
 			sadGuyText = "You do not have any past events.";
 		}
 		
+		
 		//looping thru and populating list of events
 		if (events != null && !events.isEmpty())
 		{
+			String startDate = null;
 			for (Event e : events) 
 			{
+				View dateRow = li.inflate(R.layout.list_row_date, null);	
+				TextView dateTextView = (TextView) dateRow.findViewById(R.id.dateTextView);	
+				if (startDate == null)
+				{
+					startDate = e.getStartTextNoTime();
+					dateTextView.setText(startDate);
+					listLayout.addView(dateRow);
+				}
+				else if (startDate.compareTo(e.getStartTextNoTime()) < 0)
+				{
+					startDate = e.getStartTextNoTime();
+					dateTextView.setText(startDate);
+					listLayout.addView(dateRow);
+				}
 				id = e.getID();
 				index = events.indexOf(e);
 				//Group group = GLOBAL.loadGroup(id);
@@ -715,7 +732,7 @@ public class ListActivity extends BaseActivity
 			String email = user.getEmail();
 			String id = urls[1];
 			
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("email", email));
 			nameValuePairs.add(new BasicNameValuePair(type, id));
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);

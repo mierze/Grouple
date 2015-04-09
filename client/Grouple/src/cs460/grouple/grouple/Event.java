@@ -20,6 +20,7 @@ public class Event extends Entity
 	private String eventState;
 	private String startDate;
 	private String startText;
+	private String startTextNoTime;
 	private String endText;
 	private String endDate;
 	private String category;
@@ -31,103 +32,109 @@ public class Event extends Entity
 	 * Constructor for User class
 	 */
 
-	public Event(int id)
+	protected Event(int id)
 	{
 		this.id = id;
 	}
 
-	public void setID(int id)
+	protected void setID(int id)
 	{
 		this.id = id;
 	}
 
-	public void setEventState(String eventState)
+	protected void setEventState(String eventState)
 	{
 		this.eventState = eventState;
 	}
 
-	public void setCategory(String category)
+	protected void setCategory(String category)
 	{
 		this.category = category;
 	}
 
-	public void setMinPart(int minPart)
+	protected void setMinPart(int minPart)
 	{
 		this.minPart = minPart;
 	}
 
-	public void setMaxPart(int maxPart)
+	protected void setMaxPart(int maxPart)
 	{
 		this.maxPart = maxPart;
 	}
 
-	public void setLocation(String location)
+	protected void setLocation(String location)
 	{
 		this.location = location;
 	}
 
-	public void setStartDate(String startDate)
+	protected void setStartDate(String startDate)
 	{
 		this.startDate = startDate;
 		// string is format from json, parsedate converts
 		startText = GLOBAL.toDayTextFormatFromRaw(startDate);
+		startTextNoTime = GLOBAL.toNoTimeTextFormatFromRaw(startDate);
 	}
 
-	public void setEndDate(String endDate)
+	protected void setEndDate(String endDate)
 	{
 		this.endDate = endDate;
 		endText = GLOBAL.toDayTextFormatFromRaw(endDate);
 	}
 
 	// getters
-	public int getID()
+	protected int getID()
 	{
 		return id;
 	}
 
-	public String getEventState()
+	protected String getEventState()
 	{
 		return eventState;
 	}
 
-	public String getCategory()
+	protected String getCategory()
 	{
 		return category;
 	}
 
-	public int getMinPart()
+	protected int getMinPart()
 	{
 		return minPart;
 	}
 
-	public int getMaxPart()
+	protected int getMaxPart()
 	{
 		return maxPart;
 	}
 
-	public String getLocation()
+	protected String getLocation()
 	{
 		return location;
 	}
 
-	public String getStartDate()
+	protected String getStartDate()
 	{
 		return startDate;
 	}
 
-	public String getEndDate()
+	protected String getEndDate()
 	{
 		return endDate;
 	}
 
-	public String getEndText()
+	protected String getEndText()
 	{
 		return endText;
 	}
 
-	public String getStartText()
+	protected String getStartText()
 	{
 		return startText;
+	}
+	
+	protected String getStartTextNoTime()
+	{
+		return startTextNoTime;
 	}
 
 	/**
@@ -135,7 +142,7 @@ public class Event extends Entity
 	 * fetches the user name, bio, and everything
 	 * 
 	 */
-	public int fetchEventInfo()
+	protected int fetchEventInfo()
 	{
 		AsyncTask<String, Void, String> task = new getEventInfoTask()
 				.execute("http://68.59.162.183/android_connect/get_event_info.php");
@@ -222,7 +229,7 @@ public class Event extends Entity
 	 * 
 	 * will be fetching the confirmed participants (email -> name)
 	 */
-	public int fetchParticipants()
+	protected int fetchParticipants()
 	{
 		AsyncTask<String, Void, String> task = new getParticipantsTask()
 				.execute("http://68.59.162.183/android_connect/get_event_participants.php?eid="
