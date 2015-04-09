@@ -565,7 +565,7 @@ public class ListActivity extends BaseActivity
 	{
 		loadDialog.show();
 		int id = view.getId();		
-		Intent intent = new Intent(this, ProfileActivity.class);
+		Intent intent = new Intent(this, EntityProfileActivity.class);
 		if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()) || CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString()) )
 		{
 			intent.putExtra("GID", id);
@@ -588,6 +588,7 @@ public class ListActivity extends BaseActivity
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()) || CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()) || CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()) || CONTENT.equals(CONTENT_TYPE.SELECT_FRIEND.toString()))
 		{
+			intent = new Intent(this, UserProfileActivity.class);
 			String friendEmail;
 			if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
 			{
@@ -622,7 +623,6 @@ public class ListActivity extends BaseActivity
 					GLOBAL.setCurrentUser(users.get(id)); //reloading user
 			}
 			intent.putExtra("EMAIL", friendEmail);
-			intent.putExtra("CONTENT", "USER");	
 		}		
 		startActivity(intent);	
 	}

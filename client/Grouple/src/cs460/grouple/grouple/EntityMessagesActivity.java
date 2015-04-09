@@ -26,6 +26,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
+import cs460.grouple.grouple.MessagesActivity.readMessagesTask;
+
 public class EntityMessagesActivity extends BaseActivity
 { 
 	private User user; //will be null for now
@@ -147,6 +149,49 @@ public class EntityMessagesActivity extends BaseActivity
 		            scrollview.fullScroll(ScrollView.FOCUS_DOWN);
 		        }
 		    });
+		readMessages();
+	}
+	
+	public int readMessages()
+	{
+		new readMessagesTask().execute("http://68.59.162.183/android_connect/update_entitymessage_lastread.php");
+		return 1;
+	}
+
+	class readMessagesTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected String doInBackground(String... urls)
+		{
+			String type = CONTENT_TYPE.equals("GROUP") ? "g_id" : "e_id";
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair(type, ID));
+			nameValuePairs.add(new BasicNameValuePair("email", user.getEmail()));
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+		}
+
+		@Override
+		protected void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					System.out.println("WE HAD SUCCESS IN READ MESSAGES!");
+				}
+				// user has no friends
+				if (jsonObject.getString("success").toString().equals("2"))
+				{
+					Log.d("readMessage", "failed = 2 return");
+				}
+			} 
+			catch (Exception e)
+			{
+				Log.d("readMessage", "exception caught");
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
+			}
+		}
 	}
 	
 	@Override
@@ -218,7 +263,7 @@ public class EntityMessagesActivity extends BaseActivity
 	{
 		loadDialog.show();
 		int id = view.getId();		
-		Intent intent = new Intent(this, ProfileActivity.class);
+		Intent intent = new Intent(this, EntityProfileActivity.class);
 		String friendEmail = messages.get(id).getSender();
 		User u = new User(friendEmail);
 		u.fetchEventsUpcoming();

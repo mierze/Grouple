@@ -85,8 +85,7 @@ public class BaseActivity extends ActionBarActivity implements OnClickListener
 			user.fetchEventsUpcoming();
 			user.fetchFriends();
 			user.fetchGroups();
-			intent = new Intent(this, ProfileActivity.class);
-			intent.putExtra("CONTENT", "USER");
+			intent = new Intent(this, UserProfileActivity.class);
 			break;
 		case R.id.action_messages:
 			intent = new Intent(this, RecentMessagesActivity.class);

@@ -155,8 +155,7 @@ public class HomeActivity extends BaseActivity
 			user.fetchEventsUpcoming();
 			user.fetchFriends();
 			user.fetchGroups();
-			intent = new Intent(this, ProfileActivity.class);
-			intent.putExtra("CONTENT", "USER");
+			intent = new Intent(this, UserProfileActivity.class);
 			break;
 		default: // default just break out
 			break;

@@ -411,7 +411,7 @@ public class GroupCreateActivity extends BaseActivity
 						{
 							//add code here to take user to newly created group profile page.  (pass g_id as extra so correct group profile can be loaded)
 							loadDialog.show();
-							Intent intent = new Intent(GroupCreateActivity.this, ProfileActivity.class);
+							Intent intent = new Intent(GroupCreateActivity.this, EntityProfileActivity.class);
 							intent.putExtra("EMAIL", user.getEmail());
 							intent.putExtra("GID", g.getID());
 							intent.putExtra("CONTENT", "GROUP");

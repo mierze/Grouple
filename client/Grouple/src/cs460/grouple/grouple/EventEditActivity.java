@@ -78,6 +78,11 @@ public class EventEditActivity extends BaseActivity
 	private AlertDialog categoryDialog;
 	private Bundle EXTRAS;
 	private TextView errorTextView;
+	private AlertDialog toBringDialog;
+	private Button addToBringRowButton;
+	private Button toBringButton;
+	private View toBringLayout;
+	private final ArrayList<EditText> toBringEditTexts = new ArrayList<EditText>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)

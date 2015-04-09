@@ -61,7 +61,16 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name=".ProfileActivity"
+            android:name=".EntityProfileActivity"
+            android:configChanges="orientation"
+            android:label="@string/title_activity_user"
+            android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.HomeActivity" />
+        </activity>
+                <activity
+            android:name=".UserProfileActivity"
             android:configChanges="orientation"
             android:label="@string/title_activity_user"
             android:screenOrientation="portrait" >
