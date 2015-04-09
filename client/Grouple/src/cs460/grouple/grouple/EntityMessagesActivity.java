@@ -263,7 +263,7 @@ public class EntityMessagesActivity extends BaseActivity
 	{
 		loadDialog.show();
 		int id = view.getId();		
-		Intent intent = new Intent(this, GroupProfileActivity.class);
+		Intent intent = new Intent(this, UserProfileActivity.class);
 		String friendEmail = messages.get(id).getSender();
 		User u = new User(friendEmail);
 		u.fetchEventsUpcoming();
@@ -275,7 +275,6 @@ public class EntityMessagesActivity extends BaseActivity
 		else
 			GLOBAL.setCurrentUser(u); //reloading user
 		intent.putExtra("EMAIL", friendEmail);
-		intent.putExtra("CONTENT", "USER");	
 		startActivity(intent);	
 	}
 	
