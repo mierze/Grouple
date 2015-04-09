@@ -29,7 +29,7 @@ import android.util.SparseArray;
 	private ArrayList<Group> groupInvites = new ArrayList<Group>();
 	private ArrayList<Event> eventsUpcoming = new ArrayList<Event>();
 	private ArrayList<Event> eventsPast = new ArrayList<Event>();
-	private ArrayList<Event> eventsInvites = new ArrayList<Event>();
+	private ArrayList<Event> eventInvites = new ArrayList<Event>();
 	private ArrayList<Event> eventsPending = new ArrayList<Event>();
 	private SparseArray<String> groupRoles = new SparseArray<String>();
 	private SparseArray<String> eventRoles = new SparseArray<String>();
@@ -90,11 +90,11 @@ import android.util.SparseArray;
 
 	protected void removeEventInvite(int id)
 	{
-		if (eventsInvites != null)
-			for (Event e : eventsInvites)
+		if (eventInvites != null)
+			for (Event e : eventInvites)
 				if (e.getID() == id)
 				{
-					eventsInvites.remove(eventsInvites.indexOf(e));
+					eventInvites.remove(eventInvites.indexOf(e));
 					break;
 				}
 	}
@@ -244,8 +244,8 @@ import android.util.SparseArray;
 
 	protected int getNumEventsInvites()
 	{
-		if (eventsInvites != null)
-			return eventsInvites.size();
+		if (eventInvites != null)
+			return eventInvites.size();
 		else
 			return 0;
 	}
@@ -283,9 +283,9 @@ import android.util.SparseArray;
 		return eventsUpcoming;
 	}
 
-	protected ArrayList<Event> getEventsInvites()
+	protected ArrayList<Event> getEventInvites()
 	{
-		return eventsInvites;
+		return eventInvites;
 	}
 
 	protected ArrayList<Event> getEventsPast()
@@ -336,12 +336,12 @@ import android.util.SparseArray;
 
 	protected void addToEventsInvites(Event e)
 	{
-		boolean inEventsInvites = false;
-		for (Event t : eventsInvites)
+		boolean inEventInvites = false;
+		for (Event t : eventInvites)
 			if (t.getID() == e.getID())
-				inEventsInvites = true;
-		if (!inEventsInvites)
-			eventsInvites.add(e);
+				inEventInvites = true;
+		if (!inEventInvites)
+			eventInvites.add(e);
 	}
 
 	protected void addToEventsUpcoming(Event e)
@@ -773,8 +773,7 @@ import android.util.SparseArray;
 	protected int fetchEventsPending()
 	{
 		AsyncTask<String, Void, String> task = new getEventsPendingTask()
-				.execute("http://68.59.162.183/android_connect/get_events_pending.php?email="
-						+ getEmail());
+				.execute("http://68.59.162.183/android_connect/get_events_pending.php");
 		try
 		{
 			task.get(10000, TimeUnit.MILLISECONDS);
@@ -803,7 +802,9 @@ import android.util.SparseArray;
 		@Override
 		protected  String doInBackground(String... urls)
 		{
-			return GLOBAL.readJSONFeed(urls[0], null);
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("email", getEmail()));
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
 
 		@Override
@@ -822,12 +823,12 @@ import android.util.SparseArray;
 					{
 						JSONObject o = (JSONObject) jsonArray.get(i);
 						// function adds friend to the friends map
-						Event e = new Event(
-								Integer.parseInt(o.getString("eid")));
+						Event e = new Event(o.getInt("e_id"));
 						e.setName(o.getString("name"));
 						e.setInviter(o.getString("sender"));
-						e.setMinPart(Integer.parseInt(o.getString("minpart")));
-						e.setMaxPart(Integer.parseInt(o.getString("maxpart")));
+						e.setMinPart(o.getInt("minPart"));
+						e.setMaxPart(o.getInt("maxPart"));
+						e.setStartDate(o.getString("startDate"));
 						e.fetchParticipants();
 						addToEventsPending(e);
 					}
@@ -848,8 +849,7 @@ import android.util.SparseArray;
 	protected int fetchEventsPast()
 	{
 		AsyncTask<String, Void, String> task = new getEventsPastTask()
-				.execute("http://68.59.162.183/android_connect/get_events_past.php?email="
-						+ getEmail());
+				.execute("http://68.59.162.183/android_connect/get_events_past.php");
 		try
 		{
 			task.get(10000, TimeUnit.MILLISECONDS);
@@ -877,7 +877,9 @@ import android.util.SparseArray;
 		@Override
 		protected  String doInBackground(String... urls)
 		{
-			return GLOBAL.readJSONFeed(urls[0], null);
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("email", getEmail()));
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
 
 		@Override
@@ -895,12 +897,12 @@ import android.util.SparseArray;
 					{
 						JSONObject o = (JSONObject) jsonArray.get(i);
 						// function adds friend to the friends map
-						Event e = new Event(
-								Integer.parseInt(o.getString("eid")));
+						Event e = new Event(o.getInt("e_id"));
 						e.setName(o.getString("name"));
 						e.setInviter(o.getString("sender"));
-						e.setMinPart(Integer.parseInt(o.getString("minpart")));
-						e.setMaxPart(Integer.parseInt(o.getString("maxpart")));
+						e.setMinPart(o.getInt("minPart"));
+						e.setMaxPart(o.getInt("maxPart"));
+						e.setStartDate(o.getString("startDate"));
 						e.fetchParticipants();
 						addToEventsPast(e);
 					}
@@ -918,11 +920,10 @@ import android.util.SparseArray;
 		}
 	}
 
-	protected int fetchEventsInvites()
+	protected int fetchEventInvites()
 	{
 		AsyncTask<String, Void, String> task = new getEventsInvitesTask()
-				.execute("http://68.59.162.183/android_connect/get_events_invites.php?email="
-						+ getEmail());
+				.execute("http://68.59.162.183/android_connect/get_event_invites.php");
 		try
 		{
 			task.get(10000, TimeUnit.MILLISECONDS);
@@ -950,7 +951,9 @@ import android.util.SparseArray;
 		@Override
 		protected  String doInBackground(String... urls)
 		{
-			return GLOBAL.readJSONFeed(urls[0], null);
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("email", getEmail()));
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
 
 		@Override
@@ -968,12 +971,12 @@ import android.util.SparseArray;
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
 						JSONObject o = (JSONObject) jsonArray.get(i);
-						Event e = new Event(
-								Integer.parseInt(o.getString("eid")));
+						Event e = new Event(o.getInt("e_id"));
 						e.setName(o.getString("name"));
 						e.setInviter(o.getString("sender"));
-						e.setMinPart(Integer.parseInt(o.getString("minpart")));
-						e.setMaxPart(Integer.parseInt(o.getString("maxpart")));
+						e.setMinPart(o.getInt("minPart"));
+						e.setMaxPart(o.getInt("maxPart"));
+						e.setStartDate(o.getString("startDate"));
 						e.fetchParticipants();
 						addToEventsInvites(e);
 					}

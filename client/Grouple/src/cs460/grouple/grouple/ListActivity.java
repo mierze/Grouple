@@ -316,7 +316,7 @@ public class ListActivity extends BaseActivity
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()))
 		{
-			events = user.getEventsInvites();
+			events = user.getEventInvites();
 			sadGuyText = "You do not have any event invites.";
 		}
 		else
@@ -582,12 +582,11 @@ public class ListActivity extends BaseActivity
 	{
 		loadDialog.show();
 		int id = view.getId();		
-		Intent intent = new Intent(this, EntityProfileActivity.class);
+		Intent intent = new Intent(this, GroupProfileActivity.class);
 		if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()) || CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString()) )
 		{
 			intent.putExtra("GID", id);
 			intent.putExtra("EMAIL", user.getEmail());
-			intent.putExtra("CONTENT", "GROUP");
 			Group g = new Group(id);
 			g.fetchGroupInfo();
 			g.fetchMembers();
@@ -595,9 +594,9 @@ public class ListActivity extends BaseActivity
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()))
 		{
+			intent = new Intent(this, EventProfileActivity.class);
 			intent.putExtra("EID", id);
 			intent.putExtra("EMAIL", user.getEmail());
-			intent.putExtra("CONTENT", "EVENT");
 			Event e = new Event(id);
 			e.fetchEventInfo();
 			e.fetchParticipants();
@@ -606,38 +605,24 @@ public class ListActivity extends BaseActivity
 		else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()) || CONTENT.equals(CONTENT_TYPE.GROUPS_MEMBERS.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()) || CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()) || CONTENT.equals(CONTENT_TYPE.SELECT_FRIEND.toString()))
 		{
 			intent = new Intent(this, UserProfileActivity.class);
-			String friendEmail;
-			if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
+			String friendEmail = users.get(id).getEmail();
+			User u = new User(friendEmail);
+			if (!CONTENT.equals(CONTENT_TYPE.SELECT_FRIEND.toString()))
 			{
-				friendEmail = users.get(id).getEmail();
-				User u = new User(friendEmail);
 				u.fetchEventsUpcoming();
 				u.fetchEventsPast();
+				u.fetchUserInfo();
 				u.fetchFriends();
 				u.fetchGroups();
-				u.fetchUserInfo();
 				if (!GLOBAL.isCurrentUser(friendEmail))
 					GLOBAL.setUserBuffer(u);
 				else
 					GLOBAL.setCurrentUser(u); //reloading user
 			}
-			else if (CONTENT.equals(CONTENT_TYPE.SELECT_FRIEND.toString()))//SELECT FRIEND
-			{
-				friendEmail = users.get(id).getEmail();
-				intent = new Intent(this, MessagesActivity.class);
-				intent.putExtra("NAME", users.get(id).getName());
-			}
 			else
 			{
-				friendEmail = users.get(id).getEmail();
-				users.get(id).fetchUserInfo();
-				users.get(id).fetchGroups();
-				users.get(id).fetchEventsUpcoming();
-				users.get(id).fetchFriends();
-				if (!GLOBAL.isCurrentUser(friendEmail))
-					GLOBAL.setUserBuffer(users.get(id));
-				else
-					GLOBAL.setCurrentUser(users.get(id)); //reloading user
+				intent = new Intent(this, MessagesActivity.class);
+				intent.putExtra("NAME", users.get(id).getName());
 			}
 			intent.putExtra("EMAIL", friendEmail);
 		}		
@@ -693,7 +678,7 @@ public class ListActivity extends BaseActivity
     		}
     		if (GLOBAL.isCurrentUser(user.getEmail()))
     		{
-	    		user.fetchEventsInvites();
+	    		user.fetchEventInvites();
 	    		user.fetchEventsPending();
     		}
     	}
@@ -846,7 +831,7 @@ public class ListActivity extends BaseActivity
 					else if (CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()))
 					{
 						user.removeEventInvite(bufferID);
-						user.fetchEventsInvites();
+						user.fetchEventInvites();
 						//since leave_event and decline event call same php
 						if (!message.equals("Event invite accepted!"))
 							message = "Event invite declined!";

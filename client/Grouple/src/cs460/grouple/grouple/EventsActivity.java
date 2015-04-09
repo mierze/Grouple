@@ -54,7 +54,7 @@ public class EventsActivity extends BaseActivity
 			user.fetchGroups();
 			break;
 		case R.id.eventInvitesButtonEA:
-			user.fetchEventsInvites();
+			user.fetchEventInvites();
 			intent.putExtra("CONTENT", "EVENTS_INVITES");
 			break;
 		case R.id.eventsPastButtonEA:
@@ -98,7 +98,7 @@ public class EventsActivity extends BaseActivity
 	public void onBackPressed() 
 	{
 		super.onBackPressed();
-		user.fetchEventsInvites();
+		user.fetchEventInvites();
     	user.fetchFriendRequests();
     	user.fetchGroupInvites();
     	GLOBAL.setCurrentUser(user);

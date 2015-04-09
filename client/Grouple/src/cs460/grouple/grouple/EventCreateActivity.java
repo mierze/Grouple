@@ -449,7 +449,7 @@ import android.widget.TimePicker;
 							+ jsonObject.getString("message"));
 					System.out.println("e_id of newly created group is: "
 							+ ID);
-					user.fetchEventsInvites();
+					user.fetchEventInvites();
 					user.fetchEventsPending();
 					user.fetchEventsUpcoming();
 					Event e = new Event(Integer.parseInt(ID));
@@ -499,7 +499,7 @@ import android.widget.TimePicker;
 											// profile can be loaded)
 											Intent intent = new Intent(
 													EventCreateActivity.this,
-													EntityProfileActivity.class);
+													GroupProfileActivity.class);
 											intent.putExtra("CONTENT", "EVENT");
 											intent.putExtra("EID", ID);
 											intent.putExtra("EMAIL",

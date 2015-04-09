@@ -61,7 +61,16 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name=".EntityProfileActivity"
+            android:name=".GroupProfileActivity"
+            android:configChanges="orientation"
+            android:label="@string/title_activity_user"
+            android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.HomeActivity" />
+        </activity>
+                <activity
+            android:name=".EventProfileActivity"
             android:configChanges="orientation"
             android:label="@string/title_activity_user"
             android:screenOrientation="portrait" >
@@ -113,15 +122,6 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cs460.grouple.grouple.GroupsActivity" />
-        </activity>
-        <activity
-            android:name=".GroupProfileActivity"
-            android:configChanges="orientation"
-            android:label="@string/title_activity_groups"
-            android:screenOrientation="portrait" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="cs460.grouple.grouple.GroupsCurrentActivity" />
         </activity>
         <activity
             android:name=".EventsActivity"
@@ -195,7 +195,7 @@
             android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="cs460.grouple.grouple.ProfileActivity" />
+                android:value="cs460.grouple.grouple.UserProfileActivity" />
         </activity>
         <activity android:name=".User" >
         </activity>
@@ -215,6 +215,9 @@
         <activity
             android:name=".GroupEditActivity"
             android:label="@string/title_activity_group_edit" >
+                        <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.GroupProfileActivity" />
         </activity>
         <activity
             android:name=".InviteActivity"
@@ -235,7 +238,7 @@
             android:label="@string/title_activity_event_edit" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="cs460.grouple.grouple.ProfileActivity" />
+                android:value="cs460.grouple.grouple.EventProfileActivity" />
         </activity>
         <activity
             android:name=".ManageMembersActivity"
@@ -284,7 +287,7 @@
             android:label="@string/title_activity_group_messages" >
                 <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="cs460.grouple.grouple.ProfileActivity" />
+                android:value="cs460.grouple.grouple.GroupProfileActivity" />
         </activity>
         <activity
             android:name=".BaseActivity"

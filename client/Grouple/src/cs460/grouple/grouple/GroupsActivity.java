@@ -31,7 +31,7 @@ public class GroupsActivity extends BaseActivity
 	public void onBackPressed() 
 	{
 		super.onBackPressed();
-    	user.fetchEventsInvites();
+    	user.fetchEventInvites();
     	user.fetchFriendRequests();
     	user.fetchGroupInvites();
     	GLOBAL.setCurrentUser(user);

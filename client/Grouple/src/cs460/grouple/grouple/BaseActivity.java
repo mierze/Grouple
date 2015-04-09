@@ -101,7 +101,7 @@ public class BaseActivity extends ActionBarActivity implements OnClickListener
 			intent = new Intent(this, GroupsActivity.class);
 			break;
 		case R.id.action_events:
-			user.fetchEventsInvites();
+			user.fetchEventInvites();
 			user.fetchEventsPending();
 			user.fetchEventsUpcoming();
 			user.fetchEventsPast();

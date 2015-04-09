@@ -230,7 +230,7 @@ public class RecentMessagesActivity extends BaseActivity
 
 	public void startProfileActivity(View view)
 	{
-		Intent intent = new Intent(this, EntityProfileActivity.class);
+		Intent intent = new Intent(this, GroupProfileActivity.class);
 		String friendEmail;
 		int id = view.getId();
 		friendEmail = recentMessages.get(id).getReceiver().equals(user.getEmail()) ? recentMessages.get(id).getSender() : recentMessages.get(id).getReceiver();

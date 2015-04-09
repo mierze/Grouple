@@ -30,7 +30,7 @@ public class FriendAddActivity extends BaseActivity
 	{
 		// Set the activity layout.
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_add_friend);
+		setContentView(R.layout.activity_friend_add);
 		GLOBAL = ((Global) getApplicationContext());
 		user = GLOBAL.getCurrentUser();
         gcmUtil = new GcmUtility(GLOBAL);

@@ -135,7 +135,7 @@ public class HomeActivity extends BaseActivity
 			intent = new Intent(this, SettingsActivity.class);
 			break;
 		case R.id.eventsButtonHA:
-			user.fetchEventsInvites();
+			user.fetchEventInvites();
 			user.fetchEventsPending();
 			user.fetchEventsUpcoming();
 			user.fetchEventsPast();

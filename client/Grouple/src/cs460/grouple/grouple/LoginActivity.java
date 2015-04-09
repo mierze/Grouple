@@ -198,7 +198,7 @@ public class LoginActivity extends Activity
 					//load the user into the system
 					User u = new User(email);
 					u.fetchUserInfo();
-					u.fetchEventsInvites();
+					u.fetchEventInvites();
 					u.fetchFriendRequests();
 					u.fetchGroupInvites();
 				
