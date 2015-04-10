@@ -40,11 +40,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -77,6 +79,7 @@ public class EventEditActivity extends BaseActivity
 	private int year, month, day, hour, minute;
 	private AlertDialog categoryDialog;
 	private Bundle EXTRAS;
+	private LayoutInflater inflater;
 	private TextView errorTextView;
 	private AlertDialog toBringDialog;
 	private Button addToBringRowButton;
@@ -84,6 +87,10 @@ public class EventEditActivity extends BaseActivity
 	private View toBringLayout;
 	private final ArrayList<EditText> toBringEditTexts = new ArrayList<EditText>();
 
+	//TODO: Get from database items to bring and populate the edittexts,
+	//set the corresponding number to the button text,
+	//on to bring button pressed populate rows with those texts,
+	//allow for deletions
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -95,6 +102,15 @@ public class EventEditActivity extends BaseActivity
 
 	private void load()
 	{
+		// Find the edit texts.
+		nameEditText = (EditText) findViewById(R.id.nameEditTextEPA);
+		categoryEditText = (EditText) findViewById(R.id.categoryEditTextEPA);
+		aboutEditText = (EditText) findViewById(R.id.aboutEditTextEPA);
+		locationEditText = (EditText) findViewById(R.id.locationEditTextEPA);
+		minEditText = (EditText) findViewById(R.id.minPartButtonEEA);
+		maxEditText = (EditText) findViewById(R.id.maxPartButtonEEA);
+		startEditText = (EditText) findViewById(R.id.startTimeButtonEEA);
+		endEditText = (EditText) findViewById(R.id.endTimeButtonEEA);
 		// init variables
 		currentCal = Calendar.getInstance();
 		year = currentCal.get(Calendar.YEAR);
@@ -102,7 +118,7 @@ public class EventEditActivity extends BaseActivity
 		day = currentCal.get(Calendar.DAY_OF_MONTH);
 		hour = currentCal.get(Calendar.HOUR_OF_DAY);
 		minute = currentCal.get(Calendar.MINUTE);
-		// Resetting error text view
+		inflater = getLayoutInflater();
 		errorTextView = (TextView) findViewById(R.id.errorTextViewEPA);
 		EXTRAS = getIntent().getExtras();
 		iv = (ImageView) findViewById(R.id.editEventImageView);
@@ -159,15 +175,6 @@ public class EventEditActivity extends BaseActivity
 	 */
 	private void getEventProfile()
 	{
-		// Find the edit texts.
-		nameEditText = (EditText) findViewById(R.id.nameEditTextEPA);
-		categoryEditText = (EditText) findViewById(R.id.categoryEditTextEPA);
-		aboutEditText = (EditText) findViewById(R.id.aboutEditTextEPA);
-		locationEditText = (EditText) findViewById(R.id.locationEditTextEPA);
-		minEditText = (EditText) findViewById(R.id.minPartButtonEEA);
-		maxEditText = (EditText) findViewById(R.id.maxPartButtonEEA);
-		startEditText = (EditText) findViewById(R.id.startTimeButtonEEA);
-		endEditText = (EditText) findViewById(R.id.endTimeButtonEEA);
 		// Add the info to the edittexts.
 		nameEditText.setText(event.getName());
 		categoryEditText.setText(event.getCategory());
@@ -186,6 +193,57 @@ public class EventEditActivity extends BaseActivity
 		endDate = event.getEndDate();
 	}
 	
+	// onClick for items to bring
+	public void toBringButton(View view)
+	{
+		// Creating and Building the Dialog
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Add Items To Bring");
+		toBringLayout = inflater.inflate(R.layout.dialog_tobring, null);
+		final LinearLayout layout = (LinearLayout) toBringLayout
+				.findViewById(R.id.toBringInnerLayout);
+		this.addToBringRowButton = (Button) toBringLayout
+				.findViewById(R.id.toBringAddRowButton);
+		View editTextLayout = inflater.inflate(R.layout.list_item_edittext, null);
+		EditText toBringEditText = (EditText) editTextLayout
+				.findViewById(R.id.toBringEditText);
+		toBringEditTexts.add(toBringEditText);
+		layout.addView(editTextLayout);
+		addToBringRowButton.setOnClickListener(new View.OnClickListener()
+		{
+			public void onClick(View v)
+			{
+				try
+				{
+					View editTextLayout = inflater.inflate(
+							R.layout.list_item_edittext, null);
+					EditText toBringEditText = (EditText) editTextLayout
+							.findViewById(R.id.toBringEditText);
+					toBringEditTexts.add(toBringEditText);
+					layout.addView(editTextLayout);
+				} 
+				catch (Exception e)
+				{
+					Log.d("ASDF", "Failed to create new edit text");
+				}
+			}
+		});
+		builder.setView(toBringLayout);
+		toBringDialog = builder.create();
+		toBringDialog.show();
+	}
+
+	public void saveToBringListButton(View view)
+	{
+		for (EditText toBringItem : toBringEditTexts)
+		{
+			System.out.println("\n\nItem #"
+					+ toBringEditTexts.indexOf(toBringItem) + " is "
+					+ toBringItem.getText().toString());
+		}
+		toBringDialog.dismiss();
+		toBringButton.setText("Items (" + toBringEditTexts.size() + ")");
+	}
 	// Button Listener for submit changes.
 	public void submitButton(View view)
 	{
@@ -344,13 +402,11 @@ public class EventEditActivity extends BaseActivity
 						endCal.get(Calendar.YEAR), endCal.get(Calendar.MONTH),
 						endCal.get(Calendar.DAY_OF_MONTH)).show();
 			}
-
 		}
 		// load the datepicker using the date that was previously set in endDate
 		else
 		{
 			endCal = Calendar.getInstance();
-
 			// parse to our calendar object
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 			try

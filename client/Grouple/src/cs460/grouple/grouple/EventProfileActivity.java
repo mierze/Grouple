@@ -25,6 +25,7 @@ import android.widget.ImageView.ScaleType;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,12 +42,14 @@ public class EventProfileActivity extends BaseActivity
 							// from other activities
 	private LinearLayout profileLayout;
 	private View xpBar;
-	private View pastEventsBadgesLayout;
+	private LinearLayout itemsToBringLayout;
 	private Button profileButton1;
 	private Button profileButton2;
 	private Button profileButton3;
 	private Button profileButton6;
 	private AsyncTask getImageTask;
+	private TextView infoTextView;
+	private TextView aboutTextView;
 	private ProgressBar xpProgressBar;
 	private TextView xpTextView;
 	private TextView levelTextView;
@@ -56,7 +59,7 @@ public class EventProfileActivity extends BaseActivity
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_profile);
+		setContentView(R.layout.activity_event_profile);
 		profileLayout = (LinearLayout) findViewById(R.id.profileLayout);
 		xpBar = findViewById(R.id.xpBar);
 		xpProgressBar = (ProgressBar) findViewById(R.id.xpProgressBar);
@@ -64,7 +67,10 @@ public class EventProfileActivity extends BaseActivity
 		profileButton2 = (Button) findViewById(R.id.profileButton2);
 		profileButton3 = (Button) findViewById(R.id.profileButton3);
 		profileButton6 = (Button) findViewById(R.id.profileEditButton);
-		pastEventsBadgesLayout = findViewById(R.id.profilePastEventsBadgesLayout);
+		itemsToBringLayout = (LinearLayout) findViewById(R.id.itemsToBringLayout);
+		infoTextView = (TextView) findViewById(R.id.profileInfoTextView);
+		aboutTextView = (TextView) findViewById(R.id.profileAboutTextView);
+
 		levelTextView = (TextView) findViewById(R.id.levelTextView);
 		xpTextView = (TextView) findViewById(R.id.xpTextView);
 		iv = (ImageView) findViewById(R.id.profileImageUPA);
@@ -89,7 +95,7 @@ public class EventProfileActivity extends BaseActivity
 		event = GLOBAL.getEventBuffer();
 		// TODO: testing different colors based on event types to bring some
 		// spice and push the color association
-		profileLayout.setBackgroundColor(getResources().getColor(R.color.sports_background_color));
+		//profileLayout.setBackgroundColor(getResources().getColor(R.color.sports_background_color));
 		title = event.getName();
 
 		setRole();
@@ -97,6 +103,14 @@ public class EventProfileActivity extends BaseActivity
 		getImageTask = new getImageTask().execute("http://68.59.162.183/android_connect/get_profile_image.php");
 		populateProfile(); // populates a group / user profile
 
+		//testing item list
+		itemsToBringLayout.setVisibility(View.VISIBLE);
+		LayoutInflater inflater = getLayoutInflater();
+		for (int i = 0; i<10; i++)
+		{
+			View row = inflater.inflate(R.layout.list_row_checklist, null);
+			itemsToBringLayout.addView(row);
+		}
 		// initializing the action bar and killswitch listener
 		initActionBar(title, true);
 
@@ -274,7 +288,6 @@ public class EventProfileActivity extends BaseActivity
 					int numUnread = jsonObject.getInt("numUnread");
 					if (numUnread > 0)
 						profileButton2.setText("Event Messages (" + numUnread + " unread)");
-
 				}
 				else
 				{
@@ -386,12 +399,8 @@ public class EventProfileActivity extends BaseActivity
 	 */
 	public void populateProfile()
 	{
-		TextView aboutTitle = (TextView) findViewById(R.id.aboutTitlePA);
-		TextView info = (TextView) findViewById(R.id.profileInfoTextView);
-		TextView about = (TextView) findViewById(R.id.profileAboutTextView);
 
-		aboutTitle.setText("About Event:");
-		about.setText(event.getAbout());
+		aboutTextView.setText(event.getAbout());
 		// iv.setImageBitmap(event.getImage());
 		String infoText = "Category: " + event.getCategory() + "\n" + event.getLocation() + "\n" + event.getStartText();
 		if (event.getMaxPart() > 0)
@@ -399,7 +408,7 @@ public class EventProfileActivity extends BaseActivity
 					+ "\nMax Participants: " + event.getMaxPart();
 		else
 			infoText += "\n(" + event.getNumUsers() + " confirmed / " + event.getMinPart() + " required)";
-		info.setText(infoText);
+		infoTextView.setText(infoText);
 
 	}
 
