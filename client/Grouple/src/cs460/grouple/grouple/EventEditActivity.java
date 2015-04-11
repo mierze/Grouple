@@ -598,6 +598,7 @@ public class EventEditActivity extends BaseActivity
 			} catch (Exception e)
 			{
 				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
+				System.out.println(result);
 			}
 		}
 	}
@@ -605,18 +606,41 @@ public class EventEditActivity extends BaseActivity
 	public void onClick(View v)
 	{
 		super.onClick(v);
-		switch (v.getId())
+		switch (v.getId()) 
 		{
 		case R.id.editEventImageButton:
-			AlertDialog.Builder builder = getImageBuilder(this);
-			//builder 
+			final CharSequence[] items = {"Take Photo", "Choose from Gallery",
+					"Cancel" };
+
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Choose your event picture:");
+			builder.setItems(items, new DialogInterface.OnClickListener() 
+			{
+				@Override
+				public void onClick(DialogInterface dialog, int item) 
+				{
+					if (items[item].equals("Take Photo")) 
+					{
+						Intent i = new Intent(
+								android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+						startActivityForResult(i, 1);
+					}
+					else if (items[item].equals("Choose from Gallery")) 
+					{
+						Intent intent = new Intent(
+								Intent.ACTION_PICK,
+								android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+						intent.setType("image/*");
+						startActivityForResult(
+								Intent.createChooser(intent, "Select Photo"), 2);
+					} 
+					else if (items[item].equals("Cancel")) 
+					{
+						dialog.dismiss();
+					}
+				}
+			});
 			builder.show();
-			break;
-		case R.id.manageEventButton:
-			Intent intent = new Intent(this, ManageParticipantsActivity.class);
-			intent.putExtra("EMAIL", GLOBAL.getCurrentUser().getEmail());
-			intent.putExtra("EID", event.getID());
-			startActivity(intent);
 			break;
 		}
 	}
@@ -625,27 +649,22 @@ public class EventEditActivity extends BaseActivity
 	protected void onActivityResult(int reqCode, int resCode, Intent data)
 	{
 		super.onActivityResult(reqCode, resCode, data);
-		if (resCode == RESULT_OK)
+		if (resCode == RESULT_OK) 
 		{
-			if (reqCode == 1)
+			if (reqCode == 1) 
 			{
 				Bundle extras = data.getExtras();
 				bmp = (Bitmap) extras.get("data");
 				iv.setImageBitmap(bmp);
-			} 
-			else if (reqCode == 2)
+			} else if (reqCode == 2) 
 			{
 				Uri selectedImageUri = data.getData();
-				try
-				{
-					bmp = MediaStore.Images.Media.getBitmap(
-							this.getContentResolver(), selectedImageUri);
-				} catch (FileNotFoundException e)
-				{
+				try {
+					bmp= MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+				} catch (FileNotFoundException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				} catch (IOException e)
-				{
+				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}

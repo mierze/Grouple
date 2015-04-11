@@ -55,7 +55,6 @@ public class UserEditActivity extends BaseActivity
 	// Set up fields. Most are just for the camera.
 	private ImageView iv;
 	private Bitmap bmp;
-	private Intent i;
 	private User user;
 	private EditText birthdayEditText;
 	private EditText aboutEditText;
@@ -348,7 +347,7 @@ public class UserEditActivity extends BaseActivity
 				{
 					if (items[item].equals("Take Photo")) 
 					{
-						i = new Intent(
+						Intent i = new Intent(
 								android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
 						startActivityForResult(i, 1);
 					}

@@ -89,12 +89,10 @@ public class SettingsActivity extends BaseActivity
         Switch androidGroupSwitch = (Switch)  findViewById(R.id.androidGroupSwitch); 
         Switch androidEventSwitch = (Switch)  findViewById(R.id.androidEventSwitch); 
         Switch androidUpcomingEventSwitch = (Switch)  findViewById(R.id.androidUpcomingEventSwitch);
-        
-        //these four switches not currently coded in layout
-        Switch androidFriendMessageSwitch = null;
-        Switch androidGroupMessageSwitch = null;
-        Switch androidEventMessageSwitch = null;
-        Switch androidUmbrellaSwitch = null;
+        Switch androidFriendMessageSwitch = (Switch)  findViewById(R.id.androidFriendMessageSwitch);
+        Switch androidGroupMessageSwitch = (Switch)  findViewById(R.id.androidGroupMessageSwitch);
+        Switch androidEventMessageSwitch = (Switch)  findViewById(R.id.androidEventMessageSwitch);
+        Switch androidUmbrellaSwitch = (Switch)  findViewById(R.id.androidUmbrellaSwitch);
             
     	prefs = PreferenceManager.getDefaultSharedPreferences(this);
     	String emailFriendReq = prefs.getString("emailFriendReq", null);
@@ -238,17 +236,16 @@ public class SettingsActivity extends BaseActivity
         androidFriendSwitch.setOnCheckedChangeListener(listener);
         androidGroupSwitch.setOnCheckedChangeListener(listener);
         androidEventSwitch.setOnCheckedChangeListener(listener);    
-        //androidEventMessageSwitch.setOnCheckedChangeListener(listener);
-        //androidFriendMessageSwitch.setOnCheckedChangeListener(listener);
-        //androidGroupMessageSwitch.setOnCheckedChangeListener(listener);
+        androidEventMessageSwitch.setOnCheckedChangeListener(listener);
+        androidFriendMessageSwitch.setOnCheckedChangeListener(listener);
+        androidGroupMessageSwitch.setOnCheckedChangeListener(listener);
         androidUpcomingEventSwitch.setOnCheckedChangeListener(listener);
-        //androidUmbrellaSwitch.setOnCheckedChangeListener(listener);
+        androidUmbrellaSwitch.setOnCheckedChangeListener(listener);
 	}
 	
 	public void changePasswordButton(View view)
 	{
 		System.out.println("changePassword was activated.");
-		//TODO: add code here to implement changePassword
 		//dialog box:
 		//you must first type your old password, your new password, and confirm new password
 		//this is NOT "forgot password". user must know old password.  Forget password will have to go through registered email to ensure authentication.
@@ -375,7 +372,6 @@ public class SettingsActivity extends BaseActivity
 	public void deleteAccountButton(View view)
 	{
 		System.out.println("deleteAccount was activated.");
-		//TODO: add code here to implement deleteAccountButton
 		//dialog box:
 		//you must comfirm your account deletion.  After confirmation, user will be logged out.  
 		//Deleted accounts will be flagged as 'deleted='timestamp' and then accounts will deleted flag will be cleared 30 days after timestamp. (using mysql eventscheduler)

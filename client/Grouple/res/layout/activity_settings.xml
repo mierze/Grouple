@@ -121,6 +121,38 @@
                     android:layout_margin="5dp"
                     android:gravity="top"
                     android:text="One of your Events becomes Upcoming" />
+                
+                <Switch
+                    android:id="@+id/androidFriendMessageSwitch"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:gravity="top"
+                    android:text="New Friend Messages" />
+                
+                <Switch
+                    android:id="@+id/androidGroupMessageSwitch"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:gravity="top"
+                    android:text="New Group Messages" />
+                
+                <Switch
+                    android:id="@+id/androidEventMessageSwitch"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:gravity="top"
+                    android:text="New Event Messages" />
+                
+                 <Switch
+                    android:id="@+id/androidUmbrellaSwitch"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:gravity="top"
+                    android:text="New Umbrellas" />
             </LinearLayout>
 
             <TextView
