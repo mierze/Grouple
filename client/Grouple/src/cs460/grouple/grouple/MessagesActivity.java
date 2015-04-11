@@ -34,29 +34,31 @@ public class MessagesActivity extends BaseActivity
 	private Bundle EXTRAS;
 	private Button sendMessageButton;
 	private EditText messageEditText;
-	private User user; 
+	private User user;
 	private String recipient;
-    private String SENDER_ID = "957639483805"; 
-    private ArrayList<Message> messages = new ArrayList<Message>();
-    private GoogleCloudMessaging gcm;
-    private AtomicInteger msgId = new AtomicInteger();
-    private String recipientRegID = "";
+	private String SENDER_ID = "957639483805";
+	private LinearLayout messageLayout;
+	private LayoutInflater inflater;
+	private ArrayList<Message> messages = new ArrayList<Message>();
+	private GoogleCloudMessaging gcm;
+	private AtomicInteger msgId = new AtomicInteger();
+	private String recipientRegID = "";
 
-	//This is the handler that will manager to process the broadcast intent
-	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() 
+	// This is the handler that will manager to process the broadcast intent
+	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver()
 	{
-	    @Override
-	    public void onReceive(Context context, Intent intent) 
-	    {
-	        // Extract data included in the Intent
-	        String fromEmail = intent.getStringExtra("FROM");
-	        if (fromEmail.equals(recipient))
-	        {
-	        	fetchMessages(); 
-	        }
-	    }
+		@Override
+		public void onReceive(Context context, Intent intent)
+		{
+			// Extract data included in the Intent
+			String fromEmail = intent.getStringExtra("FROM");
+			if (fromEmail.equals(recipient))
+			{
+				fetchMessages();
+			}
+		}
 	};
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -64,37 +66,41 @@ public class MessagesActivity extends BaseActivity
 		setContentView(R.layout.activity_messages);
 		EXTRAS = getIntent().getExtras();
 		user = GLOBAL.getCurrentUser();
-		//initializing the variables for the send button / message edit text
+		// initializing the variables for the send button / message edit text
 		sendMessageButton = (Button) findViewById(R.id.sendButton);
 		messageEditText = (EditText) findViewById(R.id.messageEditText);
+		messageLayout = (LinearLayout) findViewById(R.id.messageLayout);
+		inflater = getLayoutInflater();
 		initActionBar(EXTRAS.getString("NAME"), true);
 		gcm = GoogleCloudMessaging.getInstance(this);
-		recipient = EXTRAS.getString("EMAIL"); 
-		//Get the recipient 
+		recipient = EXTRAS.getString("EMAIL");
+		// Get the recipient
 		new getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php", recipient);
 	}
-	
+
 	@Override
-    protected void onResume() 
+	protected void onResume()
 	{
-        super.onResume();
-		//new getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php", recipient);
-		fetchMessages(); 
-    }
-	
-    @Override 
-    protected void onStop()
-    {
-    	super.onStop();
+		super.onResume();
+		// new
+		// getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php",
+		// recipient);
+		fetchMessages();
+	}
+
+	@Override
+	protected void onStop()
+	{
+		super.onStop();
 		unregisterReceiver(mMessageReceiver);
-    }
-    @Override 
-    protected void onStart()
-    {
-    	super.onStart();
-    	registerReceiver(mMessageReceiver, new IntentFilter("USER_MESSAGE"));
-    }
-   
+	}
+
+	@Override
+	protected void onStart()
+	{
+		super.onStart();
+		registerReceiver(mMessageReceiver, new IntentFilter("USER_MESSAGE"));
+	}
 
 	// Get numFriends, TODO: work on returning the integer
 	public int fetchMessages()
@@ -128,9 +134,9 @@ public class MessagesActivity extends BaseActivity
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
 						JSONObject o = (JSONObject) jsonArray.get(i);
-						Message m = new Message(o.getString("message"), o.getString("send_date"), o.getString("sender"),
-								"NAME", o.getString("receiver"), null);
-						messages.add(m); //adding message to message array
+						Message m = new Message(o.getString("message"), o.getString("send_date"),
+								o.getString("sender"), "NAME", o.getString("receiver"), null);
+						messages.add(m); // adding message to message array
 					}
 					populateMessages();
 				}
@@ -139,7 +145,26 @@ public class MessagesActivity extends BaseActivity
 				{
 					Log.d("fetchMessages", "failed = 2 return");
 				}
-			} catch (Exception e)
+				if (jsonObject.getString("success").toString().equals("0"))
+				{
+					// clear out any previous views already inflated
+					messageLayout.removeAllViews();
+					// layout inflater
+					TextView sadGuyTextView;
+					View row = null;
+					// messages consist of some things (messagebody, date,
+					// sender, receiver)
+					int index = 0;
+					// loop through messages (newest first), maybe a map String
+					// String with messagebody, date
+
+					row = inflater.inflate(R.layout.list_item_sadguy, null);
+					sadGuyTextView = (TextView) row.findViewById(R.id.sadGuyTextView);
+					sadGuyTextView.setText("No messages to display!");
+					messageLayout.addView(row);
+				}
+			}
+			catch (Exception e)
 			{
 				Log.d("fetchMessages", "exception caught");
 				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
@@ -147,7 +172,7 @@ public class MessagesActivity extends BaseActivity
 		}
 	}
 
-	 /*
+	/*
 	 * 
 	 * will be fetching the friends key->val stuff here
 	 */
@@ -184,7 +209,7 @@ public class MessagesActivity extends BaseActivity
 				{
 					Log.d("readMessage", "failed = 2 return");
 				}
-			} 
+			}
 			catch (Exception e)
 			{
 				Log.d("readMessage", "exception caught");
@@ -195,120 +220,134 @@ public class MessagesActivity extends BaseActivity
 
 	private void populateMessages()
 	{
-		//layout to inflate into
+		// layout to inflate into
 		LinearLayout messageLayout = (LinearLayout) findViewById(R.id.messageLayout);
-		//clear out any previous views already inflated
+		// clear out any previous views already inflated
 		messageLayout.removeAllViews();
-		//layout inflater
+		// layout inflater
 		LayoutInflater li = getLayoutInflater();
 		TextView messageBody, messageDate;
 		View row = null;
-		//messages consist of some things (messagebody, date, sender, receiver)
+		// messages consist of some things (messagebody, date, sender, receiver)
 		int index = 0;
-		//loop through messages (newest first), maybe a map String String with messagebody, date
+		// loop through messages (newest first), maybe a map String String with
+		// messagebody, date
 		for (Message m : messages)
 		{
-			if (m.getReceiver().equals(user.getEmail()/*our email*/))
-				row =  li.inflate(R.layout.message_row_out, null); //inflate this message row
+			if (m.getReceiver().equals(user.getEmail()/* our email */))
+				row = li.inflate(R.layout.message_row_out, null); // inflate
+																	// this
+																	// message
+																	// row
 			else
-				row =  li.inflate(R.layout.message_row, null); //inflate the sender message row
+				row = li.inflate(R.layout.message_row, null); // inflate the
+																// sender
+																// message row
 			messageBody = (TextView) row.findViewById(R.id.messageBody);
 			messageBody.setText(m.getMessage());
 			messageDate = (TextView) row.findViewById(R.id.messageDate);
 			messageDate.setText(m.getDateString());
-			//add row into scrollable layout
+			// add row into scrollable layout
 			messageLayout.addView(row);
 			index++;
 		}
-		//scrolling to last message
+		// scrolling to last message
 		final ScrollView scrollview = ((ScrollView) findViewById(R.id.messagesScrollView));
-		scrollview.post(new Runnable() {
+		scrollview.post(new Runnable()
+		{
 
-		        @Override
-		        public void run() {
-		            scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-		        }
-		    });	
+			@Override
+			public void run()
+			{
+				scrollview.fullScroll(ScrollView.FOCUS_DOWN);
+			}
+		});
 		readMessages();
 	}
-	
-    // Send an upstream message.
-    public void onClick(final View view) 
-    {
-    	super.onClick(view);
-        if (view == findViewById(R.id.sendButton)) 
-        {
-        	sendMessageButton.setClickable(false);
-            //Get message from edit text
-            String message = messageEditText.getText().toString();
-            
-            //make sure message field is not blank
-            if(!(message.compareTo("") ==0))
-            {
-            	 //PHP expects message,sender,receiver.
-                new storeMessageTask().execute("http://68.59.162.183/android_connect/send_message.php",message, user.getEmail(),recipient);
-                new AsyncTask<Void, Void, String>() {
-                    @Override
-                    protected String doInBackground(Void... params) {
-                        String message = "";
-                        try 
-                        {
-                            Bundle data = new Bundle();
-                            //Get message from edit text
-                            message = messageEditText.getText().toString();
-    						Message m = new Message(message, new Date(), user.getEmail(),
-    								user.getName(), recipient, null);
-                            messages.add(m);
-                            data.putString("msg", m.getMessage());
-                            data.putString("my_action", "cs460.grouple.grouple.ECHO_NOW");
-                            data.putString("content", "USER_MESSAGE");
-                            data.putString("sender", m.getSender());
-                            data.putString("receiver", m.getReceiver());
-                            //This is where we put the recipients regID.
-                            data.putString("recipient",recipientRegID);
-                            //This is where we put our first and last name. That way the recipient knows who sent it.
-                            data.putString("first", user.getFirstName());
-                            data.putString("last", user.getLastName());
-                            String id = Integer.toString(msgId.incrementAndGet());
-                            gcm.send(SENDER_ID + "@gcm.googleapis.com", id, data);
-                            message = "Sent message";
-                        } 
-                        catch (IOException ex) 
-                        {
-        					Toast toast = GLOBAL.getToast(MessagesActivity.this, "Error sending message. Please try again.");
-        					toast.show();
-        					sendMessageButton.setClickable(true);
-        					messageEditText.requestFocus();
-                            message = "Error :" + ex.getMessage();
-                        }
-                        return message;
-                    }
 
-                    @Override
-                    protected void onPostExecute(String msg) {
-                    	messageEditText.setText("");
-                    	sendMessageButton.setClickable(true);
-                    	messageEditText.requestFocus();
-                    	populateMessages();
-                    }
-                }.execute(null, null, null);
-            }
-            else
-            {
-            	Toast toast = GLOBAL.getToast(this, "Please enter a message!");
-            	toast.show();
-            }         
-        }
-    }
+	// Send an upstream message.
+	public void onClick(final View view)
+	{
+		super.onClick(view);
+		if (view == findViewById(R.id.sendButton))
+		{
+			sendMessageButton.setClickable(false);
+			// Get message from edit text
+			String message = messageEditText.getText().toString();
 
-    //This task gets your friend's regid
-    private class getRegIDTask extends AsyncTask<String, Void, String>
+			// make sure message field is not blank
+			if (!(message.compareTo("") == 0))
+			{
+				// PHP expects message,sender,receiver.
+				new storeMessageTask().execute("http://68.59.162.183/android_connect/send_message.php", message,
+						user.getEmail(), recipient);
+				new AsyncTask<Void, Void, String>()
+				{
+					@Override
+					protected String doInBackground(Void... params)
+					{
+						String message = "";
+						try
+						{
+							Bundle data = new Bundle();
+							// Get message from edit text
+							message = messageEditText.getText().toString();
+							Message m = new Message(message, new Date(), user.getEmail(), user.getName(), recipient,
+									null);
+							messages.add(m);
+							data.putString("msg", m.getMessage());
+							data.putString("my_action", "cs460.grouple.grouple.ECHO_NOW");
+							data.putString("content", "USER_MESSAGE");
+							data.putString("sender", m.getSender());
+							data.putString("receiver", m.getReceiver());
+							// This is where we put the recipients regID.
+							data.putString("recipient", recipientRegID);
+							// This is where we put our first and last name.
+							// That way the recipient knows who sent it.
+							data.putString("first", user.getFirstName());
+							data.putString("last", user.getLastName());
+							String id = Integer.toString(msgId.incrementAndGet());
+							gcm.send(SENDER_ID + "@gcm.googleapis.com", id, data);
+							message = "Sent message";
+						}
+						catch (IOException ex)
+						{
+							Toast toast = GLOBAL.getToast(MessagesActivity.this,
+									"Error sending message. Please try again.");
+							toast.show();
+							sendMessageButton.setClickable(true);
+							messageEditText.requestFocus();
+							message = "Error :" + ex.getMessage();
+						}
+						return message;
+					}
+
+					@Override
+					protected void onPostExecute(String msg)
+					{
+						messageEditText.setText("");
+						sendMessageButton.setClickable(true);
+						messageEditText.requestFocus();
+						populateMessages();
+					}
+				}.execute(null, null, null);
+			}
+			else
+			{
+				Toast toast = GLOBAL.getToast(this, "Please enter a message!");
+				toast.show();
+			}
+		}
+	}
+
+	// This task gets your friend's regid
+	private class getRegIDTask extends AsyncTask<String, Void, String>
 	{
 		@Override
 		protected String doInBackground(String... urls)
 		{
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			//The recipient's email is urls[1]
+			// The recipient's email is urls[1]
 			nameValuePairs.add(new BasicNameValuePair("email", urls[1]));
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
@@ -323,32 +362,32 @@ public class MessagesActivity extends BaseActivity
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					recipientRegID = jsonObject.getString("regid").toString();
-				} 
+				}
 				else
 				{
 					Toast toast = GLOBAL.getToast(MessagesActivity.this, "Error getting GCM REG_ID.");
 					toast.show();
 				}
-			} catch (Exception e)
+			}
+			catch (Exception e)
 			{
 				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 			}
 		}
 	}
-    
-    //Stores the message in the database.
-    private class storeMessageTask extends AsyncTask<String, Void, String>
+
+	// Stores the message in the database.
+	private class storeMessageTask extends AsyncTask<String, Void, String>
 	{
 		@Override
 		protected String doInBackground(String... urls)
 		{
-			Global global = ((Global) getApplicationContext());
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			//The msg is urls[1], sender urls[2], receiver urls[3]
+			// The msg is urls[1], sender urls[2], receiver urls[3]
 			nameValuePairs.add(new BasicNameValuePair("msg", urls[1]));
 			nameValuePairs.add(new BasicNameValuePair("sender", urls[2]));
 			nameValuePairs.add(new BasicNameValuePair("receiver", urls[3]));
-			return global.readJSONFeed(urls[0], nameValuePairs);
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
 
 		@Override
@@ -360,30 +399,28 @@ public class MessagesActivity extends BaseActivity
 				System.out.println(jsonObject.getString("success"));
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					/*//Message was successfully stored, now notify the user.
-					String msg = "";
-					try {
-                        Bundle data = new Bundle();
-                        //Get message from edit text
-                        EditText mymessage   = (EditText)findViewById(R.id.messageEditText);
-                        msg = mymessage.getText().toString();
-                        messages.add(msg);
-                        data.putString("my_message", msg);
-                        data.putString("my_action", "cs460.grouple.grouple.ECHO_NOW");
-                        data.putString("recipient",getRecipientRegID());
-                        String id = Integer.toString(msgId.incrementAndGet());
-                        gcm.send(SENDER_ID + "@gcm.googleapis.com", id, data);
-                        msg = "Sent message";
-                    } catch (IOException ex) {
-                        msg = "Error :" + ex.getMessage();
-                    }*/			
-				} 
+					/*
+					 * //Message was successfully stored, now notify the user.
+					 * String msg = ""; try { Bundle data = new Bundle(); //Get
+					 * message from edit text EditText mymessage =
+					 * (EditText)findViewById(R.id.messageEditText); msg =
+					 * mymessage.getText().toString(); messages.add(msg);
+					 * data.putString("my_message", msg);
+					 * data.putString("my_action",
+					 * "cs460.grouple.grouple.ECHO_NOW");
+					 * data.putString("recipient",getRecipientRegID()); String
+					 * id = Integer.toString(msgId.incrementAndGet());
+					 * gcm.send(SENDER_ID + "@gcm.googleapis.com", id, data);
+					 * msg = "Sent message"; } catch (IOException ex) { msg =
+					 * "Error :" + ex.getMessage(); }
+					 */
+				}
 				else
-				{		
+				{
 					Toast toast = GLOBAL.getToast(MessagesActivity.this, "Error sending message. Please try again.");
 					toast.show();
 				}
-			} 
+			}
 			catch (Exception e)
 			{
 				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());

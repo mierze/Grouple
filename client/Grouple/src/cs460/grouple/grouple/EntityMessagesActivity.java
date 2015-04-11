@@ -35,6 +35,8 @@ public class EntityMessagesActivity extends BaseActivity
 	private Event event;
 	private String NAME;
 	private Button sendMessageButton;
+	private LinearLayout messageLayout;
+	private LayoutInflater inflater;
 	private EditText messageEditText;
     private ArrayList<String> regIDList = new ArrayList<String>();
     private Bundle EXTRAS;
@@ -90,6 +92,8 @@ public class EntityMessagesActivity extends BaseActivity
 		user = GLOBAL.getCurrentUser();
     	messageEditText = (EditText)findViewById(R.id.messageEditText);
     	sendMessageButton = (Button)findViewById(R.id.sendButton);
+    	messageLayout = (LinearLayout) findViewById(R.id.messageLayout);
+    	inflater = getLayoutInflater();
 		initActionBar(EXTRAS.getString("NAME"), true);
 		gcm = GoogleCloudMessaging.getInstance(this);
 		CONTENT_TYPE = EXTRAS.getString("CONTENT");
@@ -112,12 +116,9 @@ public class EntityMessagesActivity extends BaseActivity
 
 	private void populateMessages()
 	{
-		//layout to inflate into
-		LinearLayout messageLayout = (LinearLayout) findViewById(R.id.messageLayout);
 		//clear out any previous views already inflated
 		messageLayout.removeAllViews();
 		//layout inflater
-		LayoutInflater li = getLayoutInflater();
 		TextView messageBody, messageDate;
 		Button contactName;
 		View row = null;
@@ -126,9 +127,9 @@ public class EntityMessagesActivity extends BaseActivity
 		for (Message m : messages)
 		{
 			if (m.getSender().equals(user.getEmail()))
-				row =  li.inflate(R.layout.message_row_entity, null); //inflate the sender message row
+				row =  inflater.inflate(R.layout.message_row_entity, null); //inflate the sender message row
 			else
-				row =  li.inflate(R.layout.message_row_entity_out, null); //inflate the sender message row
+				row =  inflater.inflate(R.layout.message_row_entity_out, null); //inflate the sender message row
 			contactName = (Button) row.findViewById(R.id.contactNameButton);
 			contactName.setText(m.getSenderName());
 			contactName.setId(index);
@@ -252,7 +253,8 @@ public class EntityMessagesActivity extends BaseActivity
 	}
 	
 	@Override
-    protected void onResume() {
+    protected void onResume() 
+	{
         super.onResume();
 		//new getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php", recipient);
 		fetchMessages(); 
@@ -399,6 +401,13 @@ public class EntityMessagesActivity extends BaseActivity
 				if (jsonObject.getString("success").toString().equals("2"))
 				{
 					Log.d("fetchMessages", "failed = 2 return");
+				}
+				if (jsonObject.getString("success").toString().equals("0"))
+				{
+					View row = inflater.inflate(R.layout.list_item_sadguy, null);
+					TextView sadGuyTextView = (TextView) row.findViewById(R.id.sadGuyTextView);
+					sadGuyTextView.setText("No messages to display!");
+					messageLayout.addView(row);
 				}
 			} 
 			catch (Exception e)

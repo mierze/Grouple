@@ -65,7 +65,6 @@ public class LoginActivity extends Activity
 		if(token !=null && email != null)
 		{
 			System.out.println("token was found... initiating login with email: "+email + ", token: "+token);
-			
 			tokenFlag = true;
 			//Token and email was found in SharedPreferences, try to use it to login.
 			new getLoginTask()
@@ -84,8 +83,6 @@ public class LoginActivity extends Activity
 			loginFail = (TextView) findViewById(R.id.loginFailTextViewLA);
 			progBar = (ProgressBar) findViewById(R.id.progressBar);
 			progBar.setVisibility(View.INVISIBLE);
-
-
 			loginFail.setVisibility(View.GONE);
 			initKillswitchListener();
 		}	
