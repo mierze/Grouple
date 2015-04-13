@@ -24,14 +24,14 @@
 	    android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/button_text_color"
-        android:fontFamily="sans-serif-condensed"
+        android:fontFamily="sans-serif"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:textStyle="bold"
 		android:layout_centerVertical="true"
 		android:gravity="center"
 		android:layout_gravity="center"
 		android:layout_toRightOf="@+id/backButton"
-        android:id="@+id/actionbarTitleTextView"
-        android:textSize="20sp" />
+        android:id="@+id/actionbarTitleTextView" />
 
       
 

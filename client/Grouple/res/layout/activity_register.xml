@@ -3,114 +3,111 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_color"
-    android:padding="30dp" 
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp">
+    android:padding="30dp"
+    android:paddingBottom="10dp"
+    android:paddingTop="10dp" >
 
     <EditText
         android:id="@+id/emailEditTextRA"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/border"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="3dp"
-        android:fontFamily="sans-serif"
-        android:textColorHint="@color/hint_text_color"
-		android:textColor="@color/text_color"
         android:layout_marginTop="70dp"
+        android:background="@drawable/border_layout"
         android:ems="10"
+        android:fontFamily="sans-serif"
         android:hint="@string/emailEditText"
-        android:inputType="textEmailAddress" >
+        android:inputType="textEmailAddress"
+        android:textColor="@color/text_color"
+        android:textColorHint="@color/hint_text_color" >
 
         <requestFocus />
     </EditText>
 
     <EditText
         android:id="@+id/passwordEditTextRA"
-                android:background="@drawable/border"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/emailEditTextRA"
-        android:layout_marginBottom="3dp"
-                android:textColorHint="@color/hint_text_color"
         android:layout_alignRight="@+id/emailEditTextRA"
-        		android:fontFamily="sans-serif"
-        	
-		android:textColor="@color/text_color"
         android:layout_below="@+id/emailEditTextRA"
+        android:layout_marginBottom="3dp"
+        android:background="@drawable/border_layout"
         android:ems="10"
+        android:fontFamily="sans-serif"
         android:hint="@string/passwordEditText"
-        android:inputType="textPassword" />
+        android:inputType="textPassword"
+        android:textColor="@color/text_color"
+        android:textColorHint="@color/hint_text_color" />
 
     <EditText
         android:id="@+id/rePasswordEditTextRA"
-                android:textColorHint="@color/hint_text_color"
-                        android:background="@drawable/border"
-                                android:layout_marginBottom="3dp"
-                		android:fontFamily="sans-serif"
-                		
-		android:textColor="@color/text_color"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/passwordEditTextRA"
         android:layout_alignRight="@+id/passwordEditTextRA"
         android:layout_below="@+id/passwordEditTextRA"
+        android:layout_marginBottom="3dp"
+        android:background="@drawable/border_layout"
         android:ems="10"
+        android:fontFamily="sans-serif"
         android:hint="@string/rePasswordEditText"
-        android:inputType="textPassword" />
+        android:inputType="textPassword"
+        android:textColor="@color/text_color"
+        android:textColorHint="@color/hint_text_color" />
 
     <EditText
-       
         android:id="@+id/fNameEditText"
-                android:background="@drawable/border"
-                android:textColorHint="@color/hint_text_color"
-                android:textColor="@color/text_color"
         android:layout_width="match_parent"
-                android:layout_marginBottom="3dp"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/rePasswordEditTextRA"
         android:layout_below="@+id/rePasswordEditTextRA"
+        android:layout_marginBottom="3dp"
+        android:background="@drawable/border_layout"
         android:ems="10"
         android:hint="@string/fNameEditText"
-		android:inputType="textCapSentences"/>
+        android:inputType="textCapSentences"
+        android:textColor="@color/text_color"
+        android:textColorHint="@color/hint_text_color" />
 
     <EditText
         android:id="@+id/lNameEditText"
-                android:textColorHint="@color/hint_text_color"
-                android:textColor="@color/text_color"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-                android:layout_marginBottom="3dp"
-                android:background="@drawable/border"
         android:layout_alignLeft="@+id/fNameEditText"
         android:layout_below="@+id/fNameEditText"
-        		android:fontFamily="sans-serif"
+        android:layout_marginBottom="3dp"
+        android:background="@drawable/border_layout"
         android:ems="10"
+        android:fontFamily="sans-serif"
         android:hint="@string/lNameEditText"
-		android:inputType="textCapSentences" />
+        android:inputType="textCapSentences"
+        android:textColor="@color/text_color"
+        android:textColorHint="@color/hint_text_color" />
 
     <Button
         android:id="@+id/registerButtonRA"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-                android:layout_marginBottom="5dp"
-                android:layout_marginTop="5dp"
-        		android:fontFamily="sans-serif-condensed"
-		android:textColor="@color/button_text_color"
-		android:background="@drawable/selector_button"
         android:layout_alignLeft="@+id/lNameEditText"
         android:layout_below="@+id/lNameEditText"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/selector_button"
+        android:fontFamily="sans-serif-condensed"
         android:onClick="registerButton"
-        android:textSize="20sp"
-        android:text="@string/registerButton" />
+        android:text="@string/registerButton"
+        android:textColor="@color/button_text_color"
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/errorMessageTextView"
         android:layout_width="wrap_content"
-        		android:fontFamily="sans-serif-condensed"
         android:layout_height="wrap_content"
         android:layout_below="@+id/registerButtonRA"
         android:layout_centerHorizontal="true"
+        android:fontFamily="sans-serif-condensed"
         android:text="Passwords must match!"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="@color/red"
@@ -120,13 +117,13 @@
         android:id="@+id/registerTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textStyle="bold"
         android:layout_alignLeft="@+id/noFriendRequestsTextView"
         android:layout_alignParentTop="true"
         android:fontFamily="sans-serif-condensed"
         android:text="@string/registerTextView"
         android:textColor="@color/header_text_color"
-        android:textSize="50sp" />
+        android:textSize="50sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/noFriendRequestsTextView"

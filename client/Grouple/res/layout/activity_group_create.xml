@@ -25,14 +25,14 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
-                android:background="@color/layout_background_color"
+                android:background="@drawable/border_layout"
                 android:gravity="center"
                 android:hint="@string/groupNameMessage"
                 android:inputType="textCapWords"
                 android:maxLength="40"
                 android:maxLines="1"
                 android:minLines="1"
-                android:padding="5dp"
+                android:padding="10dp"
                 android:textColor="@color/text_color"
                 android:textColorHint="@color/hint_text_color" />
 
@@ -53,13 +53,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
                 android:layout_weight="1"
-                android:background="@color/layout_background_color"
+                android:background="@drawable/border_layout"
                 android:gravity="left"
                 android:hint="@string/groupBioMessage"
                 android:inputType="textCapSentences"
                 android:maxLength="255"
                 android:maxLines="3"
-                android:padding="5dp"
+                android:padding="10dp"
                 android:textColor="@color/text_color"
                 android:textColorHint="@color/hint_text_color" />
 

@@ -63,12 +63,12 @@
                 android:id="@+id/nameEditTextEPA"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
                 android:layout_weight="1"
-                  android:layout_marginBottom="5dp"
-                android:padding="5dp"
-                android:background="@color/layout_background_color"
+                android:background="@drawable/border_layout"
                 android:capitalize="words"
                 android:inputType="textPersonName"
+                android:padding="10dp"
                 android:textColor="@color/text_color" />
 
             <TextView
@@ -88,10 +88,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
                 android:layout_weight="1"
-                android:background="@color/layout_background_color"
+                android:background="@drawable/border_layout"
                 android:focusable="false"
                 android:onClick="selectBirthdate"
-                android:padding="5dp"
+                android:padding="10dp"
                 android:textColor="@color/text_color"
                 android:textColorHint="@color/text_color" />
 
@@ -109,11 +109,11 @@
             <EditText
                 android:id="@+id/locationEditTextEPA"
                 android:layout_width="fill_parent"
-                  android:layout_marginBottom="5dp"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
+                android:layout_marginBottom="5dp"
                 android:layout_weight="1"
-                android:background="@color/layout_background_color"
+                android:background="@drawable/border_layout"
+                android:padding="10dp"
                 android:textColor="@color/text_color"
                 android:textColorHint="@color/text_color" />
 
@@ -132,13 +132,13 @@
                 android:id="@+id/aboutEditTextEPA"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
                 android:layout_weight="2"
-                android:maxLines="3"
-                  android:layout_marginBottom="5dp"
-                android:padding="5dp"
-                android:background="@color/layout_background_color"
+                android:background="@drawable/border_layout"
                 android:gravity="top|left"
                 android:inputType="textCapSentences"
+                android:maxLines="3"
+                android:padding="10dp"
                 android:textColor="@color/text_color"
                 android:textColorHint="@color/text_color" >
             </EditText>

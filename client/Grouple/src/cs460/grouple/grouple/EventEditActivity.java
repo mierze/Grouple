@@ -25,8 +25,8 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
 import org.json.JSONObject;
-
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -86,7 +86,8 @@ public class EventEditActivity extends BaseActivity
 	private Button toBringButton;
 	private View toBringLayout;
 	private final ArrayList<EditText> toBringEditTexts = new ArrayList<EditText>();
-
+	private ArrayList<String> itemNames = new ArrayList<String>();
+	private ArrayList<String> itemEmails = new ArrayList<String>();
 	//TODO: Get from database items to bring and populate the edittexts,
 	//set the corresponding number to the button text,
 	//on to bring button pressed populate rows with those texts,
@@ -111,6 +112,7 @@ public class EventEditActivity extends BaseActivity
 		maxEditText = (EditText) findViewById(R.id.maxPartButtonEEA);
 		startEditText = (EditText) findViewById(R.id.startTimeButtonEEA);
 		endEditText = (EditText) findViewById(R.id.endTimeButtonEEA);
+		toBringButton = (Button) findViewById(R.id.toBringButton);
 		// init variables
 		currentCal = Calendar.getInstance();
 		year = currentCal.get(Calendar.YEAR);
@@ -126,9 +128,61 @@ public class EventEditActivity extends BaseActivity
 		if (event != null)
 			getEventProfile();
 		initActionBar("Edit " + event.getName(), true);
+		//grabbing items to bring from server
+		fetchItemsToBring();
 	}
 	
+	protected void fetchItemsToBring()
+	{
+		new getItemsToBringTask().execute("http://68.59.162.183/android_connect/get_items_tobring.php");	
+	}
 
+	class getItemsToBringTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected  String doInBackground(String... urls)
+		{
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("e_id", Integer.toString(event.getID())));
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+		}
+
+		@Override
+		protected  void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					// gotta make a json array
+					JSONArray jsonArray = jsonObject.getJSONArray("itemsToBring");
+					for (int i = 0; i < jsonArray.length(); i++)
+					{
+						JSONObject o = (JSONObject) jsonArray.get(i);
+						// function adds friend to the friends map
+						itemNames.add(o.getString("name"));
+						itemEmails.add(o.getString("email"));
+					}
+					if (!itemNames.isEmpty())
+						toBringButton.setText("Edit Items (" + itemNames.size()+ ")");
+				}
+				// user has no friends
+				if (jsonObject.getString("success").toString().equals("2"))
+				{
+					Log.d("fetchFriends", "failed = 2 return");
+				}
+			} 
+			catch (Exception e)
+			{
+				Log.d("fetchFriends", "exception caught");
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
+			}
+		}
+	}
+
+	
+	
 	/* TASK FOR GRABBING IMAGE OF EVENT/USER/GROUP */
 	private class getImageTask extends AsyncTask<String, Void, String>
 	{
@@ -205,10 +259,26 @@ public class EventEditActivity extends BaseActivity
 		this.addToBringRowButton = (Button) toBringLayout
 				.findViewById(R.id.toBringAddRowButton);
 		View editTextLayout = inflater.inflate(R.layout.list_item_edittext, null);
+		
 		EditText toBringEditText = (EditText) editTextLayout
-				.findViewById(R.id.toBringEditText);
-		toBringEditTexts.add(toBringEditText);
-		layout.addView(editTextLayout);
+				.findViewById(R.id.toBringEditText);	
+		
+		if (!itemNames.isEmpty())
+		{
+			for (String itemName : itemNames)
+			{
+				editTextLayout = inflater.inflate(
+						R.layout.list_item_edittext, null);
+				toBringEditText = (EditText) editTextLayout
+						.findViewById(R.id.toBringEditText);
+				toBringEditTexts.add(toBringEditText);
+				toBringEditText.setText(itemName);
+				layout.addView(editTextLayout);
+			}
+		}
+
+		//toBringEditTexts.add(toBringEditText);
+		//layout.addView(editTextLayout);
 		addToBringRowButton.setOnClickListener(new View.OnClickListener()
 		{
 			public void onClick(View v)
@@ -220,6 +290,7 @@ public class EventEditActivity extends BaseActivity
 					EditText toBringEditText = (EditText) editTextLayout
 							.findViewById(R.id.toBringEditText);
 					toBringEditTexts.add(toBringEditText);
+					
 					layout.addView(editTextLayout);
 				} 
 				catch (Exception e)
@@ -242,7 +313,13 @@ public class EventEditActivity extends BaseActivity
 					+ toBringItem.getText().toString());
 		}
 		toBringDialog.dismiss();
-		toBringButton.setText("Items (" + toBringEditTexts.size() + ")");
+		//syncing itemNames with editTexts
+		itemNames.clear();
+		for (EditText eT : toBringEditTexts)
+		{
+			itemNames.add(eT.getText().toString());
+		}
+		toBringButton.setText("Edit Items (" + toBringEditTexts.size() + ")");
 	}
 	// Button Listener for submit changes.
 	public void submitButton(View view)
@@ -532,8 +609,12 @@ public class EventEditActivity extends BaseActivity
 						.toString(), ContentType.TEXT_PLAIN);
 				builder.addTextBody("location", locationEditText.getText()
 						.toString(), ContentType.TEXT_PLAIN);
-				// mustbringlist not implemented in client yet
-				builder.addTextBody("mustbringlist", "", ContentType.TEXT_PLAIN);
+				//loop through toBringList, adding each member into php array toBring[]
+			    for (EditText toBringEditText : toBringEditTexts) 
+			    {
+			    	System.out.println("attempting to add the toBring entries");
+			        builder.addTextBody("toBring[]", toBringEditText.getText().toString());
+			    }
 				System.out.println("done adding other fields");
 				httpPost.setEntity(builder.build());
 				HttpResponse response = httpClient.execute(httpPost);

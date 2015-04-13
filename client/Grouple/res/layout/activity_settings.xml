@@ -24,7 +24,7 @@
 
             <TextView
                 android:id="@+id/emailNotificationsTextView"
-                android:layout_width="fill_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:background="@color/black"
@@ -37,6 +37,7 @@
                 android:id="@+id/linearLayoutEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/border_layout"
                 android:orientation="vertical" >
 
                 <Switch
@@ -69,12 +70,12 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:gravity="top"
-                    android:text="One of your Events becomes Upcoming" />
+                    android:text="Event Updates" />
             </LinearLayout>
 
             <TextView
                 android:id="@+id/androidNotificationsTextView"
-                android:layout_width="fill_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:background="@color/black"
@@ -87,7 +88,7 @@
                 android:id="@+id/linearLayoutAndroid"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/background_color"
+                android:background="@drawable/border_layout"
                 android:orientation="vertical" >
 
                 <Switch
@@ -120,8 +121,8 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:gravity="top"
-                    android:text="One of your Events becomes Upcoming" />
-                
+                    android:text="Event Updates" />
+
                 <Switch
                     android:id="@+id/androidFriendMessageSwitch"
                     android:layout_width="fill_parent"
@@ -129,7 +130,7 @@
                     android:layout_margin="5dp"
                     android:gravity="top"
                     android:text="New Friend Messages" />
-                
+
                 <Switch
                     android:id="@+id/androidGroupMessageSwitch"
                     android:layout_width="fill_parent"
@@ -137,7 +138,7 @@
                     android:layout_margin="5dp"
                     android:gravity="top"
                     android:text="New Group Messages" />
-                
+
                 <Switch
                     android:id="@+id/androidEventMessageSwitch"
                     android:layout_width="fill_parent"
@@ -145,8 +146,8 @@
                     android:layout_margin="5dp"
                     android:gravity="top"
                     android:text="New Event Messages" />
-                
-                 <Switch
+
+                <Switch
                     android:id="@+id/androidUmbrellaSwitch"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -157,7 +158,7 @@
 
             <TextView
                 android:id="@+id/accountActionsTextView"
-                android:layout_width="fill_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:background="@color/black"

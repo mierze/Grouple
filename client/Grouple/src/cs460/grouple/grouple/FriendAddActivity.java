@@ -40,10 +40,10 @@ public class FriendAddActivity extends BaseActivity
 	// Adds a friend.
 	public void addFriendButton(View view)
 	{
-		EditText emailEditText = (EditText) findViewById(R.id.emailEditTextAFA);
+		EditText emailEditText = (EditText) findViewById(R.id.emailEditText);
 		if (emailEditText.getText().toString() == null || emailEditText.getText().toString().isEmpty())
 		{
-			TextView addFriendMessage = (TextView) findViewById(R.id.addFriendMessageTextViewAFA);
+			TextView addFriendMessage = (TextView) findViewById(R.id.addFriendMessageTextView);
 			addFriendMessage.setText("Please enter a valid email address.");
 			addFriendMessage.setTextColor(getResources().getColor(
 					R.color.red));
@@ -60,7 +60,7 @@ public class FriendAddActivity extends BaseActivity
 		@Override
 		protected String doInBackground(String... urls)
 		{
-			EditText emailEditText = (EditText) findViewById(R.id.emailEditTextAFA);
+			EditText emailEditText = (EditText) findViewById(R.id.emailEditText);
 			receiver = emailEditText.getText().toString();
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
 			nameValuePairs.add(new BasicNameValuePair("sender", user.getEmail()));
@@ -76,9 +76,9 @@ public class FriendAddActivity extends BaseActivity
 				JSONObject jsonObject = new JSONObject(result);
 				System.out.println(jsonObject.getString("success"));
 
-				EditText emailEditText = (EditText) findViewById(R.id.emailEditTextAFA);
+				EditText emailEditText = (EditText) findViewById(R.id.emailEditText);
 				emailEditText.setText("");
-				TextView addFriendMessage = (TextView) findViewById(R.id.addFriendMessageTextViewAFA);
+				TextView addFriendMessage = (TextView) findViewById(R.id.addFriendMessageTextView);
 				addFriendMessage.setText(jsonObject.getString("message"));
 
 				if (jsonObject.getString("success").toString().equals("1"))

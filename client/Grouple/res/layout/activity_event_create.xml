@@ -26,14 +26,14 @@
                 android:id="@+id/eventNameEditText"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/border_layout"
                 android:gravity="center"
-                android:hint="Give your event a name"
+                android:hint="Event Name"
                 android:inputType="textCapWords"
                 android:maxLength="40"
                 android:maxLines="1"
-                android:background="@color/layout_background_color"
                 android:minLines="1"
-                android:padding="5dp"
+                android:padding="10dp"
                 android:textColor="@color/text_color"
                 android:textColorHint="@color/hint_text_color" />
 
@@ -53,7 +53,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
-                android:background="@color/layout_background_color"
+                android:background="@drawable/border_layout"
                 android:ems="10"
                 android:focusable="false"
                 android:gravity="left"
@@ -62,7 +62,7 @@
                 android:maxLines="1"
                 android:minLines="1"
                 android:onClick="selectCategoryButton"
-                android:padding="5dp"
+                android:padding="10dp"
                 android:textColor="@color/text_color"
                 android:textColorHint="@color/hint_text_color" />
 
@@ -82,13 +82,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
                 android:layout_weight="1"
-                android:background="@color/layout_background_color"
+                android:background="@drawable/border_layout"
                 android:gravity="left"
                 android:hint="Tell people about this event"
                 android:inputType="textCapSentences"
                 android:maxLength="255"
                 android:maxLines="3"
-                android:padding="5dp"
+                android:padding="10dp"
                 android:textColor="@color/text_color"
                 android:textColorHint="@color/hint_text_color" />
 
@@ -116,7 +116,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10dp"
                     android:layout_weight="2"
-                    android:background="@color/layout_background_color"
+                    android:background="@drawable/border_layout"
                     android:focusable="false"
                     android:gravity="left"
                     android:hint="Start Date"
@@ -124,7 +124,7 @@
                     android:maxLines="1"
                     android:minLines="1"
                     android:onClick="selectStartDateButton"
-                    android:padding="5dp"
+                    android:padding="10dp"
                     android:textColor="@color/text_color"
                     android:textColorHint="@color/hint_text_color" />
 
@@ -133,7 +133,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
-                    android:background="@color/layout_background_color"
+                    android:background="@drawable/border_layout"
                     android:focusable="false"
                     android:gravity="left"
                     android:hint="End Date"
@@ -141,7 +141,7 @@
                     android:maxLines="1"
                     android:minLines="1"
                     android:onClick="selectEndDateButton"
-                    android:padding="5dp"
+                    android:padding="10dp"
                     android:textColor="@color/text_color"
                     android:textColorHint="@color/hint_text_color" />
             </LinearLayout>
@@ -162,7 +162,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
                 android:layout_weight="2"
-                android:background="@color/layout_background_color"
+                android:background="@drawable/border_layout"
                 android:ems="10"
                 android:gravity="left"
                 android:hint="Where will this event take place?"
@@ -170,7 +170,7 @@
                 android:maxLength="255"
                 android:maxLines="1"
                 android:minLines="1"
-                android:padding="5dp"
+                android:padding="10dp"
                 android:textColor="@color/text_color"
                 android:textColorHint="@color/hint_text_color" />
 
@@ -197,12 +197,12 @@
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10dp"
                     android:layout_weight="2"
-                    android:background="@color/layout_background_color"
+                    android:background="@drawable/border_layout"
                     android:gravity="left"
                     android:hint="Minimum (Optional)"
                     android:inputType="number"
                     android:maxLength="255"
-                    android:padding="5dp"
+                    android:padding="10dp"
                     android:textColor="@color/text_color"
                     android:textColorHint="@color/hint_text_color" />
 
@@ -211,12 +211,12 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
-                    android:background="@color/layout_background_color"
+                    android:background="@drawable/border_layout"
                     android:gravity="left"
                     android:hint="Maximum (Optional)"
                     android:inputType="number"
                     android:maxLength="255"
-                    android:padding="5dp"
+                    android:padding="10dp"
                     android:textColor="@color/text_color"
                     android:textColorHint="@color/hint_text_color" />
             </LinearLayout>

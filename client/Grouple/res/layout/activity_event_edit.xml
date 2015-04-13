@@ -66,9 +66,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
                 android:layout_weight="1"
-                android:background="@color/layout_background_color"
+                android:background="@drawable/border_layout"
                 android:inputType="textCapSentences"
-                android:padding="5dp"
+                android:padding="10dp"
                 android:textColor="@color/text_color" />
 
             <TextView
@@ -88,11 +88,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
                 android:layout_weight="1"
-                android:background="@color/layout_background_color"
+                android:background="@drawable/border_layout"
                 android:focusable="false"
                 android:maxLines="1"
                 android:onClick="selectCategoryButton"
-                android:padding="5dp"
+                android:padding="10dp"
                 android:textColor="@color/text_color" />
 
             <TextView
@@ -112,9 +112,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
                 android:layout_weight="1"
-                android:background="@color/layout_background_color"
+                android:background="@drawable/border_layout"
                 android:inputType="textCapSentences"
-                android:padding="5dp"
+                android:padding="10dp"
                 android:textColor="@color/text_color"
                 android:textColorHint="@color/text_color" />
 
@@ -143,7 +143,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10dp"
                     android:layout_weight="2"
-                    android:background="@color/layout_background_color"
+                    android:background="@drawable/border_layout"
                     android:focusable="false"
                     android:gravity="left"
                     android:hint="Start Date"
@@ -151,7 +151,7 @@
                     android:maxLines="1"
                     android:minLines="1"
                     android:onClick="selectStartDateButton"
-                    android:padding="5dp"
+                    android:padding="10dp"
                     android:textColor="@color/text_color"
                     android:textColorHint="@color/hint_text_color" />
 
@@ -160,7 +160,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
-                    android:background="@color/layout_background_color"
+                    android:background="@drawable/border_layout"
                     android:focusable="false"
                     android:gravity="left"
                     android:hint="End Date"
@@ -168,7 +168,7 @@
                     android:maxLines="1"
                     android:minLines="1"
                     android:onClick="selectEndDateButton"
-                    android:padding="5dp"
+                    android:padding="10dp"
                     android:textColor="@color/text_color"
                     android:textColorHint="@color/hint_text_color" />
             </LinearLayout>
@@ -190,9 +190,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
                 android:layout_weight="1"
-                android:background="@color/layout_background_color"
+                android:background="@drawable/border_layout"
                 android:inputType="textCapSentences"
-                android:padding="5dp"
+                android:padding="10dp"
                 android:textColor="@color/text_color"
                 android:textColorHint="@color/text_color" />
 
@@ -220,12 +220,12 @@
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10dp"
                     android:layout_weight="2"
-                    android:background="@color/layout_background_color"
+                    android:background="@drawable/border_layout"
                     android:gravity="left"
                     android:hint="Minimum (Optional)"
                     android:inputType="number"
                     android:maxLength="255"
-                    android:padding="5dp"
+                    android:padding="10dp"
                     android:textColor="@color/text_color"
                     android:textColorHint="@color/hint_text_color" />
 
@@ -234,12 +234,12 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
-                    android:background="@color/layout_background_color"
+                    android:background="@drawable/border_layout"
                     android:gravity="left"
                     android:hint="Maximum (Optional)"
                     android:inputType="number"
                     android:maxLength="255"
-                    android:padding="5dp"
+                    android:padding="10dp"
                     android:textColor="@color/text_color"
                     android:textColorHint="@color/hint_text_color" />
             </LinearLayout>
@@ -257,7 +257,7 @@
                 android:id="@+id/manageEventButton"
                 android:layout_width="fill_parent"
                 android:layout_height="60dp"
-                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
                 android:layout_weight="1"
                 android:background="@drawable/selector_button"
                 android:onClick="onClick"
@@ -268,7 +268,6 @@
                 android:id="@+id/toBringButton"
                 android:layout_width="match_parent"
                 android:layout_height="60sp"
-                android:layout_marginBottom="5dp"
                 android:layout_marginTop="5dp"
                 android:background="@drawable/selector_button"
                 android:onClick="toBringButton"
@@ -280,7 +279,7 @@
                 android:id="@+id/submitButtonEEA"
                 android:layout_width="fill_parent"
                 android:layout_height="60dp"
-                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
                 android:layout_weight="1"
                 android:background="@drawable/selector_button"
                 android:onClick="submitButton"

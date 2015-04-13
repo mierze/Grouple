@@ -58,7 +58,7 @@
     <color name="text_color">#22252A</color>
     <color name="button_text_color">#F0F0D8</color>
     <color name="background_color">#F5F3E5</color>
-    <color name="layout_background_color">#105CC4E4</color>
+    <color name="layout_background_color">#255CC4E4</color>
     <color name="sports_background_color">#88F4D53F</color>
    	<color name="listrow_background_color">#105CC4E4</color>
     <color name="actionbar_background_color">#5CC4E4</color>

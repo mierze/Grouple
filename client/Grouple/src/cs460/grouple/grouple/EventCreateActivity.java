@@ -498,9 +498,7 @@ import android.widget.TimePicker;
 											// e_id as extra so correct event
 											// profile can be loaded)
 											Intent intent = new Intent(
-													EventCreateActivity.this,
-													GroupProfileActivity.class);
-											intent.putExtra("CONTENT", "EVENT");
+													EventCreateActivity.this, null);
 											intent.putExtra("EID", ID);
 											intent.putExtra("EMAIL",
 													user.getEmail());

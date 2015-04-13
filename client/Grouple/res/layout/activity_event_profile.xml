@@ -64,45 +64,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-
-
-             
-
-            <LinearLayout
-                android:id="@+id/profilePastEventsBadgesLayout"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="5dp"
-                android:orientation="horizontal"
-                android:visibility="gone" >
-
-                <Button
-                    android:id="@+id/profileButton4"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginRight="10dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/background_yellow"
-                    android:fontFamily="sans-serif-condensed"
-                    android:onClick="onClick"
-                    android:text="Past Events"
-                    android:textColor="@color/text_color"
-                    android:textSize="18sp" />
-
-                <Button
-                    android:id="@+id/profileButton5"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="10dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/background_yellow"
-                    android:fontFamily="sans-serif-condensed"
-                    android:onClick="onClick"
-                    android:text="Badges\n(1)"
-                    android:textColor="@color/text_color"
-                    android:textSize="18sp" />
-            </LinearLayout>
-
             <TextView
                 android:id="@+id/aboutTitlePA"
                 android:layout_width="wrap_content"
@@ -165,6 +126,19 @@
 
             <Button
                 android:id="@+id/profileButton3"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/selector_button"
+                android:fontFamily="sans-serif-condensed"
+                android:onClick="onClick"
+                android:text=""
+                android:textColor="@color/button_text_color"
+                android:textSize="18sp"
+                android:visibility="gone" />
+            
+            <Button
+                android:id="@+id/itemListButton"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="10dp"

@@ -2,9 +2,16 @@ package cs460.grouple.grouple;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import cs460.grouple.grouple.User.getFriendsTask;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
@@ -20,8 +27,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -41,19 +50,21 @@ public class EventProfileActivity extends BaseActivity
 	private String CONTENT; // type of content to display in profile, passed in
 							// from other activities
 	private LinearLayout profileLayout;
-	private View xpBar;
-	private LinearLayout itemsToBringLayout;
+	LayoutInflater inflater;
 	private Button profileButton1;
 	private Button profileButton2;
 	private Button profileButton3;
 	private Button profileButton6;
+	private Button itemListButton;
 	private AsyncTask getImageTask;
 	private TextView infoTextView;
 	private TextView aboutTextView;
-	private ProgressBar xpProgressBar;
-	private TextView xpTextView;
-	private TextView levelTextView;
+
+	private View itemListDialogView;
+	private AlertDialog itemListAlertDialog;
 	private GcmUtility gcmUtil;
+	private ArrayList<String> itemEmails = new ArrayList<String>();
+	private ArrayList<String> itemNames = new ArrayList<String>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -61,18 +72,14 @@ public class EventProfileActivity extends BaseActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_event_profile);
 		profileLayout = (LinearLayout) findViewById(R.id.profileLayout);
-		xpBar = findViewById(R.id.xpBar);
-		xpProgressBar = (ProgressBar) findViewById(R.id.xpProgressBar);
 		profileButton1 = (Button) findViewById(R.id.profileButton1);
 		profileButton2 = (Button) findViewById(R.id.profileButton2);
 		profileButton3 = (Button) findViewById(R.id.profileButton3);
 		profileButton6 = (Button) findViewById(R.id.profileEditButton);
-		itemsToBringLayout = (LinearLayout) findViewById(R.id.itemsToBringLayout);
 		infoTextView = (TextView) findViewById(R.id.profileInfoTextView);
 		aboutTextView = (TextView) findViewById(R.id.profileAboutTextView);
-
-		levelTextView = (TextView) findViewById(R.id.levelTextView);
-		xpTextView = (TextView) findViewById(R.id.xpTextView);
+		itemListButton = (Button) findViewById(R.id.itemListButton);
+		inflater = getLayoutInflater();
 		iv = (ImageView) findViewById(R.id.profileImageUPA);
 		gcmUtil = new GcmUtility(GLOBAL);
 	}
@@ -95,7 +102,7 @@ public class EventProfileActivity extends BaseActivity
 		event = GLOBAL.getEventBuffer();
 		// TODO: testing different colors based on event types to bring some
 		// spice and push the color association
-		//profileLayout.setBackgroundColor(getResources().getColor(R.color.sports_background_color));
+		// profileLayout.setBackgroundColor(getResources().getColor(R.color.sports_background_color));
 		title = event.getName();
 
 		setRole();
@@ -103,14 +110,7 @@ public class EventProfileActivity extends BaseActivity
 		getImageTask = new getImageTask().execute("http://68.59.162.183/android_connect/get_profile_image.php");
 		populateProfile(); // populates a group / user profile
 
-		//testing item list
-		itemsToBringLayout.setVisibility(View.VISIBLE);
-		LayoutInflater inflater = getLayoutInflater();
-		for (int i = 0; i<10; i++)
-		{
-			View row = inflater.inflate(R.layout.list_row_checklist, null);
-			itemsToBringLayout.addView(row);
-		}
+		fetchItemsToBring();
 		// initializing the action bar and killswitch listener
 		initActionBar(title, true);
 
@@ -127,6 +127,54 @@ public class EventProfileActivity extends BaseActivity
 		imageDialog.setView(layout);
 		imageDialog.create();
 		imageDialog.show();
+	}
+
+	private void fetchItemsToBring()
+	{
+		new getItemsToBringTask().execute("http://68.59.162.183/android_connect/get_items_tobring.php");
+
+	}
+
+	private class getItemsToBringTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected String doInBackground(String... urls)
+		{
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("e_id", Integer.toString(event.getID())));
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+		}
+
+		@Override
+		protected void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					// gotta make a json array
+					JSONArray jsonArray = jsonObject.getJSONArray("itemsToBring");
+					for (int i = 0; i < jsonArray.length(); i++)
+					{
+						JSONObject o = (JSONObject) jsonArray.get(i);
+						// function adds friend to the friends map
+						itemNames.add(o.getString("name"));
+						itemEmails.add(o.getString("email"));
+					}
+				}
+				// user has no friends
+				if (jsonObject.getString("success").toString().equals("2"))
+				{
+					Log.d("fetchFriends", "failed = 2 return");
+				}
+			}
+			catch (Exception e)
+			{
+				Log.d("fetchFriends", "exception caught");
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
+			}
+		}
 	}
 
 	private void setRole()
@@ -164,7 +212,6 @@ public class EventProfileActivity extends BaseActivity
 		// user is in group, check role
 		{
 			// and check for not past
-
 			new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_event.php",
 					Integer.toString(event.getID()));
 
@@ -307,6 +354,7 @@ public class EventProfileActivity extends BaseActivity
 
 		if (event.inUsers(user.getEmail()))
 		{
+			itemListButton.setVisibility(View.VISIBLE);
 			profileButton2.setVisibility(View.VISIBLE);
 			profileButton2.setText("Event Messages");
 			new getUnreadEntityMessagesTask().execute(
@@ -355,6 +403,10 @@ public class EventProfileActivity extends BaseActivity
 			noIntent = true;
 
 			break;
+		case R.id.itemListButton:
+			itemListDialog();
+			noIntent = true;
+			break;
 		case R.id.profileEditButton:
 
 			intent = new Intent(this, EventEditActivity.class);
@@ -391,6 +443,63 @@ public class EventProfileActivity extends BaseActivity
 		// event invites case
 		GLOBAL.getCurrentUser().fetchEventInvites();
 
+	}
+
+	private void itemListDialog()
+	{
+		// make our builder
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Item Checklist");
+		// inflate dialog with dialog layout for the list
+		itemListDialogView = inflater.inflate(R.layout.dialog_itemlist, null);
+		LinearLayout itemListLayout = (LinearLayout) itemListDialogView.findViewById(R.id.itemListLayout);
+		// populate list with items
+		if (!itemNames.isEmpty())
+		{
+			for (String itemName : itemNames)
+			{
+				final int index = itemNames.indexOf(itemName);
+				View row = inflater.inflate(R.layout.list_row_checklist, null);
+				final CheckBox itemCheckBox = (CheckBox) row.findViewById(R.id.itemCheckBox);
+				final TextView itemUserNameTextView = (TextView) row.findViewById(R.id.itemUsernameTextView);
+
+				itemCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+				{
+					@Override
+					public void onCheckedChanged(CompoundButton view, boolean isChecked)
+					{
+						if (itemCheckBox.isChecked())
+						{
+							itemUserNameTextView.setText(user.getEmail());
+						}
+						else if (!itemCheckBox.isChecked())
+						{
+							itemCheckBox.setChecked(true);
+						}
+					}
+				});
+				if (!itemEmails.get(index).equals("null") && !itemEmails.get(index).equals(""))
+				{
+					itemUserNameTextView.setText(itemEmails.get(index));
+					itemCheckBox.setChecked(true);
+				}
+				else
+				{
+					itemCheckBox.setChecked(false);
+				}
+
+				TextView itemNameTextView = (TextView) row.findViewById(R.id.itemNameTextView);
+				itemNameTextView.setText(itemName);
+				itemListLayout.addView(row);
+			}
+		}
+		// for itemNames -> make a new checklist row
+
+		// make this save on x out or back
+
+		builder.setView(itemListDialogView);
+		itemListAlertDialog = builder.create();
+		itemListAlertDialog.show();
 	}
 
 	/*
