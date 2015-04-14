@@ -2,39 +2,24 @@ package cs460.grouple.grouple;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import cs460.grouple.grouple.User.getFriendsTask;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,7 +44,6 @@ public class EventProfileActivity extends BaseActivity
 	private AsyncTask getImageTask;
 	private TextView infoTextView;
 	private TextView aboutTextView;
-
 	private View itemListDialogView;
 	private AlertDialog itemListAlertDialog;
 	private GcmUtility gcmUtil;
@@ -153,8 +137,7 @@ public class EventProfileActivity extends BaseActivity
 						itemNames.add(o.getString("name"));
 						if (o.getString("email").equals("null"))
 							numUnclaimed++;
-						itemEmails.add(o.getString("email"));
-						
+						itemEmails.add(o.getString("email"));	
 					}
 					if (numUnclaimed > 0)
 						itemListButton.setText("Item Checklist (" + numUnclaimed + " unclaimed)");
@@ -165,7 +148,7 @@ public class EventProfileActivity extends BaseActivity
 					//clearing to avoid duplicates
 					itemNames.clear();
 					itemEmails.clear();
-					itemListButton.setText("Item Checklist");
+					itemListButton.setVisibility(View.GONE);
 				}
 				else
 				{

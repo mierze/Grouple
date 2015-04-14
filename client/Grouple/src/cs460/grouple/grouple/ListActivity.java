@@ -1,7 +1,6 @@
 package cs460.grouple.grouple;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -188,7 +187,7 @@ public class ListActivity extends BaseActivity
 				else //GROUP INVITES
 				{
 					row = li.inflate(R.layout.list_row_acceptdecline, null);
-					nameView =  (TextView)row.findViewById(R.id.nameTextViewAD);
+					nameView =  (TextView)row.findViewById(R.id.emailTextView);
 				}
 				row.setId(id);
 				nameView.setId(id);
@@ -266,7 +265,7 @@ public class ListActivity extends BaseActivity
 				else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_REQUESTS.toString()))
 				{	
 					row = li.inflate(R.layout.list_row_acceptdecline, null);
-					nameTextView = (TextView) row.findViewById(R.id.nameTextViewAD);
+					nameTextView = (TextView) row.findViewById(R.id.emailTextView);
 					name = email;
 				}
 				//FOR GROUP MEMBERS / CURRENT FRIENDS NON MOD / SELECT FRIEND
@@ -374,7 +373,7 @@ public class ListActivity extends BaseActivity
 				else
 				{
 					row = li.inflate(R.layout.list_row_acceptdecline, null);
-					nameTextView =  (TextView)row.findViewById(R.id.nameTextViewAD);
+					nameTextView =  (TextView)row.findViewById(R.id.emailTextView);
 					nameTextView.setText(e.getName() + "\n(" + e.getNumUsers() + " confirmed / " + e.getMinPart() + " required)");
 				}
 				//setting ids to the id of the group for button functionality
@@ -625,9 +624,9 @@ public class ListActivity extends BaseActivity
 			else
 			{
 				intent = new Intent(this, MessagesActivity.class);
-				intent.putExtra("NAME", users.get(id).getName());
+				intent.putExtra("name", users.get(id).getName());
 			}
-			intent.putExtra("EMAIL", friendEmail);
+			intent.putExtra("email", friendEmail);
 		}		
 		startActivity(intent);	
 	}

@@ -35,7 +35,7 @@ public class MessagesActivity extends BaseActivity
 	private Button sendMessageButton;
 	private EditText messageEditText;
 	private User user;
-	private String recipient;
+	private String recipient; //user that this user is talking to
 	private String SENDER_ID = "957639483805";
 	private LinearLayout messageLayout;
 	private LayoutInflater inflater;
@@ -50,9 +50,8 @@ public class MessagesActivity extends BaseActivity
 		@Override
 		public void onReceive(Context context, Intent intent)
 		{
-			// Extract data included in the Intent
-			String fromEmail = intent.getStringExtra("FROM");
-			if (fromEmail.equals(recipient))
+			String receiver = intent.getStringExtra("receiver");
+			if (receiver.equals(user.getEmail()))
 			{
 				fetchMessages();
 			}
@@ -71,9 +70,9 @@ public class MessagesActivity extends BaseActivity
 		messageEditText = (EditText) findViewById(R.id.messageEditText);
 		messageLayout = (LinearLayout) findViewById(R.id.messageLayout);
 		inflater = getLayoutInflater();
-		initActionBar(EXTRAS.getString("NAME"), true);
+		initActionBar(EXTRAS.getString("name"), true);
 		gcm = GoogleCloudMessaging.getInstance(this);
-		recipient = EXTRAS.getString("EMAIL");
+		recipient = EXTRAS.getString("email");
 		// Get the recipient
 		new getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php", recipient);
 	}

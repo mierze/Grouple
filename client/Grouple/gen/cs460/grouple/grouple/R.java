@@ -1604,6 +1604,7 @@ containing a value of this type.
         public static final int aboutLabelTextViewEPA=0x7f0c0075;
         public static final int aboutTitlePA=0x7f0c008a;
         public static final int acceptButton=0x7f0c0142;
+        public static final int acceptDeclineListRowLayout=0x7f0c0140;
         public static final int accountActionsTextView=0x7f0c0102;
         public static final int action_bar=0x7f0c0031;
         public static final int action_bar_activity_content=0x7f0c0001;
@@ -1716,6 +1717,7 @@ containing a value of this type.
         public static final int emailGroupSwitch=0x7f0c00f5;
         public static final int emailNotificationsTextView=0x7f0c00f2;
         public static final int emailTextCED=0x7f0c0119;
+        public static final int emailTextView=0x7f0c0141;
         public static final int emailUpcomingEventSwitch=0x7f0c00f7;
         public static final int end=0x7f0c002d;
         public static final int endTimeButton=0x7f0c0065;
@@ -1749,7 +1751,6 @@ containing a value of this type.
         public static final int friendManageLayout=0x7f0c0152;
         public static final int friendNameTextView=0x7f0c0153;
         public static final int friendProfileInnerLayout2=0x7f0c008b;
-        public static final int friendRequestGridLayout=0x7f0c0140;
         public static final int friendRequestsButtonFA=0x7f0c00a3;
         public static final int friendsButtonHA=0x7f0c00c1;
         public static final int friendsContainer=0x7f0c00a0;
@@ -1837,7 +1838,6 @@ containing a value of this type.
         public static final int nameButtonLI=0x7f0c00d7;
         public static final int nameEditTextEPA=0x7f0c0072;
         public static final int nameLabelTextViewEPA=0x7f0c0071;
-        public static final int nameTextViewAD=0x7f0c0141;
         public static final int nameTextViewLI=0x7f0c013e;
         public static final int navLayout=0x7f0c00bb;
         public static final int never=0x7f0c0028;

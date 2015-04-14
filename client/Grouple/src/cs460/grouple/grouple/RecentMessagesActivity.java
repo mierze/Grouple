@@ -3,12 +3,10 @@ package cs460.grouple.grouple;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -24,7 +22,6 @@ import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 /*
@@ -38,7 +35,6 @@ public class RecentMessagesActivity extends BaseActivity
 	private ArrayList<Message> recentMessages = new ArrayList<Message>();
     GoogleCloudMessaging gcm;
     AtomicInteger msgId = new AtomicInteger();
-	
     
 	//This is the handler that will manager to process the broadcast intent
 	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() 
@@ -47,8 +43,8 @@ public class RecentMessagesActivity extends BaseActivity
 	    public void onReceive(Context context, Intent intent) 
 	    {
 	        // Extract data included in the Intent
-	        String toEmail = intent.getStringExtra("TO");
-	        if (user.getEmail().equals(toEmail))
+	        String receiver = intent.getStringExtra("receiver");
+	        if (user.getEmail().equals(receiver))
 	        {
 	        	//do this
 	        	System.out.println("READ THIS");
@@ -121,8 +117,8 @@ public class RecentMessagesActivity extends BaseActivity
 	{
 		Intent intent = new Intent(this, MessagesActivity.class);
 		String EMAIL = recentMessages.get(view.getId()).getReceiver().equals(user.getEmail()) ? recentMessages.get(view.getId()).getSender() : recentMessages.get(view.getId()).getReceiver();
-		intent.putExtra("EMAIL", EMAIL);
-		intent.putExtra("NAME", recentMessages.get(view.getId()).getSenderName());
+		intent.putExtra("email", EMAIL);
+		intent.putExtra("name", recentMessages.get(view.getId()).getSenderName());
 		startActivity(intent);
 	}
 		

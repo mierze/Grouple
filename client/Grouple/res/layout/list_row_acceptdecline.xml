@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/friendRequestGridLayout"
+    android:id="@+id/acceptDeclineListRowLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:background="@drawable/top_bottom_border"
+    android:background="@drawable/topbottom_border_colored"
      >
 
     <TextView
-        android:id="@+id/nameTextViewAD"
+        android:id="@+id/emailTextView"
         android:layout_height="match_parent"
         android:onClick="startProfileActivity"
         android:background="@android:color/transparent"

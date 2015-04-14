@@ -91,7 +91,7 @@ public class GcmIntentService extends IntentService
 					|| TYPE.equals(CONTENT_TYPE.EVENT_INVITE.toString())
 					|| TYPE.equals(CONTENT_TYPE.EVENT_INVITE.toString()))
 			{
-				SENDER_FIRST = EXTRAS.getString("SENDER_FIRST");
+				SENDER_FIRST = EXTRAS.getString("first");
 				SENDER_LAST = EXTRAS.getString("last");
 			}
 		}
@@ -180,8 +180,9 @@ public class GcmIntentService extends IntentService
 		else if (TYPE.equals(CONTENT_TYPE.USER_MESSAGE.toString()))
 		{
 			Intent notificationIntent = new Intent(getApplicationContext(), MessagesActivity.class);
-			notificationIntent.putExtra("EMAIL", SENDER);
-			notificationIntent.putExtra("NAME", SENDER_FIRST + " " + SENDER_LAST);
+			notificationIntent.putExtra("sender", SENDER);
+			notificationIntent.putExtra("name", SENDER_FIRST + " " + SENDER_LAST);
+			notificationIntent.putExtra("receiver", RECEIVER);
 			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
 					.setContentTitle(SENDER_FIRST + " " + SENDER_LAST).setStyle(new NotificationCompat.BigTextStyle()
 					// .bigText(msg))
@@ -261,9 +262,9 @@ public class GcmIntentService extends IntentService
 		else if (TYPE.equals(CONTENT_TYPE.USER_MESSAGE.toString()))
 		{
 			intent = new Intent("USER_MESSAGE");
-			intent.putExtra("SENDER", SENDER);
-			intent.putExtra("NAME", SENDER_FIRST + " " + SENDER_LAST);
-			intent.putExtra("RECEIVER", RECEIVER);
+			intent.putExtra("sender", SENDER);
+			intent.putExtra("name", SENDER_FIRST + " " + SENDER_LAST);
+			intent.putExtra("receiver", RECEIVER);
 		}
 		else if (TYPE.equals(CONTENT_TYPE.FRIEND_REQUEST.toString()))
 		{
