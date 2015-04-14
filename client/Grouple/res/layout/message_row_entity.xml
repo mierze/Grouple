@@ -4,8 +4,6 @@
     android:layout_width="match_parent"
 	android:layout_margin="5dp"
     android:layout_height="wrap_content"
-
-
     android:orientation="horizontal"
 > 
 
@@ -38,7 +36,7 @@
 	        android:textStyle="bold"
 			android:text="This is a sample message"
 	        android:layout_height="wrap_content"
-	        android:layout_width="wrap_content"
+	        android:layout_width="match_parent"
 	        android:onClick="startProfile" />
 	  	<TextView
 	        android:id="@+id/messageBody"
@@ -52,7 +50,7 @@
 	        android:fontFamily="sans-serif"
 			android:text="This is a sample message"
 	        android:layout_height="wrap_content"
-	        android:layout_width="match_parent"
+	        android:layout_width="fill_parent"
 	        android:layout_marginBottom="10dp"
 	        />
 	  	
