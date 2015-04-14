@@ -7,6 +7,9 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -261,38 +264,51 @@ public class ManageMembersActivity extends BaseActivity {
 	
 	public void confirmButton(View view)
 	{
-		int g_id = group.getID();
-		//now loop through list of added to add all the additional users to the group
-		int size = toUpdate.size();
-		for (int i = 0 ; i < size ; i++)
-		{
-			System.out.println("adding friend #"+i+"/"+size);
-			int key = toUpdate.keyAt(i);
-			//grab the email of friend to add
-			String friendsEmail = toUpdate.valueAt(key);
-			//grab the role of friend to add
-			String friendsRole = toUpdateRole.valueAt(key);
-			
-			System.out.println("friendsROLE: " + friendsRole + " .equals: " + friendsRole.equals("-"));
-			if (friendsRole.equals("-"))
-			{
-				System.out.println("removing mg member: "+friendsEmail);
-				new UpdateGroupMembersTask().execute("http://68.59.162.183/"
-						+ "android_connect/update_group_member.php", friendsEmail, "yes", friendsRole, Integer.toString(g_id));
-			}
-			else
-			{
-				System.out.println("adding member: "+friendsEmail+", role: "+friendsRole);
-				System.out.println("http://68.59.162.183/android_connect/update_group_member.php, url1: " + friendsEmail + ", 2: no, 3: " + friendsRole +", 4: " + Integer.toString(g_id));
-				new UpdateGroupMembersTask().execute("http://68.59.162.183/android_connect/update_group_member.php", friendsEmail, "no", friendsRole, Integer.toString(g_id));
-			}
-		}
-		group.fetchMembers();
-		Toast toast = GLOBAL.getToast(this, "Group members have been updated.");
-		toast.show();
-		
-		//remove this activity from back-loop by calling finish().
-		finish();
+		new AlertDialog.Builder(this)
+		.setMessage("Are you sure you want to update these members?")
+		.setCancelable(true)
+		.setPositiveButton("Yes",
+				new DialogInterface.OnClickListener()
+				{
+					@Override
+					public void onClick(DialogInterface dialog,
+							int id)
+					{
+						int g_id = group.getID();
+						//now loop through list of added to add all the additional users to the group
+						int size = toUpdate.size();
+						for (int i = 0 ; i < size ; i++)
+						{
+							System.out.println("adding friend #"+i+"/"+size);
+							int key = toUpdate.keyAt(i);
+							//grab the email of friend to add
+							String friendsEmail = toUpdate.valueAt(key);
+							//grab the role of friend to add
+							String friendsRole = toUpdateRole.valueAt(key);
+							
+							System.out.println("friendsROLE: " + friendsRole + " .equals: " + friendsRole.equals("-"));
+							if (friendsRole.equals("-"))
+							{
+								System.out.println("removing mg member: "+friendsEmail);
+								new UpdateGroupMembersTask().execute("http://68.59.162.183/"
+										+ "android_connect/update_group_member.php", friendsEmail, "yes", friendsRole, Integer.toString(g_id));
+							}
+							else
+							{
+								System.out.println("adding member: "+friendsEmail+", role: "+friendsRole);
+								System.out.println("http://68.59.162.183/android_connect/update_group_member.php, url1: " + friendsEmail + ", 2: no, 3: " + friendsRole +", 4: " + Integer.toString(g_id));
+								new UpdateGroupMembersTask().execute("http://68.59.162.183/android_connect/update_group_member.php", friendsEmail, "no", friendsRole, Integer.toString(g_id));
+							}
+						}
+						group.fetchMembers();
+						Context context = getApplicationContext();
+						Toast toast = GLOBAL.getToast(context, "Group members have been updated.");
+						toast.show();
+						
+						//remove this activity from back-loop by calling finish().
+						finish();
+					}
+				}).setNegativeButton("Cancel", null).show();
 	}
 	
 	//aSynch task to add individual member to group.
