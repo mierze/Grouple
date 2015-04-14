@@ -210,19 +210,27 @@ public class LoginActivity extends Activity
 					//failed token login
 					if(tokenFlag)
 					{
+						setContentView(R.layout.activity_login);
+						// sets up an progress bar spinner that will appear when user hits
+						// login.
+						emailEditText = (EditText) findViewById(R.id.emailEditText);
+						
 						tokenFlag = false;
 						System.out.println("token login failed... initiating normal login activity.");
 						// sets up an progress bar spinner that will appear when user hits
-						// login.
+						// login
 						progBar = (ProgressBar) findViewById(R.id.progressBar);
 						progBar.setVisibility(View.INVISIBLE);
-
 						rememberLogin = (CheckBox) findViewById(R.id.rememberLoginCB);
 						// sets up error message that will appear if user enters invalid
 						// login/pass.
+
 						loginFail = (TextView) findViewById(R.id.loginFailTextViewLA);
+
 						loginFail.setVisibility(View.GONE);
+
 						initKillswitchListener();
+
 					}
 					//failed email/password login
 					else
