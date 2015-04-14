@@ -22,32 +22,44 @@
             android:background="@color/background_color"
             android:orientation="vertical" >
 
+           <RelativeLayout
+            android:id="@+id/editImageLayout"
+            android:layout_width="match_parent"
+            android:layout_gravity="center"
+           	android:layout_marginBottom="5dp"
+            android:layout_height="wrap_content"
+            android:background="@color/background_color"
+>
             <ImageView
                 android:id="@+id/editEventImageView"
-                android:layout_width="250dp"
-                android:layout_height="250dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_gravity="center|top"
-                android:layout_weight="1"
+                android:onClick="loadImage"
+                android:scaleType="fitXY"
                 android:adjustViewBounds="true"
-                android:background="@color/image_background_color"
+                android:background="@drawable/border"
                 android:contentDescription="Event photo."
-                android:minHeight="250dp"
-                android:minWidth="250dp"
+                android:minHeight="300dp"
+                android:maxWidth="600dp"
                 android:padding="3dp"
                 android:src="@drawable/abc_ab_bottom_solid_dark_holo" />
 
             <Button
                 android:id="@+id/editEventImageButton"
-                android:layout_width="250dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center|top"
-                android:layout_marginBottom="5dp"
+                android:layout_below="@+id/editEventImageView"
+				android:layout_alignLeft="@+id/editEventImageView"
+				android:layout_alignRight="@+id/editEventImageView"
                 android:background="@drawable/selector_button"
                 android:fontFamily="sans-serif-condensed"
                 android:onClick="onClick"
                 android:text="Edit Image"
                 android:textColor="@color/button_text_color"
                 android:textSize="14sp" />
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/nameLabelTextViewEPA"
@@ -175,7 +187,7 @@
 
             <TextView
                 android:id="@+id/locationLabelTextViewEPA"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/black"
                 android:gravity="left"
@@ -198,7 +210,7 @@
 
             <TextView
                 android:id="@+id/sizeLabelTextViewEPA"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/black"
                 android:gravity="left"

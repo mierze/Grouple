@@ -334,16 +334,19 @@ public class ListActivity extends BaseActivity
 			{
 				View dateRow = li.inflate(R.layout.list_row_date, null);	
 				TextView dateTextView = (TextView) dateRow.findViewById(R.id.dateTextView);	
+				String newStartDate = e.getStartTextNoTime();
 				if (startDate == null)
 				{
-					startDate = e.getStartTextNoTime();
-					dateTextView.setText(startDate);
+					//first event to display, show its time, and set startDate = to it
+					startDate = newStartDate;
+					dateTextView.setText(e.getStartTextListDisplay());
 					listLayout.addView(dateRow);
 				}
-				else if (startDate.compareTo(e.getStartTextNoTime()) < 0)
+				else if (startDate.compareTo(newStartDate) < 0)
 				{
+					//if previous start date less than new start date, display date
 					startDate = e.getStartTextNoTime();
-					dateTextView.setText(startDate);
+					dateTextView.setText(e.getStartTextListDisplay());
 					listLayout.addView(dateRow);
 				}
 				id = e.getID();

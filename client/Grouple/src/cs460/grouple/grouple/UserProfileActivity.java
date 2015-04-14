@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.EditText;
@@ -51,6 +52,7 @@ public class UserProfileActivity extends BaseActivity
 	private TextView xpTextView;
 	private TextView levelTextView;
 	private GcmUtility gcmUtil;
+	private LayoutInflater inflater;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -71,6 +73,7 @@ public class UserProfileActivity extends BaseActivity
 		xpTextView = (TextView) findViewById(R.id.xpTextView);
 		iv = (ImageView) findViewById(R.id.profileImageUPA);
 		gcmUtil = new GcmUtility(GLOBAL);
+		inflater = getLayoutInflater();
 	}
 
 	@Override
@@ -105,19 +108,6 @@ public class UserProfileActivity extends BaseActivity
 		// initializing the action bar and killswitch listener
 		initActionBar(title, true);
 
-	}
-
-	public void loadImage(View view)
-	{
-		ImageView tempImageView = (ImageView) view;
-		AlertDialog.Builder imageDialog = new AlertDialog.Builder(this);
-		LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
-		View layout = inflater.inflate(R.layout.dialog_image, (ViewGroup) findViewById(R.id.layout_root));
-		ImageView image = (ImageView) layout.findViewById(R.id.fullImage);
-		image.setImageDrawable(tempImageView.getDrawable());
-		imageDialog.setView(layout);
-		imageDialog.create();
-		imageDialog.show();
 	}
 
 	// TASK FOR GRABBING IMAGE OF EVENT/USER/GROUP
@@ -297,28 +287,8 @@ public class UserProfileActivity extends BaseActivity
 			break;
 		case R.id.profileButton5:
 			noIntent = true;
-			// TODO: display badges if user
-			AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-			dialogBuilder.setTitle(user.getFirstName() + "'s Badges");
-			LayoutInflater inflater = this.getLayoutInflater();
-			View dialogView = inflater.inflate(R.layout.dialog_badges, null);
-			LinearLayout layout = (LinearLayout) dialogView.findViewById(R.id.badgesLayout);
-			for (int i = 0; i < 10; i++)
-			{
-				LinearLayout row = (LinearLayout) inflater.inflate(R.layout.list_row_badges, null);
-
-				int col = 0;
-				while (col < 3)
-				{
-					View item = inflater.inflate(R.layout.list_item_badge, null);
-					row.addView(item);
-					col++;
-				}
-				layout.addView(row);
-			}
-			dialogBuilder.setView(dialogView);
-			AlertDialog badgesDialog = dialogBuilder.create();
-			badgesDialog.show();
+			badgesDialog();
+			
 			break;
 		case R.id.profileEditButton:
 
@@ -429,13 +399,45 @@ public class UserProfileActivity extends BaseActivity
 			GLOBAL.getEventBuffer().fetchParticipants();
 	}
 
+	private void badgesDialog()
+	{
+		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+		dialogBuilder.setTitle(user.getFirstName() + "'s Badges");
+		LinearLayout row;
+		ImageButton badgeImageButton;
+		View dialogView = inflater.inflate(R.layout.dialog_badges, null);
+		LinearLayout layout = (LinearLayout) dialogView.findViewById(R.id.badgesLayout);
+		for (int i = 0; i < 10; i++)
+		{
+			row = (LinearLayout) inflater.inflate(R.layout.list_row_badges, null);
+			int col = 0;
+			while (col < 4)
+			{
+				View item = inflater.inflate(R.layout.list_item_badge, null);
+				badgeImageButton = (ImageButton) item.findViewById(R.id.badgeImageButton);
+				badgeImageButton.setOnClickListener(new OnClickListener()
+				{
+					@Override
+					public void onClick(View view) 
+					{
+						badgeDialog();
+					}
+				});
+				row.addView(item);
+				col++;
+			}
+			layout.addView(row);
+		}
+		dialogBuilder.setView(dialogView);
+		AlertDialog badgesDialog = dialogBuilder.create();
+		badgesDialog.show();
+	}
 	/*
 	 * Get profile executes get_profile.php. It uses the current users email
 	 * address to retrieve the users name, age, and bio.
 	 */
-	public void populateProfile()
+	private void populateProfile()
 	{
-		TextView aboutTitle = (TextView) findViewById(R.id.aboutTitlePA);
 		TextView info = (TextView) findViewById(R.id.profileInfoTextView);
 		TextView about = (TextView) findViewById(R.id.profileAboutTextView);
 
@@ -452,6 +454,24 @@ public class UserProfileActivity extends BaseActivity
 		info.setText(infoT);
 		about.setText(infoT + user.getAbout());
 
+	}
+	
+	
+	//dialog pop up for a single badge with description
+	//TODO: add parameters about the badge?
+	private void badgeDialog()
+	{
+		View dialogView = inflater.inflate(R.layout.dialog_badge, null);
+		ImageView badgeImageView = (ImageView) dialogView.findViewById(R.id.badgeImageView);
+		TextView badgeTitleTextView = (TextView) dialogView.findViewById(R.id.badgeTitleTextView);
+		TextView badgeAboutTextView = (TextView) dialogView.findViewById(R.id.badgeAboutTextView);
+		
+		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+		dialogBuilder.setTitle(badgeTitleTextView.getText().toString() + " Badge");
+
+		dialogBuilder.setView(dialogView);
+		AlertDialog badgesDialog = dialogBuilder.create();
+		badgesDialog.show();
 	}
 
 }

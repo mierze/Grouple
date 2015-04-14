@@ -116,19 +116,6 @@ public class EventProfileActivity extends BaseActivity
 
 	}
 
-	public void loadImage(View view)
-	{
-		ImageView tempImageView = (ImageView) view;
-		AlertDialog.Builder imageDialog = new AlertDialog.Builder(this);
-		LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
-		View layout = inflater.inflate(R.layout.dialog_image, (ViewGroup) findViewById(R.id.layout_root));
-		ImageView image = (ImageView) layout.findViewById(R.id.fullImage);
-		image.setImageDrawable(tempImageView.getDrawable());
-		imageDialog.setView(layout);
-		imageDialog.create();
-		imageDialog.show();
-	}
-
 	private void fetchItemsToBring()
 	{
 		new getItemsToBringTask().execute("http://68.59.162.183/android_connect/get_items_tobring.php");
@@ -153,25 +140,34 @@ public class EventProfileActivity extends BaseActivity
 				JSONObject jsonObject = new JSONObject(result);
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
+					//clearing to avoid duplicates
+					itemNames.clear();
+					itemEmails.clear();
 					// gotta make a json array
+					int numUnclaimed = 0;
 					JSONArray jsonArray = jsonObject.getJSONArray("itemsToBring");
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
 						JSONObject o = (JSONObject) jsonArray.get(i);
 						// function adds friend to the friends map
 						itemNames.add(o.getString("name"));
+						if (o.getString("email").equals("null"))
+							numUnclaimed++;
 						itemEmails.add(o.getString("email"));
+						
 					}
+					if (numUnclaimed > 0)
+						itemListButton.setText("Item Checklist (" + numUnclaimed + " unclaimed)");
 				}
 				// user has no friends
 				if (jsonObject.getString("success").toString().equals("2"))
 				{
-					Log.d("fetchFriends", "failed = 2 return");
+					Log.d("fetchItems", "failed");
 				}
 			}
 			catch (Exception e)
 			{
-				Log.d("fetchFriends", "exception caught");
+				Log.d("fetchItems", "exception caught");
 				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 			}
 		}
@@ -182,17 +178,14 @@ public class EventProfileActivity extends BaseActivity
 		int pub;
 		String pro2Text;
 		ArrayList<User> users = new ArrayList<User>();
-
 		pub = event.getPub();
 		users = event.getUsers();
 		pro2Text = "Join Event";
-
 		// checking if user is in group/event
 		boolean inEntity = false;
 		for (User u : users)
 			if (u.getEmail().equals(user.getEmail()))
 				inEntity = true;
-
 		if (!inEntity) // user not in group, check if public so they can join
 		{
 			if (pub == 1)
@@ -339,7 +332,7 @@ public class EventProfileActivity extends BaseActivity
 				else
 				{
 					// failed
-					Log.d("FETCH ROLE FAILED", "FAILED");
+					Log.d("getUnreadMessages", "FAILED");
 				}
 			}
 			catch (Exception e)
@@ -395,20 +388,15 @@ public class EventProfileActivity extends BaseActivity
 
 			break;
 		case R.id.profileButton3:
-			// events UPCOMING
-			// join the public group
-			new JoinPublicTask().execute("http://68.59.162.183/"
-
-			+ "android_connect/join_public_event.php", user.getEmail(), "P", Integer.toString(event.getID()));
+			//joining public event, defaulting to a promoter status
+			new JoinPublicTask().execute("http://68.59.162.183/android_connect/join_public_event.php", user.getEmail(), "P", Integer.toString(event.getID()));
 			noIntent = true;
-
 			break;
 		case R.id.itemListButton:
 			itemListDialog();
 			noIntent = true;
 			break;
 		case R.id.profileEditButton:
-
 			intent = new Intent(this, EventEditActivity.class);
 			break;
 		default:
@@ -422,7 +410,6 @@ public class EventProfileActivity extends BaseActivity
 				GLOBAL.setCurrentUser(user);
 			intent.putExtra("EMAIL", user.getEmail());
 		}
-
 		if (event != null)
 			intent.putExtra("EID", Integer.toString(event.getID()));
 		if (!noIntent) // TODO, move buttons elsewhere that dont start list
@@ -435,7 +422,6 @@ public class EventProfileActivity extends BaseActivity
 	public void onBackPressed()
 	{
 		super.onBackPressed();
-
 		// events pending case
 		GLOBAL.getCurrentUser().fetchEventsUpcoming();
 		// events pending case
@@ -447,7 +433,7 @@ public class EventProfileActivity extends BaseActivity
 
 	private void itemListDialog()
 	{
-		// make our builder
+		//make our builder
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Item Checklist");
 		// inflate dialog with dialog layout for the list
@@ -462,7 +448,7 @@ public class EventProfileActivity extends BaseActivity
 				View row = inflater.inflate(R.layout.list_row_checklist, null);
 				final CheckBox itemCheckBox = (CheckBox) row.findViewById(R.id.itemCheckBox);
 				final TextView itemUserNameTextView = (TextView) row.findViewById(R.id.itemUsernameTextView);
-
+				
 				itemCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
 				{
 					@Override
@@ -494,9 +480,7 @@ public class EventProfileActivity extends BaseActivity
 			}
 		}
 		// for itemNames -> make a new checklist row
-
 		// make this save on x out or back
-
 		builder.setView(itemListDialogView);
 		itemListAlertDialog = builder.create();
 		itemListAlertDialog.show();

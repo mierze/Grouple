@@ -10,11 +10,14 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class BaseActivity extends ActionBarActivity implements OnClickListener
@@ -70,6 +73,20 @@ public class BaseActivity extends ActionBarActivity implements OnClickListener
 		actionbarTitle.setText(title);
 	}
 	
+	//for images to blow them up throughout app
+	public void loadImage(View view)
+	{
+		ImageView tempImageView = (ImageView) view;
+		AlertDialog.Builder imageDialog = new AlertDialog.Builder(this);
+		LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
+		View layout = inflater.inflate(R.layout.dialog_image, (ViewGroup) findViewById(R.id.layout_root));
+		ImageView image = (ImageView) layout.findViewById(R.id.fullImage);
+		image.setImageDrawable(tempImageView.getDrawable());
+		imageDialog.setView(layout);
+		imageDialog.create();
+		imageDialog.show();
+	}
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		User user = GLOBAL.getCurrentUser();
@@ -82,6 +99,7 @@ public class BaseActivity extends ActionBarActivity implements OnClickListener
 			break;
 		case R.id.action_profile:
 			user.fetchUserInfo();
+			user.fetchEventsPast();
 			user.fetchEventsUpcoming();
 			user.fetchFriends();
 			user.fetchGroups();

@@ -145,7 +145,7 @@
                 android:background="@drawable/selector_button"
                 android:fontFamily="sans-serif-condensed"
                 android:onClick="onClick"
-                android:text=""
+                android:text="Item Checklist"
                 android:textColor="@color/button_text_color"
                 android:textSize="18sp"
                 android:visibility="gone" />

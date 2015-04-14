@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/badgeContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="@color/black"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="10dp" >
+
+    <TextView
+        android:id="@+id/badgeTitleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="Jack of all Trades"
+        android:textColor="@color/button_text_color"
+        android:textSize="24sp" />
+
+    <ImageView
+        android:id="@+id/badgeImageView"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:layout_margin="10dp"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/border_layout"
+        android:contentDescription="Badge"
+        android:src="@drawable/event_image_default" />
+
+    <TextView
+        android:id="@+id/badgeAboutTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="80dp"
+        android:layout_marginLeft="80dp"
+        android:layout_gravity="center"
+        android:text="This badge is bla bla bla, you earn it through getting out and participating in events of all sorts blas."
+        android:textColor="@color/button_text_color"
+        android:textSize="14sp" />
+
+</LinearLayout>

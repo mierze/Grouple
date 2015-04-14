@@ -13,8 +13,8 @@
       android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitXY"
-        android:minWidth="300dp"
-        android:minHeight="500dp"
+        
+        android:adjustViewBounds="true"
       
         
      >

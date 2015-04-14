@@ -141,7 +141,7 @@ public class Global extends Application
         final Window window = loadDialog.getWindow();
         window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        loadDialog.setContentView(R.layout.load);
+        loadDialog.setContentView(R.layout.dialog_load);
         loadDialog.setCancelable(false);
         loadDialog.getWindow().setDimAmount(0.7f);
         return loadDialog;
@@ -251,7 +251,7 @@ public class Global extends Application
 		String date = "";
 		SimpleDateFormat raw = new SimpleDateFormat("yyyy-M-d h:mm:ss");
 		SimpleDateFormat dateFormat = new SimpleDateFormat(
-				"MMMM d, yyyy");
+				"yyyy-MM-dd");
 		try
 		{
 			Date parsedDate = (Date) raw.parse(dateString);

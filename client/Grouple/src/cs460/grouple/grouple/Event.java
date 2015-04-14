@@ -21,6 +21,7 @@ public class Event extends Entity
 	private String startDate;
 	private String startText;
 	private String startTextNoTime;
+	private String startTextListDisplay;
 	private String endText;
 	private String endDate;
 	private String category;
@@ -73,6 +74,7 @@ public class Event extends Entity
 		// string is format from json, parsedate converts
 		startText = GLOBAL.toDayTextFormatFromRaw(startDate);
 		startTextNoTime = GLOBAL.toNoTimeTextFormatFromRaw(startDate);
+		startTextListDisplay = GLOBAL.toYearTextFormatFromRawNoTime(startDate);
 	}
 
 	protected void setEndDate(String endDate)
@@ -135,6 +137,11 @@ public class Event extends Entity
 	protected String getStartTextNoTime()
 	{
 		return startTextNoTime;
+	}
+	
+	protected String getStartTextListDisplay()
+	{
+		return startTextListDisplay;
 	}
 
 	/**

@@ -102,19 +102,6 @@ public class GroupProfileActivity extends BaseActivity
 
 	}
 
-	public void loadImage(View view)
-	{
-		ImageView tempImageView = (ImageView) view;
-		AlertDialog.Builder imageDialog = new AlertDialog.Builder(this);
-		LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
-		View layout = inflater.inflate(R.layout.dialog_image, (ViewGroup) findViewById(R.id.layout_root));
-		ImageView image = (ImageView) layout.findViewById(R.id.fullImage);
-		image.setImageDrawable(tempImageView.getDrawable());
-		imageDialog.setView(layout);
-		imageDialog.create();
-		imageDialog.show();
-	}
-
 	private void setRole()
 	{
 		int pub;
