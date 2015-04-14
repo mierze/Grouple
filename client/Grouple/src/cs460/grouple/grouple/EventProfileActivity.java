@@ -159,10 +159,17 @@ public class EventProfileActivity extends BaseActivity
 					if (numUnclaimed > 0)
 						itemListButton.setText("Item Checklist (" + numUnclaimed + " unclaimed)");
 				}
-				// user has no friends
+				// success, but no items returned
 				if (jsonObject.getString("success").toString().equals("2"))
 				{
-					Log.d("fetchItems", "failed");
+					//clearing to avoid duplicates
+					itemNames.clear();
+					itemEmails.clear();
+					itemListButton.setText("Item Checklist");
+				}
+				else
+				{
+					Log.d("fetchItems", "failed to return success");
 				}
 			}
 			catch (Exception e)

@@ -19,6 +19,7 @@ import android.app.TimePickerDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
@@ -69,6 +70,7 @@ import android.widget.TimePicker;
 	private LayoutInflater inflater;
 	private final ArrayList<EditText> toBringEditTexts = new ArrayList<EditText>();
 	private int year, month, day, hour, minute;
+	private ArrayList<String> itemNames = new ArrayList<String>();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -101,6 +103,7 @@ import android.widget.TimePicker;
 	public void toBringButton(View view)
 	{
 		// Creating and Building the Dialog
+		toBringEditTexts.clear();
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Add Items To Bring");
 		inflater = EventCreateActivity.this.getLayoutInflater();
@@ -109,11 +112,30 @@ import android.widget.TimePicker;
 				.findViewById(R.id.toBringInnerLayout);
 		this.addToBringRowButton = (Button) toBringLayout
 				.findViewById(R.id.toBringAddRowButton);
-		View editTextLayout = inflater.inflate(R.layout.list_item_edittext, null);
-		EditText toBringEditText = (EditText) editTextLayout
-				.findViewById(R.id.toBringEditText);
-		toBringEditTexts.add(toBringEditText);
-		layout.addView(editTextLayout);
+				
+		if (!itemNames.isEmpty())
+		{
+			for (String itemName : itemNames)
+			{
+				View editTextLayout = inflater.inflate(
+						R.layout.list_item_edittext, null);
+				EditText toBringEditText = (EditText) editTextLayout
+						.findViewById(R.id.toBringEditText);
+				toBringEditText.setText(itemName);
+				toBringEditTexts.add(toBringEditText);
+				layout.addView(editTextLayout);
+			}
+		}
+			//add a new blank row at end
+			View editTextLayout = inflater.inflate(
+					R.layout.list_item_edittext, null);
+			EditText toBringEditText = (EditText) editTextLayout
+					.findViewById(R.id.toBringEditText);
+			toBringEditTexts.add(toBringEditText);
+			layout.addView(editTextLayout);
+			toBringEditText.requestFocus();
+		
+		
 		addToBringRowButton.setOnClickListener(new View.OnClickListener()
 		{
 			public void onClick(View v)
@@ -140,14 +162,22 @@ import android.widget.TimePicker;
 
 	public void saveToBringListButton(View view)
 	{
+		//first clear out final list to avoid any duplicate entries being added
+		itemNames.clear();
 		for (EditText toBringItem : toBringEditTexts)
 		{
-			System.out.println("\n\nItem #"
-					+ toBringEditTexts.indexOf(toBringItem) + " is "
-					+ toBringItem.getText().toString());
+			//when list is saved, save to final list but ignore any blank line entries
+			if(!(toBringItem.getText().toString().compareTo("") == 0))
+			{
+				//save to final list that can be used to send to db
+				itemNames.add(toBringItem.getText().toString());
+				System.out.println("\n\nSaving item #"
+						+ toBringEditTexts.indexOf(toBringItem) + ": "
+						+ toBringItem.getText().toString());
+			}
 		}
 		toBringDialog.dismiss();
-		toBringButton.setText("Items (" + toBringEditTexts.size() + ")");
+		toBringButton.setText("Items (" + itemNames.size() + ")");
 	}
 
 	// onClick for category button
@@ -200,7 +230,9 @@ import android.widget.TimePicker;
 		// calendar date.
 		if(startDateEditText.getText().toString().compareTo("") ==0)
 		{
-			new DatePickerDialog(this, myStartDateListener, year, month, day).show();
+			DatePickerDialog dpd;
+			dpd = new DatePickerDialog(this, myStartDateListener, year, month, day);
+			dpd.show();
 		}
 		// load the datepicker using the date that was previously set in startDate
 		else
@@ -221,7 +253,9 @@ import android.widget.TimePicker;
 				e.printStackTrace();
 			}// all done
 		
-			new DatePickerDialog(this, myStartDateListener, startCal.get(Calendar.YEAR),startCal.get(Calendar.MONTH), startCal.get(Calendar.DAY_OF_MONTH)).show();
+			DatePickerDialog dpd;
+			dpd = new DatePickerDialog(this, myStartDateListener, startCal.get(Calendar.YEAR),startCal.get(Calendar.MONTH), startCal.get(Calendar.DAY_OF_MONTH));
+			dpd.show();
 		}
 	}
 
@@ -235,7 +269,9 @@ import android.widget.TimePicker;
 		{
 			if(startDateEditText.getText().toString().compareTo("")==0)
 			{
-				new DatePickerDialog(this, myEndDateListener, year, month, day).show();
+				DatePickerDialog dpd;
+				dpd = new DatePickerDialog(this, myEndDateListener, year, month, day);
+				dpd.show();
 			}
 			else
 			{
@@ -254,8 +290,10 @@ import android.widget.TimePicker;
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}// all done
-			
-				new DatePickerDialog(this, myEndDateListener, endCal.get(Calendar.YEAR),endCal.get(Calendar.MONTH), endCal.get(Calendar.DAY_OF_MONTH)).show();
+				
+				DatePickerDialog dpd;
+				dpd = new DatePickerDialog(this, myEndDateListener, endCal.get(Calendar.YEAR),endCal.get(Calendar.MONTH), endCal.get(Calendar.DAY_OF_MONTH));
+				dpd.show();
 			}
 			
 		}
@@ -277,7 +315,9 @@ import android.widget.TimePicker;
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}// all done
-			new DatePickerDialog(this, myEndDateListener, endCal.get(Calendar.YEAR),endCal.get(Calendar.MONTH), endCal.get(Calendar.DAY_OF_MONTH)).show();
+			DatePickerDialog dpd;
+			dpd = new DatePickerDialog(this, myEndDateListener, endCal.get(Calendar.YEAR),endCal.get(Calendar.MONTH), endCal.get(Calendar.DAY_OF_MONTH));
+			dpd.show();
 		}
 	}
 
@@ -415,10 +455,10 @@ import android.widget.TimePicker;
 			nameValuePairs.add(new BasicNameValuePair("location", location));
 			
 			//loop through toBringList, adding each member into php array toBring[]
-		    for (int i = 0; i < toBringEditTexts.size(); i++) 
+		    for (int i = 0; i < itemNames.size(); i++) 
 		    {
 		    	System.out.println("adding the toBring entries");
-		        nameValuePairs.add(new BasicNameValuePair("toBring[]", toBringEditTexts.get(i).getText().toString()));
+		        nameValuePairs.add(new BasicNameValuePair("toBring[]", itemNames.get(i)));
 		    }
 			
 			// pass url and nameValuePairs off to GLOBAL to do the JSON call.
@@ -498,7 +538,7 @@ import android.widget.TimePicker;
 											// e_id as extra so correct event
 											// profile can be loaded)
 											Intent intent = new Intent(
-													EventCreateActivity.this, null);
+													EventCreateActivity.this, EventProfileActivity.class);
 											intent.putExtra("EID", ID);
 											intent.putExtra("EMAIL",
 													user.getEmail());
@@ -564,14 +604,36 @@ import android.widget.TimePicker;
 				{
 					System.out.println("Hour:"+startCal.get(Calendar.HOUR_OF_DAY));
 					System.out.println("Minute:"+startCal.get(Calendar.MINUTE));
-					new TimePickerDialog(EventCreateActivity.this,
-							myStartTimeListener, startCal.get(Calendar.HOUR_OF_DAY), startCal.get(Calendar.MINUTE), false).show();
+					TimePickerDialog tpd;
+					tpd = new TimePickerDialog(EventCreateActivity.this,
+							myStartTimeListener, startCal.get(Calendar.HOUR_OF_DAY), startCal.get(Calendar.MINUTE), false);
+					tpd.show();
+					tpd.setOnCancelListener(new DialogInterface.OnCancelListener()
+					{
+
+						@Override
+						public void onCancel(DialogInterface dialog)
+						{
+							startDateEditText.setText("");
+						}
+					});
 				}
 				//start the TimePicker using current system time
 				else
 				{
-					new TimePickerDialog(EventCreateActivity.this,
-						myStartTimeListener, hour, minute, false).show();
+					TimePickerDialog tpd;
+					tpd = new TimePickerDialog(EventCreateActivity.this,
+						myStartTimeListener, hour, minute, false);
+					tpd.show();
+					tpd.setOnCancelListener(new DialogInterface.OnCancelListener()
+					{
+
+						@Override
+						public void onCancel(DialogInterface dialog)
+						{
+							startDateEditText.setText("");
+						}
+					});
 				}
 			}
 		}
@@ -608,14 +670,36 @@ import android.widget.TimePicker;
 				{
 					System.out.println("Hour:"+endCal.get(Calendar.HOUR_OF_DAY));
 					System.out.println("Minute:"+endCal.get(Calendar.MINUTE));
-					new TimePickerDialog(EventCreateActivity.this,
-							myEndTimeListener, endCal.get(Calendar.HOUR_OF_DAY), endCal.get(Calendar.MINUTE), false).show();
+					TimePickerDialog tpd;
+					tpd = new TimePickerDialog(EventCreateActivity.this,
+							myEndTimeListener, endCal.get(Calendar.HOUR_OF_DAY), endCal.get(Calendar.MINUTE), false);
+					tpd.show();
+					tpd.setOnCancelListener(new DialogInterface.OnCancelListener()
+					{
+
+						@Override
+						public void onCancel(DialogInterface dialog)
+						{
+							endDateEditText.setText("");
+						}
+					});
 				}
 				//start the TimePicker using current system time
 				else
 				{
-					new TimePickerDialog(EventCreateActivity.this,
-						myEndTimeListener, hour, minute, false).show();
+					TimePickerDialog tpd;
+					tpd = new TimePickerDialog(EventCreateActivity.this,
+						myEndTimeListener, hour, minute, false);
+					tpd.show();
+					tpd.setOnCancelListener(new DialogInterface.OnCancelListener()
+					{
+
+						@Override
+						public void onCancel(DialogInterface dialog)
+						{
+							endDateEditText.setText("");
+						}
+					});
 				}
 			}
 		}

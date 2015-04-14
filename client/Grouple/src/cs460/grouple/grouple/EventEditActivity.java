@@ -251,34 +251,39 @@ public class EventEditActivity extends BaseActivity
 	public void toBringButton(View view)
 	{
 		// Creating and Building the Dialog
+		toBringEditTexts.clear();
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Add Items To Bring");
+		inflater = EventEditActivity.this.getLayoutInflater();
 		toBringLayout = inflater.inflate(R.layout.dialog_tobring, null);
 		final LinearLayout layout = (LinearLayout) toBringLayout
 				.findViewById(R.id.toBringInnerLayout);
 		this.addToBringRowButton = (Button) toBringLayout
 				.findViewById(R.id.toBringAddRowButton);
-		View editTextLayout = inflater.inflate(R.layout.list_item_edittext, null);
-		
-		EditText toBringEditText = (EditText) editTextLayout
-				.findViewById(R.id.toBringEditText);	
-		
+				
 		if (!itemNames.isEmpty())
 		{
 			for (String itemName : itemNames)
 			{
-				editTextLayout = inflater.inflate(
+				View editTextLayout = inflater.inflate(
 						R.layout.list_item_edittext, null);
-				toBringEditText = (EditText) editTextLayout
+				EditText toBringEditText = (EditText) editTextLayout
 						.findViewById(R.id.toBringEditText);
-				toBringEditTexts.add(toBringEditText);
 				toBringEditText.setText(itemName);
+				toBringEditTexts.add(toBringEditText);
 				layout.addView(editTextLayout);
 			}
 		}
-
-		//toBringEditTexts.add(toBringEditText);
-		//layout.addView(editTextLayout);
+			//add a new blank row at end
+			View editTextLayout = inflater.inflate(
+					R.layout.list_item_edittext, null);
+			EditText toBringEditText = (EditText) editTextLayout
+					.findViewById(R.id.toBringEditText);
+			toBringEditTexts.add(toBringEditText);
+			layout.addView(editTextLayout);
+			toBringEditText.requestFocus();
+		
+		
 		addToBringRowButton.setOnClickListener(new View.OnClickListener()
 		{
 			public void onClick(View v)
@@ -290,7 +295,6 @@ public class EventEditActivity extends BaseActivity
 					EditText toBringEditText = (EditText) editTextLayout
 							.findViewById(R.id.toBringEditText);
 					toBringEditTexts.add(toBringEditText);
-					
 					layout.addView(editTextLayout);
 				} 
 				catch (Exception e)
@@ -306,21 +310,24 @@ public class EventEditActivity extends BaseActivity
 
 	public void saveToBringListButton(View view)
 	{
+		//first clear out final list to avoid any duplicate entries being added
+		itemNames.clear();
 		for (EditText toBringItem : toBringEditTexts)
 		{
-			System.out.println("\n\nItem #"
-					+ toBringEditTexts.indexOf(toBringItem) + " is "
-					+ toBringItem.getText().toString());
+			//when list is saved, save to final list but ignore any blank line entries
+			if(!(toBringItem.getText().toString().compareTo("") == 0))
+			{
+				//save to final list that can be used to send to db
+				itemNames.add(toBringItem.getText().toString());
+				System.out.println("\n\nSaving item #"
+						+ toBringEditTexts.indexOf(toBringItem) + ": "
+						+ toBringItem.getText().toString());
+			}
 		}
 		toBringDialog.dismiss();
-		//syncing itemNames with editTexts
-		itemNames.clear();
-		for (EditText eT : toBringEditTexts)
-		{
-			itemNames.add(eT.getText().toString());
-		}
-		toBringButton.setText("Edit Items (" + toBringEditTexts.size() + ")");
-	}
+		toBringButton.setText("Items (" + itemNames.size() + ")");
+	}	
+	
 	// Button Listener for submit changes.
 	public void submitButton(View view)
 	{
@@ -419,8 +426,9 @@ public class EventEditActivity extends BaseActivity
 		// calendar date.
 		if (startEditText.getText().toString().compareTo("") == 0)
 		{
-			new DatePickerDialog(this, myStartDateListener, year, month, day)
-					.show();
+			DatePickerDialog dpd;
+			dpd = new DatePickerDialog(this, myStartDateListener, year, month, day);
+			dpd.show();
 		}
 		// load the datepicker using the date that was previously set in
 		// startDate
@@ -440,9 +448,11 @@ public class EventEditActivity extends BaseActivity
 				e.printStackTrace();
 			}// all done
 
-			new DatePickerDialog(this, myStartDateListener,
+			DatePickerDialog dpd;
+			dpd = new DatePickerDialog(this, myStartDateListener,
 					startCal.get(Calendar.YEAR), startCal.get(Calendar.MONTH),
-					startCal.get(Calendar.DAY_OF_MONTH)).show();
+					startCal.get(Calendar.DAY_OF_MONTH));
+			dpd.show();
 		}
 	}
 
@@ -456,8 +466,8 @@ public class EventEditActivity extends BaseActivity
 		{
 			if (startEditText.getText().toString().compareTo("") == 0)
 			{
-				new DatePickerDialog(this, myEndDateListener, year, month, day)
-						.show();
+				DatePickerDialog dpd = new DatePickerDialog(this, myEndDateListener, year, month, day);
+				dpd.show();
 			} 
 			else
 			{
@@ -475,9 +485,10 @@ public class EventEditActivity extends BaseActivity
 					e.printStackTrace();
 				}// all done
 
-				new DatePickerDialog(this, myEndDateListener,
+				DatePickerDialog dpd = new DatePickerDialog(this, myEndDateListener,
 						endCal.get(Calendar.YEAR), endCal.get(Calendar.MONTH),
-						endCal.get(Calendar.DAY_OF_MONTH)).show();
+						endCal.get(Calendar.DAY_OF_MONTH));
+				dpd.show();
 			}
 		}
 		// load the datepicker using the date that was previously set in endDate
@@ -501,9 +512,10 @@ public class EventEditActivity extends BaseActivity
 				e.printStackTrace();
 			}// all done
 
-			new DatePickerDialog(this, myEndDateListener,
+			DatePickerDialog dpd = new DatePickerDialog(this, myEndDateListener,
 					endCal.get(Calendar.YEAR), endCal.get(Calendar.MONTH),
-					endCal.get(Calendar.DAY_OF_MONTH)).show();
+					endCal.get(Calendar.DAY_OF_MONTH));
+			dpd.show();
 		}
 	}
 
@@ -610,10 +622,10 @@ public class EventEditActivity extends BaseActivity
 				builder.addTextBody("location", locationEditText.getText()
 						.toString(), ContentType.TEXT_PLAIN);
 				//loop through toBringList, adding each member into php array toBring[]
-			    for (EditText toBringEditText : toBringEditTexts) 
+			    for (String itemName : itemNames) 
 			    {
-			    	System.out.println("attempting to add the toBring entries");
-			        builder.addTextBody("toBring[]", toBringEditText.getText().toString());
+			    	System.out.println("attempting to add item: "+itemName);
+			        builder.addTextBody("toBring[]", itemName);
 			    }
 				System.out.println("done adding other fields");
 				httpPost.setEntity(builder.build());
@@ -651,6 +663,7 @@ public class EventEditActivity extends BaseActivity
 		@Override
 		protected void onPostExecute(String result)
 		{
+			System.out.println(result);
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
@@ -723,6 +736,12 @@ public class EventEditActivity extends BaseActivity
 			});
 			builder.show();
 			break;
+			case R.id.manageEventButton:
+			Intent intent = new Intent(this, ManageParticipantsActivity.class);
+			intent.putExtra("EMAIL", GLOBAL.getCurrentUser().getEmail());
+			intent.putExtra("EID", event.getID());
+			startActivity(intent);
+			break;
 		}
 	}
 
@@ -774,16 +793,37 @@ public class EventEditActivity extends BaseActivity
 							+ startCal.get(Calendar.HOUR_OF_DAY));
 					System.out.println("Minute:"
 							+ startCal.get(Calendar.MINUTE));
-					new TimePickerDialog(EventEditActivity.this,
+					TimePickerDialog tpd = new TimePickerDialog(EventEditActivity.this,
 							myStartTimeListener,
 							startCal.get(Calendar.HOUR_OF_DAY),
-							startCal.get(Calendar.MINUTE), false).show();
+							startCal.get(Calendar.MINUTE), false);
+					tpd.show();
+					tpd.setOnCancelListener(new DialogInterface.OnCancelListener()
+					{
+
+						@Override
+						public void onCancel(DialogInterface dialog)
+						{
+							startEditText.setText("");
+						}
+					});
 				}
 				// start the TimePicker using current system time
 				else
 				{
-					new TimePickerDialog(EventEditActivity.this,
-							myStartTimeListener, hour, minute, false).show();
+					
+					TimePickerDialog tpd = new TimePickerDialog(EventEditActivity.this,
+							myStartTimeListener, hour, minute, false);
+					tpd.show();
+					tpd.setOnCancelListener(new DialogInterface.OnCancelListener()
+					{
+
+						@Override
+						public void onCancel(DialogInterface dialog)
+						{
+							startEditText.setText("");
+						}
+					});
 				}
 			}
 		}
@@ -821,24 +861,54 @@ public class EventEditActivity extends BaseActivity
 					System.out.println("Hour:"
 							+ endCal.get(Calendar.HOUR_OF_DAY));
 					System.out.println("Minute:" + endCal.get(Calendar.MINUTE));
-					new TimePickerDialog(EventEditActivity.this,
+					TimePickerDialog tpd = new TimePickerDialog(EventEditActivity.this,
 							myEndTimeListener,
 							endCal.get(Calendar.HOUR_OF_DAY),
-							endCal.get(Calendar.MINUTE), false).show();
+							endCal.get(Calendar.MINUTE), false);
+					tpd.show();
+					tpd.setOnCancelListener(new DialogInterface.OnCancelListener()
+					{
+
+						@Override
+						public void onCancel(DialogInterface dialog)
+						{
+							endEditText.setText("");
+						}
+					});
 				}
 				//TODO: add check if start date changed greater than end date, make this start there
 				else if (startDate.compareTo(endDate) > 0)
 				{
-					new TimePickerDialog(EventEditActivity.this,
+					TimePickerDialog tpd = new TimePickerDialog(EventEditActivity.this,
 							myEndTimeListener,
 							startCal.get(Calendar.HOUR_OF_DAY),
-							startCal.get(Calendar.MINUTE), false).show();
+							startCal.get(Calendar.MINUTE), false);
+					tpd.show();
+					tpd.setOnCancelListener(new DialogInterface.OnCancelListener()
+					{
+
+						@Override
+						public void onCancel(DialogInterface dialog)
+						{
+							endEditText.setText("");
+						}
+					});
 				}
 				// start the TimePicker using current system time
 				else
 				{
-					new TimePickerDialog(EventEditActivity.this,
-							myEndTimeListener, hour, minute, false).show();
+					TimePickerDialog tpd = new TimePickerDialog(EventEditActivity.this,
+							myEndTimeListener, hour, minute, false);
+					tpd.show();
+					tpd.setOnCancelListener(new DialogInterface.OnCancelListener()
+					{
+
+						@Override
+						public void onCancel(DialogInterface dialog)
+						{
+							endEditText.setText("");
+						}
+					});
 				}
 			}
 		}

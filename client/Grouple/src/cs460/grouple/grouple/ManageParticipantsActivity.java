@@ -7,7 +7,10 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
+
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -297,58 +300,73 @@ public class ManageParticipantsActivity extends BaseActivity
 
 	public void confirmButton(View view)
 	{
-		int e_id = event.getID();
-		// now loop through list of added to add all the additional users to the
-		// group
-		int size = toUpdate.size();
-		System.out.println("Total count of users to process: " + size);
-		for (int i = 0; i < size; i++)
-		{
-			System.out.println("adding friend #" + i + "/" + toUpdate.size());
+		
+		
+		new AlertDialog.Builder(this)
+		.setMessage("Are you sure you want to update these participants?")
+		.setCancelable(true)
+		.setPositiveButton("Yes",
+				new DialogInterface.OnClickListener()
+				{
+					@Override
+					public void onClick(DialogInterface dialog,
+							int id)
+					{
+						int e_id = event.getID();
+						// now loop through list of added to add all the additional users to the
+						// group
+						int size = toUpdate.size();
+						System.out.println("Total count of users to process: " + size);
+						for (int i = 0; i < size; i++)
+						{
+							System.out.println("adding friend #" + i + "/" + toUpdate.size());
 
-			// get the user's email by matching indexes from added list with
-			// indexes from allFriendslist.
-			int key = toUpdate.keyAt(i);
+							// get the user's email by matching indexes from added list with
+							// indexes from allFriendslist.
+							int key = toUpdate.keyAt(i);
 
-			// grab the email of friend to add
-			String friendsEmail = toUpdate.valueAt(key);
+							// grab the email of friend to add
+							String friendsEmail = toUpdate.valueAt(key);
 
-			// grab the role of friend to add
-			String friendsRole = toUpdateRole.valueAt(key);
+							// grab the role of friend to add
+							String friendsRole = toUpdateRole.valueAt(key);
 
-			if (friendsRole.equals("-"))
-			{
-				System.out.println("removing mg member: " + friendsEmail);
-				new UpdateGroupMembersTask().execute("http://68.59.162.183/"
-						+ "android_connect/update_event_member.php",
-						friendsEmail, "yes", "M", Integer.toString(e_id));
-			} else
-			{
-				System.out.println("adding member: " + friendsEmail
-						+ ", role: " + friendsRole);
-				// initiate add of user
-				new UpdateGroupMembersTask()
-						.execute(
-								"http://68.59.162.183/android_connect/update_event_member.php",
-								friendsEmail, "no", friendsRole,
-								Integer.toString(e_id));
-			}
-		}
+							if (friendsRole.equals("-"))
+							{
+								System.out.println("removing mg member: " + friendsEmail);
+								new UpdateGroupMembersTask().execute("http://68.59.162.183/"
+										+ "android_connect/update_event_member.php",
+										friendsEmail, "yes", "M", Integer.toString(e_id));
+							} else
+							{
+								System.out.println("adding member: " + friendsEmail
+										+ ", role: " + friendsRole);
+								// initiate add of user
+								new UpdateGroupMembersTask()
+										.execute(
+												"http://68.59.162.183/android_connect/update_event_member.php",
+												friendsEmail, "no", friendsRole,
+												Integer.toString(e_id));
+							}
+						}
 
-		// group.fetchGroupInfo();
-		event.fetchParticipants();
-		// user.fetchGroupInvites();
-		// user.fetchGroups();
-		// GLOBAL.setCurrentUser(user);
-		// GLOBAL.setGroupBuffer(group);
+						// group.fetchGroupInfo();
+						event.fetchParticipants();
+						// user.fetchGroupInvites();
+						// user.fetchGroups();
+						// GLOBAL.setCurrentUser(user);
+						// GLOBAL.setGroupBuffer(group);
 
-		Context context = getApplicationContext();
-		Toast toast = GLOBAL.getToast(context,
-				"Event participants have been updated.");
-		toast.show();
+						Context context = getApplicationContext();
+						Toast toast = GLOBAL.getToast(context,
+								"Event participants have been updated.");
+						toast.show();
 
-		// remove this activity from back-loop by calling finish().
-		finish();
+						// remove this activity from back-loop by calling finish().
+						finish();
+						// initiate creation of event
+					}
+				}).setNegativeButton("Cancel", null).show();
 	}
 
 	// aSynch task to add individual member to group.
