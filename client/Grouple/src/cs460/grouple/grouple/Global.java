@@ -18,6 +18,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.HTTP;
 
 import android.app.Application;
 import android.app.Dialog;
@@ -195,7 +196,22 @@ public class Global extends Application
 			HttpPost httpPost = new HttpPost(URL);
 			try
 			{
-				httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+				UrlEncodedFormEntity form;
+				//if dealing with messaging, allow for emojis
+				if(URL.compareTo("http://68.59.162.183/android_connect/send_message.php")==0 
+					|| URL.compareTo("http://68.59.162.183/android_connect/send_group_message.php")==0 
+					|| URL.compareTo("http://68.59.162.183/android_connect/send_event_message.php")==0)
+				{
+					System.out.println("enabling UTF_8");
+					form = new UrlEncodedFormEntity(nameValuePairs,"UTF-8");
+					form.setContentEncoding(HTTP.UTF_8);
+				}
+				else
+				{
+					form = new UrlEncodedFormEntity(nameValuePairs);
+				}
+				
+				httpPost.setEntity(form);
 
 				HttpResponse response = httpClient.execute(httpPost);
 				StatusLine statusLine = response.getStatusLine();
