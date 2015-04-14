@@ -161,8 +161,8 @@ public class GcmIntentService extends IntentService
 				e.fetchEventInfo();
 				GLOBAL.setEventBuffer(e);
 			}
-			notificationIntent.putExtra("EMAIL", SENDER);
-			notificationIntent.putExtra("NAME", NAME);
+			notificationIntent.putExtra("email", SENDER);
+			notificationIntent.putExtra("name", NAME);
 			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this).setContentTitle(NAME)
 					.setStyle(new NotificationCompat.BigTextStyle()
 					// .bigText(msg))
@@ -200,9 +200,9 @@ public class GcmIntentService extends IntentService
 		{
 			// Send friend request.
 			Intent notificationIntent = new Intent(getApplicationContext(), ListActivity.class);
-			notificationIntent.putExtra("EMAIL", GLOBAL.getCurrentUser().getEmail());
-			notificationIntent.putExtra("NAME", SENDER_FIRST + " " + SENDER_LAST);
-			notificationIntent.putExtra("CONTENT", CONTENT_TYPE.FRIEND_REQUEST.toString());
+			notificationIntent.putExtra("email", GLOBAL.getCurrentUser().getEmail());
+			notificationIntent.putExtra("name", SENDER_FIRST + " " + SENDER_LAST);
+			notificationIntent.putExtra("content", CONTENT_TYPE.FRIEND_REQUEST.toString());
 			GLOBAL.getCurrentUser().fetchFriendRequests();
 			GLOBAL.getCurrentUser().fetchUserInfo();
 
@@ -224,9 +224,9 @@ public class GcmIntentService extends IntentService
 		{
 			// Send friend request.
 			Intent notificationIntent = new Intent(getApplicationContext(), ListActivity.class);
-			notificationIntent.putExtra("EMAIL", GLOBAL.getCurrentUser().getEmail());
-			notificationIntent.putExtra("NAME", SENDER_FIRST + " " + SENDER_LAST);
-			notificationIntent.putExtra("CONTENT", "GROUPS_INVITES");
+			notificationIntent.putExtra("email", GLOBAL.getCurrentUser().getEmail());
+			notificationIntent.putExtra("name", SENDER_FIRST + " " + SENDER_LAST);
+			notificationIntent.putExtra("content", "GROUPS_INVITES");
 			GLOBAL.getCurrentUser().fetchFriendRequests();
 			GLOBAL.getCurrentUser().fetchUserInfo();
 			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
@@ -257,7 +257,7 @@ public class GcmIntentService extends IntentService
 			intent.putExtra("ID", RECEIVER);
 			intent.putExtra("TYPE", TYPE);
 			intent.putExtra("SENDER", SENDER);
-			intent.putExtra("NAME", SENDER_FIRST + " " + SENDER_LAST);
+			intent.putExtra("name", SENDER_FIRST + " " + SENDER_LAST);
 		}
 		else if (TYPE.equals(CONTENT_TYPE.USER_MESSAGE.toString()))
 		{

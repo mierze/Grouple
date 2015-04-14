@@ -47,7 +47,7 @@ public class ManageMembersActivity extends BaseActivity {
 	private void load()
 	{
 		EXTRAS = getIntent().getExtras();
-		CONTENT = EXTRAS.getString("CONTENT");
+		CONTENT = EXTRAS.getString("content");
 		//should always be current user
 		user = GLOBAL.getCurrentUser();
 		group = GLOBAL.getGroupBuffer();

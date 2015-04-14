@@ -44,7 +44,7 @@ public class GcmUtility extends Application {
 		//Get Recipient's RegID
 		new getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php", recipient);
 		
-		if(notificationType.equals("FRIEND_REQUEST"))
+		if(notificationType.equals(CONTENT_TYPE.FRIEND_REQUEST.toString()))
 		{
 			//Send a friend request to the
 			sendFriendRequest();

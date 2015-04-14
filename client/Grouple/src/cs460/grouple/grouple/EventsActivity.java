@@ -43,11 +43,11 @@ public class EventsActivity extends BaseActivity
 		{
 		case R.id.eventsPendingButtonEA:
 			user.fetchEventsPending();
-			intent.putExtra("CONTENT", "EVENTS_PENDING");
+			intent.putExtra("content", "EVENTS_PENDING");
 			break;
 		case R.id.eventsUpcomingButtonEA:
 			user.fetchEventsUpcoming();
-			intent.putExtra("CONTENT", "EVENTS_UPCOMING");
+			intent.putExtra("content", "EVENTS_UPCOMING");
 			break;
 		case R.id.eventCreateButtonEA:
 			intent = new Intent(this, EventCreateActivity.class);
@@ -55,15 +55,15 @@ public class EventsActivity extends BaseActivity
 			break;
 		case R.id.eventInvitesButtonEA:
 			user.fetchEventInvites();
-			intent.putExtra("CONTENT", "EVENTS_INVITES");
+			intent.putExtra("content", "EVENTS_INVITES");
 			break;
 		case R.id.eventsPastButtonEA:
 			user.fetchEventsPast();
-			intent.putExtra("CONTENT", "EVENTS_PAST");
+			intent.putExtra("content", "EVENTS_PAST");
 			break;
 		}
 		GLOBAL.setCurrentUser(user);
-		intent.putExtra("EMAIL", user.getEmail());
+		intent.putExtra("email", user.getEmail());
 		startActivity(intent);
 	}
 
@@ -91,7 +91,7 @@ public class EventsActivity extends BaseActivity
 	{
 		Intent intent = new Intent(this, HomeActivity.class);
 		startActivity(intent);
-		intent.putExtra("EMAIL", user.getEmail());
+		intent.putExtra("email", user.getEmail());
 	}
 		
 	@Override

@@ -34,7 +34,6 @@ import android.widget.Toast;
  */
 public class LoginActivity extends Activity
 {
-	private Button loginButton;
 	private BroadcastReceiver broadcastReceiver;
 	private ProgressBar progBar;
 	private TextView loginFail;
@@ -86,7 +85,6 @@ public class LoginActivity extends Activity
 			loginFail.setVisibility(View.GONE);
 			initKillswitchListener();
 		}	
-
 	}
 	
 	@Override
@@ -121,10 +119,12 @@ public class LoginActivity extends Activity
 
 	public void loginButton(View view)
 	{
+		
 		// Create helper and if successful, will bring the correct home
 		// activity.
 
 		// Removes any previous error message from previous failed login
+		
 		loginFail.setVisibility(View.GONE);
 
 		// Makes progress bar visible during processing of login
@@ -137,6 +137,7 @@ public class LoginActivity extends Activity
 					.execute("http://68.59.162.183/android_connect/get_login.php?email="
 							+ email + "&password=" + password);
 
+		 
 	}
 
 	private class getLoginTask extends AsyncTask<String, Void, String>

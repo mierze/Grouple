@@ -8,10 +8,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -47,8 +49,7 @@ public class EventProfileActivity extends BaseActivity
 	private View itemListDialogView;
 	private AlertDialog itemListAlertDialog;
 	private GcmUtility gcmUtil;
-	private ArrayList<String> itemEmails = new ArrayList<String>();
-	private ArrayList<String> itemNames = new ArrayList<String>();
+	private ArrayList<EventItem> items = new ArrayList<EventItem>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -79,21 +80,15 @@ public class EventProfileActivity extends BaseActivity
 	{
 		EXTRAS = getIntent().getExtras();
 		String title = "";
-		System.out.println("CONTENT IS SET TO " + CONTENT);
-
 		user = GLOBAL.getCurrentUser();
-
 		event = GLOBAL.getEventBuffer();
 		// TODO: testing different colors based on event types to bring some
 		// spice and push the color association
 		// profileLayout.setBackgroundColor(getResources().getColor(R.color.sports_background_color));
 		title = event.getName();
-
 		setRole();
-
 		getImageTask = new getImageTask().execute("http://68.59.162.183/android_connect/get_profile_image.php");
 		populateProfile(); // populates a group / user profile
-
 		fetchItemsToBring();
 		// initializing the action bar and killswitch listener
 		initActionBar(title, true);
@@ -125,8 +120,7 @@ public class EventProfileActivity extends BaseActivity
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					//clearing to avoid duplicates
-					itemNames.clear();
-					itemEmails.clear();
+					items.clear();
 					// gotta make a json array
 					int numUnclaimed = 0;
 					JSONArray jsonArray = jsonObject.getJSONArray("itemsToBring");
@@ -134,10 +128,10 @@ public class EventProfileActivity extends BaseActivity
 					{
 						JSONObject o = (JSONObject) jsonArray.get(i);
 						// function adds friend to the friends map
-						itemNames.add(o.getString("name"));
-						if (o.getString("email").equals("null"))
+						EventItem item = new EventItem(Integer.parseInt(o.getString("id")), o.getString("name"), o.getString("email"));
+						items.add(item);
+						if (item.getEmail().equals("null"))
 							numUnclaimed++;
-						itemEmails.add(o.getString("email"));	
 					}
 					if (numUnclaimed > 0)
 						itemListButton.setText("Item Checklist (" + numUnclaimed + " unclaimed)");
@@ -146,8 +140,7 @@ public class EventProfileActivity extends BaseActivity
 				if (jsonObject.getString("success").toString().equals("2"))
 				{
 					//clearing to avoid duplicates
-					itemNames.clear();
-					itemEmails.clear();
+					items.clear();
 					itemListButton.setVisibility(View.GONE);
 				}
 				else
@@ -351,7 +344,56 @@ public class EventProfileActivity extends BaseActivity
 			profileButton6.setText("Edit Event");
 			profileButton6.setVisibility(View.VISIBLE);
 		}
+	}
+	
+	private int updateItemChecklist()
+	{
+		for (EventItem item : items)
+		{
+			int id = item.getID();
+			//grab the email of friend to add
+			String email = item.getEmail();
+			//grab the role of friend to add
+			if (email.equals(user.getEmail()))
+				new updateItemChecklistTask().execute("http://68.59.162.183/android_connect/update_item_checklist.php", Integer.toString(id));
+		}
+		return 1;
+	}
 
+	private class updateItemChecklistTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected String doInBackground(String... urls)
+		{
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("id", urls[1]));
+			nameValuePairs.add(new BasicNameValuePair("email", user.getEmail()));
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+		}
+
+		@Override
+		protected void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					System.out.println("WE HAD SUCCESS IN READ MESSAGES!");
+					fetchItemsToBring();
+				}
+				// user has no friends
+				if (jsonObject.getString("success").toString().equals("2"))
+				{
+					Log.d("readMessage", "failed = 2 return");
+				}
+			} 
+			catch (Exception e)
+			{
+				Log.d("readMessage", "exception caught");
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
+			}
+		}
 	}
 
 	public void onClick(View view)
@@ -373,8 +415,8 @@ public class EventProfileActivity extends BaseActivity
 			break;
 		case R.id.profileButton2:
 			intent = new Intent(this, EntityMessagesActivity.class);
-			intent.putExtra("CONTENT", "EVENT");
-			intent.putExtra("NAME", event.getName());
+			intent.putExtra("content", "EVENT");
+			intent.putExtra("name", event.getName());
 
 			break;
 		case R.id.profileButton3:
@@ -398,10 +440,10 @@ public class EventProfileActivity extends BaseActivity
 				GLOBAL.setUserBuffer(user);
 			else
 				GLOBAL.setCurrentUser(user);
-			intent.putExtra("EMAIL", user.getEmail());
+			intent.putExtra("email", user.getEmail());
 		}
 		if (event != null)
-			intent.putExtra("EID", Integer.toString(event.getID()));
+			intent.putExtra("e_id", Integer.toString(event.getID()));
 		if (!noIntent) // TODO, move buttons elsewhere that dont start list
 			startActivity(intent);
 		else
@@ -430,11 +472,17 @@ public class EventProfileActivity extends BaseActivity
 		itemListDialogView = inflater.inflate(R.layout.dialog_itemlist, null);
 		LinearLayout itemListLayout = (LinearLayout) itemListDialogView.findViewById(R.id.itemListLayout);
 		// populate list with items
-		if (!itemNames.isEmpty())
+		if (!items.isEmpty())
 		{
-			for (String itemName : itemNames)
+
+			for (final EventItem item : items)
 			{
-				final int index = itemNames.indexOf(itemName);
+				final int id = item.getID();
+				//grab the email of friend to add
+				final String itemName = item.getName();
+				final String email = item.getEmail();
+				//grab the role of friend to add
+
 				View row = inflater.inflate(R.layout.list_row_checklist, null);
 				final CheckBox itemCheckBox = (CheckBox) row.findViewById(R.id.itemCheckBox);
 				final TextView itemUserNameTextView = (TextView) row.findViewById(R.id.itemUsernameTextView);
@@ -447,6 +495,7 @@ public class EventProfileActivity extends BaseActivity
 						if (itemCheckBox.isChecked())
 						{
 							itemUserNameTextView.setText(user.getEmail());
+							item.setEmail(user.getEmail());
 						}
 						else if (!itemCheckBox.isChecked())
 						{
@@ -454,9 +503,9 @@ public class EventProfileActivity extends BaseActivity
 						}
 					}
 				});
-				if (!itemEmails.get(index).equals("null") && !itemEmails.get(index).equals(""))
+				if (email.equals("null") && email.equals(""))
 				{
-					itemUserNameTextView.setText(itemEmails.get(index));
+					itemUserNameTextView.setText(email);
 					itemCheckBox.setChecked(true);
 				}
 				else
@@ -472,8 +521,19 @@ public class EventProfileActivity extends BaseActivity
 		// for itemNames -> make a new checklist row
 		// make this save on x out or back
 		builder.setView(itemListDialogView);
+
 		itemListAlertDialog = builder.create();
+		itemListAlertDialog.setOnCancelListener(new DialogInterface.OnCancelListener()
+		{
+			@Override
+			public void onCancel(DialogInterface dialog)
+			{
+				updateItemChecklist();
+				
+			}
+		});
 		itemListAlertDialog.show();
+		//updateItemChecklist();
 	}
 
 	/*

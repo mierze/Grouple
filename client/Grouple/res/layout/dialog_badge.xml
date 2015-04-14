@@ -37,7 +37,7 @@
         android:layout_marginRight="80dp"
         android:layout_marginLeft="80dp"
         android:layout_gravity="center"
-        android:text="This badge is bla bla bla, you earn it through getting out and participating in events of all sorts blas."
+        android:text="This badge is bla bla bla, you earn it through getting out and participating in events of all different categories, blab bla more info, stuff here."
         android:textColor="@color/button_text_color"
         android:textSize="14sp" />
 

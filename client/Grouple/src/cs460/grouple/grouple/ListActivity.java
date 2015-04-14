@@ -59,13 +59,13 @@ public class ListActivity extends BaseActivity
 		addNew.setVisibility(View.GONE); //GONE FOR NOW
 			
 		//GRABBING A USER
-		if (EXTRAS.getString("EMAIL") != null)
-			if (GLOBAL.isCurrentUser(EXTRAS.getString("EMAIL")))
+		if (EXTRAS.getString("email") != null)
+			if (GLOBAL.isCurrentUser(EXTRAS.getString("email")))
 			{
 				System.out.println("MAKING USER THE CURRENT USER");
 				user = GLOBAL.getCurrentUser();
 			}
-			else if (GLOBAL.getUserBuffer() != null && GLOBAL.getUserBuffer().getEmail().equals(EXTRAS.getString("EMAIL")))
+			else if (GLOBAL.getUserBuffer() != null && GLOBAL.getUserBuffer().getEmail().equals(EXTRAS.getString("email")))
 				user = GLOBAL.getUserBuffer();
 
 		
@@ -433,7 +433,7 @@ public class ListActivity extends BaseActivity
 		listLayout = ((LinearLayout)findViewById(R.id.listLayout));
 		//INSTANTIATIONS
 		EXTRAS =  getIntent().getExtras();
-		CONTENT = EXTRAS.getString("CONTENT");
+		CONTENT = EXTRAS.getString("content");
 		listLayout = ((LinearLayout)findViewById(R.id.listLayout));
 		li = getLayoutInflater();	
 		addNew = (Button)findViewById(R.id.addNewButtonLiA);
@@ -570,11 +570,11 @@ public class ListActivity extends BaseActivity
 			GLOBAL.getCurrentUser().fetchGroups();
 		}
 		if (user != null)
-			intent.putExtra("EMAIL", user.getEmail());
+			intent.putExtra("email", user.getEmail());
 		if (event != null)
-			intent.putExtra("EID", event.getID());
+			intent.putExtra("e_id", event.getID());
 		if (group != null){
-			intent.putExtra("GID", group.getID());
+			intent.putExtra("g_id", group.getID());
 			GLOBAL.setGroupBuffer(group);
 		}
 		startActivity(intent);	
@@ -587,8 +587,8 @@ public class ListActivity extends BaseActivity
 		Intent intent = new Intent(this, GroupProfileActivity.class);
 		if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()) || CONTENT.equals(CONTENT_TYPE.GROUPS_INVITES.toString()) )
 		{
-			intent.putExtra("GID", id);
-			intent.putExtra("EMAIL", user.getEmail());
+			intent.putExtra("g_id", id);
+			intent.putExtra("email", user.getEmail());
 			Group g = new Group(id);
 			g.fetchGroupInfo();
 			g.fetchMembers();
@@ -597,8 +597,8 @@ public class ListActivity extends BaseActivity
 		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()))
 		{
 			intent = new Intent(this, EventProfileActivity.class);
-			intent.putExtra("EID", id);
-			intent.putExtra("EMAIL", user.getEmail());
+			intent.putExtra("e_id", id);
+			intent.putExtra("email", user.getEmail());
 			Event e = new Event(id);
 			e.fetchEventInfo();
 			e.fetchParticipants();

@@ -34,7 +34,6 @@ import android.widget.Toast;
  */
 public class UserProfileActivity extends BaseActivity
 {
-
 	private ImageView iv;
 	private User user; // user who's profile this is
 	private Bundle EXTRAS;
@@ -62,6 +61,8 @@ public class UserProfileActivity extends BaseActivity
 		profileLayout = (LinearLayout) findViewById(R.id.profileLayout);
 		xpBar = findViewById(R.id.xpBar);
 		xpProgressBar = (ProgressBar) findViewById(R.id.xpProgressBar);
+		levelTextView = (TextView) findViewById(R.id.levelTextView);
+		xpTextView = (TextView) findViewById(R.id.xpTextView);
 		profileButton1 = (Button) findViewById(R.id.profileButton1);
 		profileButton2 = (Button) findViewById(R.id.profileButton2);
 		profileButton3 = (Button) findViewById(R.id.profileButton3);
@@ -69,8 +70,6 @@ public class UserProfileActivity extends BaseActivity
 		profileButton5 = (Button) findViewById(R.id.profileButton5);
 		profileButton6 = (Button) findViewById(R.id.profileEditButton);
 		pastEventsBadgesLayout = findViewById(R.id.profilePastEventsBadgesLayout);
-		levelTextView = (TextView) findViewById(R.id.levelTextView);
-		xpTextView = (TextView) findViewById(R.id.xpTextView);
 		iv = (ImageView) findViewById(R.id.profileImageUPA);
 		gcmUtil = new GcmUtility(GLOBAL);
 		inflater = getLayoutInflater();
@@ -89,7 +88,7 @@ public class UserProfileActivity extends BaseActivity
 		String title = "";
 		pastEventsBadgesLayout.setVisibility(View.VISIBLE);
 		// grabbing the user with the given email in the EXTRAS
-		if (!GLOBAL.isCurrentUser(EXTRAS.getString("EMAIL")))
+		if (!GLOBAL.isCurrentUser(EXTRAS.getString("email")))
 		{
 			if (GLOBAL.getUserBuffer() != null)
 				user = GLOBAL.getUserBuffer();
@@ -157,7 +156,7 @@ public class UserProfileActivity extends BaseActivity
 		}
 	}
 
-	// TASK FOR GRABBING IMAGE OF EVENT/USER/GROUP
+	// TASK GOR GETTING USER EXPERIENCE
 	private class getUserExperienceTask extends AsyncTask<String, Void, String>
 	{
 		@Override
@@ -221,7 +220,6 @@ public class UserProfileActivity extends BaseActivity
 	}
 	private void setNotifications()
 	{
-
 		profileButton2.setVisibility(View.VISIBLE);
 		profileButton3.setVisibility(View.VISIBLE);
 		profileButton1.setText("Friends\n(" + user.getNumUsers() + ")");
@@ -263,27 +261,24 @@ public class UserProfileActivity extends BaseActivity
 		case R.id.profileButton1:
 
 			// friends
-			intent.putExtra("CONTENT", "FRIENDS_CURRENT");
+			intent.putExtra("content", "FRIENDS_CURRENT");
 			user.fetchFriends();
 
 			break;
 		case R.id.profileButton2:
 
-			intent.putExtra("CONTENT", "GROUPS_CURRENT");
+			intent.putExtra("content", "GROUPS_CURRENT");
 			user.fetchGroups();
 
 			break;
 		case R.id.profileButton3:
-			// events UPCOMING
-			// join the public group
-
 			user.fetchEventsUpcoming();
-			intent.putExtra("CONTENT", "EVENTS_UPCOMING");
+			intent.putExtra("content", "EVENTS_UPCOMING");
 
 			break;
 		case R.id.profileButton4:
 			user.fetchEventsPast();
-			intent.putExtra("CONTENT", "EVENTS_PAST");
+			intent.putExtra("content", "EVENTS_PAST");
 			break;
 		case R.id.profileButton5:
 			noIntent = true;
@@ -301,7 +296,7 @@ public class UserProfileActivity extends BaseActivity
 					// View parent = (View)view.getParent();
 					// Button name = (Button)
 					// parent.findViewById(R.id.nameTextViewLI);
-					intent.putExtra("NAME", user.getName());
+					intent.putExtra("name", user.getName());
 				}
 				else
 				{
@@ -330,7 +325,7 @@ public class UserProfileActivity extends BaseActivity
 				GLOBAL.setUserBuffer(user);
 			else
 				GLOBAL.setCurrentUser(user);
-			intent.putExtra("EMAIL", user.getEmail());
+			intent.putExtra("email", user.getEmail());
 		}
 		if (!noIntent) // TODO, move buttons elsewhere that dont start list
 			startActivity(intent);
@@ -448,14 +443,11 @@ public class UserProfileActivity extends BaseActivity
 
 		int age = user.getAge();
 		if (age == -1)
-			infoT = location;
+			infoT = location + "\n";
 		else
 			infoT = age + " yrs young\n" + location + "\n";
-		info.setText(infoT);
 		about.setText(infoT + user.getAbout());
-
-	}
-	
+	}	
 	
 	//dialog pop up for a single badge with description
 	//TODO: add parameters about the badge?
@@ -465,13 +457,10 @@ public class UserProfileActivity extends BaseActivity
 		ImageView badgeImageView = (ImageView) dialogView.findViewById(R.id.badgeImageView);
 		TextView badgeTitleTextView = (TextView) dialogView.findViewById(R.id.badgeTitleTextView);
 		TextView badgeAboutTextView = (TextView) dialogView.findViewById(R.id.badgeAboutTextView);
-		
 		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
 		dialogBuilder.setTitle(badgeTitleTextView.getText().toString() + " Badge");
-
 		dialogBuilder.setView(dialogView);
 		AlertDialog badgesDialog = dialogBuilder.create();
 		badgesDialog.show();
 	}
-
 }

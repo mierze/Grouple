@@ -1,6 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/userProfileContainer"
+    android:id="@+id/groupProfileContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_color"
@@ -66,35 +66,37 @@
 
             <LinearLayout
                 android:id="@+id/xpBar"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone" >
-
-                <ProgressBar
-                    android:id="@+id/xpProgressBar"
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_width="match_parent"
-                    android:minHeight="20dp"
-                    android:maxHeight="20dp"
-                    android:layout_height="30dp" />
+                android:background="@color/black"
+                android:orientation="vertical" >
 
                 <TextView
                     android:id="@+id/levelTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginBottom="5dp"
+                    android:padding="0dp"
+                    android:layout_margin="0dp"
                     android:background="#00000000"
                     android:gravity="center"
                     android:text="Level 1"
                     android:textColor="@color/light_green"
                     android:textStyle="bold" />
-                
-                                <TextView
+
+                <ProgressBar
+                    android:id="@+id/xpProgressBar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="0dp"/>
+
+                <TextView
                     android:id="@+id/xpTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_margin="0dp"
+                    android:padding="0dp"
                     android:layout_gravity="center"
                     android:background="#00000000"
                     android:gravity="center"

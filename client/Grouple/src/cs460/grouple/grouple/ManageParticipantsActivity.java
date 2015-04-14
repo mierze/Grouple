@@ -56,7 +56,7 @@ public class ManageParticipantsActivity extends BaseActivity
 	private void load()
 	{
 		EXTRAS = getIntent().getExtras();
-		CONTENT = EXTRAS.getString("CONTENT");
+		CONTENT = EXTRAS.getString("content");
 		// should always be current user
 		user = GLOBAL.getCurrentUser();
 		event = GLOBAL.getEventBuffer();
@@ -262,7 +262,6 @@ public class ManageParticipantsActivity extends BaseActivity
 							makeAdminButton.setTextColor(getResources()
 									.getColor(R.color.black));
 
-							System.out.println("REMOVING A USER");
 							System.out.println("Role size: "
 									+ toUpdateRole.size());
 						} else if (!cb.isChecked())

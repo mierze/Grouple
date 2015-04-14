@@ -47,7 +47,6 @@ public class RecentMessagesActivity extends BaseActivity
 	        if (user.getEmail().equals(receiver))
 	        {
 	        	//do this
-	        	System.out.println("READ THIS");
 	        	fetchRecentContacts();
 	        }
 	        /*
@@ -128,9 +127,9 @@ public class RecentMessagesActivity extends BaseActivity
 		loadDialog.show();
 		final String CONTENT = "SELECT_FRIEND";
 		Intent intent = new Intent(this, ListActivity.class);
-		intent.putExtra("EMAIL", user.getEmail());
+		intent.putExtra("email", user.getEmail());
 		user.fetchFriends();
-		intent.putExtra("CONTENT", CONTENT);
+		intent.putExtra("content", CONTENT);
 		startActivity(intent);
 	}
 	
@@ -240,7 +239,7 @@ public class RecentMessagesActivity extends BaseActivity
 			GLOBAL.setUserBuffer(u);
 		else
 			GLOBAL.setCurrentUser(u); //reloading user
-		intent.putExtra("EMAIL", friendEmail);
+		intent.putExtra("email", friendEmail);
 		startActivity(intent);
 	}
 

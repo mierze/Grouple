@@ -39,7 +39,7 @@ public class GroupCreateActivity extends BaseActivity
 	private String g_id;
 	private EditText nameEditText;
 	private EditText aboutEditText;
-	Group g;
+	private Group group;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -394,11 +394,11 @@ public class GroupCreateActivity extends BaseActivity
 								+ "android_connect/add_groupmember.php", friendsEmail, user.getEmail(), friendsRole, g_id);
 					}
 					
-					g = new Group(Integer.parseInt(g_id));
-					g.fetchMembers();
-					g.fetchGroupInfo();
+					group = new Group(Integer.parseInt(g_id));
+					group.fetchMembers();
+					group.fetchGroupInfo();
 					GLOBAL.getCurrentUser().fetchFriends();
-					GLOBAL.setGroupBuffer(g);
+					GLOBAL.setGroupBuffer(group);
 					
 					//display confirmation box
 					AlertDialog dialog = new AlertDialog.Builder(GroupCreateActivity.this)
@@ -412,8 +412,8 @@ public class GroupCreateActivity extends BaseActivity
 							//add code here to take user to newly created group profile page.  (pass g_id as extra so correct group profile can be loaded)
 							loadDialog.show();
 							Intent intent = new Intent(GroupCreateActivity.this, GroupProfileActivity.class);
-							intent.putExtra("EMAIL", user.getEmail());
-							intent.putExtra("GID", g.getID());
+							intent.putExtra("email", user.getEmail());
+							intent.putExtra("g_id", group.getID());
 							intent.putExtra("CONTENT", "GROUP");
 							startActivity(intent);	
 							finish();
@@ -426,8 +426,8 @@ public class GroupCreateActivity extends BaseActivity
 							//add code here to take user to groupaddmembersactivity page.  (pass g_id as extra so invites can be sent to correct group id)
 							loadDialog.show();
 							Intent intent = new Intent(GroupCreateActivity.this, InviteActivity.class);
-							intent.putExtra("EMAIL", user.getEmail());
-							intent.putExtra("GID", g.getID());
+							intent.putExtra("email", user.getEmail());
+							intent.putExtra("g_id", group.getID());
 							startActivity(intent);
 							finish();
 						}

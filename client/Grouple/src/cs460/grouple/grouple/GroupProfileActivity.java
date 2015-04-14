@@ -5,24 +5,15 @@ import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -57,17 +48,17 @@ public class GroupProfileActivity extends BaseActivity
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_profile);
+		setContentView(R.layout.activity_group_profile);
 		profileLayout = (LinearLayout) findViewById(R.id.profileLayout);
 		xpBar = findViewById(R.id.xpBar);
 		xpProgressBar = (ProgressBar) findViewById(R.id.xpProgressBar);
+		levelTextView = (TextView) findViewById(R.id.levelTextView);
+		xpTextView = (TextView) findViewById(R.id.xpTextView);
 		profileButton1 = (Button) findViewById(R.id.profileButton1);
 		profileButton2 = (Button) findViewById(R.id.profileButton2);
 		profileButton3 = (Button) findViewById(R.id.profileButton3);
 		profileButton6 = (Button) findViewById(R.id.profileEditButton);
 		pastEventsBadgesLayout = findViewById(R.id.profilePastEventsBadgesLayout);
-		levelTextView = (TextView) findViewById(R.id.levelTextView);
-		xpTextView = (TextView) findViewById(R.id.xpTextView);
 		iv = (ImageView) findViewById(R.id.profileImageUPA);
 		gcmUtil = new GcmUtility(GLOBAL);
 	}
@@ -82,7 +73,7 @@ public class GroupProfileActivity extends BaseActivity
 	public void load()
 	{
 		EXTRAS = getIntent().getExtras();
-		CONTENT = EXTRAS.getString("CONTENT");
+		CONTENT = EXTRAS.getString("content");
 		String title = "";
 		System.out.println("CONTENT IS SET TO " + CONTENT);
 
@@ -93,7 +84,7 @@ public class GroupProfileActivity extends BaseActivity
 		title = group.getName();
 
 		setRole();
-
+		//getGroupExperience();
 		getImageTask = new getImageTask().execute("http://68.59.162.183/android_connect/get_profile_image.php");
 		populateProfile(); // populates a group / user profile
 
@@ -135,6 +126,74 @@ public class GroupProfileActivity extends BaseActivity
 			new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_group.php",
 					Integer.toString(group.getID()));
 		}
+	}
+	
+	private void getGroupExperience()
+	{
+		new getGroupExperienceTask().execute("http://68.59.162.183/android_connect/get_group_experience.php");
+	}
+
+	// TASK GOR GETTING GROUP EXPERIENCE
+	private class getGroupExperienceTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected String doInBackground(String... urls)
+		{
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("g_id", Integer.toString(group.getID())));
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+		}
+
+		@Override
+		protected void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+				// json fetch was successful
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					int eventsIn = Integer.parseInt(jsonObject.getString("events").toString());
+					int eventsCreated = Integer.parseInt(jsonObject.getString("eventsCreated").toString());
+					int groupPoints = (eventsCreated * 2) + eventsIn;
+					setExperience(groupPoints);
+				}
+				else
+				{
+					// failed
+					Log.d("getUserExperience", "FAILED");
+				}
+			}
+			catch (Exception e)
+			{
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
+			}
+			// do next thing here
+		}
+	}
+
+	private void setExperience(int groupPoints)
+	{
+		int level = 1;
+		int pointsToNext = 10;
+		int pointsStart = 0;
+		int pointsEnd;
+		while (groupPoints > (pointsStart + pointsToNext))
+		{
+			//means user is greater than this level threshold
+			//so increase level
+			level++;
+			//make a new start
+			pointsStart += pointsToNext;
+			//recalc pointsToNext
+			pointsToNext *= 2;
+		}
+		pointsEnd = pointsStart + pointsToNext;
+		//each level pointsToNext *= level
+		levelTextView.setText("Level " + level);
+		xpProgressBar.setMax(pointsToNext);
+		xpProgressBar.setProgress(groupPoints - pointsStart);
+		xpTextView.setText(groupPoints + " / " + pointsEnd);
 	}
 
 	// TASK FOR GRABBING IMAGE OF EVENT/USER/GROUP
@@ -265,7 +324,7 @@ public class GroupProfileActivity extends BaseActivity
 				else
 				{
 					// failed
-					Log.d("FETCH ROLE FAILED", "FAILED");
+					Log.d("getUnreadMessages", "FAILED");
 				}
 			}
 			catch (Exception e)
@@ -308,18 +367,18 @@ public class GroupProfileActivity extends BaseActivity
 		case R.id.profileButton1:
 
 			// members
-			intent.putExtra("CONTENT", "GROUPS_MEMBERS");
+			intent.putExtra("content", "GROUPS_MEMBERS");
 			System.out.println("Loading a group with id: " + group.getID());
 			group.fetchMembers();
 			GLOBAL.setGroupBuffer(group);
-			intent.putExtra("GID", group.getID());
+			intent.putExtra("g_id", group.getID());
 
 			break;
 		case R.id.profileButton2:
 
 			intent = new Intent(this, EntityMessagesActivity.class);
-			intent.putExtra("CONTENT", "GROUP");
-			intent.putExtra("NAME", group.getName());
+			intent.putExtra("content", "GROUP");
+			intent.putExtra("name", group.getName());
 
 			break;
 		case R.id.profileButton3:
@@ -346,11 +405,11 @@ public class GroupProfileActivity extends BaseActivity
 				GLOBAL.setUserBuffer(user);
 			else
 				GLOBAL.setCurrentUser(user);
-			intent.putExtra("EMAIL", user.getEmail());
+			intent.putExtra("email", user.getEmail());
 		}
 		if (group != null)
 		{
-			intent.putExtra("GID", Integer.toString(group.getID()));
+			intent.putExtra("g_id", Integer.toString(group.getID()));
 			GLOBAL.setGroupBuffer(group);
 		}
 

@@ -134,7 +134,7 @@ public class MessagesActivity extends BaseActivity
 					{
 						JSONObject o = (JSONObject) jsonArray.get(i);
 						Message m = new Message(o.getString("message"), o.getString("send_date"),
-								o.getString("sender"), "NAME", o.getString("receiver"), null);
+								o.getString("sender"), "name", o.getString("receiver"), null);
 						messages.add(m); // adding message to message array
 					}
 					populateMessages();
@@ -261,6 +261,7 @@ public class MessagesActivity extends BaseActivity
 				scrollview.fullScroll(ScrollView.FOCUS_DOWN);
 			}
 		});
+		messageEditText.requestFocus();
 		readMessages();
 	}
 

@@ -65,7 +65,7 @@ public class GroupEditActivity extends BaseActivity
 		// Set the activity layout to activity_edit_profile.
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_group_edit);
-		iv = (ImageView) findViewById(R.id.groupEditImageView);
+		iv = (ImageView) findViewById(R.id.editGroupImageView);
 		aboutEditText = (EditText) findViewById(R.id.groupAboutEditText);
 		nameEditText = (EditText) findViewById(R.id.groupNameEditText);
 		errorTextView = (TextView) findViewById(R.id.errorTextViewEPA);
@@ -149,7 +149,7 @@ public class GroupEditActivity extends BaseActivity
 	public void manageGroup(View view)
 	{
 		Intent intent = new Intent(this, ManageMembersActivity.class);
-		intent.putExtra("GID", group.getID());
+		intent.putExtra("g_id", group.getID());
 		group.fetchMembers();
 		GLOBAL.setGroupBuffer(group);
 		startActivity(intent);

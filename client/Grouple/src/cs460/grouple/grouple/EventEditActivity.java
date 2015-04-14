@@ -738,8 +738,8 @@ public class EventEditActivity extends BaseActivity
 			break;
 			case R.id.manageEventButton:
 			Intent intent = new Intent(this, ManageParticipantsActivity.class);
-			intent.putExtra("EMAIL", GLOBAL.getCurrentUser().getEmail());
-			intent.putExtra("EID", event.getID());
+			intent.putExtra("email", GLOBAL.getCurrentUser().getEmail());
+			intent.putExtra("e_id", event.getID());
 			startActivity(intent);
 			break;
 		}

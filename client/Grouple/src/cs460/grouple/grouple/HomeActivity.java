@@ -166,7 +166,7 @@ public class HomeActivity extends BaseActivity
 		// checking that intent was assigned
 		if (intent != null)
 		{
-			intent.putExtra("EMAIL", user.getEmail());
+			intent.putExtra("email", user.getEmail());
 			startActivity(intent);
 		}
 		// else do nothing

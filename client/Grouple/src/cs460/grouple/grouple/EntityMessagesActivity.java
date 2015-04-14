@@ -26,8 +26,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
-import cs460.grouple.grouple.MessagesActivity.readMessagesTask;
-
 public class EntityMessagesActivity extends BaseActivity
 { 
 	private User user; //will be null for now
@@ -61,8 +59,8 @@ public class EntityMessagesActivity extends BaseActivity
 	    public void onReceive(Context context, Intent intent) 
 	    {
 	        // Extract data included in the Intent
-	    	String type = intent.getStringExtra("TYPE");
-	        String id = intent.getStringExtra("ID");
+	    	String type = intent.getStringExtra("type");
+	        String id = intent.getStringExtra("id");
 	        if (type.equals("GROUP_MESSAGE") && CONTENT_TYPE.equals("GROUP"))
 	        {
 		        if (id.equals(ID))
@@ -94,20 +92,20 @@ public class EntityMessagesActivity extends BaseActivity
     	sendMessageButton = (Button)findViewById(R.id.sendButton);
     	messageLayout = (LinearLayout) findViewById(R.id.messageLayout);
     	inflater = getLayoutInflater();
-		initActionBar(EXTRAS.getString("NAME"), true);
+		initActionBar(EXTRAS.getString("name"), true);
 		gcm = GoogleCloudMessaging.getInstance(this);
-		CONTENT_TYPE = EXTRAS.getString("CONTENT");
+		CONTENT_TYPE = EXTRAS.getString("content");
 		if (CONTENT_TYPE.equals("GROUP"))
 		{
 			group = GLOBAL.getGroupBuffer();
 			NAME = group.getName();
-			ID = EXTRAS.getString("GID"); 
+			ID = EXTRAS.getString("g_id"); 
 		}
 		else
 		{
 			event = GLOBAL.getEventBuffer();
 			NAME = event.getName();
-			ID = EXTRAS.getString("EID");
+			ID = EXTRAS.getString("e_id");
 		}
 		//Get the recipient 
 		//new getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php", recipient);
@@ -150,16 +148,17 @@ public class EntityMessagesActivity extends BaseActivity
 		            scrollview.fullScroll(ScrollView.FOCUS_DOWN);
 		        }
 		    });
+		messageEditText.requestFocus();
 		readMessages();
 	}
 	
-	public int readMessages()
+	private int readMessages()
 	{
 		new readMessagesTask().execute("http://68.59.162.183/android_connect/update_entitymessage_lastread.php");
 		return 1;
 	}
 
-	class readMessagesTask extends AsyncTask<String, Void, String>
+	private class readMessagesTask extends AsyncTask<String, Void, String>
 	{
 		@Override
 		protected String doInBackground(String... urls)
@@ -199,7 +198,7 @@ public class EntityMessagesActivity extends BaseActivity
 	public void onBackPressed() 
 	{
     	super.onBackPressed();
-    	if (CONTENT_TYPE.equals("GROUP"))
+    	if (CONTENT_TYPE.equals("group"))
     	{
     		group.fetchGroupInfo();
     		group.fetchMembers();
@@ -276,7 +275,7 @@ public class EntityMessagesActivity extends BaseActivity
 			GLOBAL.setUserBuffer(u);
 		else
 			GLOBAL.setCurrentUser(u); //reloading user
-		intent.putExtra("EMAIL", friendEmail);
+		intent.putExtra("email", friendEmail);
 		startActivity(intent);	
 	}
 	

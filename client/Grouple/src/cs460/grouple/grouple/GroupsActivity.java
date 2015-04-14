@@ -82,7 +82,7 @@ public class GroupsActivity extends BaseActivity
 		user.fetchFriends();
 		GLOBAL.setCurrentUser(user);
 		Intent intent = new Intent(this, GroupCreateActivity.class);
-		intent.putExtra("EMAIL", user.getEmail());
+		intent.putExtra("email", user.getEmail());
 		startActivity(intent);
 	}
 
@@ -93,8 +93,8 @@ public class GroupsActivity extends BaseActivity
 		user.fetchGroupInvites();
 		GLOBAL.setCurrentUser(user);//update
 		Intent intent = new Intent(this, ListActivity.class);
-		intent.putExtra("EMAIL", user.getEmail());
-		intent.putExtra("CONTENT", CONTENT);
+		intent.putExtra("email", user.getEmail());
+		intent.putExtra("content", CONTENT);
 		startActivity(intent);
 	}
 
@@ -105,8 +105,8 @@ public class GroupsActivity extends BaseActivity
 		user.fetchGroups();
 		GLOBAL.setCurrentUser(user);//update
 		Intent intent = new Intent(this, ListActivity.class);
-		intent.putExtra("CONTENT", CONTENT);
-		intent.putExtra("EMAIL", user.getEmail());// specifies which
+		intent.putExtra("content", CONTENT);
+		intent.putExtra("email", user.getEmail());// specifies which
 		startActivity(intent);
 	}
 }

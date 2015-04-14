@@ -24,7 +24,7 @@
 
            <RelativeLayout
             android:id="@+id/editImageLayout"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_gravity="center"
            	android:layout_marginBottom="5dp"
             android:layout_height="wrap_content"
@@ -33,15 +33,15 @@
             <ImageView
                 android:id="@+id/editEventImageView"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="300dp"
+                android:minHeight="200dp"
+                android:maxHeight="200dp"
                 android:layout_gravity="center|top"
                 android:onClick="loadImage"
                 android:scaleType="fitXY"
                 android:adjustViewBounds="true"
                 android:background="@drawable/border"
                 android:contentDescription="Event photo."
-                android:minHeight="300dp"
-                android:maxWidth="600dp"
                 android:padding="3dp"
                 android:src="@drawable/abc_ab_bottom_solid_dark_holo" />
 
