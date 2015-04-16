@@ -31,7 +31,7 @@
             android:background="@color/background_color"
 >
             <ImageView
-                android:id="@+id/editGroupImageView"
+                android:id="@+id/groupEditImageView"
                 android:layout_width="wrap_content"
                 android:layout_height="300dp"
                 android:minHeight="200dp"

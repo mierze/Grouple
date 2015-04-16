@@ -1,5 +1,7 @@
 package cs460.grouple.grouple;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,8 +12,11 @@ import org.json.JSONObject;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -21,6 +26,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
@@ -36,9 +42,12 @@ public class GroupCreateActivity extends BaseActivity
 	private SparseArray<Character> role = new SparseArray<Character>();   //holds list of role of all friend rows to be added
 	private ArrayList<User> allFriends = new ArrayList<User>();   //holds list of all current friends
 	private User user;
+	private Bitmap bmp;
 	private String g_id;
 	private EditText nameEditText;
 	private EditText aboutEditText;
+	private ImageView iv;
+	private Button editGroupImageButton;
 	private Group group;
 	
 	@Override
@@ -57,6 +66,8 @@ public class GroupCreateActivity extends BaseActivity
 		allFriends = user.getUsers();
 		nameEditText = (EditText) findViewById(R.id.groupNameEditText);
 		aboutEditText = (EditText) findViewById(R.id.groupAboutEditText);
+		iv = (ImageView) findViewById(R.id.groupCreateImageView);
+		editGroupImageButton = (Button) findViewById(R.id.groupEditImageButton);
 		populateGroupCreate();
 		initActionBar("Create Group", true);
 	}
@@ -472,6 +483,75 @@ public class GroupCreateActivity extends BaseActivity
 		}
 	}
 	
+	public void onClick(View v)
+	{
+		super.onClick(v);
+		switch (v.getId()) 
+		{
+		case R.id.groupEditImageButton:
+			final CharSequence[] items = {"Take Photo", "Choose from Gallery",
+					"Cancel" };
+
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Choose your group picture:");
+			builder.setItems(items, new DialogInterface.OnClickListener() 
+			{
+				@Override
+				public void onClick(DialogInterface dialog, int item) 
+				{
+					if (items[item].equals("Take Photo")) 
+					{
+						Intent i = new Intent(
+								android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+						startActivityForResult(i, 1);
+					}
+					else if (items[item].equals("Choose from Gallery")) 
+					{
+						Intent intent = new Intent(
+								Intent.ACTION_PICK,
+								android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+						intent.setType("image/*");
+						startActivityForResult(
+								Intent.createChooser(intent, "Select Photo"), 2);
+					} 
+					else if (items[item].equals("Cancel")) 
+					{
+						dialog.dismiss();
+					}
+				}
+			});
+			builder.show();
+			break;
+		}
+	}
+
+	@Override
+	protected void onActivityResult(int reqCode, int resCode, Intent data)
+	{
+		super.onActivityResult(reqCode, resCode, data);
+		if (resCode == RESULT_OK) 
+		{
+			if (reqCode == 1) 
+			{
+				Bundle extras = data.getExtras();
+				bmp = (Bitmap) extras.get("data");
+				iv.setImageBitmap(bmp);
+			} else if (reqCode == 2) 
+			{
+				Uri selectedImageUri = data.getData();
+				try {
+					bmp= MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				iv.setImageURI(selectedImageUri);
+			}
+		}
+	}
 	//aSynch task to add individual member to group.
 	private class AddGroupMembersTask extends AsyncTask<String,Void,String>
 	{

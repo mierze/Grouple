@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -22,7 +21,6 @@ import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -52,7 +50,6 @@ public class GroupEditActivity extends BaseActivity
 	// Set up fields. Most are just for the camera.
 	private ImageView iv;
 	private Bitmap bmp;
-	private Intent i;
 	private Group group;
 	private User user;
 	private EditText aboutEditText;
@@ -65,7 +62,7 @@ public class GroupEditActivity extends BaseActivity
 		// Set the activity layout to activity_edit_profile.
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_group_edit);
-		iv = (ImageView) findViewById(R.id.editGroupImageView);
+		iv = (ImageView) findViewById(R.id.groupEditImageView);
 		aboutEditText = (EditText) findViewById(R.id.groupAboutEditText);
 		nameEditText = (EditText) findViewById(R.id.groupNameEditText);
 		errorTextView = (TextView) findViewById(R.id.errorTextViewEPA);
@@ -89,7 +86,6 @@ public class GroupEditActivity extends BaseActivity
 		LayoutInflater inflater = this.getLayoutInflater();
 		View dialogView = inflater.inflate(R.layout.dialog_delete_entity, null);
 		dialogBuilder.setView(dialogView);
-
 		Button confirmDeleteButton = (Button) dialogView
 				.findViewById(R.id.confirmDeleteButton);
 		final EditText confirmEditText = (EditText) dialogView
@@ -117,7 +113,6 @@ public class GroupEditActivity extends BaseActivity
 				}
 				// call delete task
 			}
-
 		});
 		
 		deleteGroupDialog.show();

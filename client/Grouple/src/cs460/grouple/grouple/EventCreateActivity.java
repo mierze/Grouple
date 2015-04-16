@@ -1,5 +1,7 @@
 package cs460.grouple.grouple;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,8 +24,11 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -34,6 +39,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -42,7 +48,8 @@ import android.widget.TimePicker;
  * GroupCreateActivity allows a user to create a new group.
  */
 
-@SuppressLint("SimpleDateFormat") public class EventCreateActivity extends BaseActivity
+@SuppressLint("SimpleDateFormat")
+public class EventCreateActivity extends BaseActivity
 {
 	private User user;
 	private String ID;
@@ -63,6 +70,9 @@ import android.widget.TimePicker;
 	private AlertDialog toBringDialog;
 	private Button addToBringRowButton;
 	private Button toBringButton;
+	private Bitmap bmp;
+	private ImageView iv;
+	private Button editEventImageButton;
 	private View toBringLayout;
 	private Calendar currentCal;
 	private Calendar startCal;
@@ -71,7 +81,7 @@ import android.widget.TimePicker;
 	private final ArrayList<EditText> toBringEditTexts = new ArrayList<EditText>();
 	private int year, month, day, hour, minute;
 	private ArrayList<String> itemNames = new ArrayList<String>();
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -95,10 +105,13 @@ import android.widget.TimePicker;
 		endDateEditText = (EditText) findViewById(R.id.endTimeButton);
 		aboutEditText = (EditText) findViewById(R.id.eventAboutEditText);
 		nameEditText = (EditText) findViewById(R.id.eventNameEditText);
+		iv = (ImageView) findViewById(R.id.eventCreateImageView);
+		editEventImageButton = (Button) findViewById(R.id.editEventImageButton);
 		// grab the email of current users from our GLOBAL class
 		user = GLOBAL.getCurrentUser();
 		initActionBar("Create Event", true);
 	}
+
 	// onClick for items to bring
 	public void toBringButton(View view)
 	{
@@ -108,47 +121,38 @@ import android.widget.TimePicker;
 		builder.setTitle("Add Items To Bring");
 		inflater = EventCreateActivity.this.getLayoutInflater();
 		toBringLayout = inflater.inflate(R.layout.dialog_tobring, null);
-		final LinearLayout layout = (LinearLayout) toBringLayout
-				.findViewById(R.id.toBringInnerLayout);
-		this.addToBringRowButton = (Button) toBringLayout
-				.findViewById(R.id.toBringAddRowButton);
-				
+		final LinearLayout layout = (LinearLayout) toBringLayout.findViewById(R.id.toBringInnerLayout);
+		this.addToBringRowButton = (Button) toBringLayout.findViewById(R.id.toBringAddRowButton);
+
 		if (!itemNames.isEmpty())
 		{
 			for (String itemName : itemNames)
 			{
-				View editTextLayout = inflater.inflate(
-						R.layout.list_item_edittext, null);
-				EditText toBringEditText = (EditText) editTextLayout
-						.findViewById(R.id.toBringEditText);
+				View editTextLayout = inflater.inflate(R.layout.list_item_edittext, null);
+				EditText toBringEditText = (EditText) editTextLayout.findViewById(R.id.toBringEditText);
 				toBringEditText.setText(itemName);
 				toBringEditTexts.add(toBringEditText);
 				layout.addView(editTextLayout);
 			}
 		}
-			//add a new blank row at end
-			View editTextLayout = inflater.inflate(
-					R.layout.list_item_edittext, null);
-			EditText toBringEditText = (EditText) editTextLayout
-					.findViewById(R.id.toBringEditText);
-			toBringEditTexts.add(toBringEditText);
-			layout.addView(editTextLayout);
-			toBringEditText.requestFocus();
-		
-		
+		// add a new blank row at end
+		View editTextLayout = inflater.inflate(R.layout.list_item_edittext, null);
+		EditText toBringEditText = (EditText) editTextLayout.findViewById(R.id.toBringEditText);
+		toBringEditTexts.add(toBringEditText);
+		layout.addView(editTextLayout);
+		toBringEditText.requestFocus();
+
 		addToBringRowButton.setOnClickListener(new View.OnClickListener()
 		{
 			public void onClick(View v)
 			{
 				try
 				{
-					View editTextLayout = inflater.inflate(
-							R.layout.list_item_edittext, null);
-					EditText toBringEditText = (EditText) editTextLayout
-							.findViewById(R.id.toBringEditText);
+					View editTextLayout = inflater.inflate(R.layout.list_item_edittext, null);
+					EditText toBringEditText = (EditText) editTextLayout.findViewById(R.id.toBringEditText);
 					toBringEditTexts.add(toBringEditText);
 					layout.addView(editTextLayout);
-				} 
+				}
 				catch (Exception e)
 				{
 					Log.d("ASDF", "Failed to create new edit text");
@@ -162,17 +166,17 @@ import android.widget.TimePicker;
 
 	public void saveToBringListButton(View view)
 	{
-		//first clear out final list to avoid any duplicate entries being added
+		// first clear out final list to avoid any duplicate entries being added
 		itemNames.clear();
 		for (EditText toBringItem : toBringEditTexts)
 		{
-			//when list is saved, save to final list but ignore any blank line entries
-			if(!(toBringItem.getText().toString().compareTo("") == 0))
+			// when list is saved, save to final list but ignore any blank line
+			// entries
+			if (!(toBringItem.getText().toString().compareTo("") == 0))
 			{
-				//save to final list that can be used to send to db
+				// save to final list that can be used to send to db
 				itemNames.add(toBringItem.getText().toString());
-				System.out.println("\n\nSaving item #"
-						+ toBringEditTexts.indexOf(toBringItem) + ": "
+				System.out.println("\n\nSaving item #" + toBringEditTexts.indexOf(toBringItem) + ": "
 						+ toBringItem.getText().toString());
 			}
 		}
@@ -187,37 +191,36 @@ import android.widget.TimePicker;
 
 		// Strings to Show In Dialog with Radio Buttons
 		final CharSequence[] items =
-			{ "Social ", "Entertainment / Games ", "Professional / Education ", "Sports / Fitness ", "Nature" };
+		{ "Social ", "Entertainment / Games ", "Professional / Education ", "Sports / Fitness ", "Nature" };
 
 		// Creating and Building the Dialog
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Select your category");
-		builder.setSingleChoiceItems(items, -1,
-				new DialogInterface.OnClickListener()
+		builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener()
+		{
+			public void onClick(DialogInterface dialog, int item)
+			{
+				switch (item)
 				{
-					public void onClick(DialogInterface dialog, int item)
-					{
-						switch (item)
-						{
-						case 0:
-							categoryEditText.setText(items[0]);
-							break;
-						case 1:
-							categoryEditText.setText(items[1]);
-							break;
-						case 2:
-							categoryEditText.setText(items[2]);
-							break;
-						case 3:
-							categoryEditText.setText(items[3]);
-							break;
-						case 4:
-							categoryEditText.setText(items[4]);
-							break;
-						}
-						categoryDialog.cancel();
-					}
-				});
+				case 0:
+					categoryEditText.setText(items[0]);
+					break;
+				case 1:
+					categoryEditText.setText(items[1]);
+					break;
+				case 2:
+					categoryEditText.setText(items[2]);
+					break;
+				case 3:
+					categoryEditText.setText(items[3]);
+					break;
+				case 4:
+					categoryEditText.setText(items[4]);
+					break;
+				}
+				categoryDialog.cancel();
+			}
+		});
 		categoryDialog = builder.create();
 		categoryDialog.show();
 	}
@@ -228,34 +231,108 @@ import android.widget.TimePicker;
 		System.out.println("clicked on startdate");
 		// startDate is not currently set. load datepicker set to current
 		// calendar date.
-		if(startDateEditText.getText().toString().compareTo("") ==0)
+		if (startDateEditText.getText().toString().compareTo("") == 0)
 		{
 			DatePickerDialog dpd;
 			dpd = new DatePickerDialog(this, myStartDateListener, year, month, day);
 			dpd.show();
 		}
-		// load the datepicker using the date that was previously set in startDate
+		// load the datepicker using the date that was previously set in
+		// startDate
 		else
 		{
 			startCal = Calendar.getInstance();
-			//startDate = startDateEditText.getText().toString();
-			
-			//parse to our calendar object
+			// startDate = startDateEditText.getText().toString();
+
+			// parse to our calendar object
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-			try 
+			try
 			{
 				startCal.setTime(sdf.parse(startDate));
 				System.out.println("cal was parsed from tmpStartDate!");
-			} 
-			catch (ParseException e) 
+			}
+			catch (ParseException e)
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}// all done
-		
+
 			DatePickerDialog dpd;
-			dpd = new DatePickerDialog(this, myStartDateListener, startCal.get(Calendar.YEAR),startCal.get(Calendar.MONTH), startCal.get(Calendar.DAY_OF_MONTH));
+			dpd = new DatePickerDialog(this, myStartDateListener, startCal.get(Calendar.YEAR),
+					startCal.get(Calendar.MONTH), startCal.get(Calendar.DAY_OF_MONTH));
 			dpd.show();
+		}
+	}
+
+	public void onClick(View view)
+	{
+		switch (view.getId())
+		{
+		case R.id.editEventImageButton:
+			final CharSequence[] items =
+			{ "Take Photo", "Choose from Gallery", "Cancel" };
+
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Choose your event picture:");
+			builder.setItems(items, new DialogInterface.OnClickListener()
+			{
+				@Override
+				public void onClick(DialogInterface dialog, int item)
+				{
+					if (items[item].equals("Take Photo"))
+					{
+						Intent i = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+						startActivityForResult(i, 1);
+					}
+					else if (items[item].equals("Choose from Gallery"))
+					{
+						Intent intent = new Intent(Intent.ACTION_PICK,
+								android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+						intent.setType("image/*");
+						startActivityForResult(Intent.createChooser(intent, "Select Photo"), 2);
+					}
+					else if (items[item].equals("Cancel"))
+					{
+						dialog.dismiss();
+					}
+				}
+			});
+			builder.show();
+			break;
+		}
+	}
+
+	@Override
+	protected void onActivityResult(int reqCode, int resCode, Intent data)
+	{
+		super.onActivityResult(reqCode, resCode, data);
+		if (resCode == RESULT_OK)
+		{
+			if (reqCode == 1)
+			{
+				Bundle extras = data.getExtras();
+				bmp = (Bitmap) extras.get("data");
+				iv.setImageBitmap(bmp);
+			}
+			else if (reqCode == 2)
+			{
+				Uri selectedImageUri = data.getData();
+				try
+				{
+					bmp = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+				}
+				catch (FileNotFoundException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				catch (IOException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				iv.setImageURI(selectedImageUri);
+			}
 		}
 	}
 
@@ -265,9 +342,9 @@ import android.widget.TimePicker;
 		System.out.println("clicked on enddate");
 		// endDate is not currently set. load datepicker set to current
 		// calendar date.
-		if(endDateEditText.getText().toString().compareTo("") ==0)
+		if (endDateEditText.getText().toString().compareTo("") == 0)
 		{
-			if(startDateEditText.getText().toString().compareTo("")==0)
+			if (startDateEditText.getText().toString().compareTo("") == 0)
 			{
 				DatePickerDialog dpd;
 				dpd = new DatePickerDialog(this, myEndDateListener, year, month, day);
@@ -277,46 +354,48 @@ import android.widget.TimePicker;
 			{
 				endCal = Calendar.getInstance();
 				endDate = startDate;
-				
-				//parse to our calendar object
+
+				// parse to our calendar object
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-				try 
+				try
 				{
 					endCal.setTime(sdf.parse(endDate));
 					System.out.println("cal was parsed from tmpStartDate!");
-				} 
-				catch (ParseException e) 
+				}
+				catch (ParseException e)
 				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}// all done
-				
+
 				DatePickerDialog dpd;
-				dpd = new DatePickerDialog(this, myEndDateListener, endCal.get(Calendar.YEAR),endCal.get(Calendar.MONTH), endCal.get(Calendar.DAY_OF_MONTH));
+				dpd = new DatePickerDialog(this, myEndDateListener, endCal.get(Calendar.YEAR),
+						endCal.get(Calendar.MONTH), endCal.get(Calendar.DAY_OF_MONTH));
 				dpd.show();
 			}
-			
+
 		}
 		// load the datepicker using the date that was previously set in endDate
 		else
 		{
 			endCal = Calendar.getInstance();
-			//endDate = endDateEditText.getText().toString();
-			
-			//parse to our calendar object
+			// endDate = endDateEditText.getText().toString();
+
+			// parse to our calendar object
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-			try 
+			try
 			{
 				endCal.setTime(sdf.parse(endDate));
 				System.out.println("cal was parsed from tmpEndDate!");
-			} 
-			catch (ParseException e) 
+			}
+			catch (ParseException e)
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}// all done
 			DatePickerDialog dpd;
-			dpd = new DatePickerDialog(this, myEndDateListener, endCal.get(Calendar.YEAR),endCal.get(Calendar.MONTH), endCal.get(Calendar.DAY_OF_MONTH));
+			dpd = new DatePickerDialog(this, myEndDateListener, endCal.get(Calendar.YEAR), endCal.get(Calendar.MONTH),
+					endCal.get(Calendar.DAY_OF_MONTH));
 			dpd.show();
 		}
 	}
@@ -328,7 +407,7 @@ import android.widget.TimePicker;
 		// and min_part
 		location = locationEditText.getText().toString();
 		name = nameEditText.getText().toString();
-		//TODO: not grab right from here
+		// TODO: not grab right from here
 		System.out.println("startdate to be used is: " + startDate);
 		category = categoryEditText.getText().toString();
 		EditText minimumEditText = (EditText) findViewById(R.id.minPartButton);
@@ -337,12 +416,12 @@ import android.widget.TimePicker;
 		maximum = maximumEditText.getText().toString();
 		Date start = null;
 		Date end = null;
-		
+
 		if (minimum.compareTo("") == 0)
 		{
 			minimum = "1";
 		}
-		
+
 		if (!(startDate.compareTo("") == 0) && !(endDate.compareTo("") == 0))
 		{
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm");
@@ -350,7 +429,7 @@ import android.widget.TimePicker;
 			{
 				start = sdf.parse(startDate);
 				end = sdf.parse(endDate);
-			} 
+			}
 			catch (ParseException e1)
 			{
 				// TODO Auto-generated catch block
@@ -373,65 +452,47 @@ import android.widget.TimePicker;
 		// if empty group name, display error box
 		if (name.compareTo("") == 0)
 		{
-			new AlertDialog.Builder(this)
-					.setMessage(
-							"Please give your event a name before creating.")
+			new AlertDialog.Builder(this).setMessage("Please give your event a name before creating.")
 					.setCancelable(true).setNegativeButton("Ok", null).show();
 		}
 		// if empty start or end date
 		else if (startDate.compareTo("") == 0 || endDate.compareTo("") == 0)
 		{
-			new AlertDialog.Builder(this)
-					.setMessage(
-							"Please specify a Start Date and End Date before creating.")
+			new AlertDialog.Builder(this).setMessage("Please specify a Start Date and End Date before creating.")
 					.setCancelable(true).setNegativeButton("Ok", null).show();
 		}
 		// if endDate is prior to startDate
 		else if (start.compareTo(end) >= 0)
 		{
-			new AlertDialog.Builder(this)
-					.setMessage(
-							"Your Start Date must come before your End Date.")
+			new AlertDialog.Builder(this).setMessage("Your Start Date must come before your End Date.")
 					.setCancelable(true).setNegativeButton("Ok", null).show();
 		}
 		// if empty category
 		else if (category.compareTo("") == 0)
 		{
-			new AlertDialog.Builder(this)
-					.setMessage("Please select a Category before creating.")
-					.setCancelable(true).setNegativeButton("Ok", null).show();
-		}		
-		else if (!(maximum.compareTo("") == 0)
-				&& (Integer.parseInt(maximum) < Integer.parseInt(minimum)))
+			new AlertDialog.Builder(this).setMessage("Please select a Category before creating.").setCancelable(true)
+					.setNegativeButton("Ok", null).show();
+		}
+		else if (!(maximum.compareTo("") == 0) && (Integer.parseInt(maximum) < Integer.parseInt(minimum)))
 		{
-			new AlertDialog.Builder(this)
-					.setMessage(
-							"Your Minimum size cannot be larger than your Maximum size.")
+			new AlertDialog.Builder(this).setMessage("Your Minimum size cannot be larger than your Maximum size.")
 					.setCancelable(true).setNegativeButton("Ok", null).show();
 		}
 		// otherwise, display confirmation box to proceed
 		else
 		{
-			new AlertDialog.Builder(this)
-					.setMessage("Are you sure you want to create this event?")
-					.setCancelable(true)
-					.setPositiveButton("Yes",
-							new DialogInterface.OnClickListener()
-							{
-								@Override
-								public void onClick(DialogInterface dialog,
-										int id)
-								{
-									// initiate creation of event
-									new CreateEventTask()
-											.execute("http://68.59.162.183/"
-													+ "android_connect/create_event.php");
-								}
-							}).setNegativeButton("Cancel", null).show();
+			new AlertDialog.Builder(this).setMessage("Are you sure you want to create this event?").setCancelable(true)
+					.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+					{
+						@Override
+						public void onClick(DialogInterface dialog, int id)
+						{
+							// initiate creation of event
+							new CreateEventTask().execute("http://68.59.162.183/" + "android_connect/create_event.php");
+						}
+					}).setNegativeButton("Cancel", null).show();
 		}
 	}
-	
-	
 
 	// aSynch class to create event
 	private class CreateEventTask extends AsyncTask<String, Void, String>
@@ -442,7 +503,7 @@ import android.widget.TimePicker;
 			// grab group name and bio from textviews
 			String name = nameEditText.getText().toString();
 			String about = aboutEditText.getText().toString();
-		
+
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("e_name", name));
 			nameValuePairs.add(new BasicNameValuePair("about", about));
@@ -453,14 +514,15 @@ import android.widget.TimePicker;
 			nameValuePairs.add(new BasicNameValuePair("min_part", minimum));
 			nameValuePairs.add(new BasicNameValuePair("max_part", maximum));
 			nameValuePairs.add(new BasicNameValuePair("location", location));
-			
-			//loop through toBringList, adding each member into php array toBring[]
-		    for (int i = 0; i < itemNames.size(); i++) 
-		    {
-		    	System.out.println("adding the toBring entries");
-		        nameValuePairs.add(new BasicNameValuePair("toBring[]", itemNames.get(i)));
-		    }
-			
+
+			// loop through toBringList, adding each member into php array
+			// toBring[]
+			for (int i = 0; i < itemNames.size(); i++)
+			{
+				System.out.println("adding the toBring entries");
+				nameValuePairs.add(new BasicNameValuePair("toBring[]", itemNames.get(i)));
+			}
+
 			// pass url and nameValuePairs off to GLOBAL to do the JSON call.
 			// Code continues at onPostExecute when JSON returns.
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
@@ -473,8 +535,8 @@ import android.widget.TimePicker;
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
-				
-				System.out.println("success value: "+jsonObject.getString("success").toString());
+
+				System.out.println("success value: " + jsonObject.getString("success").toString());
 
 				// event has been successfully created
 				if (jsonObject.getString("success").toString().equals("1"))
@@ -485,10 +547,8 @@ import android.widget.TimePicker;
 					// therefore must be used for any future calls concerning
 					// that group.
 					ID = jsonObject.getString("e_id").toString();
-					System.out.println("MEssage: "
-							+ jsonObject.getString("message"));
-					System.out.println("e_id of newly created group is: "
-							+ ID);
+					System.out.println("MEssage: " + jsonObject.getString("message"));
+					System.out.println("e_id of newly created group is: " + ID);
 					user.fetchEventInvites();
 					user.fetchEventsPending();
 					user.fetchEventsUpcoming();
@@ -499,53 +559,40 @@ import android.widget.TimePicker;
 					GLOBAL.setEventBuffer(e);
 
 					// display confirmation box
-					AlertDialog dialog = new AlertDialog.Builder(
-							EventCreateActivity.this)
-							.setMessage("You've successfully created an event!")
-							.setCancelable(true)
-							.setPositiveButton("Invite Groups to Your Event",
-									new DialogInterface.OnClickListener()
-									{
-										@Override
-										public void onClick(
-												DialogInterface dialog, int id)
-										{
-											// code here to take user to
-											// eventaddmembersactivity page.
-											// (pass e_id as extra so invites
-											// can be sent to correct event id)
-											Intent intent = new Intent(
-													EventCreateActivity.this,
-													EventAddGroupsActivity.class);
-											intent.putExtra("CONTENT", "EVENT");
-											intent.putExtra("e_id", ID);
-											intent.putExtra("email",
-													user.getEmail());
-											startActivity(intent);
-											finish();
-										}
-									})
-							.setNegativeButton("View Your Event Profile",
-									new DialogInterface.OnClickListener()
-									{
-										@Override
-										public void onClick(
-												DialogInterface dialog,
-												int which)
-										{
-											// code here to take user to newly
-											// created event profile page. (pass
-											// e_id as extra so correct event
-											// profile can be loaded)
-											Intent intent = new Intent(
-													EventCreateActivity.this, EventProfileActivity.class);
-											intent.putExtra("e_id", ID);
-											intent.putExtra("email",
-													user.getEmail());
-											startActivity(intent);
-											finish();
-										}
-									}).show();
+					AlertDialog dialog = new AlertDialog.Builder(EventCreateActivity.this)
+							.setMessage("You've successfully created an event!").setCancelable(true)
+							.setPositiveButton("Invite Groups to Your Event", new DialogInterface.OnClickListener()
+							{
+								@Override
+								public void onClick(DialogInterface dialog, int id)
+								{
+									// code here to take user to
+									// eventaddmembersactivity page.
+									// (pass e_id as extra so invites
+									// can be sent to correct event id)
+									Intent intent = new Intent(EventCreateActivity.this, EventAddGroupsActivity.class);
+									intent.putExtra("CONTENT", "EVENT");
+									intent.putExtra("e_id", ID);
+									intent.putExtra("email", user.getEmail());
+									startActivity(intent);
+									finish();
+								}
+							}).setNegativeButton("View Your Event Profile", new DialogInterface.OnClickListener()
+							{
+								@Override
+								public void onClick(DialogInterface dialog, int which)
+								{
+									// code here to take user to newly
+									// created event profile page. (pass
+									// e_id as extra so correct event
+									// profile can be loaded)
+									Intent intent = new Intent(EventCreateActivity.this, EventProfileActivity.class);
+									intent.putExtra("e_id", ID);
+									intent.putExtra("email", user.getEmail());
+									startActivity(intent);
+									finish();
+								}
+							}).show();
 					// if user dimisses the confirmation box, gets sent to back
 					// to eventActivity.class
 					dialog.setOnCancelListener(new DialogInterface.OnCancelListener()
@@ -563,24 +610,19 @@ import android.widget.TimePicker;
 				{
 					// display error box
 					new AlertDialog.Builder(EventCreateActivity.this)
-							.setMessage(
-									"Unable to create event! Please choose an option:")
-							.setCancelable(true)
-							.setPositiveButton("Try Again",
-									new DialogInterface.OnClickListener()
-									{
-										@Override
-										public void onClick(
-												DialogInterface dialog, int id)
-										{
-											// initiate creation of event AGAIN
-											new CreateEventTask()
-													.execute("http://68.59.162.183/"
-															+ "android_connect/create_event.php");
-										}
-									}).setNegativeButton("Cancel", null).show();
+							.setMessage("Unable to create event! Please choose an option:").setCancelable(true)
+							.setPositiveButton("Try Again", new DialogInterface.OnClickListener()
+							{
+								@Override
+								public void onClick(DialogInterface dialog, int id)
+								{
+									// initiate creation of event AGAIN
+									new CreateEventTask().execute("http://68.59.162.183/"
+											+ "android_connect/create_event.php");
+								}
+							}).setNegativeButton("Cancel", null).show();
 				}
-			} 
+			}
 			catch (Exception e)
 			{
 				Log.d("onPostreadJSONFeed", e.getLocalizedMessage());
@@ -598,15 +640,16 @@ import android.widget.TimePicker;
 				int tmpMonth = month + 1;
 				startDate = year + "-" + tmpMonth + "-" + day;
 				startDateEditText.setText(year + "-" + tmpMonth + "-" + day);
-								
-				//start the TimePicker using hour and minute previously set in startCal
-				if(startCal != null)
+
+				// start the TimePicker using hour and minute previously set in
+				// startCal
+				if (startCal != null)
 				{
-					System.out.println("Hour:"+startCal.get(Calendar.HOUR_OF_DAY));
-					System.out.println("Minute:"+startCal.get(Calendar.MINUTE));
+					System.out.println("Hour:" + startCal.get(Calendar.HOUR_OF_DAY));
+					System.out.println("Minute:" + startCal.get(Calendar.MINUTE));
 					TimePickerDialog tpd;
-					tpd = new TimePickerDialog(EventCreateActivity.this,
-							myStartTimeListener, startCal.get(Calendar.HOUR_OF_DAY), startCal.get(Calendar.MINUTE), false);
+					tpd = new TimePickerDialog(EventCreateActivity.this, myStartTimeListener,
+							startCal.get(Calendar.HOUR_OF_DAY), startCal.get(Calendar.MINUTE), false);
 					tpd.show();
 					tpd.setOnCancelListener(new DialogInterface.OnCancelListener()
 					{
@@ -618,12 +661,11 @@ import android.widget.TimePicker;
 						}
 					});
 				}
-				//start the TimePicker using current system time
+				// start the TimePicker using current system time
 				else
 				{
 					TimePickerDialog tpd;
-					tpd = new TimePickerDialog(EventCreateActivity.this,
-						myStartTimeListener, hour, minute, false);
+					tpd = new TimePickerDialog(EventCreateActivity.this, myStartTimeListener, hour, minute, false);
 					tpd.show();
 					tpd.setOnCancelListener(new DialogInterface.OnCancelListener()
 					{
@@ -664,15 +706,16 @@ import android.widget.TimePicker;
 				int tmpMonth = month + 1;
 				endDate = year + "-" + tmpMonth + "-" + day;
 				endDateEditText.setText(year + "-" + tmpMonth + "-" + day);
-								
-				//start the TimePicker using hour and minute previously set in startCal
-				if(endCal != null)
+
+				// start the TimePicker using hour and minute previously set in
+				// startCal
+				if (endCal != null)
 				{
-					System.out.println("Hour:"+endCal.get(Calendar.HOUR_OF_DAY));
-					System.out.println("Minute:"+endCal.get(Calendar.MINUTE));
+					System.out.println("Hour:" + endCal.get(Calendar.HOUR_OF_DAY));
+					System.out.println("Minute:" + endCal.get(Calendar.MINUTE));
 					TimePickerDialog tpd;
-					tpd = new TimePickerDialog(EventCreateActivity.this,
-							myEndTimeListener, endCal.get(Calendar.HOUR_OF_DAY), endCal.get(Calendar.MINUTE), false);
+					tpd = new TimePickerDialog(EventCreateActivity.this, myEndTimeListener,
+							endCal.get(Calendar.HOUR_OF_DAY), endCal.get(Calendar.MINUTE), false);
 					tpd.show();
 					tpd.setOnCancelListener(new DialogInterface.OnCancelListener()
 					{
@@ -684,12 +727,11 @@ import android.widget.TimePicker;
 						}
 					});
 				}
-				//start the TimePicker using current system time
+				// start the TimePicker using current system time
 				else
 				{
 					TimePickerDialog tpd;
-					tpd = new TimePickerDialog(EventCreateActivity.this,
-						myEndTimeListener, hour, minute, false);
+					tpd = new TimePickerDialog(EventCreateActivity.this, myEndTimeListener, hour, minute, false);
 					tpd.show();
 					tpd.setOnCancelListener(new DialogInterface.OnCancelListener()
 					{

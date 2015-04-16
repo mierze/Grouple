@@ -408,7 +408,7 @@ public class EventProfileActivity extends BaseActivity
 		case R.id.profileButton1:
 
 			// events
-			intent.putExtra("CONTENT", "EVENTS_ATTENDING");
+			intent.putExtra("content", "EVENTS_ATTENDING");
 			event.fetchParticipants();
 			GLOBAL.setEventBuffer(event);
 
