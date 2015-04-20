@@ -78,6 +78,19 @@
             android:text="Past Events"
             android:textColor="@color/button_text_color"
             android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/eventsDeclinedButtonEA"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/selector_button"
+            android:fontFamily="sans-serif-condensed"
+            android:onClick="onClick"
+            android:text="Past Events"
+            android:textColor="@color/button_text_color"
+            android:textSize="20sp" />
     </LinearLayout>
 
 </LinearLayout>

@@ -30,6 +30,7 @@ import android.util.SparseArray;
 	private ArrayList<Event> eventsUpcoming = new ArrayList<Event>();
 	private ArrayList<Event> eventsPast = new ArrayList<Event>();
 	private ArrayList<Event> eventInvites = new ArrayList<Event>();
+	private ArrayList<Event> eventsDeclined = new ArrayList<Event>();
 	private ArrayList<Event> eventsPending = new ArrayList<Event>();
 	private SparseArray<String> groupRoles = new SparseArray<String>();
 	private SparseArray<String> eventRoles = new SparseArray<String>();
@@ -106,6 +107,17 @@ import android.util.SparseArray;
 				if (e.getID() == id)
 				{
 					eventsPast.remove(eventsPast.indexOf(e));
+					break;
+				}
+	}
+	
+	protected void removeEventDeclined(int id)
+	{
+		if (eventsDeclined != null)
+			for (Event e : eventsDeclined)
+				if (e.getID() == id)
+				{
+					eventsDeclined.remove(eventsDeclined.indexOf(e));
 					break;
 				}
 	}
@@ -233,6 +245,14 @@ import android.util.SparseArray;
 		else
 			return 0;
 	}
+	
+	protected int getNumEventsDeclined()
+	{
+		if (eventsDeclined != null)
+			return eventsDeclined.size();
+		else
+			return 0;
+	}
 
 	protected int getNumEventsPast()
 	{
@@ -287,6 +307,11 @@ import android.util.SparseArray;
 	{
 		return eventInvites;
 	}
+	
+	protected ArrayList<Event> getEventsDeclined()
+	{
+		return eventsDeclined;
+	}
 
 	protected ArrayList<Event> getEventsPast()
 	{
@@ -322,6 +347,16 @@ import android.util.SparseArray;
 				inGroupInvites = true;
 		if (!inGroupInvites)
 			groupInvites.add(g);
+	}
+	
+	protected void addToEventsDeclined(Event e)
+	{
+		boolean inEventsDeclined = false;
+		for (Event t : eventsDeclined)
+			if (t.getID() == e.getID())
+				inEventsDeclined = true;
+		if (!inEventsDeclined)
+			eventsDeclined.add(e);
 	}
 
 	protected void addToEventsPending(Event e)
@@ -831,6 +866,86 @@ import android.util.SparseArray;
 						e.setStartDate(o.getString("startDate"));
 						e.fetchParticipants();
 						addToEventsPending(e);
+					}
+				}
+				// user has no group invites
+				if (jsonObject.getString("success").toString().equals("2"))
+				{
+					// no group invites
+				}
+			} 
+			catch (Exception e)
+			{
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
+			}
+		}
+	}
+	
+	/*
+	 * 
+	 * should be getting the groupInvites key->vals here
+	 */
+	// Get numFriends, TODO: work on returning the integer
+	protected int fetchEventsDeclined()
+	{
+		AsyncTask<String, Void, String> task = new getEventsDeclinedTask()
+				.execute("http://68.59.162.183/android_connect/get_events_declined.php");
+		try
+		{
+			task.get(10000, TimeUnit.MILLISECONDS);
+		} 
+		catch (InterruptedException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		catch (ExecutionException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		catch (TimeoutException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// while (task.getStatus() != Status.FINISHED);
+		return 1;
+	}
+
+	private class getEventsDeclinedTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected  String doInBackground(String... urls)
+		{
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("email", getEmail()));
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+		}
+
+		@Override
+		protected  void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					// gotta make a json array
+					JSONArray jsonArray = jsonObject
+							.getJSONArray("eventsDeclined");
+					// looping thru array
+					for (int i = 0; i < jsonArray.length(); i++)
+					{
+						JSONObject o = (JSONObject) jsonArray.get(i);
+						// function adds friend to the friends map
+						Event e = new Event(o.getInt("e_id"));
+						e.setName(o.getString("name"));
+						e.setMinPart(o.getInt("minPart"));
+						e.setMaxPart(o.getInt("maxPart"));
+						e.setStartDate(o.getString("startDate"));
+						e.fetchParticipants();
+						addToEventsDeclined(e);
 					}
 				}
 				// user has no group invites

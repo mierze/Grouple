@@ -138,6 +138,7 @@ public class HomeActivity extends BaseActivity
 			user.fetchEventInvites();
 			user.fetchEventsPending();
 			user.fetchEventsUpcoming();
+			user.fetchEventsDeclined();
 			user.fetchEventsPast();
 			intent = new Intent(this, EventsActivity.class);
 			break;

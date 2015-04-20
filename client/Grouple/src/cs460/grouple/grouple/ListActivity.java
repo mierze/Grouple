@@ -32,7 +32,7 @@ public class ListActivity extends BaseActivity
 	{
 		FRIENDS_CURRENT, FRIENDS_REQUESTS, GROUPS_MEMBERS, EVENTS_ATTENDING, SELECT_FRIEND,
 		GROUPS_CURRENT, GROUPS_INVITES, 
-	    EVENTS_UPCOMING, EVENTS_PENDING, EVENTS_PAST, EVENTS_INVITES;    
+	    EVENTS_UPCOMING, EVENTS_PENDING, EVENTS_PAST, EVENTS_INVITES, EVENTS_DECLINED;    
 	}	
 	
 	//CLASS-WIDE DECLARATIONS
@@ -119,7 +119,7 @@ public class ListActivity extends BaseActivity
 			populateGroups();
 		//CONTENT_TYPE -> POPULATEEVENTS
 		}
-		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
+		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_DECLINED.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_DECLINED.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
 		{
 			//setting the bottom button gone
 			if (addNew != null)
@@ -131,8 +131,10 @@ public class ListActivity extends BaseActivity
 				actionBarTitle = user.getFirstName() + "'s Event Invites";
 			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
 				actionBarTitle = user.getFirstName() + "'s Upcoming Events";
-			else
+			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
 				actionBarTitle = user.getFirstName() + "'s Past Events";
+			else
+				actionBarTitle = user.getFirstName() + "'s Declined Events";
 			populateEvents();
 		}
 		//calling next functions to execute
@@ -318,6 +320,11 @@ public class ListActivity extends BaseActivity
 			events = user.getEventInvites();
 			sadGuyText = "You do not have any event invites.";
 		}
+		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_DECLINED.toString()))
+		{
+			events = user.getEventsDeclined();
+			sadGuyText = "You do not have any events declined.";
+		}
 		else
 		{
 			events = user.getEventsPast();
@@ -351,7 +358,7 @@ public class ListActivity extends BaseActivity
 				id = e.getID();
 				index = events.indexOf(e);
 				//Group group = GLOBAL.loadGroup(id);
-				if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
+				if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_DECLINED.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
 				{
 					System.out.println("IN FIRST EVENT IF");
 					if (GLOBAL.isCurrentUser(user.getEmail()))
@@ -365,7 +372,7 @@ public class ListActivity extends BaseActivity
 					
 					nameTextView =  (TextView)row.findViewById(R.id.nameTextViewLI);
 
-					if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
+					if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_DECLINED.toString()))
 						nameTextView.setText(e.getName());//future get date too?
 					else
 						nameTextView.setText(e.getName() + "\n(" + e.getNumUsers() + " confirmed / " + e.getMinPart() + " required)");
@@ -594,7 +601,7 @@ public class ListActivity extends BaseActivity
 			g.fetchMembers();
 			GLOBAL.setGroupBuffer(g);
 		}
-		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()))
+		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_DECLINED.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()))
 		{
 			intent = new Intent(this, EventProfileActivity.class);
 			intent.putExtra("e_id", id);
@@ -668,7 +675,7 @@ public class ListActivity extends BaseActivity
     		//GROUP PROFILE
     		group.fetchMembers();
     	}
-    	else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
+    	else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_INVITES.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_DECLINED.toString()))
     	{
     		//EVENTS
     		user.fetchEventsUpcoming();
@@ -682,6 +689,7 @@ public class ListActivity extends BaseActivity
     		{
 	    		user.fetchEventInvites();
 	    		user.fetchEventsPending();
+	    		user.fetchEventsDeclined();
     		}
     	}
     	else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
@@ -824,6 +832,11 @@ public class ListActivity extends BaseActivity
 					{
 						user.removeEventPending(bufferID);
 						user.fetchEventsPending();
+					}
+					else if (CONTENT.equals(CONTENT_TYPE.EVENTS_DECLINED.toString()))
+					{
+						user.removeEventDeclined(bufferID);
+						user.fetchEventsDeclined();
 					}
 					else if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
 					{

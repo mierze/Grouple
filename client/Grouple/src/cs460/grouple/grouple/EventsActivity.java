@@ -33,6 +33,7 @@ public class EventsActivity extends BaseActivity
 		((Button) findViewById(R.id.eventsPendingButtonEA)).setText("Pending Events (" + user.getNumEventsPending() + ")");
 		((Button) findViewById(R.id.eventInvitesButtonEA)).setText("Event Invites (" + user.getNumEventsInvites() + ")");
 		((Button) findViewById(R.id.eventsPastButtonEA)).setText("Past Events (" + user.getNumEventsPast() + ")");		
+		((Button) findViewById(R.id.eventsDeclinedButtonEA)).setText("Declined Events (" + user.getNumEventsDeclined() + ")");		
 	}
 	
 	public void onClick(View view)
@@ -60,6 +61,10 @@ public class EventsActivity extends BaseActivity
 		case R.id.eventsPastButtonEA:
 			user.fetchEventsPast();
 			intent.putExtra("content", "EVENTS_PAST");
+			break;
+		case R.id.eventsDeclinedButtonEA:
+			user.fetchEventsDeclined();
+			intent.putExtra("content", "EVENTS_DECLINED");
 			break;
 		}
 		GLOBAL.setCurrentUser(user);
