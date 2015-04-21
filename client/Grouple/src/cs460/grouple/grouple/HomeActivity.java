@@ -154,6 +154,8 @@ public class HomeActivity extends BaseActivity
 			user.fetchUserInfo();
 			user.fetchEventsPast();
 			user.fetchEventsUpcoming();
+			user.fetchNewBadges();
+			user.fetchBadges();
 			user.fetchFriends();
 			user.fetchGroups();
 			intent = new Intent(this, UserProfileActivity.class);

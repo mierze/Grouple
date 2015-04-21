@@ -32,6 +32,7 @@ import android.util.SparseArray;
 	private ArrayList<Event> eventInvites = new ArrayList<Event>();
 	private ArrayList<Event> eventsDeclined = new ArrayList<Event>();
 	private ArrayList<Event> eventsPending = new ArrayList<Event>();
+	private ArrayList<Badge> badges = new ArrayList<Badge>();
 	private SparseArray<String> groupRoles = new SparseArray<String>();
 	private SparseArray<String> eventRoles = new SparseArray<String>();
 
@@ -42,6 +43,7 @@ import android.util.SparseArray;
 	{
 		super();
 		setEmail(email);
+		initBadges();
 		System.out.println("Initializing new user.");
 	}
 	
@@ -214,6 +216,15 @@ import android.util.SparseArray;
 		return age;
 	}
 
+	protected int getNumBadges()
+	{
+		int size = 0;
+		for (Badge b : badges)
+			if (b.getLevel() > 0)
+				size++;
+		return size;
+	}
+	
 	protected int getNumGroups()
 	{
 		if (groups != null)
@@ -278,6 +289,11 @@ import android.util.SparseArray;
 			return 0;
 	}
 
+	protected ArrayList<Badge> getBadges()
+	{
+		return badges;
+	}
+	
 	protected ArrayList<User> getFriendRequests()
 	{
 		return friendRequests;
@@ -319,6 +335,24 @@ import android.util.SparseArray;
 	}
 
 	//METHODS
+	private void initBadges()
+	{
+		//adding all badges to the user with level 0
+		badges.add(new Badge("Environmentalist", 0, null));
+		badges.add(new Badge("Helping Hand", 0, null));
+		badges.add(new Badge("Active", 0, null));
+		badges.add(new Badge("Social", 0, null));
+		badges.add(new Badge("Jack of all Trades", 0, null));
+		badges.add(new Badge("Professional", 0, null));
+	}
+	protected void addToBadges(Badge b)
+	{
+		for (Badge t : badges)
+			if (t.getName().equals(b.getName()))
+			{
+				t.setLevel(b.getLevel());
+			}
+	}
 	protected void addToFriendRequests(User u)
 	{
 		boolean inFriendRequests = false;
@@ -1169,6 +1203,119 @@ import android.util.SparseArray;
 				{
 					
 				}
+			} 
+			catch (Exception e)
+			{
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
+			}
+		}
+	}
+	
+	protected  int fetchNewBadges()
+	{
+		AsyncTask<String, Void, String> task = new getNewBadgesTask()
+				.execute("http://68.59.162.183/android_connect/get_new_badges.php");
+		try
+		{
+			task.get(10000, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TimeoutException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return 1;
+	}
+	
+	private class getNewBadgesTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected  String doInBackground(String... urls)
+		{
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("email", getEmail()));
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+		}
+
+		@Override
+		protected  void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+				JSONArray jsonArray = jsonObject.getJSONArray("badges");
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+
+					//success
+				}
+		
+			} 
+			catch (Exception e)
+			{
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
+			}
+		}
+	}
+	
+	protected  int fetchBadges()
+	{
+		AsyncTask<String, Void, String> task = new getBadgesTask()
+				.execute("http://68.59.162.183/android_connect/get_badges.php");
+		try
+		{
+			task.get(10000, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TimeoutException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return 1;
+	}
+	
+	private class getBadgesTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected  String doInBackground(String... urls)
+		{
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("email", getEmail()));
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+		}
+
+		@Override
+		protected  void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					JSONArray jsonArray = jsonObject.getJSONArray("badges");
+					for (int i = 0; i < jsonArray.length(); i++)
+					{
+						JSONObject o = (JSONObject) jsonArray.get(i);
+						Badge b = new Badge(o.getString("name"), Integer.parseInt(o.getString("level")), o.getString("date"));
+						addToBadges(b);
+					}
+				}
+		
 			} 
 			catch (Exception e)
 			{

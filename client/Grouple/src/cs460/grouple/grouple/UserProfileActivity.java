@@ -52,6 +52,7 @@ public class UserProfileActivity extends BaseActivity
 	private TextView levelTextView;
 	private GcmUtility gcmUtil;
 	private LayoutInflater inflater;
+	private ArrayList<Badge> badges = new ArrayList<Badge>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -100,7 +101,7 @@ public class UserProfileActivity extends BaseActivity
 		title = user.getFirstName() + "'s Profile";
 		new getUserExperienceTask().execute("http://68.59.162.183/android_connect/get_user_experience.php");
 		setNotifications();
-
+		badges = user.getBadges();
 		getImageTask = new getImageTask().execute("http://68.59.162.183/android_connect/get_profile_image.php");
 		populateProfile(); // populates a group / user profile
 
@@ -203,21 +204,22 @@ public class UserProfileActivity extends BaseActivity
 		int pointsEnd;
 		while (userPoints > (pointsStart + pointsToNext))
 		{
-			//means user is greater than this level threshold
-			//so increase level
+			// means user is greater than this level threshold
+			// so increase level
 			level++;
-			//make a new start
+			// make a new start
 			pointsStart += pointsToNext;
-			//recalc pointsToNext
+			// recalc pointsToNext
 			pointsToNext *= 2;
 		}
 		pointsEnd = pointsStart + pointsToNext;
-		//each level pointsToNext *= level
+		// each level pointsToNext *= level
 		levelTextView.setText("Level " + level);
 		xpProgressBar.setMax(pointsToNext);
 		xpProgressBar.setProgress(userPoints - pointsStart);
 		xpTextView.setText(userPoints + " / " + pointsEnd);
 	}
+
 	private void setNotifications()
 	{
 		profileButton2.setVisibility(View.VISIBLE);
@@ -226,6 +228,7 @@ public class UserProfileActivity extends BaseActivity
 		profileButton2.setText("Groups\n(" + user.getNumGroups() + ")");
 		profileButton3.setText("Upcoming Events\n(" + user.getNumEventsUpcoming() + ")");
 		profileButton4.setText("Past Events\n(" + user.getNumEventsPast() + ")");
+		profileButton5.setText("Badges\n(" + user.getNumBadges() + ")");
 		if (!GLOBAL.isCurrentUser(user.getEmail()))
 		{
 			if (user.inUsers(GLOBAL.getCurrentUser().getEmail()))
@@ -283,7 +286,7 @@ public class UserProfileActivity extends BaseActivity
 		case R.id.profileButton5:
 			noIntent = true;
 			badgesDialog();
-			
+
 			break;
 		case R.id.profileEditButton:
 
@@ -398,35 +401,43 @@ public class UserProfileActivity extends BaseActivity
 	{
 		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
 		dialogBuilder.setTitle(user.getFirstName() + "'s Badges");
-		LinearLayout row;
+		LinearLayout row = null;
 		ImageButton badgeImageButton;
+		TextView badgeTextView;
 		View dialogView = inflater.inflate(R.layout.dialog_badges, null);
 		LinearLayout layout = (LinearLayout) dialogView.findViewById(R.id.badgesLayout);
-		for (int i = 0; i < 10; i++)
+		for (Badge b : badges)
 		{
-			row = (LinearLayout) inflater.inflate(R.layout.list_row_badges, null);
-			int col = 0;
-			while (col < 4)
+	
+			final int index = badges.indexOf(b);
+			if (index % 4 == 0 || index == 0)
 			{
-				View item = inflater.inflate(R.layout.list_item_badge, null);
-				badgeImageButton = (ImageButton) item.findViewById(R.id.badgeImageButton);
-				badgeImageButton.setOnClickListener(new OnClickListener()
-				{
-					@Override
-					public void onClick(View view) 
-					{
-						badgeDialog();
-					}
-				});
-				row.addView(item);
-				col++;
+				row = (LinearLayout) inflater.inflate(R.layout.list_row_badges, null);
+				layout.addView(row);
 			}
-			layout.addView(row);
+
+			View item = inflater.inflate(R.layout.list_item_badge, null);
+			badgeTextView = (TextView)item.findViewById(R.id.badgeNameTextView);
+			badgeTextView.setText(b.getName());
+			badgeImageButton = (ImageButton) item.findViewById(R.id.badgeImageButton);
+			if (b.getLevel() > 0)
+				badgeImageButton.setImageDrawable(getResources().getDrawable(R.drawable.icon_events));
+			badgeImageButton.setId(index);
+			badgeImageButton.setOnClickListener(new OnClickListener()
+			{
+				@Override
+				public void onClick(View view)
+				{
+					badgeDialog(index);
+				}
+			});
+			row.addView(item);
 		}
 		dialogBuilder.setView(dialogView);
 		AlertDialog badgesDialog = dialogBuilder.create();
 		badgesDialog.show();
 	}
+
 	/*
 	 * Get profile executes get_profile.php. It uses the current users email
 	 * address to retrieve the users name, age, and bio.
@@ -447,18 +458,26 @@ public class UserProfileActivity extends BaseActivity
 		else
 			infoT = age + " yrs young\n" + location + "\n";
 		about.setText(infoT + user.getAbout());
-	}	
-	
-	//dialog pop up for a single badge with description
-	//TODO: add parameters about the badge?
-	private void badgeDialog()
+	}
+
+	// dialog pop up for a single badge with description
+	// TODO: add parameters about the badge?
+	private void badgeDialog(int index)
 	{
+		Badge b = badges.get(index);
 		View dialogView = inflater.inflate(R.layout.dialog_badge, null);
 		ImageView badgeImageView = (ImageView) dialogView.findViewById(R.id.badgeImageView);
 		TextView badgeTitleTextView = (TextView) dialogView.findViewById(R.id.badgeTitleTextView);
+
 		TextView badgeAboutTextView = (TextView) dialogView.findViewById(R.id.badgeAboutTextView);
+		if (!badges.isEmpty())
+		{
+			badgeTitleTextView.setText("First Nature Event!\n");
+			badgeAboutTextView.setText(getResources().getString(b.getAboutID()));
+			badgeImageView.setImageDrawable(getResources().getDrawable(R.drawable.user_image_default));
+		}
 		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-		dialogBuilder.setTitle(badgeTitleTextView.getText().toString() + " Badge");
+		dialogBuilder.setTitle(b.getName() + " (Level " + b.getLevel() + ")");
 		dialogBuilder.setView(dialogView);
 		AlertDialog badgesDialog = dialogBuilder.create();
 		badgesDialog.show();

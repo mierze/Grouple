@@ -53,7 +53,14 @@
     <string name="editProfilePhotoButton">Edit Photo</string>
     <string name="title_activity_settings">Settings</string>
     <string name="title_activity_messages">Messages</string>
-
+	<string name="environmentalist_about">For the explorer of nature. This badge is not for your typical city dweller, one must go out in the environment and take in the great outdoors to earn this badge.</string>
+    <string name="social_about">This is a real party animal. User\'s with this badge tend to attend a lot of social outings where they can cherish great times with friends.</string>
+    <string name="active_about">Active user who pushes themselves to achieve more physically.</string>
+   	<string name="jackoftrades_about">Active user who pushes themselves to achieve more physically.</string>
+    <string name="professional_about">Whether it be in school or the workplace, this badge is for the overachiever who goes to great lengths to succeed as a team.</string>
+    <string name="entertainment_about">This badge is for the user who loves getting out there and experiencing quality entertainment.</string>
+     <string name="helpinghand_about">This badge is for someone who goes to great lengths to provide for the events they attend. Bringing items from the item checklist can earn you this badge.</string>
+    
     <color name="hint_text_color">#7022252A</color>
     <color name="text_color">#22252A</color>
     <color name="button_text_color">#F0F0D8</color>

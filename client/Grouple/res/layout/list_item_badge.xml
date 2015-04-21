@@ -9,7 +9,7 @@
 
     <ImageButton
         android:id="@+id/badgeImageButton"
-        android:layout_width="fill_parent"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:src="@drawable/event_image_default" />
 
