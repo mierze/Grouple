@@ -18,7 +18,7 @@
 	    android:contentDescription="test"
 	    android:gravity="center_vertical"
 	    android:layout_gravity="center_vertical"
-	    android:src="@drawable/home_logo_update4"
+	    android:src="@drawable/logo_grouple"
 	    android:visibility="visible" />
     
   	<LinearLayout

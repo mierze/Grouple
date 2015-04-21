@@ -349,7 +349,10 @@ public class EventProfileActivity extends BaseActivity
 		if (user.getEventRole(event.getID()) != null && user.getEventRole(event.getID()).equals("A")
 				&& !event.getEventState().equals("Ended"))
 		{
-			profileButton6.setText("Edit Event");
+			if (event.getEventState().equals("Declined"))
+				profileButton6.setText("Edit and Re-propose Event");
+			else
+				profileButton6.setText("Edit Event");
 			profileButton6.setVisibility(View.VISIBLE);
 		}
 	}
@@ -514,7 +517,7 @@ public class EventProfileActivity extends BaseActivity
 						}
 						else if (!itemCheckBox.isChecked())
 						{
-							if(!email.equals(user.getEmail()))
+							if(!itemUserNameTextView.getText().equals(user.getEmail()))
 							{
 								System.out.println("this is not your claim");
 								itemCheckBox.setChecked(true);

@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -25,6 +26,12 @@ public class GcmUtility extends Application {
 	private Global GLOBAL;
 	private User user;
 	private AtomicInteger msgId = new AtomicInteger();
+	//Email of user recieving the push notification.
+	private String groupName;
+	private String groupID;
+	private String notificationType;
+	private String eventName;
+	private String eventID;
 	
 	enum CONTENT_TYPE 
 	{
@@ -41,41 +48,37 @@ public class GcmUtility extends Application {
 	//This is for sending friend request notifications. 
 	public void sendNotification(String recipient, String notificationType) 
 	{
+		//Set class variables
+		this.notificationType = notificationType;
 		//Get Recipient's RegID
 		new getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php", recipient);
-		
-		if(notificationType.equals(CONTENT_TYPE.FRIEND_REQUEST.toString()))
-		{
-			//Send a friend request to the
-			sendFriendRequest();
-		}
 	}
 	/*
 	 * This is for sending group notifications. Only implemented invite for now..
 	 * The naming convention is weird, but that's because we have to send the additional param, group name.
 	 * So for now, this is for all group type notifications.
 	 */
-	public void sendGroupNotification(String recipient, String gName, String notificationType) 
+	public void sendGroupNotification(String recipient, String gName,String gid, String notificationType)
 	{
-		//Get Recipient's RegID
+		//Set class variables
+		groupName = gName;
+		groupID = gid;
+		this.notificationType = notificationType;
+		//Get Recipient's RegID and send the push in the post execute.
 		new getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php", recipient);
-			
-		if(notificationType.equals("GROUP_INVITE"))
-		{
-			sendGroupInvite(gName);
-		}
+		
 		//Here we can implement other types of Group Notifications.
 	}
 	
-	public void sendEventNotification(String recipient, String eName, String notificationType) 
+	public void sendEventNotification(String recipient, String eName,String eid, String notificationType) 
 	{
+		//Set class variables
+		eventName = eName;
+		eventID = eid;
+		this.notificationType = notificationType;
 		//Get Recipient's RegID
 		new getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php", recipient);
-			
-		if(notificationType.equals("EVENT_INVITE"))
-		{
-			sendEventInvite(eName);
-		}
+		
 		//Here we can implement other types of Event Notifications.
 	}
 
@@ -118,7 +121,7 @@ public class GcmUtility extends Application {
         }.execute(null, null, null);
 
 	}
-	private void sendGroupInvite(final String gName) 
+	private void sendGroupInvite(final String gName,final String gid) 
 	{
         new AsyncTask<Void, Void, String>() {
             @Override
@@ -132,8 +135,8 @@ public class GcmUtility extends Application {
                    data.putString("content", "GROUP_INVITE");
                    data.putString("sender", user.getEmail());
                    data.putString("recipient",recipientRegID);
-                   data.putString("name", gName);
-                   //This is where we put our first and last name. That way the recipient knows who sent it.
+                   data.putString("group_name", gName);
+                   data.putString("group_id", gid);
                    data.putString("first", user.getFirstName());
                    data.putString("last", user.getLastName());
                    String id = Integer.toString(msgId.incrementAndGet());
@@ -158,7 +161,7 @@ public class GcmUtility extends Application {
 
 	}
 	
-	private void sendEventInvite(final String eName) 
+	private void sendEventInvite(final String eName, final String eid) 
 	{
         new AsyncTask<Void, Void, String>() {
             @Override
@@ -172,7 +175,8 @@ public class GcmUtility extends Application {
                    data.putString("content", "EVENT_INVITE");
                    data.putString("sender", user.getEmail());
                    data.putString("recipient",recipientRegID);
-                   data.putString("name", eName);
+                   data.putString("event_name", eName);
+                   data.putString("event_id", eid);
                    //This is where we put our first and last name. That way the recipient knows who sent it.
                    data.putString("first", user.getFirstName());
                    data.putString("last", user.getLastName());
@@ -197,7 +201,24 @@ public class GcmUtility extends Application {
         }.execute(null, null, null);
 
 	}
-	
+	public boolean getRegID(String recipient)
+	{
+		//Get Recipient's RegID
+		try {
+			new getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php", recipient).get();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+		
+		return true;
+		
+	}
 	//This task gets your friend's regid
     private class getRegIDTask extends AsyncTask<String, Void, String>
 	{
@@ -221,6 +242,19 @@ public class GcmUtility extends Application {
 				{
 					String id = jsonObject.getString("regid").toString();
 					recipientRegID = id;
+					
+					if(notificationType.equals(CONTENT_TYPE.FRIEND_REQUEST.toString()))
+					{
+						sendFriendRequest();
+					}
+					else if(notificationType.equals("GROUP_INVITE"))
+					{
+						sendGroupInvite(groupName,groupID);
+					}
+					else if(notificationType.equals("EVENT_INVITE"))
+					{
+						sendEventInvite(eventName,eventID);
+					}
 				} 
 				else
 				{

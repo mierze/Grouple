@@ -92,7 +92,7 @@ public class FriendAddActivity extends BaseActivity
 				else if (jsonObject.getString("success").toString().equals("2"))
 				{
 					addFriendMessage.setTextColor(getResources().getColor(
-							R.color.orange));
+							R.color.yellow));
 					addFriendMessage.setVisibility(0);
 				} 
 				else

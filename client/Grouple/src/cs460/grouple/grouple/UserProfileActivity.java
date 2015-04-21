@@ -51,7 +51,6 @@ public class UserProfileActivity extends BaseActivity
 	private TextView xpTextView;
 	private TextView levelTextView;
 	private GcmUtility gcmUtil;
-	private LayoutInflater inflater;
 	private ArrayList<Badge> badges = new ArrayList<Badge>();
 
 	@Override
@@ -73,7 +72,6 @@ public class UserProfileActivity extends BaseActivity
 		pastEventsBadgesLayout = findViewById(R.id.profilePastEventsBadgesLayout);
 		iv = (ImageView) findViewById(R.id.profileImageUPA);
 		gcmUtil = new GcmUtility(GLOBAL);
-		inflater = getLayoutInflater();
 	}
 
 	@Override
@@ -421,14 +419,16 @@ public class UserProfileActivity extends BaseActivity
 			badgeTextView.setText(b.getName());
 			badgeImageButton = (ImageButton) item.findViewById(R.id.badgeImageButton);
 			if (b.getLevel() > 0)
-				badgeImageButton.setImageDrawable(getResources().getDrawable(R.drawable.icon_events));
+				badgeImageButton.setImageDrawable(getResources().getDrawable(R.drawable.badge_nature));
+			else
+				badgeImageButton.setImageDrawable(getResources().getDrawable(R.drawable.badge_nature_grey));
 			badgeImageButton.setId(index);
 			badgeImageButton.setOnClickListener(new OnClickListener()
 			{
 				@Override
 				public void onClick(View view)
 				{
-					badgeDialog(index);
+					badgeDialog(badges.get(index));
 				}
 			});
 			row.addView(item);
@@ -460,26 +460,5 @@ public class UserProfileActivity extends BaseActivity
 		about.setText(infoT + user.getAbout());
 	}
 
-	// dialog pop up for a single badge with description
-	// TODO: add parameters about the badge?
-	private void badgeDialog(int index)
-	{
-		Badge b = badges.get(index);
-		View dialogView = inflater.inflate(R.layout.dialog_badge, null);
-		ImageView badgeImageView = (ImageView) dialogView.findViewById(R.id.badgeImageView);
-		TextView badgeTitleTextView = (TextView) dialogView.findViewById(R.id.badgeTitleTextView);
 
-		TextView badgeAboutTextView = (TextView) dialogView.findViewById(R.id.badgeAboutTextView);
-		if (!badges.isEmpty())
-		{
-			badgeTitleTextView.setText("First Nature Event!\n");
-			badgeAboutTextView.setText(getResources().getString(b.getAboutID()));
-			badgeImageView.setImageDrawable(getResources().getDrawable(R.drawable.user_image_default));
-		}
-		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-		dialogBuilder.setTitle(b.getName() + " (Level " + b.getLevel() + ")");
-		dialogBuilder.setView(dialogView);
-		AlertDialog badgesDialog = dialogBuilder.create();
-		badgesDialog.show();
-	}
 }

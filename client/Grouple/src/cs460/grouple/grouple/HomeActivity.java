@@ -87,6 +87,11 @@ public class HomeActivity extends BaseActivity
 
 		// initializing action bar and killswitch listener
 		initActionBar("Welcome, " + user.getFirstName() + "!", false);
+		if (user.getNumNewBadges() > 0)
+		{
+			for (Badge b : user.getNewBadges())
+				badgeDialog(b);
+		}
 	}
 
 

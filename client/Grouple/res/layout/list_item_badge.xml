@@ -5,13 +5,15 @@
     android:layout_height="wrap_content"
     android:layout_weight="1"
     android:background="@drawable/border"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:layout_marginRight="5dp"
+    android:layout_marginLeft="5dp" >
 
     <ImageButton
         android:id="@+id/badgeImageButton"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:src="@drawable/event_image_default" />
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:src="@drawable/badge_nature_grey" />
 
     <TextView
         android:id="@+id/badgeNameTextView"

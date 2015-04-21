@@ -199,6 +199,8 @@ public class LoginActivity extends Activity
 					u.fetchEventInvites();
 					u.fetchFriendRequests();
 					u.fetchGroupInvites();
+					u.fetchNewBadges();
+					u.fetchBadges();
 				
 					GLOBAL.setCurrentUser(u);
 

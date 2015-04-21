@@ -114,7 +114,7 @@ public class InviteActivity extends BaseActivity {
 							cb.setChecked(true);
 
 							makeAdminButton.setTextColor(getResources().getColor(
-									R.color.orange));
+									R.color.yellow));
 						} 
 						else if (makeAdminButton.getText().toString().equals("U") && userRole.equals("A")) 
 						{
@@ -130,7 +130,7 @@ public class InviteActivity extends BaseActivity {
 							role.put(view.getId(), "A");
 							cb.setChecked(true);
 							makeAdminButton.setTextColor(getResources().getColor(
-									R.color.light_green));
+									R.color.green));
 						}
 						else if (makeAdminButton.getText().toString().equals("A") || makeAdminButton.getText().toString().equals("U")) 
 						{
@@ -154,7 +154,7 @@ public class InviteActivity extends BaseActivity {
 							cb.setChecked(true);
 
 							makeAdminButton.setTextColor(getResources().getColor(
-									R.color.orange));
+									R.color.yellow));
 						} 
 						else if (makeAdminButton.getText().toString().equals("U") && userRole.equals("A")) 
 						{
@@ -171,7 +171,7 @@ public class InviteActivity extends BaseActivity {
 							cb.setChecked(true);
 
 							makeAdminButton.setTextColor(getResources().getColor(
-									R.color.light_green));
+									R.color.green));
 						}
 						else if (makeAdminButton.getText().toString().equals("A") || makeAdminButton.getText().toString().equals("U")) 
 						{
@@ -194,7 +194,7 @@ public class InviteActivity extends BaseActivity {
 							role.put(view.getId(), "U");
 							makeAdminButton.setText("U");
 							makeAdminButton.setTextColor(getResources().getColor(
-									R.color.orange));
+									R.color.yellow));
 						}
 						else
 						{
@@ -237,7 +237,7 @@ public class InviteActivity extends BaseActivity {
 			{
 				new AddGroupMembersTask().execute("http://68.59.162.183/"+ "android_connect/add_groupmember.php", friendsEmail, user.getEmail(), friendsRole, Integer.toString(group.getID()));
 				//Send Push Notification TODO: move this to onpost somehow
-				gcmUtil.sendGroupNotification(friendsEmail,group.getName(),"GROUP_INVITE");
+				gcmUtil.sendGroupNotification(friendsEmail,group.getName(),Integer.toString(group.getID()),"GROUP_INVITE");
 			}
 				
 			

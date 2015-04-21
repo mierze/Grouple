@@ -34,6 +34,7 @@ public class User extends Entity
 	private ArrayList<Event> eventsDeclined = new ArrayList<Event>();
 	private ArrayList<Event> eventsPending = new ArrayList<Event>();
 	private ArrayList<Badge> badges = new ArrayList<Badge>();
+	private ArrayList<Badge> newBadges = new ArrayList<Badge>();
 	private SparseArray<String> groupRoles = new SparseArray<String>();
 	private SparseArray<String> eventRoles = new SparseArray<String>();
 
@@ -290,10 +291,18 @@ public class User extends Entity
 		else
 			return 0;
 	}
+	protected int getNumNewBadges()
+	{
+		return newBadges.size();
+	}
 
 	protected ArrayList<Badge> getBadges()
 	{
 		return badges;
+	}
+	protected ArrayList<Badge> getNewBadges()
+	{
+		return newBadges;
 	}
 
 	protected ArrayList<User> getFriendRequests()
@@ -340,12 +349,12 @@ public class User extends Entity
 	private void initBadges()
 	{
 		// adding all badges to the user with level 0
-		badges.add(new Badge("Environmentalist", 0, null));
-		badges.add(new Badge("Helping Hand", 0, null));
-		badges.add(new Badge("Active", 0, null));
-		badges.add(new Badge("Social", 0, null));
-		badges.add(new Badge("Jack of all Trades", 0, null));
-		badges.add(new Badge("Professional", 0, null));
+		badges.add(new Badge("Environmentalist", null));
+		badges.add(new Badge("Extrovert", null));
+		badges.add(new Badge("Active", null));
+		badges.add(new Badge("Social", null));
+		badges.add(new Badge("Amused", null));
+		badges.add(new Badge("Professional", null));
 	}
 
 	protected void addToBadges(Badge b)
@@ -1259,7 +1268,13 @@ public class User extends Entity
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 
-					// success
+					for (int i = 0; i < jsonArray.length(); i++)
+					{
+						JSONObject o = (JSONObject) jsonArray.get(i);
+						Badge b = new Badge(o.getString("name"), o.getString("date"));
+						b.setLevel(Integer.parseInt(o.getString("level")));
+						newBadges.add(b);
+					}
 				}
 
 			}
@@ -1319,8 +1334,9 @@ public class User extends Entity
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
 						JSONObject o = (JSONObject) jsonArray.get(i);
-						Badge b = new Badge(o.getString("name"), Integer.parseInt(o.getString("level")),
+						Badge b = new Badge(o.getString("name"),
 								o.getString("date"));
+						b.setLevel(Integer.parseInt(o.getString("level")));
 						addToBadges(b);
 					}
 				}

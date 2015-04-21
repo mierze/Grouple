@@ -6,7 +6,7 @@ public class Badge
 	int id;
 	private String name;
 	private int aboutID;
-	private int level;
+	private int level = 0;
 	private int imageID; // ref in drawable folder
 	private String date;
 	private Global GLOBAL = new Global();
@@ -35,7 +35,46 @@ public class Badge
 	{
 		if (name.equals("Environmentalist"))
 		{
-			imageID = R.drawable.user_image_default;
+			if (level > 0)
+				imageID = R.drawable.badge_nature_grey;
+			else
+				imageID = R.drawable.badge_nature_grey;
+		}
+		else if (name.equals("Social"))
+		{
+			if (level > 0)
+				imageID = R.drawable.badge_nature_grey;
+			else
+				imageID = R.drawable.badge_nature_grey;
+		}
+		else if (name.equals("Active"))
+		{
+			if (level > 0)
+				imageID = R.drawable.badge_nature;
+			else
+				imageID = R.drawable.badge_nature_grey;
+			
+		}
+		else if (name.equals("Professional"))
+		{
+			if (level > 0)
+				imageID = R.drawable.badge_nature_grey;
+			else
+				imageID = R.drawable.badge_nature_grey;
+		}
+		else if (name.equals("Amused"))
+		{
+			if (level > 0)
+				imageID = R.drawable.badge_nature_grey;
+			else
+				imageID = R.drawable.badge_nature_grey;
+		}
+		else if (name.equals("Extrovert"))
+		{
+			if (level > 0)
+				imageID = R.drawable.badge_nature_grey;
+			else
+				imageID = R.drawable.badge_nature_grey;
 		}
 		else
 		{
@@ -45,13 +84,12 @@ public class Badge
 
 	private String dateText;
 
-	protected Badge(String name, int level, String date)
+	protected Badge(String name, String date)
 	{
 		this.name = name;
 		this.date = date;
 		if (date != null)
 			this.dateText = GLOBAL.toYearTextFormatFromRawNoTime(date);
-		this.level = level;
 		setID();
 		setAbout();
 
@@ -100,13 +138,13 @@ public class Badge
 		{
 			aboutID = R.string.active_about;
 		}
-		else if (name.equals("Jack of all Trades"))
+		else if (name.equals("Amused"))
+		{
+			aboutID = R.string.amused_about;
+		}
+		else if (name.equals("Extrovert"))
 		{
 			aboutID = R.string.jackoftrades_about;
-		}
-		else if (name.equals("Helping Hand"))
-		{
-			aboutID = R.string.helpinghand_about;
 		}
 
 	}
@@ -119,6 +157,7 @@ public class Badge
 	protected void setLevel(int level)
 	{
 		this.level = level;
+		setImageID();
 	}
 
 	protected int getImageID()

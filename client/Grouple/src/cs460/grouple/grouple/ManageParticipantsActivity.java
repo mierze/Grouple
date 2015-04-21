@@ -159,10 +159,10 @@ public class ManageParticipantsActivity extends BaseActivity
 				makeAdminButton.setText(roles.get(index));
 				if (roles.get(index).equals("A"))
 					makeAdminButton.setTextColor(getResources().getColor(
-							R.color.light_green));
+							R.color.green));
 				else if (roles.get(index).equals("U"))
 					makeAdminButton.setTextColor(getResources().getColor(
-							R.color.orange));
+							R.color.yellow));
 				else if (roles.get(index).equals("P"))
 					makeAdminButton.setTextColor(getResources().getColor(
 							R.color.purple));
@@ -177,7 +177,7 @@ public class ManageParticipantsActivity extends BaseActivity
 							makeAdminButton.setText("A");
 							toUpdateRole.put(view.getId(), "A");
 							makeAdminButton.setTextColor(getResources()
-									.getColor(R.color.light_green));
+									.getColor(R.color.green));
 							cb.setChecked(false);
 						} else if (makeAdminButton.getText().toString()
 								.equals("A"))
@@ -185,7 +185,7 @@ public class ManageParticipantsActivity extends BaseActivity
 							makeAdminButton.setText("U");
 							toUpdateRole.put(view.getId(), "U");
 							makeAdminButton.setTextColor(getResources()
-									.getColor(R.color.orange));
+									.getColor(R.color.yellow));
 							cb.setChecked(false);
 						} else if (makeAdminButton.getText().toString()
 								.equals("U"))
@@ -200,7 +200,7 @@ public class ManageParticipantsActivity extends BaseActivity
 							makeAdminButton.setText("U");
 							toUpdateRole.put(view.getId(), "U");
 							makeAdminButton.setTextColor(getResources()
-									.getColor(R.color.orange));
+									.getColor(R.color.yellow));
 							cb.setChecked(false);
 						}
 					}
@@ -224,21 +224,21 @@ public class ManageParticipantsActivity extends BaseActivity
 							makeAdminButton.setText("A");
 							toUpdateRole.put(view.getId(), "A");
 							makeAdminButton.setTextColor(getResources()
-									.getColor(R.color.light_green));
+									.getColor(R.color.green));
 						} else if (makeAdminButton.getText().toString()
 								.equals("A"))
 						{
 							makeAdminButton.setText("U");
 							toUpdateRole.put(view.getId(), "U");
 							makeAdminButton.setTextColor(getResources()
-									.getColor(R.color.orange));
+									.getColor(R.color.yellow));
 						} else
 						{
 							makeAdminButton.setText("U");
 							toUpdateRole.put(view.getId(), "U");
 							cb.setChecked(false);
 							makeAdminButton.setTextColor(getResources()
-									.getColor(R.color.orange));
+									.getColor(R.color.yellow));
 						}
 						System.out.println("Setting role for user: "
 								+ toUpdate.get(view.getId()) + " to: "
@@ -270,7 +270,7 @@ public class ManageParticipantsActivity extends BaseActivity
 							// REMOVING THOSE CHECKED OFF FOR DELETION
 							makeAdminButton.setText("U");
 							makeAdminButton.setTextColor(getResources()
-									.getColor(R.color.orange));
+									.getColor(R.color.yellow));
 							System.out.println("Added size: " + toUpdate.size());
 							System.out.println("Role size: "
 									+ toUpdateRole.size());

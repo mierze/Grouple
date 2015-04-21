@@ -25,6 +25,7 @@ public class BaseActivity extends ActionBarActivity implements OnClickListener
 	protected Global GLOBAL;
 	protected Dialog loadDialog;
 	private BroadcastReceiver broadcastReceiver;
+	protected LayoutInflater inflater;
 	
 	@Override
 	public void onBackPressed() 
@@ -48,6 +49,7 @@ public class BaseActivity extends ActionBarActivity implements OnClickListener
 		GLOBAL = ((Global) getApplicationContext());
 		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
 		loadDialog.setOwnerActivity(this);
+		inflater = getLayoutInflater();
 		initKillswitchListener();
 	}
 
@@ -71,6 +73,32 @@ public class BaseActivity extends ActionBarActivity implements OnClickListener
 			backButton.setVisibility(View.INVISIBLE);
 		TextView actionbarTitle = (TextView) findViewById(R.id.actionbarTitleTextView);
 		actionbarTitle.setText(title);
+	}
+	
+	// dialog pop up for a single badge with description
+	// TODO: add parameters about the badge?
+	protected void badgeDialog(Badge b)
+	{
+		int level = b.getLevel();
+		View dialogView = inflater.inflate(R.layout.dialog_badge, null);
+		ImageView badgeImageView = (ImageView) dialogView.findViewById(R.id.badgeImageView);
+		TextView badgeTitleTextView = (TextView) dialogView.findViewById(R.id.badgeTitleTextView);
+
+		TextView badgeAboutTextView = (TextView) dialogView.findViewById(R.id.badgeAboutTextView);
+		if(level > 0)
+			badgeTitleTextView.setText("Congratulations! You just earned a badge!\n");
+		else
+			badgeTitleTextView.setText("You have not unlocked this badge, keep on working!\n");
+		badgeAboutTextView.setText(getResources().getString(b.getAboutID()));
+		if (b.getLevel() > 0)
+			badgeImageView.setImageDrawable(getResources().getDrawable(R.drawable.badge_nature));
+		else
+			badgeImageView.setImageDrawable(getResources().getDrawable(R.drawable.badge_nature_grey));
+		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+		dialogBuilder.setTitle(b.getName() + " (Level " + b.getLevel() + ")");
+		dialogBuilder.setView(dialogView);
+		AlertDialog badgesDialog = dialogBuilder.create();
+		badgesDialog.show();
 	}
 	
 	//for images to blow them up throughout app
