@@ -268,7 +268,7 @@ public class EventCreateActivity extends BaseActivity
 	{
 		switch (view.getId())
 		{
-		case R.id.editEventImageButton:
+		case R.id.eventEditImageButton:
 			final CharSequence[] items =
 			{ "Take Photo", "Choose from Gallery", "Cancel" };
 
@@ -577,7 +577,7 @@ public class EventCreateActivity extends BaseActivity
 									startActivity(intent);
 									finish();
 								}
-							}).setNegativeButton("View Your Event Profile", new DialogInterface.OnClickListener()
+							}).setNegativeButton("View Your Event's Profile", new DialogInterface.OnClickListener()
 							{
 								@Override
 								public void onClick(DialogInterface dialog, int which)

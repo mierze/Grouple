@@ -68,10 +68,12 @@ public class GroupCreateActivity extends BaseActivity
 		aboutEditText = (EditText) findViewById(R.id.groupAboutEditText);
 		iv = (ImageView) findViewById(R.id.groupCreateImageView);
 		editGroupImageButton = (Button) findViewById(R.id.groupEditImageButton);
-		populateGroupCreate();
+		//populateGroupCreate(); //no longer allowing invites during create itself
 		initActionBar("Create Group", true);
 	}
 		
+	//no longer allowing invites during create itself
+	/*
 	private void populateGroupCreate()
 	{
 		// begin building the interface
@@ -264,6 +266,7 @@ public class GroupCreateActivity extends BaseActivity
 			}
 		}
 	}
+	*/
 	
 	//onClick for Confirm create group button
 	public void createGroupButton(View view)
@@ -385,6 +388,9 @@ public class GroupCreateActivity extends BaseActivity
 					new AddGroupMembersTask().execute("http://68.59.162.183/"
 							+ "android_connect/add_groupmember.php", user.getEmail(), user.getEmail(), "C", g_id);
 					
+					//no longer doing during create. will instead just show confirmation box
+					
+					/*
 					//now loop through list of added to add all the additional users to the group
 					int size = added.size();
 					System.out.println("Total count of users to process: "+size);
@@ -404,6 +410,7 @@ public class GroupCreateActivity extends BaseActivity
 						new AddGroupMembersTask().execute("http://68.59.162.183/"
 								+ "android_connect/add_groupmember.php", friendsEmail, user.getEmail(), friendsRole, g_id);
 					}
+					*/
 					
 					group = new Group(Integer.parseInt(g_id));
 					group.fetchMembers();
@@ -415,10 +422,23 @@ public class GroupCreateActivity extends BaseActivity
 					AlertDialog dialog = new AlertDialog.Builder(GroupCreateActivity.this)
 					.setMessage("Nice work, you've successfully created a group!")
 					.setCancelable(true)
-					.setPositiveButton("View Group Profile", new DialogInterface.OnClickListener()
+					.setPositiveButton("Invite Friends to Your Group", new DialogInterface.OnClickListener()
 					{
 						@Override
 						public void onClick(DialogInterface dialog, int id)
+						{
+							//add code here to take user to groupaddmembersactivity page.  (pass g_id as extra so invites can be sent to correct group id)
+							loadDialog.show();
+							Intent intent = new Intent(GroupCreateActivity.this, InviteActivity.class);
+							intent.putExtra("email", user.getEmail());
+							intent.putExtra("g_id", group.getID());
+							startActivity(intent);
+							finish();
+						}
+					}).setNegativeButton("View Your Group's Profile", new DialogInterface.OnClickListener()
+					{
+						@Override
+						public void onClick(DialogInterface dialog, int which) 
 						{
 							//add code here to take user to newly created group profile page.  (pass g_id as extra so correct group profile can be loaded)
 							loadDialog.show();
@@ -427,19 +447,6 @@ public class GroupCreateActivity extends BaseActivity
 							intent.putExtra("g_id", group.getID());
 							intent.putExtra("CONTENT", "GROUP");
 							startActivity(intent);	
-							finish();
-						}
-					}).setNegativeButton("Invite More Friends", new DialogInterface.OnClickListener()
-					{
-						@Override
-						public void onClick(DialogInterface dialog, int which) 
-						{
-							//add code here to take user to groupaddmembersactivity page.  (pass g_id as extra so invites can be sent to correct group id)
-							loadDialog.show();
-							Intent intent = new Intent(GroupCreateActivity.this, InviteActivity.class);
-							intent.putExtra("email", user.getEmail());
-							intent.putExtra("g_id", group.getID());
-							startActivity(intent);
 							finish();
 						}
 					}).show();
