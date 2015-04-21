@@ -134,10 +134,17 @@ public class EventProfileActivity extends BaseActivity
 							numUnclaimed++;
 					}
 					if (numUnclaimed > 0)
+					{
 						itemListButton.setText("Item Checklist (" + numUnclaimed + " unclaimed)");
+					}
+					else if(numUnclaimed == 0)
+					{
+						itemListButton.setText("Item Checklist");
+					}
+						
 				}
 				// success, but no items returned
-				if (jsonObject.getString("success").toString().equals("2"))
+				else if (jsonObject.getString("success").toString().equals("2"))
 				{
 					//clearing to avoid duplicates
 					items.clear();
@@ -145,6 +152,7 @@ public class EventProfileActivity extends BaseActivity
 				}
 				else
 				{
+					System.out.println("\""+jsonObject.getString("success").toString()+"\"");
 					Log.d("fetchItems", "failed to return success");
 				}
 			}
@@ -354,8 +362,10 @@ public class EventProfileActivity extends BaseActivity
 			//grab the email of friend to add
 			String email = item.getEmail();
 			//grab the role of friend to add
-			if (email.equals(user.getEmail()))
-				new updateItemChecklistTask().execute("http://68.59.162.183/android_connect/update_item_checklist.php", Integer.toString(id));
+			if (email.equals(user.getEmail()) || email.equals(""))
+			{
+				new updateItemChecklistTask().execute("http://68.59.162.183/android_connect/update_item_checklist.php", Integer.toString(id), email);
+			}	
 		}
 		return 1;
 	}
@@ -367,7 +377,7 @@ public class EventProfileActivity extends BaseActivity
 		{
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("id", urls[1]));
-			nameValuePairs.add(new BasicNameValuePair("email", user.getEmail()));
+			nameValuePairs.add(new BasicNameValuePair("email", urls[2]));
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
 
@@ -379,7 +389,7 @@ public class EventProfileActivity extends BaseActivity
 				JSONObject jsonObject = new JSONObject(result);
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					System.out.println("WE HAD SUCCESS IN READ MESSAGES!");
+					System.out.println("WE HAD SUCCESS IN UPDATING TO BRING!");
 					fetchItemsToBring();
 				}
 				// user has no friends
@@ -482,6 +492,8 @@ public class EventProfileActivity extends BaseActivity
 				final String itemName = item.getName();
 				final String email = item.getEmail();
 				//grab the role of friend to add
+				
+				System.out.println("itemName found was: "+itemName+"\nemail of item was: "+email);
 
 				View row = inflater.inflate(R.layout.list_row_checklist, null);
 				final CheckBox itemCheckBox = (CheckBox) row.findViewById(R.id.itemCheckBox);
@@ -494,17 +506,36 @@ public class EventProfileActivity extends BaseActivity
 					{
 						if (itemCheckBox.isChecked())
 						{
-							itemUserNameTextView.setText(user.getEmail());
-							item.setEmail(user.getEmail());
+							if(itemUserNameTextView.getText().equals(""))
+							{
+								itemUserNameTextView.setText(user.getEmail());
+								item.setEmail(user.getEmail());
+							}
 						}
 						else if (!itemCheckBox.isChecked())
 						{
-							itemCheckBox.setChecked(true);
+							if(!email.equals(user.getEmail()))
+							{
+								System.out.println("this is not your claim");
+								itemCheckBox.setChecked(true);
+								Context context = getApplicationContext();
+								Toast toast = GLOBAL.getToast(context,
+										"Sorry, someone has already claimed that item.");
+								toast.show();
+							}
+							else
+							{
+								System.out.println("this is your claim... you change it, if you wish.");
+								itemCheckBox.setChecked(false);
+								itemUserNameTextView.setText("");
+								item.setEmail("");
+							}
 						}
 					}
 				});
-				if (email.equals("null") && email.equals(""))
+				if (!email.equals("null") && !email.equals(""))
 				{
+					System.out.println("activating a item row!");
 					itemUserNameTextView.setText(email);
 					itemCheckBox.setChecked(true);
 				}
@@ -528,8 +559,7 @@ public class EventProfileActivity extends BaseActivity
 			@Override
 			public void onCancel(DialogInterface dialog)
 			{
-				updateItemChecklist();
-				
+				updateItemChecklist();	
 			}
 		});
 		itemListAlertDialog.show();
