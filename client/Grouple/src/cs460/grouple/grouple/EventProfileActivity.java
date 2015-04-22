@@ -415,7 +415,7 @@ public class EventProfileActivity extends BaseActivity
 		loadDialog.show();
 		boolean noIntent = view.getId() == R.id.backButton ? true : false;
 
-		Intent intent = new Intent(this, ListActivity.class);
+		Intent intent = new Intent(this, UserListActivity.class);
 		switch (view.getId())
 		{
 		case R.id.profileButton1:

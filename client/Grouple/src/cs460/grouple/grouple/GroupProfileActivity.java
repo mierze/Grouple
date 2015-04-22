@@ -361,13 +361,12 @@ public class GroupProfileActivity extends BaseActivity
 		loadDialog.show();
 		boolean noIntent = view.getId() == R.id.backButton ? true : false;
 
-		Intent intent = new Intent(this, ListActivity.class);
+		Intent intent = new Intent(this, UserListActivity.class);
 		switch (view.getId())
 		{
 		case R.id.profileButton1:
-
 			// members
-			intent.putExtra("content", "GROUPS_MEMBERS");
+			intent.putExtra("content", "GROUP_MEMBERS");
 			System.out.println("Loading a group with id: " + group.getID());
 			group.fetchMembers();
 			GLOBAL.setGroupBuffer(group);
@@ -375,11 +374,9 @@ public class GroupProfileActivity extends BaseActivity
 
 			break;
 		case R.id.profileButton2:
-
 			intent = new Intent(this, EntityMessagesActivity.class);
 			intent.putExtra("content", "GROUP");
 			intent.putExtra("name", group.getName());
-
 			break;
 		case R.id.profileButton3:
 			// events UPCOMING

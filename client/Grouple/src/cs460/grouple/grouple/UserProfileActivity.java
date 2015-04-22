@@ -256,18 +256,18 @@ public class UserProfileActivity extends BaseActivity
 		loadDialog.show();
 		boolean noIntent = view.getId() == R.id.backButton ? true : false;
 
-		Intent intent = new Intent(this, ListActivity.class);
+		Intent intent = new Intent(this, EventListActivity.class);
 		switch (view.getId())
 		{
 		case R.id.profileButton1:
-
+			intent = new Intent(this, UserListActivity.class);
 			// friends
 			intent.putExtra("content", "FRIENDS_CURRENT");
 			user.fetchFriends();
 
 			break;
 		case R.id.profileButton2:
-
+			intent = new Intent(this, GroupListActivity.class);
 			intent.putExtra("content", "GROUPS_CURRENT");
 			user.fetchGroups();
 

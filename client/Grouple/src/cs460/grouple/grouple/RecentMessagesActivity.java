@@ -126,7 +126,7 @@ public class RecentMessagesActivity extends BaseActivity
 	{
 		loadDialog.show();
 		final String CONTENT = "SELECT_FRIEND";
-		Intent intent = new Intent(this, ListActivity.class);
+		Intent intent = new Intent(this, EventListActivity.class);
 		intent.putExtra("email", user.getEmail());
 		user.fetchFriends();
 		intent.putExtra("content", CONTENT);

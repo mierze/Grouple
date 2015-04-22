@@ -62,6 +62,7 @@
     <string name="helpinghand_about">This badge is for someone who goes to great lengths to provide for the events they attend. Bringing items from the item checklist can earn you this badge.</string>
     <string name="amused_about">The finder of amusement, attend a lot of entertainment events to earn this prestigious badge.</string>
 
+    <!-- COLORS -->
     <color name="hint_text_color">#7022252A</color>
     <color name="text_color">#41291C</color>
     <color name="button_text_color">#F0F0D8</color>
@@ -81,14 +82,17 @@
     <color name="blue">#5CC4E4</color>
     <color name="light_blue">#6FC2DD</color>
     <color name="green">#94CB6C</color>
-        <color name="light_green">#94CB6C</color>
+    <color name="light_green">#94CB6C</color>
     <color name="red">#F6946F</color>
-        <color name="light_red">#F6946F</color>
+    <color name="light_red">#F6946F</color>
     <color name="yellow">#EEE469</color>
-        <color name="light_yellow">#EEE469</color>
+    <color name="light_yellow">#EEE469</color>
     <color name="black">#41291C</color>
-        <color name="light_black">#AD9587</color>
+    <color name="light_black">#AD9587</color>
 
+    
+    
+    
     <string name="title_activity_edit_profile">Edit Profile</string>
     <string name="title_activity_friend_profile">FriendProfileActivity</string>
     <string name="AddGroup">Add to Group</string>

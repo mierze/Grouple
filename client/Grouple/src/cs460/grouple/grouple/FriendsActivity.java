@@ -82,7 +82,7 @@ public class FriendsActivity extends BaseActivity
 	{
 		loadDialog.show();
 		final String CONTENT = "FRIENDS_CURRENT";
-		Intent intent = new Intent(this, ListActivity.class);
+		Intent intent = new Intent(this, UserListActivity.class);
 		intent.putExtra("email", user.getEmail());
 		intent.putExtra("content", CONTENT);
 		startActivity(intent);
@@ -92,7 +92,7 @@ public class FriendsActivity extends BaseActivity
 	{
 		loadDialog.show();
 		final String CONTENT = "FRIEND_REQUESTS";
-		Intent intent = new Intent(this, ListActivity.class);
+		Intent intent = new Intent(this, UserListActivity.class);
 		intent.putExtra("content", CONTENT);
 		intent.putExtra("email", user.getEmail());
 		startActivity(intent);

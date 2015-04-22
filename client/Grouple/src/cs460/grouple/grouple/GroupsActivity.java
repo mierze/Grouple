@@ -92,7 +92,7 @@ public class GroupsActivity extends BaseActivity
 		final String CONTENT = "GROUP_INVITES";
 		user.fetchGroupInvites();
 		GLOBAL.setCurrentUser(user);//update
-		Intent intent = new Intent(this, ListActivity.class);
+		Intent intent = new Intent(this, GroupListActivity.class);
 		intent.putExtra("email", user.getEmail());
 		intent.putExtra("content", CONTENT);
 		startActivity(intent);
@@ -104,7 +104,7 @@ public class GroupsActivity extends BaseActivity
 		final String CONTENT = "GROUPS_CURRENT";
 		user.fetchGroups();
 		GLOBAL.setCurrentUser(user);//update
-		Intent intent = new Intent(this, ListActivity.class);
+		Intent intent = new Intent(this, GroupListActivity.class);
 		intent.putExtra("content", CONTENT);
 		intent.putExtra("email", user.getEmail());// specifies which
 		startActivity(intent);

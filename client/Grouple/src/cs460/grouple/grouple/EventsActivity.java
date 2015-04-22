@@ -39,7 +39,7 @@ public class EventsActivity extends BaseActivity
 	public void onClick(View view)
 	{
 		loadDialog.show();
-		Intent intent =  new Intent(this, ListActivity.class);
+		Intent intent =  new Intent(this, EventListActivity.class);
 		switch (view.getId())
 		{
 		case R.id.eventsPendingButtonEA:

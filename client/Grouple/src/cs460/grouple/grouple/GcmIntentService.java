@@ -234,7 +234,7 @@ public class GcmIntentService extends IntentService
 		//Friend request notification.
 		else if (TYPE.equals(CONTENT_TYPE.FRIEND_REQUEST.toString()))
 		{
-			Intent notificationIntent = new Intent(getApplicationContext(), ListActivity.class);
+			Intent notificationIntent = new Intent(getApplicationContext(), EventListActivity.class);
 			notificationIntent.putExtra("email", GLOBAL.getCurrentUser().getEmail());
 			notificationIntent.putExtra("name", SENDER_FIRST + " " + SENDER_LAST);
 			notificationIntent.putExtra("content", "FRIEND_REQUESTS");
@@ -258,7 +258,7 @@ public class GcmIntentService extends IntentService
 		//Group Invite notification.
 		else if (TYPE.equals(CONTENT_TYPE.GROUP_INVITE.toString()))
 		{
-			Intent notificationIntent = new Intent(getApplicationContext(), ListActivity.class);
+			Intent notificationIntent = new Intent(getApplicationContext(), EventListActivity.class);
 			
 			notificationIntent.putExtra("email", GLOBAL.getCurrentUser().getEmail());
 			notificationIntent.putExtra("name", SENDER_FIRST + " " + SENDER_LAST);
@@ -285,7 +285,7 @@ public class GcmIntentService extends IntentService
 		//Event Invite Notification.
 		else if (TYPE.equals(CONTENT_TYPE.EVENT_INVITE.toString()))
 		{
-			Intent notificationIntent = new Intent(getApplicationContext(), ListActivity.class);
+			Intent notificationIntent = new Intent(getApplicationContext(), EventListActivity.class);
 			
 			notificationIntent.putExtra("email", GLOBAL.getCurrentUser().getEmail());
 			notificationIntent.putExtra("name", SENDER_FIRST + " " + SENDER_LAST);
