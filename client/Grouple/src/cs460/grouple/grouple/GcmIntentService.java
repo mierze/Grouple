@@ -237,7 +237,7 @@ public class GcmIntentService extends IntentService
 			Intent notificationIntent = new Intent(getApplicationContext(), ListActivity.class);
 			notificationIntent.putExtra("email", GLOBAL.getCurrentUser().getEmail());
 			notificationIntent.putExtra("name", SENDER_FIRST + " " + SENDER_LAST);
-			notificationIntent.putExtra("content", CONTENT_TYPE.FRIEND_REQUEST.toString());
+			notificationIntent.putExtra("content", "FRIEND_REQUESTS");
 			GLOBAL.getCurrentUser().fetchFriendRequests();
 			GLOBAL.getCurrentUser().fetchUserInfo();
 
@@ -262,8 +262,10 @@ public class GcmIntentService extends IntentService
 			
 			notificationIntent.putExtra("email", GLOBAL.getCurrentUser().getEmail());
 			notificationIntent.putExtra("name", SENDER_FIRST + " " + SENDER_LAST);
-			notificationIntent.putExtra("content", "GROUPS_INVITES");
+			notificationIntent.putExtra("content", "GROUP_INVITES");
 			
+			GLOBAL.getCurrentUser().fetchGroupInvites();
+			GLOBAL.getCurrentUser().fetchUserInfo();
 			//TODO:???GLOBAL.getCurrentUser().fetchFriendRequests();
 			//GLOBAL.getCurrentUser().fetchUserInfo();
 			
@@ -287,8 +289,10 @@ public class GcmIntentService extends IntentService
 			
 			notificationIntent.putExtra("email", GLOBAL.getCurrentUser().getEmail());
 			notificationIntent.putExtra("name", SENDER_FIRST + " " + SENDER_LAST);
-			notificationIntent.putExtra("content", "GROUPS_INVITES");
+			notificationIntent.putExtra("content", "EVENT_INVITES");
 			
+			GLOBAL.getCurrentUser().fetchEventInvites();
+			GLOBAL.getCurrentUser().fetchUserInfo();
 			//TODO:???GLOBAL.getCurrentUser().fetchFriendRequests();
 			//GLOBAL.getCurrentUser().fetchUserInfo();
 			
@@ -336,6 +340,14 @@ public class GcmIntentService extends IntentService
 			intent.putExtra("receiver", RECEIVER);
 		}
 		else if (TYPE.equals(CONTENT_TYPE.FRIEND_REQUEST.toString()))
+		{
+			//intent = new Intent("?");
+		}
+		else if (TYPE.equals(CONTENT_TYPE.GROUP_INVITE.toString()))
+		{
+			//intent = new Intent("?");
+		}
+		else if (TYPE.equals(CONTENT_TYPE.EVENT_INVITE.toString()))
 		{
 			//intent = new Intent("?");
 		}

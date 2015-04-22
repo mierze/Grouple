@@ -56,7 +56,7 @@ public class EventsActivity extends BaseActivity
 			break;
 		case R.id.eventInvitesButtonEA:
 			user.fetchEventInvites();
-			intent.putExtra("content", "EVENTS_INVITES");
+			intent.putExtra("content", "EVENT_INVITES");
 			break;
 		case R.id.eventsPastButtonEA:
 			user.fetchEventsPast();

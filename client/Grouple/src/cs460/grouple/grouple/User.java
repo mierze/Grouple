@@ -355,6 +355,12 @@ public class User extends Entity
 		badges.add(new Badge("Social", null));
 		badges.add(new Badge("Amused", null));
 		badges.add(new Badge("Professional", null));
+		badges.add(new Badge("Healthy Lifestyle", null));
+		badges.add(new Badge("Productive", null));
+		badges.add(new Badge("Facilitator of Entertainment", null));
+		badges.add(new Badge("Fun Creator", null));
+		badges.add(new Badge("Creator", null));
+		badges.add(new Badge("Mother Nature Lover", null));
 	}
 
 	protected void addToBadges(Badge b)

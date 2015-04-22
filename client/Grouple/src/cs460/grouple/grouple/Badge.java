@@ -76,6 +76,41 @@ public class Badge
 			else
 				imageID = R.drawable.badge_nature_grey;
 		}
+		else if (name.equals("Fun Creator"))
+		{
+			if (level > 0)
+				imageID = R.drawable.badge_nature_grey;
+			else
+				imageID = R.drawable.badge_nature_grey;
+		}
+		else if (name.equals("Creator"))
+		{
+			if (level > 0)
+				imageID = R.drawable.badge_nature_grey;
+			else
+				imageID = R.drawable.badge_nature_grey;
+		}
+		else if (name.equals("Productive"))
+		{
+			if (level > 0)
+				imageID = R.drawable.badge_nature_grey;
+			else
+				imageID = R.drawable.badge_nature_grey;
+		}
+		else if (name.equals("Facilitator of Entertainment"))
+		{
+			if (level > 0)
+				imageID = R.drawable.badge_nature_grey;
+			else
+				imageID = R.drawable.badge_nature_grey;
+		}
+		else if (name.equals("Healthy Lifestyle"))
+		{
+			if (level > 0)
+				imageID = R.drawable.badge_nature_grey;
+			else
+				imageID = R.drawable.badge_nature_grey;
+		}
 		else
 		{
 			System.out.println("HAKFHJALSDFJ");
@@ -143,6 +178,26 @@ public class Badge
 			aboutID = R.string.amused_about;
 		}
 		else if (name.equals("Extrovert"))
+		{
+			aboutID = R.string.jackoftrades_about;
+		}
+		else if (name.equals("Creator"))
+		{
+			aboutID = R.string.jackoftrades_about;
+		}
+		else if (name.equals("Fun Creator"))
+		{
+			aboutID = R.string.jackoftrades_about;
+		}
+		else if (name.equals("Productive"))
+		{
+			aboutID = R.string.jackoftrades_about;
+		}
+		else if (name.equals("Mother Nature Lover"))
+		{
+			aboutID = R.string.jackoftrades_about;
+		}
+		else
 		{
 			aboutID = R.string.jackoftrades_about;
 		}

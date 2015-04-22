@@ -127,6 +127,7 @@ public class BaseActivity extends ActionBarActivity implements OnClickListener
 			break;
 		case R.id.action_profile:
 			user.fetchUserInfo();
+			user.fetchBadges();
 			user.fetchEventsPast();
 			user.fetchEventsUpcoming();
 			user.fetchFriends();

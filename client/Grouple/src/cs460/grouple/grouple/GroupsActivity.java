@@ -89,7 +89,7 @@ public class GroupsActivity extends BaseActivity
 	public void startGroupInvitesActivity(View view)
 	{
 		loadDialog.show();
-		final String CONTENT = "GROUPS_INVITES";
+		final String CONTENT = "GROUP_INVITES";
 		user.fetchGroupInvites();
 		GLOBAL.setCurrentUser(user);//update
 		Intent intent = new Intent(this, ListActivity.class);
