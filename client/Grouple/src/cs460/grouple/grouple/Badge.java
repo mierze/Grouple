@@ -18,17 +18,14 @@ public class Badge
 
 	protected void setDate(String date)
 	{
+		if (date != null)
+			this.dateText = GLOBAL.toYearTextFormatFromRawNoTime(date);
 		this.date = date;
 	}
 
 	protected String getDateText()
 	{
 		return dateText;
-	}
-
-	protected void setDateText(String dateText)
-	{
-		this.dateText = dateText;
 	}
 
 	protected void setImageID()
@@ -113,7 +110,10 @@ public class Badge
 		}
 		else
 		{
-			System.out.println("HAKFHJALSDFJ");
+			if (level > 0)
+				imageID = R.drawable.badge_nature_grey;
+			else
+				imageID = R.drawable.badge_nature_grey;
 		}
 	}
 
@@ -122,9 +122,8 @@ public class Badge
 	protected Badge(String name, String date)
 	{
 		this.name = name;
-		this.date = date;
-		if (date != null)
-			this.dateText = GLOBAL.toYearTextFormatFromRawNoTime(date);
+		setDate(date);
+
 		setID();
 		setAbout();
 
@@ -179,27 +178,27 @@ public class Badge
 		}
 		else if (name.equals("Extrovert"))
 		{
-			aboutID = R.string.jackoftrades_about;
+			aboutID = R.string.wellrounded_about;
 		}
 		else if (name.equals("Creator"))
 		{
-			aboutID = R.string.jackoftrades_about;
+			aboutID = R.string.wellrounded_about;
 		}
 		else if (name.equals("Fun Creator"))
 		{
-			aboutID = R.string.jackoftrades_about;
+			aboutID = R.string.wellrounded_about;
 		}
 		else if (name.equals("Productive"))
 		{
-			aboutID = R.string.jackoftrades_about;
+			aboutID = R.string.wellrounded_about;
 		}
 		else if (name.equals("Mother Nature Lover"))
 		{
-			aboutID = R.string.jackoftrades_about;
+			aboutID = R.string.wellrounded_about;
 		}
 		else
 		{
-			aboutID = R.string.jackoftrades_about;
+			aboutID = R.string.wellrounded_about;
 		}
 
 	}

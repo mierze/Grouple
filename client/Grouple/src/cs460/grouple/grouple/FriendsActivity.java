@@ -91,7 +91,7 @@ public class FriendsActivity extends BaseActivity
 	public void startFriendRequestsActivity(View view)
 	{
 		loadDialog.show();
-		final String CONTENT = "FRIENDS_REQUESTS";
+		final String CONTENT = "FRIEND_REQUESTS";
 		Intent intent = new Intent(this, ListActivity.class);
 		intent.putExtra("content", CONTENT);
 		intent.putExtra("email", user.getEmail());

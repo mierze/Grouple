@@ -408,7 +408,7 @@ public class UserProfileActivity extends BaseActivity
 		{
 	
 			final int index = badges.indexOf(b);
-			if (index % 4 == 0 || index == 0)
+			if (index % 3 == 0 || index == 0)
 			{
 				row = (LinearLayout) inflater.inflate(R.layout.list_row_badges, null);
 				layout.addView(row);

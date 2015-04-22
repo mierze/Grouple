@@ -2246,7 +2246,6 @@ containing a value of this type.
         public static final int inviteMembersMessage=0x7f070036;
         public static final int ip=0x7f070030;
         public static final int isAdmin=0x7f070070;
-        public static final int jackoftrades_about=0x7f070067;
         public static final int lNameEditText=0x7f07003e;
         public static final int loginButton=0x7f07003f;
         public static final int loginFailString=0x7f07005a;
@@ -2302,6 +2301,7 @@ containing a value of this type.
          available or up-to-date 
          */
         public static final int wallet_buy_button_place_holder=0x7f070022;
+        public static final int wellrounded_about=0x7f070067;
         public static final int yourGroupsButton=0x7f07004d;
     }
     public static final class style {

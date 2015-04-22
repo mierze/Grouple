@@ -349,18 +349,23 @@ public class User extends Entity
 	private void initBadges()
 	{
 		// adding all badges to the user with level 0
-		badges.add(new Badge("Environmentalist", null));
-		badges.add(new Badge("Extrovert", null));
-		badges.add(new Badge("Active", null));
-		badges.add(new Badge("Social", null));
-		badges.add(new Badge("Amused", null));
-		badges.add(new Badge("Professional", null));
-		badges.add(new Badge("Healthy Lifestyle", null));
-		badges.add(new Badge("Productive", null));
-		badges.add(new Badge("Facilitator of Entertainment", null));
-		badges.add(new Badge("Fun Creator", null));
-		badges.add(new Badge("Creator", null));
-		badges.add(new Badge("Mother Nature Lover", null));
+		badges.add(new Badge("Outdoorsman", null)); //nature count
+		badges.add(new Badge("Agile", null)); //fitness count
+		badges.add(new Badge("Gregarious", null)); //social count
+		badges.add(new Badge("Amused", null)); //entertainment count
+		badges.add(new Badge("Diligent", null)); //professional count
+		badges.add(new Badge("Extrovert", null)); //total count
+		
+		badges.add(new Badge("Health Nut", null)); //create fitness count
+		badges.add(new Badge("Productive", null)); //create professional count
+		badges.add(new Badge("Merrymaker", null)); //create entertainment count
+		badges.add(new Badge("Congregator", null)); //create social count
+		badges.add(new Badge("Environmentalist", null)); //create nature count
+		badges.add(new Badge("Creator", null)); //create total count
+		
+		badges.add(new Badge("Active", null)); //per week count
+		badges.add(new Badge("Well Rounded", null)); //participated in all categories
+		badges.add(new Badge("Helping Hand", null)); //bring items to event
 	}
 
 	protected void addToBadges(Badge b)
@@ -368,6 +373,7 @@ public class User extends Entity
 		for (Badge t : badges)
 			if (t.getName().equals(b.getName()))
 			{
+				t.setDate(b.getDate());
 				t.setLevel(b.getLevel());
 			}
 	}
