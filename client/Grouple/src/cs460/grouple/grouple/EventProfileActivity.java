@@ -37,7 +37,6 @@ public class EventProfileActivity extends BaseActivity
 	private String CONTENT; // type of content to display in profile, passed in
 							// from other activities
 	private LinearLayout profileLayout;
-	LayoutInflater inflater;
 	private Button profileButton1;
 	private Button profileButton2;
 	private Button profileButton3;
@@ -57,6 +56,7 @@ public class EventProfileActivity extends BaseActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_event_profile);
 		profileLayout = (LinearLayout) findViewById(R.id.profileLayout);
+
 		profileButton1 = (Button) findViewById(R.id.profileButton1);
 		profileButton2 = (Button) findViewById(R.id.profileButton2);
 		profileButton3 = (Button) findViewById(R.id.profileButton3);
@@ -64,7 +64,6 @@ public class EventProfileActivity extends BaseActivity
 		infoTextView = (TextView) findViewById(R.id.profileInfoTextView);
 		aboutTextView = (TextView) findViewById(R.id.profileAboutTextView);
 		itemListButton = (Button) findViewById(R.id.itemListButton);
-		inflater = getLayoutInflater();
 		iv = (ImageView) findViewById(R.id.profileImageUPA);
 		gcmUtil = new GcmUtility(GLOBAL);
 	}
@@ -86,6 +85,27 @@ public class EventProfileActivity extends BaseActivity
 		// spice and push the color association
 		// profileLayout.setBackgroundColor(getResources().getColor(R.color.sports_background_color));
 		title = event.getName();
+		
+		if (event.getCategory().equals("Social"))
+		{
+			profileLayout.setBackgroundColor(getResources().getColor(R.color.light_red));
+		}
+		else if (event.getCategory().equals("Professional"))
+		{
+			profileLayout.setBackgroundColor(getResources().getColor(R.color.light_blue));
+		}
+		else if (event.getCategory().equals("Fitness"))
+		{
+			profileLayout.setBackgroundColor(getResources().getColor(R.color.light_yellow));
+		}
+		else if (event.getCategory().equals("Nature"))
+		{
+			profileLayout.setBackgroundColor(getResources().getColor(R.color.light_green));
+		}
+		else if (event.getCategory().equals("Entertainment"))
+		{
+			profileLayout.setBackgroundColor(getResources().getColor(R.color.light_purple));
+		}
 		setRole();
 		getImageTask = new getImageTask().execute("http://68.59.162.183/android_connect/get_profile_image.php");
 		populateProfile(); // populates a group / user profile
