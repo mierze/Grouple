@@ -463,6 +463,13 @@ public class EventProfileActivity extends BaseActivity
 			break;
 		case R.id.profileEditButton:
 			intent = new Intent(this, EventEditActivity.class);
+			//add reprososed extra if clicking this button when it says "repropose event" instead of "edit event"
+			if(!profileButton6.getText().toString().equals("Edit Event"))
+			{
+				System.out.println("adding reproposed extra!");
+				intent.putExtra("reproposed", 1);
+				finish();
+			}
 			break;
 		default:
 			break;
