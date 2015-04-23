@@ -31,9 +31,9 @@ public class GroupProfileActivity extends BaseActivity
 	private Bundle EXTRAS;
 	private String CONTENT; // type of content to display in profile, passed in
 							// from other activities
-	private LinearLayout profileLayout;
+
 	private View xpBar;
-	private View pastEventsBadgesLayout;
+
 	private Button profileButton1;
 	private Button profileButton2;
 	private Button profileButton3;
@@ -49,7 +49,7 @@ public class GroupProfileActivity extends BaseActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_group_profile);
-		profileLayout = (LinearLayout) findViewById(R.id.profileLayout);
+
 		xpBar = findViewById(R.id.xpBar);
 		xpProgressBar = (ProgressBar) findViewById(R.id.xpProgressBar);
 		levelTextView = (TextView) findViewById(R.id.levelTextView);
@@ -58,7 +58,6 @@ public class GroupProfileActivity extends BaseActivity
 		profileButton2 = (Button) findViewById(R.id.profileButton2);
 		profileButton3 = (Button) findViewById(R.id.profileButton3);
 		profileButton6 = (Button) findViewById(R.id.profileEditButton);
-		pastEventsBadgesLayout = findViewById(R.id.profilePastEventsBadgesLayout);
 		iv = (ImageView) findViewById(R.id.profileImageUPA);
 		gcmUtil = new GcmUtility(GLOBAL);
 	}

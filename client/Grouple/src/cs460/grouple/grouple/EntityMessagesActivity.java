@@ -39,7 +39,7 @@ public class EntityMessagesActivity extends BaseActivity
     private ArrayList<String> regIDList = new ArrayList<String>();
     private Bundle EXTRAS;
     private String ID;
-    private String CONTENT_TYPE;
+    private String CONTENT;
     private String SENDER_ID = "957639483805"; 
     private ArrayList<Message> messages = new ArrayList<Message>();  
     private GoogleCloudMessaging gcm;
@@ -61,7 +61,7 @@ public class EntityMessagesActivity extends BaseActivity
 	        // Extract data included in the Intent
 	    	String type = intent.getStringExtra("type");
 	        String id = intent.getStringExtra("id");
-	        if (type.equals("GROUP_MESSAGE") && CONTENT_TYPE.equals("GROUP"))
+	        if (type.equals("GROUP_MESSAGE") && CONTENT.equals("GROUP"))
 	        {
 		        if (id.equals(ID))
 		        {
@@ -69,7 +69,7 @@ public class EntityMessagesActivity extends BaseActivity
 		        	fetchMessages(); 
 		        }
 	        }
-	        else if (type.equals("EVENT_MESSAGE") && CONTENT_TYPE.equals("EVENT"))
+	        else if (type.equals("EVENT_MESSAGE") && CONTENT.equals("EVENT"))
 	        {
 	        	  if (id.equals(ID))
 			        {
@@ -94,8 +94,8 @@ public class EntityMessagesActivity extends BaseActivity
     	inflater = getLayoutInflater();
 		initActionBar(EXTRAS.getString("name"), true);
 		gcm = GoogleCloudMessaging.getInstance(this);
-		CONTENT_TYPE = EXTRAS.getString("content");
-		if (CONTENT_TYPE.equals("GROUP"))
+		CONTENT = EXTRAS.getString("content");
+		if (CONTENT.equals("GROUP"))
 		{
 			group = GLOBAL.getGroupBuffer();
 			NAME = group.getName();
@@ -163,7 +163,7 @@ public class EntityMessagesActivity extends BaseActivity
 		@Override
 		protected String doInBackground(String... urls)
 		{
-			String type = CONTENT_TYPE.equals("GROUP") ? "g_id" : "e_id";
+			String type = CONTENT.equals("GROUP") ? "g_id" : "e_id";
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair(type, ID));
 			nameValuePairs.add(new BasicNameValuePair("email", user.getEmail()));
@@ -198,17 +198,15 @@ public class EntityMessagesActivity extends BaseActivity
 	public void onBackPressed() 
 	{
     	super.onBackPressed();
-    	if (CONTENT_TYPE.equals("group"))
+    	if (CONTENT.equals(CONTENT))
     	{
     		group.fetchGroupInfo();
     		group.fetchMembers();
-    		GLOBAL.setGroupBuffer(group);
     	}
     	else
     	{
     		event.fetchEventInfo();
     		event.fetchParticipants();
-    		GLOBAL.setEventBuffer(event);
     	}
     	//finish();
 	    return;
@@ -220,7 +218,7 @@ public class EntityMessagesActivity extends BaseActivity
 		@Override
 		protected String doInBackground(String... urls)
 		{
-			String type = CONTENT_TYPE.equals("GROUP") ? "g_id" : "e_id";
+			String type = CONTENT.equals("GROUP") ? "g_id" : "e_id";
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			//The msg is urls[1], sender urls[2], receiver urls[3]
 			nameValuePairs.add(new BasicNameValuePair("msg", urls[1]));
@@ -289,7 +287,7 @@ public class EntityMessagesActivity extends BaseActivity
             if(!(msg.compareTo("") ==0))
             {
             	sendMessageButton.setClickable(false);
-               if (CONTENT_TYPE.equals("GROUP"))
+               if (CONTENT.equals("GROUP"))
             	   new storeMessageTask().execute("http://68.59.162.183/android_connect/send_group_message.php",msg, user.getEmail(), ID);
                else
             	   new storeMessageTask().execute("http://68.59.162.183/android_connect/send_event_message.php",msg, user.getEmail(), ID);
@@ -308,7 +306,7 @@ public class EntityMessagesActivity extends BaseActivity
                             messages.add(m);
                             data.putString("msg", msg);
                             data.putString("my_action", "cs460.grouple.grouple.ECHO_NOW");
-                            data.putString("content", CONTENT_TYPE + "_MESSAGE");
+                            data.putString("content", CONTENT + "_MESSAGE");
                             data.putString("receiver", ID);//may want to just use receiver for all instead of ID
                             data.putString("sender", user.getEmail());
                             data.putString("id", ID);
@@ -357,7 +355,7 @@ public class EntityMessagesActivity extends BaseActivity
     //grabs from the database group or event messages, respectively
 	public int fetchMessages()
 	{
-		if (CONTENT_TYPE.equals("GROUP"))
+		if (CONTENT.equals("GROUP"))
 			new getMessagesTask().execute("http://68.59.162.183/android_connect/get_group_messages.php");
 		else
 			new getMessagesTask().execute("http://68.59.162.183/android_connect/get_event_messages.php");
@@ -370,7 +368,7 @@ public class EntityMessagesActivity extends BaseActivity
 		@Override
 		protected String doInBackground(String... urls)
 		{
-			String type = CONTENT_TYPE.equals("GROUP") ? "g_id" : "e_id";
+			String type = CONTENT.equals("GROUP") ? "g_id" : "e_id";
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			System.out.println("GRABBING MESSAGES ID = " + ID);
 			nameValuePairs.add(new BasicNameValuePair(type, ID));
@@ -423,7 +421,7 @@ public class EntityMessagesActivity extends BaseActivity
 		@Override
 		protected String doInBackground(String... urls)
 		{
-			String type = CONTENT_TYPE.equals("GROUP") ? "g_id" : "e_id";
+			String type = CONTENT.equals("GROUP") ? "g_id" : "e_id";
 			Global global = ((Global) getApplicationContext());
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			//The recipient's email is urls[1]

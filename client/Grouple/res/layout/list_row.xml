@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/friendGridLayout"
+    android:id="@+id/listRowLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:onClick="startProfileActivity"
     android:background="@drawable/selector_listrow"
-    android:clickable="true"
-    android:onClick="startProfileActivity" >
+    android:clickable="true" >
 
   	<TextView
   	    android:id="@+id/nameTextViewLI"

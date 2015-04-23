@@ -14,8 +14,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,20 +38,22 @@ public class GroupListActivity extends BaseActivity
 		GROUPS_CURRENT, GROUP_INVITES;
 	}	
 	
+	//LIST-VIEW STUFF
+	private ArrayList<Group> groups;
+	
 	//CLASS-WIDE DECLARATIONS
 	private User user; //user whose current groups displayed
 	private Group group;
 	private Bundle EXTRAS; //extras passed in from the activity that called ListActivity
 	private String CONTENT; //type of content to display in list, passed in from other activities
-	private LinearLayout listLayout; //layout for list activity (scrollable layout to inflate into)
-	private LayoutInflater li;
+	private ListView listLayout; //layout for list activity (scrollable layout to inflate into)
+	private int listItemID;
 	private String ROLE = "U";//defaulting to lowest level
 	private String PANDABUFFER = ""; //same
 	private int bufferID; //same as below: could alternatively have json return the values instead of saving here	
 	private Button addNew;
 	//TESTING
-	private ArrayList<User> users;
-	private ArrayList<Group> groups;
+
 
 	/* loading in everything needed to generate the list */
 	public void load()
@@ -66,17 +73,27 @@ public class GroupListActivity extends BaseActivity
 
 		
 		//CLEAR LIST
-		listLayout.removeAllViews();
+		//listLayout.removeAllViews();
 		
 		//CALL APPROPRIATE METHODS TO POPULATE LIST
 		//CONTENT_TYPE -> POPULATEGROUPS
 		if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()) || CONTENT.equals(CONTENT_TYPE.GROUP_INVITES.toString()))
 		{
 			if (CONTENT.equals(CONTENT_TYPE.GROUP_INVITES.toString()))
+			{
 				actionBarTitle = user.getFirstName() + "'s Group Invites";
+				listItemID = R.layout.list_row_acceptdecline;
+			}
 			if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
 			{
 				actionBarTitle = user.getFirstName() + "'s Groups";
+				if (GLOBAL.isCurrentUser(user.getEmail()))
+				{
+					listItemID = R.layout.list_row;
+					
+				}
+				else
+					listItemID = R.layout.list_row_nobutton;
 			}
 			populateGroups();
 		//CONTENT_TYPE -> POPULATEEVENTS
@@ -86,16 +103,52 @@ public class GroupListActivity extends BaseActivity
 
 	}
 	
+	
+	private class GroupListAdapter extends ArrayAdapter<Group> {
+		public GroupListAdapter()
+		{
+			super(GroupListActivity.this, listItemID, groups);
+		}
+		
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent)
+		{
+			View itemView = convertView;
+			if (itemView == null)
+				itemView = inflater.inflate(listItemID, parent, false);
+			RelativeLayout itemLayout = (RelativeLayout)itemView.findViewById(R.id.listRowLayout);
+			//find group to work with
+			Group g = groups.get(position);
+			TextView nameView = (TextView) itemView.findViewById(R.id.nameTextViewLI);
+			nameView.setText(g.getName());
+			//nameView.setId(g.getID());
+			System.out.println(g.getID());
+			itemView.setId(g.getID());
+			Button deleteButton;
+			// fill the view
+			return itemView;
+		}
+	}
+	
+	private void registerClickCallback()
+	{
+		ListView list = ((ListView)findViewById(R.id.listLayout));
+		list.setOnItemClickListener(new AdapterView.OnItemClickListener()
+		{
+			@Override 
+			public void onItemClick(AdapterView<?> parent, View viewClicked, int position, long id)
+			{
+				System.out.println("ADSFASFDA\b\n\n\n\n");
+				Group g = groups.get(position);
+				//startProfileActivity(g);
+			}
+		});
+	}
 	//populates a list of groups
+	//populateListView
 	private void populateGroups()
 	{
 		String sadGuyText = "";
-		String name = "";
-		TextView nameView;
-		View row = null;
-		int index;
-		int id;		
-		
 		if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
 		{
 			groups = user.getGroups();
@@ -107,47 +160,21 @@ public class GroupListActivity extends BaseActivity
 			sadGuyText = "You do not have any group invites.";
 		}
 
+
 		//looping thru and populating list of groups
 		if (groups != null && !groups.isEmpty())
 		{
-			for (Group g : groups)
-			{
-				index = groups.indexOf(g);
-				id = groups.get(index).getID();
-				name = groups.get(index).getName();
-				
-				//GROUPS CURRENT
-				if  (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
-				{
-					if (GLOBAL.isCurrentUser(user.getEmail()))
-					{
-						row = li.inflate(R.layout.list_row, null);
-						Button leaveGroupButton = (Button)row.findViewById(R.id.removeButtonLI);
-						leaveGroupButton.setId(g.getID());
-					}
-					else
-						row = li.inflate(R.layout.list_row_nobutton, null);
-					
-					nameView =  (TextView)row.findViewById(R.id.nameTextViewLI);
-				}
-				else //GROUP INVITES
-				{
-					row = li.inflate(R.layout.list_row_acceptdecline, null);
-					nameView =  (TextView)row.findViewById(R.id.emailTextView);
-				}
-				row.setId(id);
-				nameView.setId(id);
-				nameView.setText(name);
-				listLayout.addView(row);
-			}		
+			ArrayAdapter<Group> adapter = new GroupListAdapter();
+			listLayout.setAdapter(adapter);		
 		}
 		else
 		{
 			// The user has no groups so display the sad guy
-			row = li.inflate(R.layout.list_item_sadguy, null);
+			View row = inflater.inflate(R.layout.list_item_sadguy, null);
 			((TextView) row.findViewById(R.id.sadGuyTextView)).setText(sadGuyText);
 			listLayout.addView(row);
 		}	
+		
 	}
 	
 			
@@ -159,13 +186,12 @@ public class GroupListActivity extends BaseActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list);
 		//clearing any previous views populated, for refresh
-		listLayout = ((LinearLayout)findViewById(R.id.listLayout));
+		listLayout = ((ListView)findViewById(R.id.listLayout));
 		//INSTANTIATIONS
 		EXTRAS =  getIntent().getExtras();
 		CONTENT = EXTRAS.getString("content");
-		listLayout = ((LinearLayout)findViewById(R.id.listLayout));
-		li = getLayoutInflater();	
 		addNew = (Button)findViewById(R.id.addNewButtonLiA);
+		//registerClickCallback();
 	}
 	@Override
 	protected void onResume()
@@ -223,12 +249,12 @@ public class GroupListActivity extends BaseActivity
 	public void startProfileActivity(View view)
 	{
 		loadDialog.show();
-		int id = view.getId();		
+		int id = view.getId();
+		Group g = new Group(id);
 		Intent intent = new Intent(this, GroupProfileActivity.class);
 
 		intent.putExtra("g_id", id);
 			intent.putExtra("email", user.getEmail());
-			Group g = new Group(id);
 			g.fetchGroupInfo();
 			g.fetchMembers();
 			GLOBAL.setGroupBuffer(g);

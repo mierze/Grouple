@@ -168,7 +168,8 @@ public class BaseActivity extends ActionBarActivity implements OnClickListener
 		if (intent != null)
 		{
 			GLOBAL.setCurrentUser(user);
-			intent.putExtra("email", user.getEmail());
+			if (user != null)
+				intent.putExtra("email", user.getEmail());
 			startActivity(intent);
 		}
 		return super.onOptionsItemSelected(item);
