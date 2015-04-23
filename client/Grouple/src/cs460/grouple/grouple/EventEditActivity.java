@@ -73,11 +73,13 @@ public class EventEditActivity extends BaseActivity
 	private EditText maxEditText;
 	private EditText startEditText;
 	private EditText endEditText;
+	private EditText recurringButton;
 	private Calendar currentCal;
 	private Calendar startCal;
 	private Calendar endCal;
 	private int year, month, day, hour, minute;
 	private AlertDialog categoryDialog;
+	private AlertDialog recurringDialog;
 	private Bundle EXTRAS;
 	private LayoutInflater inflater;
 	private TextView errorTextView;
@@ -85,6 +87,7 @@ public class EventEditActivity extends BaseActivity
 	private Button addToBringRowButton;
 	private Button toBringButton;
 	private View toBringLayout;
+	private String recurring;
 	private final ArrayList<EditText> toBringEditTexts = new ArrayList<EditText>();
 	private ArrayList<String> itemNames = new ArrayList<String>();
 	private ArrayList<String> itemEmails = new ArrayList<String>();
@@ -113,6 +116,7 @@ public class EventEditActivity extends BaseActivity
 		startEditText = (EditText) findViewById(R.id.startTimeButtonEEA);
 		endEditText = (EditText) findViewById(R.id.endTimeButtonEEA);
 		toBringButton = (Button) findViewById(R.id.toBringButton);
+		recurringButton = (EditText) findViewById(R.id.recurringButton);
 		// init variables
 		currentCal = Calendar.getInstance();
 		year = currentCal.get(Calendar.YEAR);
@@ -245,6 +249,23 @@ public class EventEditActivity extends BaseActivity
 		startDate = event.getStartDate();
 		endEditText.setText(event.getEndText());
 		endDate = event.getEndDate();
+		recurring = event.getRecurringType();
+		if(recurring.equals("A"))
+		{
+			recurringButton.setText("Recurring Event: Anually");
+		}
+		else if(recurring.equals("M"))
+		{
+			recurringButton.setText("Recurring Event: Monthly");
+		}
+		else if(recurring.equals("W"))
+		{
+			recurringButton.setText("Recurring Event: Weekly");
+		}
+		else if(recurring.equals("O"))
+		{
+			recurringButton.setText("One-time Event");
+		}
 	}
 	
 	// onClick for items to bring
@@ -518,13 +539,57 @@ public class EventEditActivity extends BaseActivity
 			dpd.show();
 		}
 	}
+	
+	// onClick for select recurring
+			public void selectRecurring(View view)
+			{
+				System.out.println("clicked on recurring button");
+				//display a dialog box that allows user to choose recurrig options (Annually, monthly, or weekly)
+				
+				// Strings to Show In Dialog with Radio Buttons
+				final CharSequence[] items =
+				{ "Just Once","Weekly", "Monthly", "Annually"};
+
+				// Creating and Building the Dialog
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				builder.setTitle("How often do you want this event to occur?");
+				builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener()
+				{
+					public void onClick(DialogInterface dialog, int item)
+					{
+						switch (item)
+						{
+						case 0:
+							recurringButton.setText("One-time Event");
+							recurring = "O";
+							break;
+						case 1:
+							recurringButton.setText("Recurring Event: "+items[1]);
+							recurring = "W";
+							break;
+						case 2:
+							recurringButton.setText("Recurring Event: "+items[2]);
+							recurring = "M";
+							break;
+						case 3:
+							recurringButton.setText("Recurring Event: "+items[3]);
+							recurring = "A";
+							break;
+						}
+						recurringDialog.cancel();
+					}
+				});
+				recurringDialog = builder.create();
+				recurringDialog.show();
+				
+			}
 
 	// Button Listener for when user clicks on category.
 	public void selectCategoryButton(View view)
 	{
 		// Strings to Show In Dialog with Radio Buttons
 		final CharSequence[] items =
-		{ "Social ", "Entertainment / Games ", "Professional / Education ", "Sports / Fitness ", "Nature" };
+		{ "Social", "Entertainment", "Professional", "Fitness", "Nature" };
 		// Creating and Building the Dialog
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Select your category");
@@ -613,6 +678,7 @@ public class EventEditActivity extends BaseActivity
 				builder.addTextBody("start_date", startDate,
 						ContentType.TEXT_PLAIN);
 				builder.addTextBody("end_date", endDate, ContentType.TEXT_PLAIN);
+				builder.addTextBody("recurring_type", recurring, ContentType.TEXT_PLAIN);
 				builder.addTextBody("category", categoryEditText.getText()
 						.toString(), ContentType.TEXT_PLAIN);
 				builder.addTextBody("min_part", minEditText.getText()

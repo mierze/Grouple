@@ -66,7 +66,9 @@ public class EventCreateActivity extends BaseActivity
 	private EditText locationEditText;
 	private EditText aboutEditText;
 	private EditText nameEditText;
+	private EditText recurringButton;
 	private AlertDialog categoryDialog;
+	private AlertDialog recurringDialog;
 	private AlertDialog toBringDialog;
 	private Button addToBringRowButton;
 	private Button toBringButton;
@@ -81,6 +83,7 @@ public class EventCreateActivity extends BaseActivity
 	private final ArrayList<EditText> toBringEditTexts = new ArrayList<EditText>();
 	private int year, month, day, hour, minute;
 	private ArrayList<String> itemNames = new ArrayList<String>();
+	private String recurring;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -105,6 +108,7 @@ public class EventCreateActivity extends BaseActivity
 		endDateEditText = (EditText) findViewById(R.id.endTimeButton);
 		aboutEditText = (EditText) findViewById(R.id.eventAboutEditText);
 		nameEditText = (EditText) findViewById(R.id.eventNameEditText);
+		recurringButton = (EditText) findViewById(R.id.recurringButton);
 		iv = (ImageView) findViewById(R.id.eventCreateImageView);
 		editEventImageButton = (Button) findViewById(R.id.editEventImageButton);
 		// grab the email of current users from our GLOBAL class
@@ -191,7 +195,7 @@ public class EventCreateActivity extends BaseActivity
 
 		// Strings to Show In Dialog with Radio Buttons
 		final CharSequence[] items =
-		{ "Social ", "Entertainment / Games ", "Professional / Education ", "Sports / Fitness ", "Nature" };
+		{ "Social", "Entertainment", "Professional", "Fitness", "Nature" };
 
 		// Creating and Building the Dialog
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -263,6 +267,50 @@ public class EventCreateActivity extends BaseActivity
 			dpd.show();
 		}
 	}
+	
+	// onClick for select recurring
+		public void selectRecurring(View view)
+		{
+			System.out.println("clicked on recurring button");
+			//display a dialog box that allows user to choose recurrig options (Annually, monthly, or weekly)
+			
+			// Strings to Show In Dialog with Radio Buttons
+			final CharSequence[] items =
+			{ "Just Once","Weekly", "Monthly", "Annually"};
+
+			// Creating and Building the Dialog
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("How often do you want this event to occur?");
+			builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener()
+			{
+				public void onClick(DialogInterface dialog, int item)
+				{
+					switch (item)
+					{
+					case 0:
+						recurringButton.setText("One-time Event");
+						recurring = "O";
+						break;
+					case 1:
+						recurringButton.setText("Recurring Event: "+items[1]);
+						recurring = "W";
+						break;
+					case 2:
+						recurringButton.setText("Recurring Event: "+items[2]);
+						recurring = "M";
+						break;
+					case 3:
+						recurringButton.setText("Recurring Event: "+items[3]);
+						recurring = "A";
+						break;
+					}
+					recurringDialog.cancel();
+				}
+			});
+			recurringDialog = builder.create();
+			recurringDialog.show();
+			
+		}
 
 	public void onClick(View view)
 	{
@@ -503,6 +551,10 @@ public class EventCreateActivity extends BaseActivity
 			// grab group name and bio from textviews
 			String name = nameEditText.getText().toString();
 			String about = aboutEditText.getText().toString();
+			if(recurring.equals(""))
+			{
+				recurring = "O";
+			}
 
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("e_name", name));
@@ -514,7 +566,8 @@ public class EventCreateActivity extends BaseActivity
 			nameValuePairs.add(new BasicNameValuePair("min_part", minimum));
 			nameValuePairs.add(new BasicNameValuePair("max_part", maximum));
 			nameValuePairs.add(new BasicNameValuePair("location", location));
-
+			nameValuePairs.add(new BasicNameValuePair("recurring", recurring));
+			
 			// loop through toBringList, adding each member into php array
 			// toBring[]
 			for (int i = 0; i < itemNames.size(); i++)
