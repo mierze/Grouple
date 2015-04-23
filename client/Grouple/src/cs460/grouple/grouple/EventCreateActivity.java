@@ -407,7 +407,7 @@ public class EventCreateActivity extends BaseActivity
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 				try
 				{
-					endCal.setTime(sdf.parse(endDate));
+					endCal.setTime(sdf.parse(startDate));
 					System.out.println("cal was parsed from tmpStartDate!");
 				}
 				catch (ParseException e)

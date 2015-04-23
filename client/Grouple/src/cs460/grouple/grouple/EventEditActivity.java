@@ -27,6 +27,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -63,6 +64,7 @@ public class EventEditActivity extends BaseActivity
 	private ImageView iv;
 	private Bitmap bmp;
 	private Event event;
+	private String ID;
 	private String startDate;
 	private String endDate;
 	private EditText nameEditText;
@@ -86,8 +88,11 @@ public class EventEditActivity extends BaseActivity
 	private AlertDialog toBringDialog;
 	private Button addToBringRowButton;
 	private Button toBringButton;
+	private Button manageEventButton;
+	private Button submitButton;
 	private View toBringLayout;
 	private String recurring;
+	private User user;
 	private final ArrayList<EditText> toBringEditTexts = new ArrayList<EditText>();
 	private ArrayList<String> itemNames = new ArrayList<String>();
 	private ArrayList<String> itemEmails = new ArrayList<String>();
@@ -116,7 +121,9 @@ public class EventEditActivity extends BaseActivity
 		startEditText = (EditText) findViewById(R.id.startTimeButtonEEA);
 		endEditText = (EditText) findViewById(R.id.endTimeButtonEEA);
 		toBringButton = (Button) findViewById(R.id.toBringButton);
+		manageEventButton = (Button) findViewById(R.id.manageEventButton);
 		recurringButton = (EditText) findViewById(R.id.recurringButton);
+		submitButton = (Button) findViewById(R.id.submitButtonEEA);
 		// init variables
 		currentCal = Calendar.getInstance();
 		year = currentCal.get(Calendar.YEAR);
@@ -125,13 +132,32 @@ public class EventEditActivity extends BaseActivity
 		hour = currentCal.get(Calendar.HOUR_OF_DAY);
 		minute = currentCal.get(Calendar.MINUTE);
 		inflater = getLayoutInflater();
+		user = GLOBAL.getCurrentUser();
 		errorTextView = (TextView) findViewById(R.id.errorTextViewEPA);
 		EXTRAS = getIntent().getExtras();
 		iv = (ImageView) findViewById(R.id.editEventImageView);
 		event = GLOBAL.getEventBuffer();
 		if (event != null)
 			getEventProfile();
-		initActionBar("Edit " + event.getName(), true);
+		
+		//changes to layout in special case of repropose
+		if(EXTRAS.containsKey("reproposed"))
+		{
+			System.out.println("case will be reproposeEvent");
+			initActionBar("Repropose " + event.getName(), true);
+			manageEventButton.setVisibility(View.GONE);
+			submitButton.setText("Repropose Event");
+			Toast toast = GLOBAL.getToast(this, "Note: You'll need to pick new Start and End Dates before reproposing.");
+			toast.setDuration(Toast.LENGTH_LONG);
+			toast.show();
+		}
+		//normal editEventActivity
+		else
+		{
+			System.out.println("case will be normal editEvent");
+			initActionBar("Edit " + event.getName(), true);
+		}
+		
 		//grabbing items to bring from server
 		fetchItemsToBring();
 	}
@@ -228,7 +254,7 @@ public class EventEditActivity extends BaseActivity
 	}
 
 	/*
-	 * Get profile executes get_groupprofile.php. It uses the current groups gid
+	 * Get profile executes get_eventprofile.php. It uses the current groups eid
 	 * to retrieve the groups name, about, and other info.
 	 */
 	private void getEventProfile()
@@ -245,10 +271,13 @@ public class EventEditActivity extends BaseActivity
 		minEditText.setText(String.valueOf(event.getMinPart()));
 		if (event.getMaxPart() > 0)
 			maxEditText.setText(String.valueOf(event.getMaxPart()));
-		startEditText.setText(event.getStartText());
-		startDate = event.getStartDate();
-		endEditText.setText(event.getEndText());
-		endDate = event.getEndDate();
+		if(!getIntent().getExtras().containsKey("reproposed"))
+		{
+			startEditText.setText(event.getStartText());
+			startDate = event.getStartDate();
+			endEditText.setText(event.getEndText());
+			endDate = event.getEndDate();
+		}
 		recurring = event.getRecurringType();
 		if(recurring.equals("A"))
 		{
@@ -434,8 +463,27 @@ public class EventEditActivity extends BaseActivity
 		// otherwise, display confirmation box to proceed
 		else
 		{
-			new SetProfileTask().execute("http://68.59.162.183/"
-					+ "android_connect/update_event.php");
+			//special case of reproposed event
+			if(getIntent().getExtras().containsKey("reproposed"))
+			{
+				new AlertDialog.Builder(this).setMessage("Are you sure you want to repropose this event?").setCancelable(true)
+				.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+				{
+					@Override
+					public void onClick(DialogInterface dialog, int id)
+					{
+						// initiate creation of event
+						new SetProfileTask().execute("http://68.59.162.183/" + "android_connect/create_event.php");
+					}
+				}).setNegativeButton("Cancel", null).show();
+			}
+			//normal editEvent
+			else
+			{
+				new SetProfileTask().execute("http://68.59.162.183/"
+						+ "android_connect/update_event.php");
+			}
+			
 		}
 	}
 
@@ -498,7 +546,7 @@ public class EventEditActivity extends BaseActivity
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 				try
 				{
-					endCal.setTime(sdf.parse(endDate));
+					endCal.setTime(sdf.parse(startDate));
 					System.out.println("cal was parsed from tmpStartDate!");
 				} catch (ParseException e)
 				{
@@ -672,12 +720,14 @@ public class EventEditActivity extends BaseActivity
 				builder.addTextBody("about",
 						aboutEditText.getText().toString(),
 						ContentType.TEXT_PLAIN);
+				//Note: e_id only used in case of editEvent case, however we can send it either way
 				builder.addTextBody("e_id", Integer.toString(event.getID()),
 						ContentType.TEXT_PLAIN);
 				System.out.println("About to add start date as " + startDate);
 				builder.addTextBody("start_date", startDate,
 						ContentType.TEXT_PLAIN);
 				builder.addTextBody("end_date", endDate, ContentType.TEXT_PLAIN);
+				builder.addTextBody("recurring", recurring, ContentType.TEXT_PLAIN);
 				builder.addTextBody("recurring_type", recurring, ContentType.TEXT_PLAIN);
 				builder.addTextBody("category", categoryEditText.getText()
 						.toString(), ContentType.TEXT_PLAIN);
@@ -687,6 +737,8 @@ public class EventEditActivity extends BaseActivity
 						.toString(), ContentType.TEXT_PLAIN);
 				builder.addTextBody("location", locationEditText.getText()
 						.toString(), ContentType.TEXT_PLAIN);
+				//Note: creator only used in case of reproposeEvent case, however we can send it either way
+				builder.addTextBody("creator", GLOBAL.getCurrentUser().getEmail(), ContentType.TEXT_PLAIN);
 				//loop through toBringList, adding each member into php array toBring[]
 			    for (String itemName : itemNames) 
 			    {
@@ -729,32 +781,123 @@ public class EventEditActivity extends BaseActivity
 		@Override
 		protected void onPostExecute(String result)
 		{
-			System.out.println(result);
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
-				// success: event profile was either successfully updated in
-				// database, or no changes were necesssary
-				if (jsonObject.getString("success").toString().equals("1")
-						|| jsonObject.getString("success").toString()
-								.equals("2"))
+				//case of reproposed (not editevent)
+				if(EXTRAS.containsKey("reproposed"))
 				{
-					// Success
-					Context context = getApplicationContext();
-					Toast toast = GLOBAL.getToast(context,
-							"Event profile changed successfully!");
-					toast.show();
-					event.fetchEventInfo();
-					event.fetchParticipants();
-					GLOBAL.setEventBuffer(event);
-					finish();
-				} else
-				{
-					// Fail
-					Toast toast = GLOBAL.getToast(EventEditActivity.this,
-							"Failed to update event profile.");
-					toast.show();
+					// reproposed event has been successfully created
+					if (jsonObject.getString("success").toString().equals("1"))
+					{
+						// now we can grab the newly created e_id returned from the
+						// server
+						// Note: e_id is the only unique identifier of an event and
+						// therefore must be used for any future calls concerning
+						// that event.
+						ID = jsonObject.getString("e_id").toString();
+						System.out.println("MEssage: " + jsonObject.getString("message"));
+						System.out.println("e_id of newly created group is: " + ID);
+						user.fetchEventInvites();
+						user.fetchEventsPending();
+						user.fetchEventsUpcoming();
+						Event e = new Event(Integer.parseInt(ID));
+						e.fetchEventInfo();
+						e.fetchParticipants();
+						GLOBAL.setCurrentUser(user);
+						GLOBAL.setEventBuffer(e);
+
+						// display confirmation box
+						AlertDialog dialog = new AlertDialog.Builder(EventEditActivity.this)
+								.setMessage("You've successfully reproposed an event!").setCancelable(true)
+								.setPositiveButton("Invite Groups to Your Event", new DialogInterface.OnClickListener()
+								{
+									@Override
+									public void onClick(DialogInterface dialog, int id)
+									{
+										// code here to take user to
+										// eventaddmembersactivity page.
+										// (pass e_id as extra so invites
+										// can be sent to correct event id)
+										Intent intent = new Intent(EventEditActivity.this, EventAddGroupsActivity.class);
+										intent.putExtra("CONTENT", "EVENT");
+										intent.putExtra("e_id", ID);
+										intent.putExtra("email", user.getEmail());
+										startActivity(intent);
+										finish();
+									}
+								}).setNegativeButton("View Your Event's Profile", new DialogInterface.OnClickListener()
+								{
+									@Override
+									public void onClick(DialogInterface dialog, int which)
+									{
+										// code here to take user to newly
+										// created event profile page. (pass
+										// e_id as extra so correct event
+										// profile can be loaded)
+										Intent intent = new Intent(EventEditActivity.this, EventProfileActivity.class);
+										intent.putExtra("e_id", ID);
+										intent.putExtra("email", user.getEmail());
+										startActivity(intent);
+										finish();
+									}
+								}).show();
+						// if user dimisses the confirmation box, gets sent to back
+						// to eventActivity.class
+						dialog.setOnCancelListener(new DialogInterface.OnCancelListener()
+						{
+
+							@Override
+							public void onCancel(DialogInterface dialog)
+							{
+								finish();
+							}
+						});
+					}
+					// Create event failed for some reasons. Allow user to retry.
+					else if (jsonObject.getString("success").toString().equals("0"))
+					{
+						// display error box
+						new AlertDialog.Builder(EventEditActivity.this)
+								.setMessage("Unable to repropose the event! Please choose an option:").setCancelable(true)
+								.setPositiveButton("Try Again", new DialogInterface.OnClickListener()
+								{
+									@Override
+									public void onClick(DialogInterface dialog, int id)
+									{
+										// initiate creation of event AGAIN
+										new SetProfileTask().execute("http://68.59.162.183/"
+												+ "android_connect/create_event.php");
+									}
+								}).setNegativeButton("Cancel", null).show();
+					}
 				}
+				//case of normal editEvent
+				else
+				{
+					// success: event profile was either successfully updated in
+					// database, or no changes were necesssary
+					if (jsonObject.getString("success").toString().equals("1")
+							|| jsonObject.getString("success").toString()
+									.equals("2"))
+					{
+						// Success
+						Context context = getApplicationContext();
+						Toast toast = GLOBAL.getToast(context,
+								"Event profile changed successfully!");
+						toast.show();
+						event.fetchEventInfo();
+						event.fetchParticipants();
+						GLOBAL.setEventBuffer(event);
+						finish();
+					} else
+					{
+						// Fail
+						Toast toast = GLOBAL.getToast(EventEditActivity.this,
+								"Failed to update event profile.");
+						toast.show();
+					}
+				}	
 			} catch (Exception e)
 			{
 				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
