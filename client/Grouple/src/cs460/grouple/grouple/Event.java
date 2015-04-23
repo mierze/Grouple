@@ -24,6 +24,7 @@ public class Event extends Entity
 	private String startTextListDisplay;
 	private String endText;
 	private String endDate;
+	private String recurringType;
 	private String category;
 	private int minPart;
 	private String location;
@@ -82,6 +83,11 @@ public class Event extends Entity
 		this.endDate = endDate;
 		endText = GLOBAL.toDayTextFormatFromRaw(endDate);
 	}
+	
+	protected void setRecurringType(String recurringType)
+	{
+		this.recurringType = recurringType;
+	}
 
 	// getters
 	protected int getID()
@@ -122,6 +128,11 @@ public class Event extends Entity
 	protected String getEndDate()
 	{
 		return endDate;
+	}
+	
+	protected String getRecurringType()
+	{
+		return recurringType;
 	}
 
 	protected String getEndText()
@@ -207,15 +218,16 @@ public class Event extends Entity
 					setEventState((String) jsonArray.get(1));
 					setStartDate((String) jsonArray.get(2));
 					setEndDate((String) jsonArray.get(3));
-					setCategory((String) jsonArray.get(4));
-					setAbout((String) jsonArray.get(5));
-					setLocation((String) jsonArray.get(6));
-					setMinPart((Integer) jsonArray.get(7));
-					setMaxPart((Integer) jsonArray.get(8));
+					setRecurringType((String) jsonArray.getString(4));
+					setCategory((String) jsonArray.get(5));
+					setAbout((String) jsonArray.get(6));
+					setLocation((String) jsonArray.get(7));
+					setMinPart((Integer) jsonArray.get(8));
+					setMaxPart((Integer) jsonArray.get(9));
 					// 9 = mustbringlist
 					setEmail((String) jsonArray.get(10));
 					// setImage((String) jsonArray.get(11));
-					setPub((Integer) jsonArray.get(12));
+					setPub((Integer) jsonArray.get(11));
 				}
 				// unsuccessful
 				else
