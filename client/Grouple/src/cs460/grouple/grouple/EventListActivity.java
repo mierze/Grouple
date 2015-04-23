@@ -43,15 +43,14 @@ public class EventListActivity extends BaseActivity
 							// ListActivity
 	private String CONTENT; // type of content to display in list, passed in
 							// from other activities
-	private ListView listLayout; // layout for list activity (scrollable layout
-									// to inflate into)
+	private LinearLayout listViewLayout; // layout for list activity (scrollable layout
+	private ListView listView;							// to inflate into)
 	private String ROLE = "U";// defaulting to lowest level
 	private String PANDABUFFER = ""; // same
 	private int bufferID; // same as below: could alternatively have json return
 							// the values instead of saving here
 	private Button addNew;
 	// TESTING
-	private int listItemID;
 	private ArrayList<User> users;
 	private ArrayList<Event> events;
 
@@ -72,7 +71,6 @@ public class EventListActivity extends BaseActivity
 					&& GLOBAL.getUserBuffer().getEmail().equals(EXTRAS.getString("email")))
 				user = GLOBAL.getUserBuffer();
 
-		listItemID = R.layout.list_row;
 		// CALL APPROPRIATE METHODS TO POPULATE LIST
 		// CONTENT_TYPE -> POPULATEGROUPS
 		// setting the bottom button gone
@@ -82,19 +80,14 @@ public class EventListActivity extends BaseActivity
 		if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
 		{
 			actionBarTitle = user.getFirstName() + "'s Pending Events";
-			if (!GLOBAL.isCurrentUser(user.getEmail()))
-				listItemID = R.layout.list_row_nobutton;
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.EVENT_INVITES.toString()))
 		{
-			listItemID = R.layout.list_row_acceptdecline;
 			actionBarTitle = user.getFirstName() + "'s Event Invites";
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
 		{
 			actionBarTitle = user.getFirstName() + "'s Upcoming Events";
-			if (!GLOBAL.isCurrentUser(user.getEmail()))
-				listItemID = R.layout.list_row_nobutton;
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
 			actionBarTitle = user.getFirstName() + "'s Past Events";
@@ -110,10 +103,11 @@ public class EventListActivity extends BaseActivity
 	private class EventListAdapter extends ArrayAdapter<Event>
 	{
 		String startDate = "";
-
+		String newStartDate = "";
+		int numDateRows = 0;
 		public EventListAdapter()
 		{
-			super(EventListActivity.this, listItemID, events);
+			super(EventListActivity.this, 0, events);
 		}
 
 		@Override
@@ -121,11 +115,11 @@ public class EventListActivity extends BaseActivity
 		{
 			View itemView = convertView;
 			if (itemView == null)
-				itemView = inflater.inflate(listItemID, parent, false);
+				itemView = inflater.inflate(getItemViewType(position), parent, false);
 			Event e = events.get(position);
-			String newStartDate = e.getStartTextNoTime();
+		//	newStartDate = e.getStartTextNoTime();
 
-			if (position == 0)
+			/*if (position == 0)
 				startDate = newStartDate;
 			else if (startDate.compareTo(newStartDate) < 0)
 			{
@@ -133,11 +127,30 @@ public class EventListActivity extends BaseActivity
 				TextView dateTextView = (TextView) dateRow.findViewById(R.id.dateTextView);
 				startDate = newStartDate;
 				dateTextView.setText(e.getStartTextListDisplay());
-			}
+				numDateRows++;
+				return dateRow;
+			}*/
 			TextView nameView = (TextView) itemView.findViewById(R.id.nameTextViewLI);
 			nameView.setText(e.getName());
 			itemView.setId(e.getID());
 			return itemView;
+		}
+
+		@Override
+		public int getItemViewType(int position)
+		{
+			int listItemID = R.layout.list_row;
+
+			if (CONTENT.equals(CONTENT_TYPE.EVENT_INVITES.toString()))
+			{
+				listItemID = R.layout.list_row_acceptdecline;
+			}
+			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
+			{
+				if (!GLOBAL.isCurrentUser(user.getEmail()))
+					listItemID = R.layout.list_row_nobutton;
+			}
+			return listItemID;
 		}
 		/*
 		 * 
@@ -217,8 +230,7 @@ public class EventListActivity extends BaseActivity
 		if (events != null && !events.isEmpty())
 		{
 			ArrayAdapter<Event> adapter = new EventListAdapter();
-			listLayout.setAdapter(adapter);
-
+			listView.setAdapter(adapter);
 		}
 		else
 		{
@@ -227,7 +239,8 @@ public class EventListActivity extends BaseActivity
 			TextView sadTextView = (TextView) row.findViewById(R.id.sadGuyTextView);
 			// Set the sad guy text.
 			sadTextView.setText(sadGuyText);
-			listLayout.addView(row);
+			listView.setVisibility(View.GONE);
+			listViewLayout.addView(row);
 		}
 	}
 
@@ -238,11 +251,11 @@ public class EventListActivity extends BaseActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list);
 		// clearing any previous views populated, for refresh
-		listLayout = ((ListView) findViewById(R.id.listLayout));
+		listView = (ListView) findViewById(R.id.listView);
 		// INSTANTIATIONS
 		EXTRAS = getIntent().getExtras();
 		CONTENT = EXTRAS.getString("content");
-		listLayout = ((ListView) findViewById(R.id.listLayout));
+		listViewLayout = (LinearLayout) findViewById(R.id.listViewLayout);
 		addNew = (Button) findViewById(R.id.addNewButtonLiA);
 	}
 
@@ -485,8 +498,6 @@ public class EventListActivity extends BaseActivity
 					// reset values, looking to move these
 					PANDABUFFER = "";
 					bufferID = -1;
-					// removing all friend requests for refresh
-					listLayout.removeAllViews();
 
 					// CALLING CORRESPONDING METHOD TO REPOPULATE
 					populateEvents();

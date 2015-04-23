@@ -5,6 +5,8 @@ import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
+
+import cs460.grouple.grouple.EventListActivity.CONTENT_TYPE;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -45,10 +47,8 @@ public class UserListActivity extends BaseActivity
 							// ListActivity
 	private String CONTENT; // type of content to display in list, passed in
 							// from other activities
-	private ListView listLayout; // layout for list activity (scrollable layout
-									// to inflate into)
-	private int listItemID;
-	private LayoutInflater li;
+	private ListView listView;
+	private LinearLayout listViewLayout;
 	private String ROLE = "U";// defaulting to lowest level
 	private String PANDABUFFER = ""; // same
 	private int bufferID; // same as below: could alternatively have json return
@@ -68,18 +68,12 @@ public class UserListActivity extends BaseActivity
 		// GRABBING A USER
 		if (EXTRAS.getString("email") != null)
 			if (GLOBAL.isCurrentUser(EXTRAS.getString("email")))
-			{
-				System.out.println("MAKING USER THE CURRENT USER");
 				user = GLOBAL.getCurrentUser();
-			}
 			else if (GLOBAL.getUserBuffer() != null
 					&& GLOBAL.getUserBuffer().getEmail().equals(EXTRAS.getString("email")))
 				user = GLOBAL.getUserBuffer();
 
-		// CALL APPROPRIATE METHODS TO POPULATE LIST
 		// CONTENT_TYPE -> POPULATEUSERS
-
-		listItemID = R.layout.list_row;
 		if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
 		{
 			addNew.setText("Add New Friend");
@@ -93,17 +87,9 @@ public class UserListActivity extends BaseActivity
 			actionBarTitle = "Group Members";
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.FRIEND_REQUESTS.toString()))
-		{
-			listItemID = R.layout.list_row_acceptdecline;
-			System.out.println("Load 5 now setting action bar title to : " + user.getFirstName());
 			actionBarTitle = user.getFirstName() + "'s Friend Requests";
-		}
 		else if (CONTENT.equals(CONTENT_TYPE.SELECT_FRIEND.toString()))
-		{
-			listItemID = R.layout.list_row_nobutton;
-			System.out.println("Load 5 now setting action bar title to : " + user.getFirstName());
 			actionBarTitle = "Message Who?";
-		}
 		else
 		// EVENTS_ATTENDING
 		{
@@ -141,7 +127,7 @@ public class UserListActivity extends BaseActivity
 	{
 		public UserListAdapter()
 		{
-			super(UserListActivity.this, listItemID, users);
+			super(UserListActivity.this, 0, users);
 		}
 
 		@Override
@@ -149,7 +135,7 @@ public class UserListActivity extends BaseActivity
 		{
 			View itemView = convertView;
 			if (itemView == null)
-				itemView = inflater.inflate(listItemID, parent, false);
+				itemView = inflater.inflate(getItemViewType(position), parent, false);
 			RelativeLayout itemLayout = (RelativeLayout) itemView.findViewById(R.id.listRowLayout);
 			// find group to work with
 			User u = users.get(position);
@@ -160,6 +146,25 @@ public class UserListActivity extends BaseActivity
 			// fill the view
 			return itemView;
 		}
+		
+		@Override
+		public int getItemViewType(int position)
+		{
+			int listItemID = R.layout.list_row;
+
+			if (CONTENT.equals(CONTENT_TYPE.FRIEND_REQUESTS.toString()))
+			{
+				listItemID = R.layout.list_row_acceptdecline;
+			}
+			else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
+			{
+				if (!GLOBAL.isCurrentUser(user.getEmail()))
+					listItemID = R.layout.list_row_nobutton;
+			}
+			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()) || CONTENT.equals(CONTENT_TYPE.GROUP_MEMBERS.toString()))
+				listItemID = R.layout.list_row_nobutton;
+			return listItemID;
+		}
 	}
 
 	// populates a list of users
@@ -167,7 +172,6 @@ public class UserListActivity extends BaseActivity
 	{
 		String sadGuyText = "";
 		
-
 		if (CONTENT.equals(CONTENT_TYPE.GROUP_MEMBERS.toString()))
 		{
 			sadGuyText = "There are no members in this group.";
@@ -204,18 +208,17 @@ public class UserListActivity extends BaseActivity
 		if (users != null && !users.isEmpty())
 		{
 			ArrayAdapter<User> adapter = new UserListAdapter();
-			listLayout.setAdapter(adapter);
-				
+			listView.setAdapter(adapter);	
 		}
 		else
 		{
 			// The user has no friend's so display the sad guy image / text
-			View row = li.inflate(R.layout.list_item_sadguy, null);
+			View row = inflater.inflate(R.layout.list_item_sadguy, null);
 			TextView sadGuy = ((TextView) row.findViewById(R.id.sadGuyTextView));
 			sadGuy.setText(sadGuyText);
-			listLayout.addView(row);
+			listView.setVisibility(View.GONE);
+			listViewLayout.addView(row);
 		}
-
 	}
 
 	// based on content type, gets the corresponding role
@@ -255,12 +258,12 @@ public class UserListActivity extends BaseActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list);
-		// clearing any previous views populated, for refresh
-		listLayout = (ListView) findViewById(R.id.listLayout);
+		//grabbing xml elements
+		listView = (ListView) findViewById(R.id.listView);
+		listViewLayout = (LinearLayout) findViewById(R.id.listViewLayout);
 		// INSTANTIATIONS
 		EXTRAS = getIntent().getExtras();
 		CONTENT = EXTRAS.getString("content");
-		li = getLayoutInflater();
 		addNew = (Button) findViewById(R.id.addNewButtonLiA);
 	}
 
@@ -538,8 +541,6 @@ public class UserListActivity extends BaseActivity
 					// reset values, looking to move these
 					PANDABUFFER = "";
 					bufferID = -1;
-					// removing all friend requests for refresh
-					listLayout.removeAllViews();
 
 					// CALLING CORRESPONDING METHOD TO REPOPULATE
 					populateUsers();

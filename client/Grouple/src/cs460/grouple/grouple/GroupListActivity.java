@@ -5,6 +5,8 @@ import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
+
+import cs460.grouple.grouple.EventListActivity.CONTENT_TYPE;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -33,119 +35,123 @@ public class GroupListActivity extends BaseActivity
 	/*
 	 * All possible content types that list activity supports
 	 */
-	enum CONTENT_TYPE 
+	enum CONTENT_TYPE
 	{
 		GROUPS_CURRENT, GROUP_INVITES;
-	}	
-	
-	//LIST-VIEW STUFF
-	private ArrayList<Group> groups;
-	
-	//CLASS-WIDE DECLARATIONS
-	private User user; //user whose current groups displayed
-	private Group group;
-	private Bundle EXTRAS; //extras passed in from the activity that called ListActivity
-	private String CONTENT; //type of content to display in list, passed in from other activities
-	private ListView listLayout; //layout for list activity (scrollable layout to inflate into)
-	private int listItemID;
-	private String ROLE = "U";//defaulting to lowest level
-	private String PANDABUFFER = ""; //same
-	private int bufferID; //same as below: could alternatively have json return the values instead of saving here	
-	private Button addNew;
-	//TESTING
+	}
 
+	// LIST-VIEW STUFF
+	private ArrayList<Group> groups;
+
+	// CLASS-WIDE DECLARATIONS
+	private User user; // user whose current groups displayed
+	private Group group;
+	private Bundle EXTRAS; // extras passed in from the activity that called
+							// ListActivity
+	private String CONTENT; // type of content to display in list, passed in
+							// from other activities
+	private ListView listView; // layout for list activity (scrollable layout to
+								// inflate into)
+	private LinearLayout listViewLayout;
+	private String ROLE = "U";// defaulting to lowest level
+	private String PANDABUFFER = ""; // same
+	private int bufferID; // same as below: could alternatively have json return
+							// the values instead of saving here
+	private Button addNew;
+
+	// TESTING
 
 	/* loading in everything needed to generate the list */
 	public void load()
 	{
 		String actionBarTitle = "";
-		addNew.setVisibility(View.GONE); //GONE FOR NOW
-			
-		//GRABBING A USER
+		addNew.setVisibility(View.GONE); // GONE FOR NOW
+
+		// GRABBING A USER
 		if (EXTRAS.getString("email") != null)
 			if (GLOBAL.isCurrentUser(EXTRAS.getString("email")))
 			{
 				System.out.println("MAKING USER THE CURRENT USER");
 				user = GLOBAL.getCurrentUser();
 			}
-			else if (GLOBAL.getUserBuffer() != null && GLOBAL.getUserBuffer().getEmail().equals(EXTRAS.getString("email")))
+			else if (GLOBAL.getUserBuffer() != null
+					&& GLOBAL.getUserBuffer().getEmail().equals(EXTRAS.getString("email")))
 				user = GLOBAL.getUserBuffer();
 
-		
-		//CLEAR LIST
-		//listLayout.removeAllViews();
-		
-		//CALL APPROPRIATE METHODS TO POPULATE LIST
-		//CONTENT_TYPE -> POPULATEGROUPS
-		if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()) || CONTENT.equals(CONTENT_TYPE.GROUP_INVITES.toString()))
-		{
-			if (CONTENT.equals(CONTENT_TYPE.GROUP_INVITES.toString()))
-			{
-				actionBarTitle = user.getFirstName() + "'s Group Invites";
-				listItemID = R.layout.list_row_acceptdecline;
-			}
-			if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
-			{
-				actionBarTitle = user.getFirstName() + "'s Groups";
-				if (GLOBAL.isCurrentUser(user.getEmail()))
-				{
-					listItemID = R.layout.list_row;
-					
-				}
-				else
-					listItemID = R.layout.list_row_nobutton;
-			}
-			populateGroups();
-		//CONTENT_TYPE -> POPULATEEVENTS
-		}
-		//calling next functions to execute
+		// CLEAR LIST
+		// listLayout.removeAllViews();
+
+		// CALL APPROPRIATE METHODS TO POPULATE LIST
+		// CONTENT_TYPE -> POPULATEGROUPS
+
+		if (CONTENT.equals(CONTENT_TYPE.GROUP_INVITES.toString()))
+			actionBarTitle = user.getFirstName() + "'s Group Invites";
+		if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
+			actionBarTitle = user.getFirstName() + "'s Groups";
+		populateGroups();
+		// CONTENT_TYPE -> POPULATEEVENTS
+
+		// calling next functions to execute
 		initActionBar(actionBarTitle, true);
 
 	}
-	
-	
-	private class GroupListAdapter extends ArrayAdapter<Group> {
+
+	private class GroupListAdapter extends ArrayAdapter<Group>
+	{
 		public GroupListAdapter()
 		{
-			super(GroupListActivity.this, listItemID, groups);
+			super(GroupListActivity.this, 0, groups);
 		}
-		
+
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent)
 		{
 			View itemView = convertView;
 			if (itemView == null)
-				itemView = inflater.inflate(listItemID, parent, false);
-			RelativeLayout itemLayout = (RelativeLayout)itemView.findViewById(R.id.listRowLayout);
-			//find group to work with
+				itemView = inflater.inflate(getItemViewType(position), parent, false);
+			RelativeLayout itemLayout = (RelativeLayout) itemView.findViewById(R.id.listRowLayout);
+			// find group to work with
 			Group g = groups.get(position);
 			TextView nameView = (TextView) itemView.findViewById(R.id.nameTextViewLI);
 			nameView.setText(g.getName());
-			//nameView.setId(g.getID());
+			// nameView.setId(g.getID());
 			System.out.println(g.getID());
 			itemView.setId(g.getID());
 			Button deleteButton;
 			// fill the view
 			return itemView;
 		}
+
+		@Override
+		public int getItemViewType(int position)
+		{
+			int listItemID = R.layout.list_row;
+			if (CONTENT.equals(CONTENT_TYPE.GROUP_INVITES.toString()))
+			{
+				listItemID = R.layout.list_row_acceptdecline;
+			}
+			else if (!GLOBAL.isCurrentUser(user.getEmail()))
+					listItemID = R.layout.list_row_nobutton;
+			return listItemID;
+		}
 	}
-	
+
 	private void registerClickCallback()
 	{
-		ListView list = ((ListView)findViewById(R.id.listLayout));
-		list.setOnItemClickListener(new AdapterView.OnItemClickListener()
+		listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
 		{
-			@Override 
+			@Override
 			public void onItemClick(AdapterView<?> parent, View viewClicked, int position, long id)
 			{
 				System.out.println("ADSFASFDA\b\n\n\n\n");
 				Group g = groups.get(position);
-				//startProfileActivity(g);
+				// startProfileActivity(g);
 			}
 		});
 	}
-	//populates a list of groups
-	//populateListView
+
+	// populates a list of groups
+	// populateListView
 	private void populateGroups()
 	{
 		String sadGuyText = "";
@@ -160,92 +166,94 @@ public class GroupListActivity extends BaseActivity
 			sadGuyText = "You do not have any group invites.";
 		}
 
-
-		//looping thru and populating list of groups
+		// looping thru and populating list of groups
 		if (groups != null && !groups.isEmpty())
 		{
 			ArrayAdapter<Group> adapter = new GroupListAdapter();
-			listLayout.setAdapter(adapter);		
+			listView.setAdapter(adapter);
 		}
 		else
 		{
 			// The user has no groups so display the sad guy
 			View row = inflater.inflate(R.layout.list_item_sadguy, null);
 			((TextView) row.findViewById(R.id.sadGuyTextView)).setText(sadGuyText);
-			listLayout.addView(row);
-		}	
-		
+			listView.setVisibility(View.GONE);
+			listViewLayout.addView(row);
+		}
+
 	}
-	
-			
-	
-	//DEFAULT METHODS BELOW
+
+	// DEFAULT METHODS BELOW
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list);
-		//clearing any previous views populated, for refresh
-		listLayout = ((ListView)findViewById(R.id.listLayout));
-		//INSTANTIATIONS
-		EXTRAS =  getIntent().getExtras();
+		//grabbing xml elements
+		listView = (ListView) findViewById(R.id.listView);
+		listViewLayout = (LinearLayout) findViewById(R.id.listViewLayout);
+		addNew = (Button) findViewById(R.id.addNewButtonLiA);
+		// INSTANTIATIONS
+		EXTRAS = getIntent().getExtras();
 		CONTENT = EXTRAS.getString("content");
-		addNew = (Button)findViewById(R.id.addNewButtonLiA);
-		//registerClickCallback();
+		// registerClickCallback();
 	}
+
 	@Override
 	protected void onResume()
 	{
 		super.onResume();
 		load();
-	}	
+	}
 
-	//ONCLICK METHODS BELOW
+	// ONCLICK METHODS BELOW
 	public void onClick(View view)
 	{
 		super.onClick(view);
-		View parent = (View)view.getParent();
+		View parent = (View) view.getParent();
 		switch (view.getId())
 		{
 		case R.id.declineButton:
 			if (CONTENT.equals(CONTENT_TYPE.GROUP_INVITES.toString()))
 			{
 				bufferID = parent.getId();
-				new performActionTask().execute("http://68.59.162.183/android_connect/leave_group.php", user.getEmail(), Integer.toString(parent.getId()));
+				new performActionTask().execute("http://68.59.162.183/android_connect/leave_group.php",
+						user.getEmail(), Integer.toString(parent.getId()));
 			}
 			break;
 		case R.id.acceptButton:
 			if (CONTENT.equals(CONTENT_TYPE.GROUP_INVITES.toString()))
 			{
 				bufferID = parent.getId();
-				new performActionTask().execute("http://68.59.162.183/android_connect/accept_group_invite.php",user.getEmail(),Integer.toString(bufferID));
+				new performActionTask().execute("http://68.59.162.183/android_connect/accept_group_invite.php",
+						user.getEmail(), Integer.toString(bufferID));
 			}
 			break;
 		}
 	}
+
 	// Handles removing a friend when the remove friend button is pushed.
 	public void removeButton(View view)
-	{			
+	{
 		if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
 		{
-			//Get the id.
+			// Get the id.
 			bufferID = view.getId();
 
-			new AlertDialog.Builder(this)
-					.setMessage("Are you sure you want to leave this group?")
-					.setCancelable(true)
+			new AlertDialog.Builder(this).setMessage("Are you sure you want to leave this group?").setCancelable(true)
 					.setPositiveButton("Yes", new DialogInterface.OnClickListener()
 					{
 						@Override
 						public void onClick(DialogInterface dialog, int id)
 						{
-							new performActionTask().execute("http://68.59.162.183/android_connect/leave_group.php", user.getEmail(), Integer.toString(bufferID));
+							new performActionTask().execute("http://68.59.162.183/android_connect/leave_group.php",
+									user.getEmail(), Integer.toString(bufferID));
 						}
 					}).setNegativeButton("Cancel", null).show();
 		}
 	}
 
-	//Starts a USER/GROUP/EVENT profile
+	// Starts a USER/GROUP/EVENT profile
 	public void startProfileActivity(View view)
 	{
 		loadDialog.show();
@@ -254,44 +262,45 @@ public class GroupListActivity extends BaseActivity
 		Intent intent = new Intent(this, GroupProfileActivity.class);
 
 		intent.putExtra("g_id", id);
-			intent.putExtra("email", user.getEmail());
-			g.fetchGroupInfo();
-			g.fetchMembers();
-			GLOBAL.setGroupBuffer(g);
-		
-		startActivity(intent);	
+		intent.putExtra("email", user.getEmail());
+		g.fetchGroupInfo();
+		g.fetchMembers();
+		GLOBAL.setGroupBuffer(g);
+
+		startActivity(intent);
 	}
 
 	@Override
-	public void onBackPressed() 
+	public void onBackPressed()
 	{
 		super.onBackPressed();
-    	//refresh pertinent info
-    	if (CONTENT.equals(CONTENT_TYPE.GROUP_INVITES.toString()) || CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
-    	{
-    		//GROUPS
-    		user.fetchGroupInvites();
-    		user.fetchGroups();
-    		if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
-    		{
-    			user.fetchFriends();
-    			user.fetchEventsUpcoming();
-        		//USER PROFILE
-	    		//FRIEND PROFILE
-    		}
-    	}
-    	
-    	//SETTING GLOBALS
-    	if (user != null)
-    		if (GLOBAL.isCurrentUser(user.getEmail()))
-    		{
-    			GLOBAL.setCurrentUser(user);
-    		}
-    		else
-    			GLOBAL.setUserBuffer(user);
-    	if (group != null)
-    		GLOBAL.setGroupBuffer(group);
-    	
+		// refresh pertinent info
+		if (CONTENT.equals(CONTENT_TYPE.GROUP_INVITES.toString())
+				|| CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
+		{
+			// GROUPS
+			user.fetchGroupInvites();
+			user.fetchGroups();
+			if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
+			{
+				user.fetchFriends();
+				user.fetchEventsUpcoming();
+				// USER PROFILE
+				// FRIEND PROFILE
+			}
+		}
+
+		// SETTING GLOBALS
+		if (user != null)
+			if (GLOBAL.isCurrentUser(user.getEmail()))
+			{
+				GLOBAL.setCurrentUser(user);
+			}
+			else
+				GLOBAL.setUserBuffer(user);
+		if (group != null)
+			GLOBAL.setGroupBuffer(group);
+
 	}
 
 	private class performActionTask extends AsyncTask<String, Void, String>
@@ -301,15 +310,17 @@ public class GroupListActivity extends BaseActivity
 		{
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			// Add your data
-			if (CONTENT.equals(CONTENT_TYPE.GROUP_INVITES.toString()) || CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
+			if (CONTENT.equals(CONTENT_TYPE.GROUP_INVITES.toString())
+					|| CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
 			{
-				//group invites or current groups, add email and gid
+				// group invites or current groups, add email and gid
 				nameValuePairs.add(new BasicNameValuePair("email", urls[1]));
-				nameValuePairs.add(new BasicNameValuePair("gid",urls[2]));
+				nameValuePairs.add(new BasicNameValuePair("gid", urls[2]));
 			}
-			//calling readJSONFeed in Global, continues below in onPostExecute
+			// calling readJSONFeed in Global, continues below in onPostExecute
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
+
 		@Override
 		protected void onPostExecute(String result)
 		{
@@ -324,7 +335,8 @@ public class GroupListActivity extends BaseActivity
 					if (CONTENT.equals(CONTENT_TYPE.GROUP_INVITES.toString()))
 					{
 						user.removeGroupInvite(bufferID);
-						//since leave_group and decline group invite call same php
+						// since leave_group and decline group invite call same
+						// php
 						if (!message.equals("Group invite accepted!"))
 							message = "Group invite declined!";
 					}
@@ -333,26 +345,23 @@ public class GroupListActivity extends BaseActivity
 						user.removeGroup(bufferID);
 						user.fetchGroups();
 					}
-					
+
 					Toast toast = GLOBAL.getToast(context, message);
 					toast.show();
-					//reset values, looking to move these 
+					// reset values, looking to move these
 					PANDABUFFER = "";
 					bufferID = -1;
-					//removing all friend requests for refresh
-					listLayout.removeAllViews();
-					
-					//CALLING CORRESPONDING METHOD TO REPOPULATE
+					// CALLING CORRESPONDING METHOD TO REPOPULATE
 
 					populateGroups();
-					
-				} 
+
+				}
 				else
 				{
 					// failed
 					System.out.println("fail!");
 				}
-			} 
+			}
 			catch (Exception e)
 			{
 				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
