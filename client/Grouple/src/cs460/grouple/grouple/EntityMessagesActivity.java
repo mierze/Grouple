@@ -18,80 +18,91 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
+import cs460.grouple.grouple.EventListActivity.CONTENT_TYPE;
+
 public class EntityMessagesActivity extends BaseActivity
-{ 
-	private User user; //will be null for now
+{
+	private User user; // will be null for now
 	private Group group;
 	private Event event;
 	private String NAME;
 	private Button sendMessageButton;
-	private LinearLayout messageLayout;
-	private LayoutInflater inflater;
+	private LinearLayout listViewLayout;
+	private ListView listView;
 	private EditText messageEditText;
-    private ArrayList<String> regIDList = new ArrayList<String>();
-    private Bundle EXTRAS;
-    private String ID;
-    private String CONTENT;
-    private String SENDER_ID = "957639483805"; 
-    private ArrayList<Message> messages = new ArrayList<Message>();  
-    private GoogleCloudMessaging gcm;
-    private AtomicInteger msgId = new AtomicInteger();
-    
+	private ArrayList<String> regIDList = new ArrayList<String>();
+	private Bundle EXTRAS;
+	private String ID;
+	private String CONTENT;
+	private String SENDER_ID = "957639483805";
+	private ArrayList<Message> messages = new ArrayList<Message>();
+	private GoogleCloudMessaging gcm;
+	private AtomicInteger msgId = new AtomicInteger();
+
 	@Override
 	protected void onDestroy()
 	{
 		super.onDestroy();
-	    unregisterReceiver(mMessageReceiver);
 	}
-	
-	//This is the handler that will manager to process the broadcast intent
-	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() 
+
+	@Override
+	protected void onPause()
 	{
-	    @Override
-	    public void onReceive(Context context, Intent intent) 
-	    {
-	        // Extract data included in the Intent
-	    	String type = intent.getStringExtra("type");
-	        String id = intent.getStringExtra("id");
-	        if (type.equals("GROUP_MESSAGE") && CONTENT.equals("GROUP"))
-	        {
-		        if (id.equals(ID))
-		        {
-		            //messages.clear(); //TODO: smartly add to this
-		        	fetchMessages(); 
-		        }
-	        }
-	        else if (type.equals("EVENT_MESSAGE") && CONTENT.equals("EVENT"))
-	        {
-	        	  if (id.equals(ID))
-			        {
-			           // messages.clear(); //TODO: smartly add to this
-			        	fetchMessages(); 
-			        }
-	        }
-	    }
+		unregisterReceiver(mMessageReceiver);
+		super.onPause();
+	}
+
+	// This is the handler that will manager to process the broadcast intent
+	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver()
+	{
+		@Override
+		public void onReceive(Context context, Intent intent)
+		{
+			// Extract data included in the Intent
+			String type = intent.getStringExtra("type");
+			String id = intent.getStringExtra("id");
+			if (type.equals("GROUP_MESSAGE") && CONTENT.equals("GROUP"))
+			{
+				if (id.equals(ID))
+				{
+					// messages.clear(); //TODO: smartly add to this
+					fetchMessages();
+				}
+			}
+			else if (type.equals("EVENT_MESSAGE") && CONTENT.equals("EVENT"))
+			{
+				if (id.equals(ID))
+				{
+					// messages.clear(); //TODO: smartly add to this
+					fetchMessages();
+				}
+			}
+		}
 	};
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_messages);
-		registerReceiver(mMessageReceiver, new IntentFilter("ENTITY_MESSAGE"));
 		EXTRAS = getIntent().getExtras();
 		user = GLOBAL.getCurrentUser();
-    	messageEditText = (EditText)findViewById(R.id.messageEditText);
-    	sendMessageButton = (Button)findViewById(R.id.sendButton);
-    	messageLayout = (LinearLayout) findViewById(R.id.messageLayout);
-    	inflater = getLayoutInflater();
+		messageEditText = (EditText) findViewById(R.id.messageEditText);
+		sendMessageButton = (Button) findViewById(R.id.sendButton);
+		listViewLayout = (LinearLayout) findViewById(R.id.listViewLayout);
+		listView = (ListView) findViewById(R.id.listView);
 		initActionBar(EXTRAS.getString("name"), true);
 		gcm = GoogleCloudMessaging.getInstance(this);
 		CONTENT = EXTRAS.getString("content");
@@ -99,7 +110,7 @@ public class EntityMessagesActivity extends BaseActivity
 		{
 			group = GLOBAL.getGroupBuffer();
 			NAME = group.getName();
-			ID = EXTRAS.getString("g_id"); 
+			ID = EXTRAS.getString("g_id");
 		}
 		else
 		{
@@ -107,51 +118,77 @@ public class EntityMessagesActivity extends BaseActivity
 			NAME = event.getName();
 			ID = EXTRAS.getString("e_id");
 		}
-		//Get the recipient 
-		//new getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php", recipient);
-		new getRegIDsTask().execute("http://68.59.162.183/android_connect/get_chat_ids_by_gid.php",ID ,user.getEmail());
+		// Get the recipient
+		// new
+		// getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php",
+		// recipient);
+		new getRegIDsTask()
+				.execute("http://68.59.162.183/android_connect/get_chat_ids_by_gid.php", ID, user.getEmail());
+	}
+
+	private class MessageListAdapter extends ArrayAdapter<Message>
+	{
+		public MessageListAdapter()
+		{
+			super(EntityMessagesActivity.this, 0, messages);
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent)
+		{
+			View itemView = convertView;
+			if (itemView == null)
+				itemView = inflater.inflate(getItemViewType(position), parent, false);
+			final Message m = messages.get(position);
+			Button contactName = (Button) itemView.findViewById(R.id.contactNameButton);
+			contactName.setText(m.getSenderName());
+			contactName.setOnClickListener(new OnClickListener()
+			{
+				@Override
+				public void onClick(View view)
+				{
+					startProfile(m);
+				}
+			});
+
+			TextView messageBody = (TextView) itemView.findViewById(R.id.messageBody);
+			TextView messageDate = (TextView) itemView.findViewById(R.id.messageDate);
+			messageBody.setText(m.getMessage());
+			messageDate.setText(m.getDateString());
+			itemView.setId(m.getID());
+			return itemView;
+		}
+
+		@Override
+		public int getItemViewType(int position)
+		{
+			int listItemID = R.layout.list_row;
+			Message m = messages.get(position);
+			if (m.getSender().equals(user.getEmail()))
+				listItemID = R.layout.message_row_entity;
+			else
+				listItemID = R.layout.message_row_entity_out;
+
+			return listItemID;
+		}
 	}
 
 	private void populateMessages()
 	{
-		//clear out any previous views already inflated
-		messageLayout.removeAllViews();
-		//layout inflater
-		TextView messageBody, messageDate;
-		Button contactName;
-		View row = null;
-		
-		int index = 0;
-		for (Message m : messages)
-		{
-			if (m.getSender().equals(user.getEmail()))
-				row =  inflater.inflate(R.layout.message_row_entity, null); //inflate the sender message row
-			else
-				row =  inflater.inflate(R.layout.message_row_entity_out, null); //inflate the sender message row
-			contactName = (Button) row.findViewById(R.id.contactNameButton);
-			contactName.setText(m.getSenderName());
-			contactName.setId(index);
-			messageBody = (TextView) row.findViewById(R.id.messageBody);
-			messageBody.setText(m.getMessage());
-			messageDate = (TextView) row.findViewById(R.id.messageDate);
-			messageDate.setText(m.getDateString());
-			row.setId(index);
-			//add row into scrollable layout
-			messageLayout.addView(row);
-			index++;
-		}
-		//scrolling down to the bottom
-		final ScrollView scrollview = ((ScrollView) findViewById(R.id.messagesScrollView));
-		scrollview.post(new Runnable() {
-		        @Override
-		        public void run() {
-		            scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-		        }
-		    });
+		// scrolling down to the bottom
+
+		/*
+		 * listView.post(new Runnable() {
+		 * 
+		 * @Override public void run() { // ((ScrollView)
+		 * listView).fullScroll(ScrollView.FOCUS_DOWN); } });
+		 */
+		ArrayAdapter<Message> adapter = new MessageListAdapter();
+		listView.setAdapter(adapter);
 		messageEditText.requestFocus();
 		readMessages();
 	}
-	
+
 	private int readMessages()
 	{
 		new readMessagesTask().execute("http://68.59.162.183/android_connect/update_entitymessage_lastread.php");
@@ -185,7 +222,7 @@ public class EntityMessagesActivity extends BaseActivity
 				{
 					Log.d("readMessage", "failed = 2 return");
 				}
-			} 
+			}
 			catch (Exception e)
 			{
 				Log.d("readMessage", "exception caught");
@@ -193,37 +230,37 @@ public class EntityMessagesActivity extends BaseActivity
 			}
 		}
 	}
-	
+
 	@Override
-	public void onBackPressed() 
+	public void onBackPressed()
 	{
-    	super.onBackPressed();
-    	if (CONTENT.equals(CONTENT))
-    	{
-    		group.fetchGroupInfo();
-    		group.fetchMembers();
-    	}
-    	else
-    	{
-    		event.fetchEventInfo();
-    		event.fetchParticipants();
-    	}
-    	//finish();
-	    return;
+		super.onBackPressed();
+		if (CONTENT.equals("GROUP"))
+		{
+			group.fetchGroupInfo();
+			group.fetchMembers();
+		}
+		else
+		{
+			event.fetchEventInfo();
+			event.fetchParticipants();
+		}
+		// finish();
+		return;
 	}
-	
-    //Stores the message in the database.
-    private class storeMessageTask extends AsyncTask<String, Void, String>
+
+	// Stores the message in the database.
+	private class storeMessageTask extends AsyncTask<String, Void, String>
 	{
 		@Override
 		protected String doInBackground(String... urls)
 		{
 			String type = CONTENT.equals("GROUP") ? "g_id" : "e_id";
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			//The msg is urls[1], sender urls[2], receiver urls[3]
+			// The msg is urls[1], sender urls[2], receiver urls[3]
 			nameValuePairs.add(new BasicNameValuePair("msg", urls[1]));
 			nameValuePairs.add(new BasicNameValuePair("sender", urls[2]));
-			nameValuePairs.add(new BasicNameValuePair(type, urls[3]));	
+			nameValuePairs.add(new BasicNameValuePair(type, urls[3]));
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
 
@@ -236,130 +273,143 @@ public class EntityMessagesActivity extends BaseActivity
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					System.out.println("Successfully stored message");
-				} 
+				}
 				else
 				{
-					Toast toast = GLOBAL.getToast(EntityMessagesActivity.this, "Error sending message. Please try again");
+					Toast toast = GLOBAL.getToast(EntityMessagesActivity.this,
+							"Error sending message. Please try again");
 					toast.show();
 				}
-			} catch (Exception e)
+			}
+			catch (Exception e)
 			{
 				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 			}
 		}
 	}
-	
+
 	@Override
-    protected void onResume() 
+	protected void onResume()
 	{
-        super.onResume();
-		//new getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php", recipient);
-		fetchMessages(); 
-    }
-	
-	//Starts a USER/GROUP/EVENT profile
-	public void startProfile(View view)
+		registerReceiver(mMessageReceiver, new IntentFilter("ENTITY_MESSAGE"));
+		super.onResume();
+		// new
+		// getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php",
+		// recipient);
+		fetchMessages();
+	}
+
+	// Starts a USER/GROUP/EVENT profile
+	public void startProfile(Message m)
 	{
 		loadDialog.show();
-		int id = view.getId();		
 		Intent intent = new Intent(this, UserProfileActivity.class);
-		String friendEmail = messages.get(id).getSender();
+		String friendEmail = m.getSender();
 		User u = new User(friendEmail);
 		u.fetchEventsUpcoming();
 		u.fetchFriends();
+		u.fetchEventsPast();
+		u.fetchBadges();
 		u.fetchGroups();
 		u.fetchUserInfo();
 		if (!GLOBAL.isCurrentUser(friendEmail))
 			GLOBAL.setUserBuffer(u);
 		else
-			GLOBAL.setCurrentUser(u); //reloading user
+			GLOBAL.setCurrentUser(u); // reloading user
 		intent.putExtra("email", friendEmail);
-		startActivity(intent);	
+		startActivity(intent);
 	}
-	
-	// Send an upstream message.
-    public void onClick(final View view) {
-        if (view == findViewById(R.id.sendButton)) 
-        {
-            //Get message from edit text
-            String msg = messageEditText.getText().toString();
-            //make sure message field is not blank
-            if(!(msg.compareTo("") ==0))
-            {
-            	sendMessageButton.setClickable(false);
-               if (CONTENT.equals("GROUP"))
-            	   new storeMessageTask().execute("http://68.59.162.183/android_connect/send_group_message.php",msg, user.getEmail(), ID);
-               else
-            	   new storeMessageTask().execute("http://68.59.162.183/android_connect/send_event_message.php",msg, user.getEmail(), ID);
-                new AsyncTask<Void, Void, String>() {
-                    @Override
-                    protected String doInBackground(Void... params) {
-                        String msg = "";
-                        try 
-                        {
-                            Bundle data = new Bundle();
-                            //Get message from edit text
-                            msg = messageEditText.getText().toString();
-                            //print message to our screen
-                            Message m = new Message(msg, new Date(), user.getEmail(),
-    								user.getName(), ID, null);
-                            messages.add(m);
-                            data.putString("msg", msg);
-                            data.putString("my_action", "cs460.grouple.grouple.ECHO_NOW");
-                            data.putString("content", CONTENT + "_MESSAGE");
-                            data.putString("receiver", ID);//may want to just use receiver for all instead of ID
-                            data.putString("sender", user.getEmail());
-                            data.putString("id", ID);
-                            data.putString("name", NAME);
-                            data.putString("first", user.getFirstName());
-                            data.putString("last", user.getLastName());
-                            
-                            String id = Integer.toString(msgId.incrementAndGet());
-                            
-                            //Send the message to all the group members.
-                            for(int i = 0; i < regIDList.size(); i++)
-                            {
-                                data.putString("recipient",regIDList.get(i));                           
-                                gcm.send(SENDER_ID + "@gcm.googleapis.com", id, data);
-                            }
-                        } 
-                        catch (IOException ex) 
-                        {
-                            msg = "Error :" + ex.getMessage();
-                            sendMessageButton.setClickable(true);
-                            messageEditText.requestFocus();
-        					Toast toast = GLOBAL.getToast(EntityMessagesActivity.this, "Error sending message. Please try again");
-        					toast.show();
-                        }
-                        return msg;
-                    }
-                    
-                    @Override
-                    protected void onPostExecute(String msg) 
-                    {
-                    	messageEditText.setText("");
-                    	sendMessageButton.setClickable(true);
-                    	messageEditText.requestFocus();
-                    	populateMessages();
-                    }
-                }.execute(null, null, null);
-            }    
-            else
-            {
-            	Toast toast = GLOBAL.getToast(this, "Please enter a message!");
-            	toast.show();
-            }
-        }
-    }
 
-    //grabs from the database group or event messages, respectively
+	// Send an upstream message.
+	public void onClick(final View view)
+	{
+		if (view == findViewById(R.id.sendButton))
+		{
+			// Get message from edit text
+			String msg = messageEditText.getText().toString();
+			// make sure message field is not blank
+			if (!(msg.compareTo("") == 0))
+			{
+				sendMessageButton.setClickable(false);
+				if (CONTENT.equals("GROUP"))
+					new storeMessageTask().execute("http://68.59.162.183/android_connect/send_group_message.php", msg,
+							user.getEmail(), ID);
+				else
+					new storeMessageTask().execute("http://68.59.162.183/android_connect/send_event_message.php", msg,
+							user.getEmail(), ID);
+				new AsyncTask<Void, Void, String>()
+				{
+					@Override
+					protected String doInBackground(Void... params)
+					{
+						String msg = "";
+						try
+						{
+							Bundle data = new Bundle();
+							// Get message from edit text
+							msg = messageEditText.getText().toString();
+							// print message to our screen
+							Message m = new Message(msg, new Date(), user.getEmail(), user.getName(), ID, null);
+							messages.add(m);
+							data.putString("msg", msg);
+							data.putString("my_action", "cs460.grouple.grouple.ECHO_NOW");
+							data.putString("content", CONTENT + "_MESSAGE");
+							data.putString("receiver", ID);// may want to just
+															// use receiver for
+															// all instead of ID
+							data.putString("sender", user.getEmail());
+							data.putString("id", ID);
+							data.putString("name", NAME);
+							data.putString("first", user.getFirstName());
+							data.putString("last", user.getLastName());
+
+							String id = Integer.toString(msgId.incrementAndGet());
+
+							// Send the message to all the group members.
+							for (int i = 0; i < regIDList.size(); i++)
+							{
+								data.putString("recipient", regIDList.get(i));
+								gcm.send(SENDER_ID + "@gcm.googleapis.com", id, data);
+							}
+						}
+						catch (IOException ex)
+						{
+							msg = "Error :" + ex.getMessage();
+							sendMessageButton.setClickable(true);
+							messageEditText.requestFocus();
+							Toast toast = GLOBAL.getToast(EntityMessagesActivity.this,
+									"Error sending message. Please try again");
+							toast.show();
+						}
+						return msg;
+					}
+
+					@Override
+					protected void onPostExecute(String msg)
+					{
+						messageEditText.setText("");
+						sendMessageButton.setClickable(true);
+						messageEditText.requestFocus();
+						populateMessages();
+					}
+				}.execute(null, null, null);
+			}
+			else
+			{
+				Toast toast = GLOBAL.getToast(this, "Please enter a message!");
+				toast.show();
+			}
+		}
+	}
+
+	// grabs from the database group or event messages, respectively
 	public int fetchMessages()
 	{
 		if (CONTENT.equals("GROUP"))
 			new getMessagesTask().execute("http://68.59.162.183/android_connect/get_group_messages.php");
 		else
 			new getMessagesTask().execute("http://68.59.162.183/android_connect/get_event_messages.php");
-		
+
 		return 1;
 	}
 
@@ -389,8 +439,8 @@ public class EntityMessagesActivity extends BaseActivity
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
 						JSONObject o = (JSONObject) jsonArray.get(i);
-						Message m = new Message(o.getString("message"), o.getString("send_date"), o.getString("sender"),
-								o.getString("first") + " " + o.getString("last"), ID, null);
+						Message m = new Message(o.getString("message"), o.getString("send_date"),
+								o.getString("sender"), o.getString("first") + " " + o.getString("last"), ID, null);
 						messages.add(m);
 					}
 					populateMessages();
@@ -404,9 +454,10 @@ public class EntityMessagesActivity extends BaseActivity
 					View row = inflater.inflate(R.layout.list_item_sadguy, null);
 					TextView sadGuyTextView = (TextView) row.findViewById(R.id.sadGuyTextView);
 					sadGuyTextView.setText("No messages to display!");
-					messageLayout.addView(row);
+					listView.setVisibility(View.GONE);
+					listViewLayout.addView(row);
 				}
-			} 
+			}
 			catch (Exception e)
 			{
 				Log.d("fetchMessages", "exception caught");
@@ -414,9 +465,9 @@ public class EntityMessagesActivity extends BaseActivity
 			}
 		}
 	}
-	
-	//This task gets your singular friend's regid
-    private class getRegIDsTask extends AsyncTask<String, Void, String>
+
+	// This task gets your singular friend's regid
+	private class getRegIDsTask extends AsyncTask<String, Void, String>
 	{
 		@Override
 		protected String doInBackground(String... urls)
@@ -424,12 +475,13 @@ public class EntityMessagesActivity extends BaseActivity
 			String type = CONTENT.equals("GROUP") ? "g_id" : "e_id";
 			Global global = ((Global) getApplicationContext());
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			//The recipient's email is urls[1]
+			// The recipient's email is urls[1]
 			nameValuePairs.add(new BasicNameValuePair(type, urls[1]));
 			nameValuePairs.add(new BasicNameValuePair("email", urls[2]));
 
 			return global.readJSONFeed(urls[0], nameValuePairs);
 		}
+
 		@Override
 		protected void onPostExecute(String result)
 		{
@@ -442,9 +494,9 @@ public class EntityMessagesActivity extends BaseActivity
 					JSONArray jsonArray = jsonObject.getJSONArray("chat_ids");
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
-						//get the ith friend's chat id.
+						// get the ith friend's chat id.
 						JSONObject o = (JSONObject) jsonArray.get(i);
-						regIDList.add(o.getString("chat_id"));			
+						regIDList.add(o.getString("chat_id"));
 					}
 				}
 				else
@@ -452,7 +504,7 @@ public class EntityMessagesActivity extends BaseActivity
 					Toast toast = GLOBAL.getToast(EntityMessagesActivity.this, "Error getting regID list.");
 					toast.show();
 				}
-			} 
+			}
 			catch (Exception e)
 			{
 				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());

@@ -10,6 +10,8 @@ import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,12 +21,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -78,8 +84,29 @@ public class UserProfileActivity extends BaseActivity
 	protected void onResume()
 	{
 		super.onResume();
+		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("USER_DATA"));
 		load();
 	}
+
+	@Override
+	protected void onPause()
+	{
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
+		super.onPause();
+
+	}
+
+	// This is the handler that will manager to process the broadcast intent
+	private BroadcastReceiver mReceiver = new BroadcastReceiver()
+	{
+		@Override
+		public void onReceive(Context context, Intent intent)
+		{
+			// Extract data included in the Intent
+			String type = intent.getStringExtra("type");
+			GLOBAL.getToast(UserProfileActivity.this, type).show();
+		}
+	};
 
 	public void load()
 	{
@@ -93,12 +120,11 @@ public class UserProfileActivity extends BaseActivity
 				user = GLOBAL.getUserBuffer();
 		}
 		else
-		{
 			user = GLOBAL.getCurrentUser();
-		}
+		// user.fetchUserInfo();
 		title = user.getFirstName() + "'s Profile";
 		new getUserExperienceTask().execute("http://68.59.162.183/android_connect/get_user_experience.php");
-		setNotifications();
+
 		badges = user.getBadges();
 		getImageTask = new getImageTask().execute("http://68.59.162.183/android_connect/get_profile_image.php");
 		populateProfile(); // populates a group / user profile
@@ -139,7 +165,6 @@ public class UserProfileActivity extends BaseActivity
 						iv.setImageResource(R.drawable.user_image_default);
 
 					iv.setScaleType(ScaleType.CENTER_CROP);
-					setNotifications(); // for group / event
 				}
 				else
 				{
@@ -218,7 +243,7 @@ public class UserProfileActivity extends BaseActivity
 		xpTextView.setText(userPoints + " / " + pointsEnd);
 	}
 
-	private void setNotifications()
+	private void setButtons()
 	{
 		profileButton2.setVisibility(View.VISIBLE);
 		profileButton3.setVisibility(View.VISIBLE);
@@ -253,7 +278,7 @@ public class UserProfileActivity extends BaseActivity
 	public void onClick(View view)
 	{
 		super.onClick(view);
-		loadDialog.show();
+		//loadDialog.show();
 		boolean noIntent = view.getId() == R.id.backButton ? true : false;
 
 		Intent intent = new Intent(this, EventListActivity.class);
@@ -395,44 +420,63 @@ public class UserProfileActivity extends BaseActivity
 			GLOBAL.getEventBuffer().fetchParticipants();
 	}
 
-	private void badgesDialog()
+	private class BadgesListAdapter extends ArrayAdapter<Badge>
 	{
-		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-		dialogBuilder.setTitle(user.getFirstName() + "'s Badges");
-		LinearLayout row = null;
-		ImageButton badgeImageButton;
-		TextView badgeTextView;
-		View dialogView = inflater.inflate(R.layout.dialog_badges, null);
-		LinearLayout layout = (LinearLayout) dialogView.findViewById(R.id.badgesLayout);
-		for (Badge b : badges)
+		public BadgesListAdapter()
 		{
-	
-			final int index = badges.indexOf(b);
-			if (index % 3 == 0 || index == 0)
-			{
-				row = (LinearLayout) inflater.inflate(R.layout.list_row_badges, null);
-				layout.addView(row);
-			}
+			super(UserProfileActivity.this, R.layout.list_item_badge, badges);
+		}
 
-			View item = inflater.inflate(R.layout.list_item_badge, null);
-			badgeTextView = (TextView)item.findViewById(R.id.badgeNameTextView);
+		@Override
+		public View getView(final int position, View convertView, ViewGroup parent)
+		{
+			View itemView = convertView;
+			if (itemView == null)
+				itemView = inflater.inflate(R.layout.list_item_badge, parent, false);
+			Badge b = badges.get(position);
+			TextView badgeTextView = (TextView) itemView.findViewById(R.id.badgeNameTextView);
+			ImageButton badgeImageButton = (ImageButton) itemView.findViewById(R.id.badgeImageButton);
 			badgeTextView.setText(b.getName());
-			badgeImageButton = (ImageButton) item.findViewById(R.id.badgeImageButton);
+
 			if (b.getLevel() > 0)
 				badgeImageButton.setImageDrawable(getResources().getDrawable(R.drawable.badge_nature));
 			else
 				badgeImageButton.setImageDrawable(getResources().getDrawable(R.drawable.badge_nature_grey));
-			badgeImageButton.setId(index);
+			// badgeImageButton.setId(position);
 			badgeImageButton.setOnClickListener(new OnClickListener()
 			{
 				@Override
 				public void onClick(View view)
 				{
-					badgeDialog(badges.get(index));
+					badgeDialog(badges.get(position));
 				}
 			});
-			row.addView(item);
+			itemView.setId(position);
+			return itemView;
 		}
+
+	}
+
+	private void badgesDialog()
+	{
+		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+		dialogBuilder.setTitle(user.getFirstName() + "'s Badges");
+		View dialogView = inflater.inflate(R.layout.dialog_badges, null);
+		GridView gridView = (GridView) dialogView.findViewById(R.id.gridView);
+
+		ArrayAdapter<Badge> adapter = new BadgesListAdapter();
+		gridView.setAdapter(adapter);
+		gridView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+		{
+
+			public void onItemClick(AdapterView<?> parent, View itemClicked, int position, long id)
+			{
+
+				badgeDialog(badges.get(position));
+
+			}
+		});
+
 		dialogBuilder.setView(dialogView);
 		AlertDialog badgesDialog = dialogBuilder.create();
 		badgesDialog.show();
@@ -444,6 +488,7 @@ public class UserProfileActivity extends BaseActivity
 	 */
 	private void populateProfile()
 	{
+		setButtons();
 		TextView info = (TextView) findViewById(R.id.profileInfoTextView);
 		TextView about = (TextView) findViewById(R.id.profileAboutTextView);
 
@@ -459,6 +504,4 @@ public class UserProfileActivity extends BaseActivity
 			infoT = age + " yrs young\n" + location + "\n";
 		about.setText(infoT + user.getAbout());
 	}
-
-
 }

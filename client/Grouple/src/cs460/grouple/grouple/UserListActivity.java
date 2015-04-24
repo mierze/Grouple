@@ -15,8 +15,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -125,13 +129,14 @@ public class UserListActivity extends BaseActivity
 
 	private class UserListAdapter extends ArrayAdapter<User>
 	{
+
 		public UserListAdapter()
 		{
 			super(UserListActivity.this, 0, users);
 		}
 
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent)
+		public View getView(final int position, View convertView, ViewGroup parent)
 		{
 			View itemView = convertView;
 			if (itemView == null)
@@ -139,6 +144,8 @@ public class UserListActivity extends BaseActivity
 			RelativeLayout itemLayout = (RelativeLayout) itemView.findViewById(R.id.listRowLayout);
 			// find group to work with
 			User u = users.get(position);
+
+	
 			TextView nameView = (TextView) itemView.findViewById(R.id.nameTextViewLI);
 			nameView.setText(u.getName());
 			itemView.setId(position);
@@ -208,7 +215,40 @@ public class UserListActivity extends BaseActivity
 		if (users != null && !users.isEmpty())
 		{
 			ArrayAdapter<User> adapter = new UserListAdapter();
-			listView.setAdapter(adapter);	
+			listView.setAdapter(adapter);
+			listView.setOnTouchListener(new OnTouchListener() {
+				float historicX = Float.NaN, historicY = Float.NaN;
+				final int DELTA = 50;
+			    @Override
+			    public boolean onTouch(View v, MotionEvent event) 
+			    {
+			        // TODO Auto-generated method stub
+			        switch (event.getAction()) 
+			        {
+			            case MotionEvent.ACTION_DOWN:
+			            historicX = event.getX();
+			            historicY = event.getY();
+			            break;
+
+			            case MotionEvent.ACTION_UP:
+			            if (event.getX() - historicX < -DELTA) 
+			            {
+			               GLOBAL.getToast(UserListActivity.this, "HASJDFHLAHSFDJHAF").show();
+			               //populateUsers();
+			                return true;
+			            }
+			            else if (event.getX() - historicX > DELTA)  
+			            {
+			            	GLOBAL.getToast(UserListActivity.this, "HASJDFHLAHSFDJHAF").show();
+			            	 //users.remove(position);
+			            	// populateUsers();
+			                return true;
+			            } break;
+			            default: return false;
+			        }
+			        return false;
+			    }
+			});
 		}
 		else
 		{
@@ -364,7 +404,7 @@ public class UserListActivity extends BaseActivity
 	// Starts a USER/GROUP/EVENT profile
 	public void startProfileActivity(View view)
 	{
-		loadDialog.show();
+		//loadDialog.show();
 		int id = view.getId();
 		Intent intent = new Intent(this, UserProfileActivity.class);
 

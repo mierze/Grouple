@@ -11,94 +11,93 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.View.OnClickListener;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-
 /*
- * MessagesActivity has not been implemented yet.
+ * TODO: needs some thinking and re working before making list
  */
 public class RecentMessagesActivity extends BaseActivity
 {
-	private int IMAGE_INDEX = 0;//holy shit
-	private User user; //will be null for now
-	private ArrayList<ImageView> images = new ArrayList<ImageView>();
+	private int IMAGE_INDEX = 0;// holy shit
+	private User user; // will be null for now
 	private ArrayList<Message> recentMessages = new ArrayList<Message>();
-    GoogleCloudMessaging gcm;
-    AtomicInteger msgId = new AtomicInteger();
-    
-	//This is the handler that will manager to process the broadcast intent
-	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() 
+	private GoogleCloudMessaging gcm;
+	private LinearLayout listViewLayout;
+	private ListView listView;
+	private AtomicInteger msgId = new AtomicInteger();
+
+	// This is the handler that will manager to process the broadcast intent
+	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver()
 	{
-	    @Override
-	    public void onReceive(Context context, Intent intent) 
-	    {
-	        // Extract data included in the Intent
-	        String receiver = intent.getStringExtra("receiver");
-	        if (user.getEmail().equals(receiver))
-	        {
-	        	//do this
-	        	fetchRecentContacts();
-	        }
-	        /*
-	        for (Message m : recentMessages)
-	        {
-	        	if (m.getSender().equals(fromEmail) || m.getReceiver().equals(fromEmail))
-	        	{
-	        		//copy message over, add it to top of stack, adjust images accordingly
-	        		//for now just change message
-	        		//m.setMessage(message)
-	        		
-	        		//maybe for now just grab all
-	        	}
-	        }
-	        */
-	    }
+		@Override
+		public void onReceive(Context context, Intent intent)
+		{
+			// Extract data included in the Intent
+			String receiver = intent.getStringExtra("receiver");
+			if (user.getEmail().equals(receiver))
+			{
+				// do this
+				fetchRecentContacts();
+			}
+			/*
+			 * for (Message m : recentMessages) { if
+			 * (m.getSender().equals(fromEmail) ||
+			 * m.getReceiver().equals(fromEmail)) { //copy message over, add it
+			 * to top of stack, adjust images accordingly //for now just change
+			 * message //m.setMessage(message)
+			 * 
+			 * //maybe for now just grab all } }
+			 */
+		}
 	};
-    
+
 	@Override
-	protected void onStop()
+	protected void onPause()
 	{
-		super.onStop();
 		unregisterReceiver(mMessageReceiver);
+		super.onPause();
 	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
-		
+
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_recent_messages);
+		listViewLayout = (LinearLayout) findViewById(R.id.listViewLayout);
+		listView = (ListView) findViewById(R.id.listView);
 		user = GLOBAL.getCurrentUser();
 		/* Action bar */
-		initActionBar("Messages", true);		
-		//new getContactsTask().execute("http://68.59.162.183/android_connect/get_chat_id.php");
-        // Check device for Play Services APK. If check succeeds, proceed with GCM registration.
+		initActionBar("Messages", true);
+		// new
+		// getContactsTask().execute("http://68.59.162.183/android_connect/get_chat_id.php");
+		// Check device for Play Services APK. If check succeeds, proceed with
+		// GCM registration.
 	}
-	
+
 	@Override
-	protected void onStart()
+	protected void onResume()
 	{
-		super.onStart();
-	    registerReceiver(mMessageReceiver, new IntentFilter("USER_MESSAGE"));
+		registerReceiver(mMessageReceiver, new IntentFilter("USER_MESSAGE"));
+		super.onResume();
+		fetchRecentContacts();
+		// Check device for Play Services APK.
 	}
-	
-	@Override
-    protected void onResume() 
-	{
-        super.onResume();
-        fetchRecentContacts();
-        // Check device for Play Services APK.
-    }
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
@@ -107,7 +106,7 @@ public class RecentMessagesActivity extends BaseActivity
 		if (id == R.id.action_messages)
 		{
 			return true;
-			//already here
+			// already here
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -115,13 +114,14 @@ public class RecentMessagesActivity extends BaseActivity
 	public void startMessages(View view)
 	{
 		Intent intent = new Intent(this, MessagesActivity.class);
-		String EMAIL = recentMessages.get(view.getId()).getReceiver().equals(user.getEmail()) ? recentMessages.get(view.getId()).getSender() : recentMessages.get(view.getId()).getReceiver();
+		String EMAIL = recentMessages.get(view.getId()).getReceiver().equals(user.getEmail()) ? recentMessages.get(
+				view.getId()).getSender() : recentMessages.get(view.getId()).getReceiver();
 		intent.putExtra("email", EMAIL);
 		intent.putExtra("name", recentMessages.get(view.getId()).getSenderName());
 		startActivity(intent);
 	}
-		
-	//onClick for items to bring
+
+	// onClick for items to bring
 	public void newMessageButton(View view)
 	{
 		loadDialog.show();
@@ -132,53 +132,70 @@ public class RecentMessagesActivity extends BaseActivity
 		intent.putExtra("content", CONTENT);
 		startActivity(intent);
 	}
-	
+
+	private class ContactListAdapter extends ArrayAdapter<Message>
+	{
+		public ContactListAdapter()
+		{
+			super(RecentMessagesActivity.this, R.layout.list_row_contact, recentMessages);
+		}
+
+		@Override
+		public View getView(final int position, View convertView, ViewGroup parent)
+		{
+			View itemView = convertView;
+			if (itemView == null)
+				itemView = inflater.inflate(R.layout.list_row_contact, parent, false);
+			final Message m = recentMessages.get(position);
+			TextView contactName = (TextView) itemView.findViewById(R.id.contactName);
+			TextView messageBody = (TextView) itemView.findViewById(R.id.messageBody);
+			TextView messageDate = (TextView) itemView.findViewById(R.id.messageDate);
+			ImageButton contactImage = (ImageButton) itemView.findViewById(R.id.contactImage);
+			/*contactImage.setOnClickListener(new OnClickListener()
+			{
+				@Override
+			 public void onClick(View view)
+				{
+					startProfileActivity(m);
+				}
+			});*/
+			messageBody.setText(m.getMessage());
+			messageDate.setText(m.getDateString());
+			itemView.setId(position);
+			// recentMessages.get(index).setImage((ImageView)row.findViewById(R.id.contactImage));
+			String otherEmail = recentMessages.get(position).getSender().equals(user.getEmail()) ? recentMessages.get(
+					position).getReceiver() : recentMessages.get(position).getSender();
+			new getImageTask().execute("http://68.59.162.183/android_connect/get_profile_image.php", otherEmail);
+			contactName.setText(recentMessages.get(position).getSenderName());
+
+			if (recentMessages.get(position).getReadByDateString().equals("0000-00-00 00:00:00")
+					&& recentMessages.get(position).getReceiver().equals(user.getEmail()))
+			{
+				contactName.setTextColor(getResources().getColor(R.color.purple));
+				contactName.setTypeface(null, Typeface.BOLD);
+				itemView.setBackgroundResource(R.drawable.top_bottom_border_new);
+			}
+
+			return itemView;
+		}
+	}
+
 	private void populateRecentContacts()
 	{
-		//populate all of the chats between peers, groups and events that are most active
-		//layout to inflate into
-		LinearLayout messageLayout = (LinearLayout) findViewById(R.id.contactLayout);
-		messageLayout.removeAllViews();
-		//layout inflater
-		LayoutInflater li = getLayoutInflater();
-		TextView messageBody, messageDate, contactName;
-		View row;
+
 
 		if (!recentMessages.isEmpty())
-			for (int index = recentMessages.size()-1; index >= 0; index--)
-			{
-				//loop through messages, maybe a map String String with messagebody, date
-				row =  li.inflate(R.layout.list_row_contact, null); //inflate this message row
-				row.setId(index);
-				messageBody = (TextView) row.findViewById(R.id.messageBody);
-				messageDate = (TextView) row.findViewById(R.id.messageDate);
-				contactName = (TextView) row.findViewById(R.id.contactName);
-				messageDate.setText(recentMessages.get(index).getDateString());
-				messageBody.setText(recentMessages.get(index).getMessage());
-				//recentMessages.get(index).setImage((ImageView)row.findViewById(R.id.contactImage));
-				String otherEmail = recentMessages.get(index).getSender().equals(user.getEmail()) ? recentMessages.get(index).getReceiver() : recentMessages.get(index).getSender();
-				//String contactName = recentMessages.get(index).getSender().equals(user.getEmail()) ?  : recentMessages.get(index).getSender();
-				new getImageTask().execute("http://68.59.162.183/android_connect/get_profile_image.php", otherEmail);
-				contactName.setText(recentMessages.get(index).getSenderName());
-				ImageView contactImage = (ImageView) row.findViewById(R.id.contactImage);
-				images.add(contactImage);
-				System.out.println("READ AT INDEX " +index+"\tis " + recentMessages.get(index).getReadByDateString());
-				if (recentMessages.get(index).getReadByDateString().equals("0000-00-00 00:00:00") && recentMessages.get(index).getReceiver().equals(user.getEmail()))
-				{
-					System.out.println("Should be changing color here");
-					contactName.setTextColor(getResources().getColor(R.color.purple));
-					contactName.setTypeface(null, Typeface.BOLD);
-					row.setBackgroundResource(R.drawable.top_bottom_border_new);
-				}
-				else
-					System.out.println("Should not be changing this message");
-				//add row into scrollable layout
-				messageLayout.addView(row);
-				System.out.println("Done adding row with name: "+contactName.getText().toString());
-			}
-		
+		{
+			ArrayAdapter<Message> adapter = new ContactListAdapter();
+			listView.setAdapter(adapter);
+		}
+		else
+		{
+			//display sad guy
+		}
+
 	}
-	
+
 	private class getImageTask extends AsyncTask<String, Void, String>
 	{
 		@Override
@@ -188,47 +205,67 @@ public class RecentMessagesActivity extends BaseActivity
 			nameValuePairs.add(new BasicNameValuePair("email", urls[1]));
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
+
 		@Override
 		protected void onPostExecute(String result)
 		{
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
-				//json fetch was successful
+				// json fetch was successful
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					ImageView iv = images.get(IMAGE_INDEX);
+					
 					String image = jsonObject.getString("image").toString();
+					if (IMAGE_INDEX < recentMessages.size())
+					{
 					Message m = recentMessages.get(IMAGE_INDEX);
 					m.setImage(image);
-					iv.setId(recentMessages.size()-1-IMAGE_INDEX);
-					if (m.getImage() != null)
-						iv.setImageBitmap(m.getImage());
-					else
-						iv.setImageResource(R.drawable.user_image_default);
-					iv.setScaleType(ScaleType.CENTER_CROP);
+					updateView(IMAGE_INDEX, m.getImage());
+					//updateView(recentMessages.size() - 1 - IMAGE_INDEX, m.getImage());
+					
 					IMAGE_INDEX++;
-				} 
+					
+					}
+				}
 				else
 				{
 					// failed
 					Log.d("getImageTask", "FAILED");
 				}
-			} 
+			}
 			catch (Exception e)
 			{
-				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
+				Log.d("ReadJSON, IMAGE TASKdTask", e.getLocalizedMessage());
 			}
-			//do next thing here
+			// do next thing here
 		}
 	}
 
-	public void startProfileActivity(View view)
+	
+	private void updateView(int index, Bitmap image){
+	    View v = listView.getChildAt(index - 
+	        listView.getFirstVisiblePosition());
+
+	    if(v == null)
+	       return;
+
+	    ImageView imageView = (ImageView) v.findViewById(R.id.contactImage);
+		if (image != null)
+			 imageView.setImageBitmap(image);
+		else
+			imageView.setImageResource(R.drawable.user_image_default);
+	    
+	   
+	   imageView.setScaleType(ScaleType.CENTER_CROP);
+	   imageView.setId(index);
+	}
+	public void startProfileActivity(Message m)
 	{
 		Intent intent = new Intent(this, UserProfileActivity.class);
 		String friendEmail;
-		int id = view.getId();
-		friendEmail = recentMessages.get(id).getReceiver().equals(user.getEmail()) ? recentMessages.get(id).getSender() : recentMessages.get(id).getReceiver();
+		friendEmail = m.getReceiver().equals(user.getEmail()) ? m.getSender()
+				: m.getReceiver();
 		User u = new User(friendEmail);
 		u.fetchEventsUpcoming();
 		u.fetchFriends();
@@ -238,18 +275,17 @@ public class RecentMessagesActivity extends BaseActivity
 		if (!GLOBAL.isCurrentUser(friendEmail))
 			GLOBAL.setUserBuffer(u);
 		else
-			GLOBAL.setCurrentUser(u); //reloading user
+			GLOBAL.setCurrentUser(u); // reloading user
 		intent.putExtra("email", friendEmail);
 		startActivity(intent);
 	}
 
 	public int fetchRecentContacts()
 	{
-		//resetting data, currently pulling everything each time
+		// resetting data, currently pulling everything each time
 		recentMessages.clear();
-		images.clear();
 		IMAGE_INDEX = 0;
-		new getRecentContactsTask().execute("http://68.59.162.183/android_connect/testcontacts4.php");
+		new getRecentContactsTask().execute("http://68.59.162.183/android_connect/get_recent_contacts.php");
 		return 1;
 	}
 
@@ -275,15 +311,19 @@ public class RecentMessagesActivity extends BaseActivity
 					JSONArray jsonArray = jsonObject.getJSONArray("messages");
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
-						JSONObject o = (JSONObject) jsonArray.get(i);				
-						Message newMsg = new Message(o.getString("message"), o.getString("senddate"),o.getString("sender"), o.getString("first") + " " + o.getString("last"), o.getString("receiver"), o.getString("read_date"));
+						JSONObject o = (JSONObject) jsonArray.get(i);
+						Message newMsg = new Message(o.getString("message"), o.getString("senddate"),
+								o.getString("sender"), o.getString("first") + " " + o.getString("last"),
+								o.getString("receiver"), o.getString("read_date"));
 						newMsg.setID(Integer.parseInt(o.getString("id")));
-						String otherEmail = newMsg.getSender().equals(user.getEmail()) ? newMsg.getReceiver() : newMsg.getSender();
+						String otherEmail = newMsg.getSender().equals(user.getEmail()) ? newMsg.getReceiver() : newMsg
+								.getSender();
 						boolean contains = false;
 						int indexFound = -1;
 						for (Message m : recentMessages)
 						{
-							String otherEmail2 = m.getSender().equals(user.getEmail()) ? m.getReceiver() : m.getSender();
+							String otherEmail2 = m.getSender().equals(user.getEmail()) ? m.getReceiver() : m
+									.getSender();
 							if (otherEmail2.equals(otherEmail))
 							{
 								contains = true;
@@ -292,31 +332,34 @@ public class RecentMessagesActivity extends BaseActivity
 						}
 						if (!contains)
 						{
-							//recent messages does not contain a message from this user
+							// recent messages does not contain a message from
+							// this user
 							recentMessages.add(newMsg);
 						}
 						else if (recentMessages.get(indexFound).getDate().compareTo(newMsg.getDate()) < 0)
 						{
 							recentMessages.set(indexFound, newMsg);
-							System.out.println("The old message has been replaced and is now:" + recentMessages.get(indexFound).getMessage());
-						}		
+							System.out.println("The old message has been replaced and is now:"
+									+ recentMessages.get(indexFound).getMessage());
+						}
 						else
 						{
-							System.out.println("no replace happened.  Message is same as before: " + recentMessages.get(indexFound).getMessage());
+							System.out.println("no replace happened.  Message is same as before: "
+									+ recentMessages.get(indexFound).getMessage());
 						}
 					}
-					//done fetching, now populate to scrollview
+					// done fetching, now populate to scrollview
 					populateRecentContacts();
 				}
 				if (jsonObject.getString("success").toString().equals("2"))
 				{
 					Log.d("fetchRecentContacts", "failed = 2 return");
 				}
-			} 
+			}
 			catch (Exception e)
 			{
 				Log.d("fetchRecentContacts", "exception caught");
-				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
+				Log.d("ReadJSONFINDCONTACTSFeedTask", e.getLocalizedMessage());
 			}
 		}
 	}

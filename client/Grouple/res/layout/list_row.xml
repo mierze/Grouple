@@ -22,7 +22,7 @@
   	    android:textStyle="bold" />
 
   	  	<Button
-  	  	    android:id="@+id/removeButtonLI"
+  	  	    android:id="@+id/removeButton"
   	  	    android:layout_width="48dp"
   	  	    android:layout_height="match_parent"
   	  	    android:layout_gravity="right|top"

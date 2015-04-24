@@ -1,5 +1,13 @@
 package cs460.grouple.grouple;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
+
+import cs460.grouple.grouple.GcmUtility.CONTENT_TYPE;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
@@ -7,9 +15,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -159,6 +169,8 @@ public class BaseActivity extends ActionBarActivity implements OnClickListener
 			intent = new Intent(this, SettingsActivity.class);
 			break;
 		case R.id.action_logout:
+			//Remove RegID
+			new deleteRegIDTask().execute("http://68.59.162.183/android_connect/delete_chat_id.php", user.getEmail());
 			GLOBAL.destroySession();
 			intent = new Intent(this, LoginActivity.class);
 			Intent CLOSE_ALL = new Intent("CLOSE_ALL");
@@ -248,5 +260,41 @@ public class BaseActivity extends ActionBarActivity implements OnClickListener
 		});
 		
 		return builder;
+	}
+	
+	//This task gets your friend's regid
+    private class deleteRegIDTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected String doInBackground(String... urls)
+		{
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			//The recipient's email is urls[1]
+			nameValuePairs.add(new BasicNameValuePair("email", urls[1]));
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+		}
+
+		@Override
+		protected void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+				System.out.println(jsonObject.getString("success"));
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					//The reg ID was removed successfully.
+					
+				} 
+				else
+				{
+					//Toast toast = GLOBAL.getToast(MessagesActivity.this, "Error getting GCM REG_ID.");
+					//toast.show();
+				}
+			} catch (Exception e)
+			{
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
+			}
+		}
 	}
 }

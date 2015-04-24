@@ -2,6 +2,7 @@ package cs460.grouple.grouple;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import cs460.grouple.grouple.DataService;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -37,13 +38,14 @@ public class User extends Entity
 	private ArrayList<Badge> newBadges = new ArrayList<Badge>();
 	private SparseArray<String> groupRoles = new SparseArray<String>();
 	private SparseArray<String> eventRoles = new SparseArray<String>();
-
+	private DataService dataApp;
 	/*
 	 * Constructor for User class
 	 */
 	protected User(String email)
 	{
 		super();
+		dataApp = new DataService(GLOBAL, this);
 		setEmail(email);
 		initBadges();
 		System.out.println("Initializing new user.");
@@ -484,93 +486,11 @@ public class User extends Entity
 		return "U";
 	}
 
-	// fetches all profile information for the user
-	protected int fetchUserInfo()
+	protected void fetchUserInfo()
 	{
-		AsyncTask<String, Void, String> task = new getUserInfoTask()
-				.execute("http://68.59.162.183/android_connect/get_user_info.php");
-		try
-		{
-			task.get(10000, TimeUnit.MILLISECONDS);
-		}
-		catch (InterruptedException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (ExecutionException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (TimeoutException e)
-		{
-			// TODO Auto-generated catch block
-			Log.d("fetchUserInfo", "TIMED OUT INTERNET TO SLOW!");
-			e.printStackTrace();
-		}
-		return 1;
-	}
-
-	private class getUserInfoTask extends AsyncTask<String, Void, String>
-	{
-		@Override
-		protected String doInBackground(String... urls)
-		{
-			System.out.println("ABOT TO GET USER INFO for " + getEmail());
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair("email", getEmail()));
-
-			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
-		}
-
-		@Override
-		protected void onPostExecute(String result)
-		{
-			try
-			{
-				// getting json object from the result string
-				JSONObject jsonObject = new JSONObject(result);
-				// gotta make a json array
-				// json fetch was successful
-				if (jsonObject.getString("success").toString().equals("1"))
-				{
-					JSONArray jsonArray = jsonObject.getJSONArray("userInfo");
-					Log.d("getUserInfoOnPost", "success1");
-					String fName = (String) jsonArray.get(0);
-					String lName = (String) jsonArray.get(1);
-					setName(fName + " " + lName);
-					Object about = jsonArray.get(3);
-					if (about.toString().equals("null"))
-						setAbout("");
-					else
-						setAbout(about.toString());
-					// set location
-					Object location = jsonArray.get(4);
-					if (location.toString().equals("null"))
-						setLocation("");
-					else
-						setLocation(location.toString());
-					Object dob = jsonArray.get(2);
-					if (dob.toString().equals("null") || dob.toString().equals("0000-00-00"))
-						setBirthday("");
-					else
-						setBirthday(dob.toString());// panda
-					Log.d("getUserInfoOnPost", "age: " + age);
-				}
-				// unsuccessful
-				else
-				{
-					// failed
-					Log.d("UserFetchInfoOnPost", "FAILED");
-				}
-			}
-			catch (Exception e)
-			{
-				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
-			}
-			// do next thing here
-		}
+		//call the application
+		dataApp.fetchContent("INFO");
+		//
 	}
 
 	protected int fetchFriends()

@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -43,8 +44,9 @@ public class EventListActivity extends BaseActivity
 							// ListActivity
 	private String CONTENT; // type of content to display in list, passed in
 							// from other activities
-	private LinearLayout listViewLayout; // layout for list activity (scrollable layout
-	private ListView listView;							// to inflate into)
+	private LinearLayout listViewLayout; // layout for list activity (scrollable
+											// layout
+	private ListView listView; // to inflate into)
 	private String ROLE = "U";// defaulting to lowest level
 	private String PANDABUFFER = ""; // same
 	private int bufferID; // same as below: could alternatively have json return
@@ -54,57 +56,12 @@ public class EventListActivity extends BaseActivity
 	private ArrayList<User> users;
 	private ArrayList<Event> events;
 
-	/* loading in everything needed to generate the list */
-	public void load()
-	{
-		String actionBarTitle = "";
-		addNew.setVisibility(View.GONE); // GONE FOR NOW
-
-		// GRABBING A USER
-		if (EXTRAS.getString("email") != null)
-			if (GLOBAL.isCurrentUser(EXTRAS.getString("email")))
-			{
-				System.out.println("MAKING USER THE CURRENT USER");
-				user = GLOBAL.getCurrentUser();
-			}
-			else if (GLOBAL.getUserBuffer() != null
-					&& GLOBAL.getUserBuffer().getEmail().equals(EXTRAS.getString("email")))
-				user = GLOBAL.getUserBuffer();
-
-		// CALL APPROPRIATE METHODS TO POPULATE LIST
-		// CONTENT_TYPE -> POPULATEGROUPS
-		// setting the bottom button gone
-		if (addNew != null)
-			addNew.setVisibility(View.GONE);
-		// setting the actionbar text
-		if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
-		{
-			actionBarTitle = user.getFirstName() + "'s Pending Events";
-		}
-		else if (CONTENT.equals(CONTENT_TYPE.EVENT_INVITES.toString()))
-		{
-			actionBarTitle = user.getFirstName() + "'s Event Invites";
-		}
-		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
-		{
-			actionBarTitle = user.getFirstName() + "'s Upcoming Events";
-		}
-		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
-			actionBarTitle = user.getFirstName() + "'s Past Events";
-		else
-			actionBarTitle = user.getFirstName() + "'s Declined Events";
-		populateEvents();
-
-		// calling next functions to execute
-		initActionBar(actionBarTitle, true);
-
-	}
-
 	private class EventListAdapter extends ArrayAdapter<Event>
 	{
 		String startDate = "";
 		String newStartDate = "";
 		int numDateRows = 0;
+
 		public EventListAdapter()
 		{
 			super(EventListActivity.this, 0, events);
@@ -116,20 +73,29 @@ public class EventListActivity extends BaseActivity
 			View itemView = convertView;
 			if (itemView == null)
 				itemView = inflater.inflate(getItemViewType(position), parent, false);
-			Event e = events.get(position);
-		//	newStartDate = e.getStartTextNoTime();
-
-			/*if (position == 0)
-				startDate = newStartDate;
-			else if (startDate.compareTo(newStartDate) < 0)
+			final Event e = events.get(position);
+			// newStartDate = e.getStartTextNoTime();
+			Button removeButton = (Button) itemView.findViewById(R.id.removeButton);
+			if (removeButton != null)
 			{
-				View dateRow = inflater.inflate(R.layout.list_row_date, null);
-				TextView dateTextView = (TextView) dateRow.findViewById(R.id.dateTextView);
-				startDate = newStartDate;
-				dateTextView.setText(e.getStartTextListDisplay());
-				numDateRows++;
-				return dateRow;
-			}*/
+				removeButton.setOnClickListener(new OnClickListener()
+				{
+					@Override
+					public void onClick(View view)
+					{
+						removeButton(e);
+					}
+				});
+			}
+			/*
+			 * if (position == 0) startDate = newStartDate; else if
+			 * (startDate.compareTo(newStartDate) < 0) { View dateRow =
+			 * inflater.inflate(R.layout.list_row_date, null); TextView
+			 * dateTextView = (TextView)
+			 * dateRow.findViewById(R.id.dateTextView); startDate =
+			 * newStartDate; dateTextView.setText(e.getStartTextListDisplay());
+			 * numDateRows++; return dateRow; }
+			 */
 			TextView nameView = (TextView) itemView.findViewById(R.id.nameTextViewLI);
 			nameView.setText(e.getName());
 			itemView.setId(e.getID());
@@ -145,7 +111,8 @@ public class EventListActivity extends BaseActivity
 			{
 				listItemID = R.layout.list_row_acceptdecline;
 			}
-			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
+			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString())
+					|| CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
 			{
 				if (!GLOBAL.isCurrentUser(user.getEmail()))
 					listItemID = R.layout.list_row_nobutton;
@@ -250,20 +217,57 @@ public class EventListActivity extends BaseActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list);
-		// clearing any previous views populated, for refresh
 		listView = (ListView) findViewById(R.id.listView);
 		// INSTANTIATIONS
 		EXTRAS = getIntent().getExtras();
 		CONTENT = EXTRAS.getString("content");
 		listViewLayout = (LinearLayout) findViewById(R.id.listViewLayout);
 		addNew = (Button) findViewById(R.id.addNewButtonLiA);
+		String actionBarTitle = "";
+		addNew.setVisibility(View.GONE); // GONE FOR NOW
+
+		// GRABBING A USER
+		if (EXTRAS.getString("email") != null)
+			if (GLOBAL.isCurrentUser(EXTRAS.getString("email")))
+			{
+				System.out.println("MAKING USER THE CURRENT USER");
+				user = GLOBAL.getCurrentUser();
+			}
+			else if (GLOBAL.getUserBuffer() != null
+					&& GLOBAL.getUserBuffer().getEmail().equals(EXTRAS.getString("email")))
+				user = GLOBAL.getUserBuffer();
+
+		// CALL APPROPRIATE METHODS TO POPULATE LIST
+		// CONTENT_TYPE -> POPULATEGROUPS
+		// setting the bottom button gone
+		if (addNew != null)
+			addNew.setVisibility(View.GONE);
+		// setting the actionbar text
+		if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
+		{
+			actionBarTitle = user.getFirstName() + "'s Pending Events";
+		}
+		else if (CONTENT.equals(CONTENT_TYPE.EVENT_INVITES.toString()))
+		{
+			actionBarTitle = user.getFirstName() + "'s Event Invites";
+		}
+		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
+		{
+			actionBarTitle = user.getFirstName() + "'s Upcoming Events";
+		}
+		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
+			actionBarTitle = user.getFirstName() + "'s Past Events";
+		else
+			actionBarTitle = user.getFirstName() + "'s Declined Events";
+		// calling next functions to execute
+		initActionBar(actionBarTitle, true);
 	}
 
 	@Override
 	protected void onResume()
 	{
 		super.onResume();
-		load();
+		populateEvents();
 	}
 
 	// ONCLICK METHODS BELOW
@@ -294,26 +298,21 @@ public class EventListActivity extends BaseActivity
 	}
 
 	// Handles removing a friend when the remove friend button is pushed.
-	public void removeButton(View view)
+	public void removeButton(Event e)
 	{
-		if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString())
-				|| CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString())
-				|| CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
-		{
-			// Get the id.
-			bufferID = view.getId();
-			System.out.println("ID IS SET TO IN PAST EVENT!! " + bufferID);
-			new AlertDialog.Builder(this).setMessage("Are you sure you want to leave this event?").setCancelable(true)
-					.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+		// Get the id.
+		bufferID = e.getID();
+		new AlertDialog.Builder(this).setMessage("Are you sure you want to leave this event?").setCancelable(true)
+				.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+				{
+					@Override
+					public void onClick(DialogInterface dialog, int id)
 					{
-						@Override
-						public void onClick(DialogInterface dialog, int id)
-						{
-							new performActionTask().execute("http://68.59.162.183/android_connect/leave_event.php",
-									Integer.toString(bufferID));
-						}
-					}).setNegativeButton("Cancel", null).show();
-		}
+						new performActionTask().execute("http://68.59.162.183/android_connect/leave_event.php",
+								Integer.toString(bufferID));
+					}
+				}).setNegativeButton("Cancel", null).show();
+
 	}
 
 	// Starts a USER/GROUP/EVENT profile
@@ -387,51 +386,7 @@ public class EventListActivity extends BaseActivity
 			GLOBAL.setEventBuffer(event);
 	}
 
-	/* Gets the role of the current user in a group / event */
-	private class getRoleTask extends AsyncTask<String, Void, String>
-	{
-		@Override
-		protected String doInBackground(String... urls)
-		{
-			String type = "eid";
-			String email = user.getEmail();
-			String id = urls[1];
-
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair("email", email));
-			nameValuePairs.add(new BasicNameValuePair(type, id));
-			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
-		}
-
-		@Override
-		protected void onPostExecute(String result)
-		{
-			try
-			{
-				JSONObject jsonObject = new JSONObject(result);
-
-				// json fetch was successful
-				if (jsonObject.getString("success").toString().equals("1"))
-				{
-					ROLE = jsonObject.getString("role").toString();
-					System.out.println("ROLE IS BEING SET TO " + ROLE);
-					if (!ROLE.equals("U"))
-						addNew.setVisibility(View.VISIBLE);
-				}
-				// unsuccessful
-				else
-				{
-					// failed
-					Log.d("FETCH ROLE FAILED", "FAILED");
-				}
-			}
-			catch (Exception e)
-			{
-				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
-			}
-		}
-	}
-
+	
 	private class performActionTask extends AsyncTask<String, Void, String>
 	{
 		@Override
@@ -439,16 +394,12 @@ public class EventListActivity extends BaseActivity
 		{
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			// Add your data
-			if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString())
-					|| CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString())
-					|| CONTENT.equals(CONTENT_TYPE.EVENT_INVITES.toString())
-					|| CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
-			{
-				// events pending past, upcoming or invites, all need email and
-				// eid
-				nameValuePairs.add(new BasicNameValuePair("email", user.getEmail()));
-				nameValuePairs.add(new BasicNameValuePair("eid", urls[1]));
-			}
+
+			// events pending past, upcoming or invites, all need email and
+			// eid
+			nameValuePairs.add(new BasicNameValuePair("email", user.getEmail()));
+			nameValuePairs.add(new BasicNameValuePair("eid", urls[1]));
+
 			// calling readJSONFeed in Global, continues below in onPostExecute
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}

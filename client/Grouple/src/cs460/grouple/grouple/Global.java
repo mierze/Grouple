@@ -38,9 +38,9 @@ import android.widget.Toast;
  */
 public class Global extends Application
 {
-	private static ArrayList<User> users = new ArrayList<User>();
-	private static ArrayList<Group> groups = new ArrayList<Group>();
-	private static ArrayList<Event> events = new ArrayList<Event>();
+	private static ArrayList<User> users = new ArrayList<User>(); //all users in system
+	private static ArrayList<Group> groups = new ArrayList<Group>(); //all groups loaded in
+	private static ArrayList<Event> events = new ArrayList<Event>(); //all events loaded in
 	private static User currentUser; //contains the current user, is updated on every pertinent activity call
 	private static Group groupBuffer;
 	private static User userBuffer;
@@ -378,7 +378,9 @@ public class Global extends Application
 		for (User u : users)
 			if (u.getEmail().equals(email))
 				return u;
-		return null;
+		User user = new User(email);
+		users.add(user);
+		return user;
 	}
 	protected boolean containsUser(String email)
 	{

@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/messageLayout"
     android:layout_width="match_parent"
-    android:layout_height="80dp"
+    android:layout_height="wrap_content"
     android:layout_margin="5dp"
     android:background="@drawable/top_bottom_border"
     android:onClick="startMessages"
@@ -18,17 +18,16 @@
         android:orientation="vertical"
         android:padding="0dp" >
 
-        <ImageView
+        <ImageButton
             android:id="@+id/contactImage"
-            android:layout_width="80dp"
-            android:layout_height="match_parent"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
             android:layout_gravity="left"
             android:layout_margin="0dp"
             android:layout_marginTop="5dp"
             android:background="@drawable/border"
             android:contentDescription="Profile photo."
             android:gravity="center"
-            android:onClick="startProfileActivity"
             android:padding="2dp"
             android:src="@drawable/abc_ab_bottom_solid_light_holo" />
     </LinearLayout>

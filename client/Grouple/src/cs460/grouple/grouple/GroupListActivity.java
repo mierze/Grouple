@@ -256,7 +256,7 @@ public class GroupListActivity extends BaseActivity
 	// Starts a USER/GROUP/EVENT profile
 	public void startProfileActivity(View view)
 	{
-		loadDialog.show();
+		//loadDialog.show();
 		int id = view.getId();
 		Group g = new Group(id);
 		Intent intent = new Intent(this, GroupProfileActivity.class);

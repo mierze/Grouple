@@ -28,9 +28,6 @@ public class GroupProfileActivity extends BaseActivity
 	private ImageView iv;
 	private Group group;
 	private User user;
-	private Bundle EXTRAS;
-	private String CONTENT; // type of content to display in profile, passed in
-							// from other activities
 
 	private View xpBar;
 
@@ -71,10 +68,7 @@ public class GroupProfileActivity extends BaseActivity
 
 	public void load()
 	{
-		EXTRAS = getIntent().getExtras();
-		CONTENT = EXTRAS.getString("content");
 		String title = "";
-		System.out.println("CONTENT IS SET TO " + CONTENT);
 
 		user = GLOBAL.getCurrentUser();
 
@@ -357,7 +351,7 @@ public class GroupProfileActivity extends BaseActivity
 	public void onClick(View view)
 	{
 		super.onClick(view);
-		loadDialog.show();
+		//loadDialog.show();
 		boolean noIntent = view.getId() == R.id.backButton ? true : false;
 
 		Intent intent = new Intent(this, UserListActivity.class);

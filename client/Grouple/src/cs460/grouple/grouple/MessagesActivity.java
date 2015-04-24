@@ -18,14 +18,16 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-
 /*
  * MessagesActivity has not been implemented yet.
  */
@@ -37,8 +39,8 @@ public class MessagesActivity extends BaseActivity
 	private User user;
 	private String recipient; //user that this user is talking to
 	private String SENDER_ID = "957639483805";
-	private LinearLayout messageLayout;
-	private LayoutInflater inflater;
+	private LinearLayout listViewLayout;
+	private ListView listView;
 	private ArrayList<Message> messages = new ArrayList<Message>();
 	private GoogleCloudMessaging gcm;
 	private AtomicInteger msgId = new AtomicInteger();
@@ -68,8 +70,8 @@ public class MessagesActivity extends BaseActivity
 		// initializing the variables for the send button / message edit text
 		sendMessageButton = (Button) findViewById(R.id.sendButton);
 		messageEditText = (EditText) findViewById(R.id.messageEditText);
-		messageLayout = (LinearLayout) findViewById(R.id.messageLayout);
-		inflater = getLayoutInflater();
+		listViewLayout = (LinearLayout) findViewById(R.id.listViewLayout);
+		listView = (ListView) findViewById(R.id.listView);
 		initActionBar(EXTRAS.getString("name"), true);
 		gcm = GoogleCloudMessaging.getInstance(this);
 		recipient = EXTRAS.getString("email");
@@ -80,6 +82,7 @@ public class MessagesActivity extends BaseActivity
 	@Override
 	protected void onResume()
 	{
+		registerReceiver(mMessageReceiver, new IntentFilter("USER_MESSAGE"));
 		super.onResume();
 		// new
 		// getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php",
@@ -88,18 +91,12 @@ public class MessagesActivity extends BaseActivity
 	}
 
 	@Override
-	protected void onStop()
+	protected void onPause()
 	{
-		super.onStop();
 		unregisterReceiver(mMessageReceiver);
+		super.onPause();
 	}
-
-	@Override
-	protected void onStart()
-	{
-		super.onStart();
-		registerReceiver(mMessageReceiver, new IntentFilter("USER_MESSAGE"));
-	}
+	
 
 	// Get numFriends, TODO: work on returning the integer
 	public int fetchMessages()
@@ -146,8 +143,6 @@ public class MessagesActivity extends BaseActivity
 				}
 				if (jsonObject.getString("success").toString().equals("0"))
 				{
-					// clear out any previous views already inflated
-					messageLayout.removeAllViews();
 					// layout inflater
 					TextView sadGuyTextView;
 					View row = null;
@@ -160,7 +155,8 @@ public class MessagesActivity extends BaseActivity
 					row = inflater.inflate(R.layout.list_item_sadguy, null);
 					sadGuyTextView = (TextView) row.findViewById(R.id.sadGuyTextView);
 					sadGuyTextView.setText("No messages to display!");
-					messageLayout.addView(row);
+					listView.setVisibility(View.GONE);
+					listViewLayout.addView(row);
 				}
 			}
 			catch (Exception e)
@@ -216,51 +212,59 @@ public class MessagesActivity extends BaseActivity
 			}
 		}
 	}
+	
+	private class MessageListAdapter extends ArrayAdapter<Message>
+	{
+		public MessageListAdapter()
+		{
+			super(MessagesActivity.this, 0, messages);
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent)
+		{
+			View itemView = convertView;
+			if (itemView == null)
+				itemView = inflater.inflate(getItemViewType(position), parent, false);
+			Message m = messages.get(position);
+			TextView messageBody = (TextView) itemView.findViewById(R.id.messageBody);
+			TextView messageDate = (TextView) itemView.findViewById(R.id.messageDate);
+			messageBody.setText(m.getMessage());
+			messageDate.setText(m.getDateString());
+			itemView.setId(m.getID());
+			return itemView;
+		}
+
+		@Override
+		public int getItemViewType(int position)
+		{
+			int listItemID = R.layout.list_row;
+			Message m = messages.get(position);
+			if (m.getSender().equals(user.getEmail()))
+				listItemID = R.layout.message_row; 
+			else
+				listItemID = R.layout.message_row_out;
+
+			return listItemID;
+		}
+	}
 
 	private void populateMessages()
 	{
-		// layout to inflate into
-		LinearLayout messageLayout = (LinearLayout) findViewById(R.id.messageLayout);
-		// clear out any previous views already inflated
-		messageLayout.removeAllViews();
-		// layout inflater
-		LayoutInflater li = getLayoutInflater();
-		TextView messageBody, messageDate;
-		View row = null;
-		// messages consist of some things (messagebody, date, sender, receiver)
-		int index = 0;
-		// loop through messages (newest first), maybe a map String String with
-		// messagebody, date
-		for (Message m : messages)
-		{
-			if (m.getReceiver().equals(user.getEmail()/* our email */))
-				row = li.inflate(R.layout.message_row_out, null); // inflate
-																	// this
-																	// message
-																	// row
-			else
-				row = li.inflate(R.layout.message_row, null); // inflate the
-																// sender
-																// message row
-			messageBody = (TextView) row.findViewById(R.id.messageBody);
-			messageBody.setText(m.getMessage());
-			messageDate = (TextView) row.findViewById(R.id.messageDate);
-			messageDate.setText(m.getDateString());
-			// add row into scrollable layout
-			messageLayout.addView(row);
-			index++;
-		}
-		// scrolling to last message
-		final ScrollView scrollview = ((ScrollView) findViewById(R.id.messagesScrollView));
-		scrollview.post(new Runnable()
-		{
 
-			@Override
-			public void run()
-			{
-				scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-			}
-		});
+		// scrolling to last message
+		//final ScrollView scrollview = ((ScrollView) findViewById(R.id.messagesScrollView));
+		//scrollview.post(new Runnable()
+		//{
+
+			//@Override
+		//	public void run()
+			//{
+			//	scrollview.fullScroll(ScrollView.FOCUS_DOWN);
+			//}
+		//});
+		ArrayAdapter<Message> adapter = new MessageListAdapter();
+		listView.setAdapter(adapter);
 		messageEditText.requestFocus();
 		readMessages();
 	}

@@ -4,12 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -21,8 +19,6 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -65,8 +61,8 @@ public class HomeActivity extends BaseActivity
 			{
 				registerInBackground();
 			}
-			// Send reg_id with a login message type to server and how the
-			// server store it. May
+			//Store this in the backend, even though it may just store the same value.
+			sendRegistrationIdToBackend();
 		} 
 		else
 		{
@@ -286,13 +282,7 @@ public class HomeActivity extends BaseActivity
 					// You should send the registration ID to your server over
 					// HTTP, so it
 					// can use GCM/HTTP or CCS to send messages to your app.
-					sendRegistrationIdToBackend();
-
-					// For this demo: we don't need to send it because the
-					// device will send
-					// upstream messages to a server that echo back the message
-					// using the
-					// 'from' address in the message.
+					//sendRegistrationIdToBackend();
 
 					// Persist the regID - no need to register again.
 					storeRegistrationId(context, regid);
@@ -354,8 +344,7 @@ public class HomeActivity extends BaseActivity
 	private void sendRegistrationIdToBackend()
 	{
 		// Your implementation here.
-		new setRegIDTask()
-				.execute("http://68.59.162.183/android_connect/add_chat_id.php");
+		new setRegIDTask().execute("http://68.59.162.183/android_connect/add_chat_id.php");
 	}
 
 	// Store the reg_id in the database if you are newly registered.
@@ -386,11 +375,11 @@ public class HomeActivity extends BaseActivity
 
 				} else
 				{
-					Context context = getApplicationContext();
-					Toast toast = Toast.makeText(context,
-							"Error Registering GCM REGID. Contact Devs",
-							Toast.LENGTH_LONG);
-					toast.show();
+					//Context context = getApplicationContext();
+					//Toast toast = Toast.makeText(context,
+					//		"Error Registering GCM REGID. Contact Devs",
+					//		Toast.LENGTH_LONG);
+					//toast.show();
 				}
 			} 
 			catch (Exception e)
