@@ -128,7 +128,6 @@ public class RecentMessagesActivity extends BaseActivity
 		final String CONTENT = "SELECT_FRIEND";
 		Intent intent = new Intent(this, EventListActivity.class);
 		intent.putExtra("email", user.getEmail());
-		user.fetchFriends();
 		intent.putExtra("content", CONTENT);
 		startActivity(intent);
 	}
@@ -266,16 +265,6 @@ public class RecentMessagesActivity extends BaseActivity
 		String friendEmail;
 		friendEmail = m.getReceiver().equals(user.getEmail()) ? m.getSender()
 				: m.getReceiver();
-		User u = new User(friendEmail);
-		u.fetchEventsUpcoming();
-		u.fetchFriends();
-		u.fetchEventsPast();
-		u.fetchGroups();
-		u.fetchUserInfo();
-		if (!GLOBAL.isCurrentUser(friendEmail))
-			GLOBAL.setUserBuffer(u);
-		else
-			GLOBAL.setCurrentUser(u); // reloading user
 		intent.putExtra("email", friendEmail);
 		startActivity(intent);
 	}

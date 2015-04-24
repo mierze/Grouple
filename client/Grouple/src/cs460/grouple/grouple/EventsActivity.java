@@ -43,27 +43,21 @@ public class EventsActivity extends BaseActivity
 		switch (view.getId())
 		{
 		case R.id.eventsPendingButtonEA:
-			user.fetchEventsPending();
 			intent.putExtra("content", "EVENTS_PENDING");
 			break;
 		case R.id.eventsUpcomingButtonEA:
-			user.fetchEventsUpcoming();
 			intent.putExtra("content", "EVENTS_UPCOMING");
 			break;
 		case R.id.eventCreateButtonEA:
 			intent = new Intent(this, EventCreateActivity.class);
-			user.fetchGroups();
 			break;
 		case R.id.eventInvitesButtonEA:
-			user.fetchEventInvites();
 			intent.putExtra("content", "EVENT_INVITES");
 			break;
 		case R.id.eventsPastButtonEA:
-			user.fetchEventsPast();
 			intent.putExtra("content", "EVENTS_PAST");
 			break;
 		case R.id.eventsDeclinedButtonEA:
-			user.fetchEventsDeclined();
 			intent.putExtra("content", "EVENTS_DECLINED");
 			break;
 		}
@@ -98,14 +92,5 @@ public class EventsActivity extends BaseActivity
 		startActivity(intent);
 		intent.putExtra("email", user.getEmail());
 	}
-		
-	@Override
-	public void onBackPressed() 
-	{
-		super.onBackPressed();
-		user.fetchEventInvites();
-    	user.fetchFriendRequests();
-    	user.fetchGroupInvites();
-    	GLOBAL.setCurrentUser(user);
-	}
+
 }

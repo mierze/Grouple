@@ -320,7 +320,7 @@ public class UserEditActivity extends BaseActivity
 					toast.show();
 					finish();
 				}
-				user.fetchUserInfo();
+				user.fetchUserInfo(UserEditActivity.this);
 				GLOBAL.setCurrentUser(user);
 			}
 			catch (Exception e)

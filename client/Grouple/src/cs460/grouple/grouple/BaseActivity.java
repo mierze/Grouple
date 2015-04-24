@@ -136,12 +136,6 @@ public class BaseActivity extends ActionBarActivity implements OnClickListener
 			intent = new Intent(this, HomeActivity.class);
 			break;
 		case R.id.action_profile:
-			user.fetchUserInfo();
-			user.fetchBadges();
-			user.fetchEventsPast();
-			user.fetchEventsUpcoming();
-			user.fetchFriends();
-			user.fetchGroups();
 			intent = new Intent(this, UserProfileActivity.class);
 			break;
 		case R.id.action_messages:
@@ -149,20 +143,11 @@ public class BaseActivity extends ActionBarActivity implements OnClickListener
 			break;
 		case R.id.action_friends:
 			intent = new Intent(this, FriendsActivity.class);
-			user.fetchFriendRequests();
-			user.fetchFriends();
 			break;
 		case R.id.action_groups:
-			user.fetchGroupInvites();
-			user.fetchGroups();
 			intent = new Intent(this, GroupsActivity.class);
 			break;
 		case R.id.action_events:
-			user.fetchEventInvites();
-			user.fetchEventsPending();
-			user.fetchEventsUpcoming();
-			user.fetchEventsDeclined();
-			user.fetchEventsPast();
 			intent = new Intent(this, EventsActivity.class);
 			break;
 		case R.id.action_settings:

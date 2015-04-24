@@ -238,8 +238,6 @@ public class GcmIntentService extends IntentService
 			notificationIntent.putExtra("email", GLOBAL.getCurrentUser().getEmail());
 			notificationIntent.putExtra("name", SENDER_FIRST + " " + SENDER_LAST);
 			notificationIntent.putExtra("content", "FRIEND_REQUESTS");
-			GLOBAL.getCurrentUser().fetchFriendRequests();
-			GLOBAL.getCurrentUser().fetchUserInfo();
 
 			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
 			.setContentTitle("New friend request from " + SENDER_FIRST + " " + SENDER_LAST + "!")
@@ -264,8 +262,6 @@ public class GcmIntentService extends IntentService
 			notificationIntent.putExtra("name", SENDER_FIRST + " " + SENDER_LAST);
 			notificationIntent.putExtra("content", "GROUP_INVITES");
 			
-			GLOBAL.getCurrentUser().fetchGroupInvites();
-			GLOBAL.getCurrentUser().fetchUserInfo();
 			//TODO:???GLOBAL.getCurrentUser().fetchFriendRequests();
 			//GLOBAL.getCurrentUser().fetchUserInfo();
 			
@@ -290,9 +286,7 @@ public class GcmIntentService extends IntentService
 			notificationIntent.putExtra("email", GLOBAL.getCurrentUser().getEmail());
 			notificationIntent.putExtra("name", SENDER_FIRST + " " + SENDER_LAST);
 			notificationIntent.putExtra("content", "EVENT_INVITES");
-			
-			GLOBAL.getCurrentUser().fetchEventInvites();
-			GLOBAL.getCurrentUser().fetchUserInfo();
+
 			//TODO:???GLOBAL.getCurrentUser().fetchFriendRequests();
 			//GLOBAL.getCurrentUser().fetchUserInfo();
 			

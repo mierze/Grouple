@@ -42,7 +42,7 @@ public class UserProfileActivity extends BaseActivity
 {
 	private ImageView iv;
 	private User user; // user who's profile this is
-	private Bundle EXTRAS;
+	private String EMAIL;
 	private LinearLayout profileLayout;
 	private View xpBar;
 	private View pastEventsBadgesLayout;
@@ -55,6 +55,8 @@ public class UserProfileActivity extends BaseActivity
 	private AsyncTask getImageTask;
 	private ProgressBar xpProgressBar;
 	private TextView xpTextView;
+	private TextView infoTextView;
+	private TextView aboutTextView;
 	private TextView levelTextView;
 	private GcmUtility gcmUtil;
 	private ArrayList<Badge> badges = new ArrayList<Badge>();
@@ -68,6 +70,8 @@ public class UserProfileActivity extends BaseActivity
 		xpBar = findViewById(R.id.xpBar);
 		xpProgressBar = (ProgressBar) findViewById(R.id.xpProgressBar);
 		levelTextView = (TextView) findViewById(R.id.levelTextView);
+		infoTextView = (TextView) findViewById(R.id.profileInfoTextView);
+		aboutTextView = (TextView) findViewById(R.id.profileAboutTextView);
 		xpTextView = (TextView) findViewById(R.id.xpTextView);
 		profileButton1 = (Button) findViewById(R.id.profileButton1);
 		profileButton2 = (Button) findViewById(R.id.profileButton2);
@@ -78,13 +82,15 @@ public class UserProfileActivity extends BaseActivity
 		pastEventsBadgesLayout = findViewById(R.id.profilePastEventsBadgesLayout);
 		iv = (ImageView) findViewById(R.id.profileImageUPA);
 		gcmUtil = new GcmUtility(GLOBAL);
+		Bundle extras = getIntent().getExtras();
+		EMAIL = extras.getString("email");
 	}
 
 	@Override
 	protected void onResume()
 	{
 		super.onResume();
-		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("USER_DATA"));
+		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("user_data"));
 		load();
 	}
 
@@ -96,128 +102,49 @@ public class UserProfileActivity extends BaseActivity
 
 	}
 
-	// This is the handler that will manager to process the broadcast intent
+	//This listens for pings from the data service to let it know that there are updates
 	private BroadcastReceiver mReceiver = new BroadcastReceiver()
 	{
 		@Override
 		public void onReceive(Context context, Intent intent)
 		{
 			// Extract data included in the Intent
-			String type = intent.getStringExtra("type");
-			GLOBAL.getToast(UserProfileActivity.this, type).show();
+			String type = intent.getStringExtra("message");
+			//repopulate views
+			populateProfile();
 		}
 	};
 
 	public void load()
 	{
-		EXTRAS = getIntent().getExtras();
-		String title = "";
 		pastEventsBadgesLayout.setVisibility(View.VISIBLE);
 		// grabbing the user with the given email in the EXTRAS
-		if (!GLOBAL.isCurrentUser(EXTRAS.getString("email")))
-		{
-			if (GLOBAL.getUserBuffer() != null)
-				user = GLOBAL.getUserBuffer();
-		}
+		if (!GLOBAL.isCurrentUser(EMAIL))
+			user = GLOBAL.getUser(EMAIL);
 		else
 			user = GLOBAL.getCurrentUser();
-		// user.fetchUserInfo();
-		title = user.getFirstName() + "'s Profile";
-		new getUserExperienceTask().execute("http://68.59.162.183/android_connect/get_user_experience.php");
-
-		badges = user.getBadges();
-		getImageTask = new getImageTask().execute("http://68.59.162.183/android_connect/get_profile_image.php");
+		
+		fetchData();
+		//TODO: move this task and the image to the user data app
+		
 		populateProfile(); // populates a group / user profile
-
-		// initializing the action bar and killswitch listener
-		initActionBar(title, true);
-
 	}
-
-	// TASK FOR GRABBING IMAGE OF EVENT/USER/GROUP
-	private class getImageTask extends AsyncTask<String, Void, String>
+	
+	/*
+	 * fetchData fetches all data needed to be displayed in the UI for user profile activity
+	 */
+	private void fetchData()
 	{
-		@Override
-		protected String doInBackground(String... urls)
-		{
-			String type = "email";
-			String id = user.getEmail();
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair(type, id));
-			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
-		}
-
-		@Override
-		protected void onPostExecute(String result)
-		{
-			try
-			{
-				JSONObject jsonObject = new JSONObject(result);
-				// json fetch was successful
-				if (jsonObject.getString("success").toString().equals("1"))
-				{
-					String image = jsonObject.getString("image").toString();
-
-					user.setImage(image);
-					if (user.getImage() != null)
-						iv.setImageBitmap(user.getImage());
-					else
-						iv.setImageResource(R.drawable.user_image_default);
-
-					iv.setScaleType(ScaleType.CENTER_CROP);
-				}
-				else
-				{
-					// failed
-					Log.d("fetchImage", "FAILED");
-				}
-			}
-			catch (Exception e)
-			{
-				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
-			}
-			// do next thing here
-		}
+		user.fetchUserInfo(this);
+		user.fetchGroups(this);
+		user.fetchFriends(this);
+		user.fetchEventsUpcoming(this);
+		user.fetchEventsPast(this);
+		user.fetchImage(this);
+		user.fetchPoints(this);
 	}
 
-	// TASK GOR GETTING USER EXPERIENCE
-	private class getUserExperienceTask extends AsyncTask<String, Void, String>
-	{
-		@Override
-		protected String doInBackground(String... urls)
-		{
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair("email", user.getEmail()));
-			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
-		}
-
-		@Override
-		protected void onPostExecute(String result)
-		{
-			try
-			{
-				JSONObject jsonObject = new JSONObject(result);
-				// json fetch was successful
-				if (jsonObject.getString("success").toString().equals("1"))
-				{
-					int eventsIn = Integer.parseInt(jsonObject.getString("eventsIn").toString());
-					int eventsCreated = Integer.parseInt(jsonObject.getString("eventsCreated").toString());
-					int userPoints = (eventsCreated * 2) + eventsIn;
-					setExperience(userPoints);
-				}
-				else
-				{
-					// failed
-					Log.d("getUserExperience", "FAILED");
-				}
-			}
-			catch (Exception e)
-			{
-				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
-			}
-			// do next thing here
-		}
-	}
+	
 
 	private void setExperience(int userPoints)
 	{
@@ -288,22 +215,22 @@ public class UserProfileActivity extends BaseActivity
 			intent = new Intent(this, UserListActivity.class);
 			// friends
 			intent.putExtra("content", "FRIENDS_CURRENT");
-			user.fetchFriends();
+
 
 			break;
 		case R.id.profileButton2:
 			intent = new Intent(this, GroupListActivity.class);
 			intent.putExtra("content", "GROUPS_CURRENT");
-			user.fetchGroups();
+
 
 			break;
 		case R.id.profileButton3:
-			user.fetchEventsUpcoming();
+
 			intent.putExtra("content", "EVENTS_UPCOMING");
 
 			break;
 		case R.id.profileButton4:
-			user.fetchEventsPast();
+
 			intent.putExtra("content", "EVENTS_PAST");
 			break;
 		case R.id.profileButton5:
@@ -347,10 +274,6 @@ public class UserProfileActivity extends BaseActivity
 		}
 		if (user != null)
 		{
-			if (!GLOBAL.isCurrentUser(user.getEmail()))
-				GLOBAL.setUserBuffer(user);
-			else
-				GLOBAL.setCurrentUser(user);
 			intent.putExtra("email", user.getEmail());
 		}
 		if (!noIntent) // TODO, move buttons elsewhere that dont start list
@@ -409,9 +332,7 @@ public class UserProfileActivity extends BaseActivity
 	{
 		super.onBackPressed();
 		// current friends case
-		GLOBAL.getCurrentUser().fetchFriends();
-		// friend requests case
-		GLOBAL.getCurrentUser().fetchFriendRequests();
+
 		// group members case
 		if (GLOBAL.getGroupBuffer() != null)
 			GLOBAL.getGroupBuffer().fetchMembers();
@@ -482,26 +403,31 @@ public class UserProfileActivity extends BaseActivity
 		badgesDialog.show();
 	}
 
-	/*
-	 * Get profile executes get_profile.php. It uses the current users email
-	 * address to retrieve the users name, age, and bio.
-	 */
+	//should be responsible for updating all ui data
 	private void populateProfile()
 	{
-		setButtons();
-		TextView info = (TextView) findViewById(R.id.profileInfoTextView);
-		TextView about = (TextView) findViewById(R.id.profileAboutTextView);
-
-		String infoT = "";
+		String title = user.getFirstName() + "'s Profile";
+		String about = "";
 		String location = user.getLocation();
+		int age = user.getAge();
+		
+		initActionBar(title, true);
+		setButtons();
+		badges = user.getBadges();
 		if (location == null)
 			location = "";
-
-		int age = user.getAge();
 		if (age == -1)
-			infoT = location + "\n";
+			about = location + "\n";
 		else
-			infoT = age + " yrs young\n" + location + "\n";
-		about.setText(infoT + user.getAbout());
+			about = age + " yrs young\n" + location + "\n";
+		aboutTextView.setText(about + user.getAbout());
+		
+		if (user.getImage() != null)
+			iv.setImageBitmap(user.getImage());
+		else
+			iv.setImageResource(R.drawable.user_image_default);
+
+		iv.setScaleType(ScaleType.CENTER_CROP);
+		setExperience(user.getPoints());
 	}
 }

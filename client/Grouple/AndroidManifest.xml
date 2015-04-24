@@ -283,19 +283,16 @@
         </receiver>
 
         <receiver
-    android:name=".UserProfileActivity"
-    android:enabled="true"
-    android:exported="true" >
+    android:name="receiver" >
+
     <intent-filter>
-        <action android:name=".UserBroadcast" />
+        <action android:name="user_data" />
     </intent-filter>
 </receiver>
         <service android:name=".GcmIntentService" />
- 	<activity
-            android:name=".DataService"
-            android:label="@string/title_activity_group_messages" >
-         
-        </activity>
+ 	<service
+            android:name=".UserDataService" />
+
         <activity
             android:name=".RecentMessagesActivity"
             android:label="@string/title_activity_contact_list" >

@@ -83,7 +83,6 @@ public class LoginActivity extends Activity
 			progBar = (ProgressBar) findViewById(R.id.progressBar);
 			progBar.setVisibility(View.INVISIBLE);
 			loginFail.setVisibility(View.GONE);
-			initKillswitchListener();
 		}	
 	}
 	
@@ -194,15 +193,9 @@ public class LoginActivity extends Activity
 					}
 				
 					//load the user into the system
-					User u = new User(email);
-					u.fetchUserInfo();
-					u.fetchEventInvites();
-					u.fetchFriendRequests();
-					u.fetchGroupInvites();
-					u.fetchNewBadges();
-					u.fetchBadges();
-				
-					GLOBAL.setCurrentUser(u);
+					//User u = new User(email);
+					GLOBAL.login(email, LoginActivity.this);
+			
 
 					//starting the home activity with the current users email
 					startHomeActivity(email);
@@ -232,7 +225,6 @@ public class LoginActivity extends Activity
 
 						loginFail.setVisibility(View.GONE);
 
-						initKillswitchListener();
 
 					}
 					//failed email/password login
@@ -521,23 +513,5 @@ public class LoginActivity extends Activity
 		return;
 	}
 
-	public void initKillswitchListener()
-	{
-		// START KILL SWITCH LISTENER
-		IntentFilter intentFilter = new IntentFilter();
-		intentFilter.addAction("CLOSE_ALL");
-		broadcastReceiver = new BroadcastReceiver()
-		{
-			@Override
-			public void onReceive(Context context, Intent intent)
-			{
-				// close activity
-				if (intent.getAction().equals("CLOSE_ALL"))
-				{
-					finish();
-				}
-			}
-		};
-		registerReceiver(broadcastReceiver, intentFilter);
-	}
+
 }

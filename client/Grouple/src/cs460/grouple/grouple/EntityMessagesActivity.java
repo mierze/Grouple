@@ -43,7 +43,7 @@ public class EntityMessagesActivity extends BaseActivity
 	private ListView listView;
 	private EditText messageEditText;
 	private ArrayList<String> regIDList = new ArrayList<String>();
-	private Bundle EXTRAS;
+	private String EMAIL;
 	private String ID;
 	private String CONTENT;
 	private String SENDER_ID = "957639483805";
@@ -97,26 +97,26 @@ public class EntityMessagesActivity extends BaseActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_messages);
-		EXTRAS = getIntent().getExtras();
+		Bundle extras = getIntent().getExtras();
 		user = GLOBAL.getCurrentUser();
 		messageEditText = (EditText) findViewById(R.id.messageEditText);
 		sendMessageButton = (Button) findViewById(R.id.sendButton);
 		listViewLayout = (LinearLayout) findViewById(R.id.listViewLayout);
 		listView = (ListView) findViewById(R.id.listView);
-		initActionBar(EXTRAS.getString("name"), true);
+		initActionBar(extras.getString("name"), true);
 		gcm = GoogleCloudMessaging.getInstance(this);
-		CONTENT = EXTRAS.getString("content");
+		CONTENT = extras.getString("content");
 		if (CONTENT.equals("GROUP"))
 		{
 			group = GLOBAL.getGroupBuffer();
 			NAME = group.getName();
-			ID = EXTRAS.getString("g_id");
+			ID = extras.getString("g_id");
 		}
 		else
 		{
 			event = GLOBAL.getEventBuffer();
 			NAME = event.getName();
-			ID = EXTRAS.getString("e_id");
+			ID = extras.getString("e_id");
 		}
 		// Get the recipient
 		// new
@@ -305,17 +305,6 @@ public class EntityMessagesActivity extends BaseActivity
 		loadDialog.show();
 		Intent intent = new Intent(this, UserProfileActivity.class);
 		String friendEmail = m.getSender();
-		User u = new User(friendEmail);
-		u.fetchEventsUpcoming();
-		u.fetchFriends();
-		u.fetchEventsPast();
-		u.fetchBadges();
-		u.fetchGroups();
-		u.fetchUserInfo();
-		if (!GLOBAL.isCurrentUser(friendEmail))
-			GLOBAL.setUserBuffer(u);
-		else
-			GLOBAL.setCurrentUser(u); // reloading user
 		intent.putExtra("email", friendEmail);
 		startActivity(intent);
 	}

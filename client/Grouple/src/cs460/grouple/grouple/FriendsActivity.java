@@ -20,16 +20,6 @@ public class FriendsActivity extends BaseActivity
 		setContentView(R.layout.activity_friends);
 	}
 
-	@Override
-	public void onBackPressed()
-	{
-		super.onBackPressed();
-		user.fetchEventInvites();
-		user.fetchFriendRequests();
-		user.fetchGroupInvites();
-		GLOBAL.setCurrentUser(user);
-	}
-
 	public void load()
 	{
 		user = GLOBAL.getCurrentUser();

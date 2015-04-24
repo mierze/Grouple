@@ -490,18 +490,6 @@ public class EventProfileActivity extends BaseActivity
 			loadDialog.hide(); // did not launch intent, cancel load dialog
 	}
 
-	@Override
-	public void onBackPressed()
-	{
-		super.onBackPressed();
-		// events pending case
-		GLOBAL.getCurrentUser().fetchEventsUpcoming();
-		// events pending case
-		GLOBAL.getCurrentUser().fetchEventsPending();
-		// event invites case
-		GLOBAL.getCurrentUser().fetchEventInvites();
-
-	}
 
 	private void itemListDialog()
 	{

@@ -39,7 +39,6 @@ public class ManageParticipantsActivity extends BaseActivity
 	private ArrayList<User> members = new ArrayList<User>();
 	// holds list of all current friends
 	private static String CONTENT; // type of content to display
-	private static Bundle EXTRAS; // type of content to display
 	private ArrayList<String> roles = new ArrayList<String>();
 
 	@Override
@@ -55,8 +54,8 @@ public class ManageParticipantsActivity extends BaseActivity
 	// //////////////////////////////////////////////////////////////////////////////////////
 	private void load()
 	{
-		EXTRAS = getIntent().getExtras();
-		CONTENT = EXTRAS.getString("content");
+		Bundle extras = getIntent().getExtras();
+		CONTENT = extras.getString("content");
 		// should always be current user
 		user = GLOBAL.getCurrentUser();
 		event = GLOBAL.getEventBuffer();

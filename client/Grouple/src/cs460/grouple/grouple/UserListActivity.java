@@ -47,7 +47,7 @@ public class UserListActivity extends BaseActivity
 	private User user; // user whose current groups displayed
 	private Group group;
 	private Event event;
-	private Bundle EXTRAS; // extras passed in from the activity that called
+	private String EMAIL; // extras passed in from the activity that called
 							// ListActivity
 	private String CONTENT; // type of content to display in list, passed in
 							// from other activities
@@ -69,13 +69,6 @@ public class UserListActivity extends BaseActivity
 		String actionBarTitle = "";
 		addNew.setVisibility(View.GONE); // GONE FOR NOW
 
-		// GRABBING A USER
-		if (EXTRAS.getString("email") != null)
-			if (GLOBAL.isCurrentUser(EXTRAS.getString("email")))
-				user = GLOBAL.getCurrentUser();
-			else if (GLOBAL.getUserBuffer() != null
-					&& GLOBAL.getUserBuffer().getEmail().equals(EXTRAS.getString("email")))
-				user = GLOBAL.getUserBuffer();
 
 		// CONTENT_TYPE -> POPULATEUSERS
 		if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
@@ -102,25 +95,6 @@ public class UserListActivity extends BaseActivity
 			actionBarTitle = "Attending " + event.getName();
 		}
 		populateUsers();
-
-		/*
-		 * if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()) &&
-		 * GLOBAL.isCurrentUser(user.getEmail()) &&
-		 * !CONTENT.equals(CONTENT_TYPE.GROUP_MEMBERS.toString())) { name =
-		 * u.getName(); row = li.inflate(R.layout.list_row, null); nameTextView
-		 * = (TextView) row.findViewById(R.id.nameTextViewLI); Button
-		 * removeFriendButton = (Button) row.findViewById(R.id.removeButtonLI);
-		 * removeFriendButton.setId(index); } //FOR FRIEND REQUESTS else if
-		 * (CONTENT.equals(CONTENT_TYPE.FRIEND_REQUESTS.toString())) { row =
-		 * li.inflate(R.layout.list_row_acceptdecline, null); nameTextView =
-		 * (TextView) row.findViewById(R.id.emailTextView); name = email; }
-		 * //FOR GROUP MEMBERS / CURRENT FRIENDS NON MOD / SELECT FRIEND else {
-		 * name = u.getName(); row = li.inflate(R.layout.list_row_nobutton,
-		 * null); nameTextView = (TextView)
-		 * row.findViewById(R.id.nameTextViewLI); } nameTextView.setText(name);
-		 * nameTextView.setId(index); row.setId(index); listLayout.addView(row);
-		 * }
-		 */
 
 		// calling next functions to execute
 		initActionBar(actionBarTitle, true);
@@ -302,8 +276,12 @@ public class UserListActivity extends BaseActivity
 		listView = (ListView) findViewById(R.id.listView);
 		listViewLayout = (LinearLayout) findViewById(R.id.listViewLayout);
 		// INSTANTIATIONS
-		EXTRAS = getIntent().getExtras();
-		CONTENT = EXTRAS.getString("content");
+		Bundle extras = getIntent().getExtras();
+		EMAIL = extras.getString("email");
+		CONTENT =extras.getString("content");
+		// GRABBING A USER
+		if (EMAIL != null)
+			user = GLOBAL.getUser(EMAIL);
 		addNew = (Button) findViewById(R.id.addNewButtonLiA);
 	}
 
@@ -382,12 +360,10 @@ public class UserListActivity extends BaseActivity
 		{
 			intent = new Intent(this, InviteActivity.class);
 			group.fetchMembers();
-			GLOBAL.getCurrentUser().fetchFriends();
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()))
 		{
 			intent = new Intent(this, EventAddGroupsActivity.class);
-			GLOBAL.getCurrentUser().fetchGroups();
 		}
 		if (user != null)
 			intent.putExtra("email", user.getEmail());
@@ -415,19 +391,9 @@ public class UserListActivity extends BaseActivity
 				|| CONTENT.equals(CONTENT_TYPE.SELECT_FRIEND.toString()))
 		{
 			String friendEmail = users.get(id).getEmail();
-			User u = new User(friendEmail);
 			if (!CONTENT.equals(CONTENT_TYPE.SELECT_FRIEND.toString()))
 			{
-				u.fetchEventsUpcoming();
-				u.fetchEventsPast();
-				u.fetchUserInfo();
-				u.fetchBadges();
-				u.fetchFriends();
-				u.fetchGroups();
-				if (!GLOBAL.isCurrentUser(friendEmail))
-					GLOBAL.setUserBuffer(u);
-				else
-					GLOBAL.setCurrentUser(u); // reloading user
+
 			}
 			else
 			{
@@ -447,16 +413,13 @@ public class UserListActivity extends BaseActivity
 		if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString())
 				|| CONTENT.equals(CONTENT_TYPE.FRIEND_REQUESTS.toString()))
 		{
-			user.fetchFriends();
 			// FRIENDS
-			if (GLOBAL.isCurrentUser(user.getEmail()))
-				user.fetchFriendRequests();
+
 			if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
 			{
 				// USER PROFILE
 				// FRIEND PROFILE
-				user.fetchEventsUpcoming();
-				user.fetchGroups();
+
 			}
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.GROUP_MEMBERS.toString()))
@@ -569,12 +532,12 @@ public class UserListActivity extends BaseActivity
 					if (CONTENT.equals(CONTENT_TYPE.FRIEND_REQUESTS.toString()))
 					{
 						user.removeFriendRequest(PANDABUFFER);
-						user.fetchFriendRequests();
+
 					}
 					else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
 					{
 						user.removeUser(PANDABUFFER);
-						user.fetchFriends();
+
 					}
 					Toast toast = GLOBAL.getToast(context, message);
 					toast.show();

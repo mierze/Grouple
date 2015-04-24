@@ -602,9 +602,6 @@ public class EventCreateActivity extends BaseActivity
 					ID = jsonObject.getString("e_id").toString();
 					System.out.println("MEssage: " + jsonObject.getString("message"));
 					System.out.println("e_id of newly created group is: " + ID);
-					user.fetchEventInvites();
-					user.fetchEventsPending();
-					user.fetchEventsUpcoming();
 					Event e = new Event(Integer.parseInt(ID));
 					e.fetchEventInfo();
 					e.fetchParticipants();

@@ -46,7 +46,7 @@ public class GroupListActivity extends BaseActivity
 	// CLASS-WIDE DECLARATIONS
 	private User user; // user whose current groups displayed
 	private Group group;
-	private Bundle EXTRAS; // extras passed in from the activity that called
+	private String EMAIL; // extras passed in from the activity that called
 							// ListActivity
 	private String CONTENT; // type of content to display in list, passed in
 							// from other activities
@@ -68,15 +68,10 @@ public class GroupListActivity extends BaseActivity
 		addNew.setVisibility(View.GONE); // GONE FOR NOW
 
 		// GRABBING A USER
-		if (EXTRAS.getString("email") != null)
-			if (GLOBAL.isCurrentUser(EXTRAS.getString("email")))
-			{
-				System.out.println("MAKING USER THE CURRENT USER");
-				user = GLOBAL.getCurrentUser();
-			}
-			else if (GLOBAL.getUserBuffer() != null
-					&& GLOBAL.getUserBuffer().getEmail().equals(EXTRAS.getString("email")))
-				user = GLOBAL.getUserBuffer();
+		if (EMAIL != null)
+		{
+			user = GLOBAL.getUser(EMAIL);
+		}
 
 		// CLEAR LIST
 		// listLayout.removeAllViews();
@@ -194,8 +189,9 @@ public class GroupListActivity extends BaseActivity
 		listViewLayout = (LinearLayout) findViewById(R.id.listViewLayout);
 		addNew = (Button) findViewById(R.id.addNewButtonLiA);
 		// INSTANTIATIONS
-		EXTRAS = getIntent().getExtras();
-		CONTENT = EXTRAS.getString("content");
+		Bundle extras = getIntent().getExtras();
+		CONTENT = extras.getString("content");
+		EMAIL = extras.getString("email");
 		// registerClickCallback();
 	}
 
@@ -274,30 +270,9 @@ public class GroupListActivity extends BaseActivity
 	public void onBackPressed()
 	{
 		super.onBackPressed();
-		// refresh pertinent info
-		if (CONTENT.equals(CONTENT_TYPE.GROUP_INVITES.toString())
-				|| CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
-		{
-			// GROUPS
-			user.fetchGroupInvites();
-			user.fetchGroups();
-			if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
-			{
-				user.fetchFriends();
-				user.fetchEventsUpcoming();
-				// USER PROFILE
-				// FRIEND PROFILE
-			}
-		}
 
-		// SETTING GLOBALS
-		if (user != null)
-			if (GLOBAL.isCurrentUser(user.getEmail()))
-			{
-				GLOBAL.setCurrentUser(user);
-			}
-			else
-				GLOBAL.setUserBuffer(user);
+
+
 		if (group != null)
 			GLOBAL.setGroupBuffer(group);
 
@@ -343,7 +318,6 @@ public class GroupListActivity extends BaseActivity
 					else if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
 					{
 						user.removeGroup(bufferID);
-						user.fetchGroups();
 					}
 
 					Toast toast = GLOBAL.getToast(context, message);

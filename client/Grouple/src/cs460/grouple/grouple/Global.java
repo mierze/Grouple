@@ -46,10 +46,23 @@ public class Global extends Application
 	private static User userBuffer;
 	private static Event eventBuffer;
 	
-	@Override
-	public void onCreate()
+	protected void login(String email, Context context)
 	{
-		super.onCreate();
+		User u = new User(email);
+		u.fetchUserInfo(context);
+		u.fetchFriendRequests(context);
+		u.fetchFriends(context);
+		u.fetchGroups(context);
+		u.fetchGroupInvites(context);
+		u.fetchEventInvites(context);
+		u.fetchEventsUpcoming(context);
+		u.fetchEventsPast(context);
+		u.fetchEventsDeclined(context);
+		u.fetchEventsPending(context);
+		u.fetchNewBadges(context);
+		u.fetchBadges(context);
+		setCurrentUser(u);
+		addToUsers(u);
 	}
 	
 	//SETTERS

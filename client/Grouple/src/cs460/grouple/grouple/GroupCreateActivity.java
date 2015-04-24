@@ -415,7 +415,6 @@ public class GroupCreateActivity extends BaseActivity
 					group = new Group(Integer.parseInt(g_id));
 					group.fetchMembers();
 					group.fetchGroupInfo();
-					GLOBAL.getCurrentUser().fetchFriends();
 					GLOBAL.setGroupBuffer(group);
 					
 					//display confirmation box
@@ -431,7 +430,6 @@ public class GroupCreateActivity extends BaseActivity
 							loadDialog.show();
 							Intent intent = new Intent(GroupCreateActivity.this, InviteActivity.class);
 							intent.putExtra("email", user.getEmail());
-							user.fetchFriends();
 							intent.putExtra("g_id", group.getID());
 							startActivity(intent);
 							finish();
@@ -462,8 +460,6 @@ public class GroupCreateActivity extends BaseActivity
 							finish();
 						}
 					});
-					user.fetchGroupInvites();
-					user.fetchGroups();
 				} 
 				//Create group failed for some reasons.
 				else if (jsonObject.getString("success").toString().equals("0"))

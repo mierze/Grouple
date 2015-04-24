@@ -113,12 +113,4 @@ public class FriendAddActivity extends BaseActivity
 		}
 	}
 
-	@Override
-	public void onBackPressed() 
-	{
-    	super.onBackPressed();
-    	user.fetchFriends();
-    	user.fetchFriendRequests();
-    	GLOBAL.setCurrentUser(user);
-	}
 }

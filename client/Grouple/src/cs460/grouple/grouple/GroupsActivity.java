@@ -31,10 +31,6 @@ public class GroupsActivity extends BaseActivity
 	public void onBackPressed() 
 	{
 		super.onBackPressed();
-    	user.fetchEventInvites();
-    	user.fetchFriendRequests();
-    	user.fetchGroupInvites();
-    	GLOBAL.setCurrentUser(user);
 	}
 	
 	public void load()
@@ -79,8 +75,6 @@ public class GroupsActivity extends BaseActivity
 	public void startGroupCreateActivity(View view)
 	{
 		loadDialog.show();
-		user.fetchFriends();
-		GLOBAL.setCurrentUser(user);
 		Intent intent = new Intent(this, GroupCreateActivity.class);
 		intent.putExtra("email", user.getEmail());
 		startActivity(intent);
@@ -90,8 +84,6 @@ public class GroupsActivity extends BaseActivity
 	{
 		loadDialog.show();
 		final String CONTENT = "GROUP_INVITES";
-		user.fetchGroupInvites();
-		GLOBAL.setCurrentUser(user);//update
 		Intent intent = new Intent(this, GroupListActivity.class);
 		intent.putExtra("email", user.getEmail());
 		intent.putExtra("content", CONTENT);
@@ -102,8 +94,6 @@ public class GroupsActivity extends BaseActivity
 	{
 		loadDialog.show();
 		final String CONTENT = "GROUPS_CURRENT";
-		user.fetchGroups();
-		GLOBAL.setCurrentUser(user);//update
 		Intent intent = new Intent(this, GroupListActivity.class);
 		intent.putExtra("content", CONTENT);
 		intent.putExtra("email", user.getEmail());// specifies which

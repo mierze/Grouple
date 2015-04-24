@@ -409,17 +409,6 @@ public class GroupProfileActivity extends BaseActivity
 			loadDialog.hide(); // did not launch intent, cancel load dialog
 	}
 
-	@Override
-	public void onBackPressed()
-	{
-		super.onBackPressed();
-
-		// current groups case
-		GLOBAL.getCurrentUser().fetchGroups();
-		// group invites case
-		GLOBAL.getCurrentUser().fetchGroupInvites();
-
-	}
 
 	/*
 	 * Get profile executes get_profile.php. It uses the current users email

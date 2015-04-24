@@ -245,8 +245,6 @@ public class InviteActivity extends BaseActivity {
 		}
 		group.fetchGroupInfo();
 		group.fetchMembers();
-		user.fetchGroupInvites();
-		user.fetchGroups();
 		GLOBAL.setCurrentUser(user);  
 		GLOBAL.setGroupBuffer(group);
 		Context context = getApplicationContext();

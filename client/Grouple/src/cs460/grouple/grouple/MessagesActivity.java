@@ -33,7 +33,6 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
  */
 public class MessagesActivity extends BaseActivity
 {
-	private Bundle EXTRAS;
 	private Button sendMessageButton;
 	private EditText messageEditText;
 	private User user;
@@ -65,16 +64,16 @@ public class MessagesActivity extends BaseActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_messages);
-		EXTRAS = getIntent().getExtras();
+		Bundle extras = getIntent().getExtras();
 		user = GLOBAL.getCurrentUser();
 		// initializing the variables for the send button / message edit text
 		sendMessageButton = (Button) findViewById(R.id.sendButton);
 		messageEditText = (EditText) findViewById(R.id.messageEditText);
 		listViewLayout = (LinearLayout) findViewById(R.id.listViewLayout);
 		listView = (ListView) findViewById(R.id.listView);
-		initActionBar(EXTRAS.getString("name"), true);
+		initActionBar(extras.getString("name"), true);
 		gcm = GoogleCloudMessaging.getInstance(this);
-		recipient = EXTRAS.getString("email");
+		recipient = extras.getString("email");
 		// Get the recipient
 		new getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php", recipient);
 	}

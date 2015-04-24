@@ -2,7 +2,7 @@ package cs460.grouple.grouple;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import cs460.grouple.grouple.DataService;
+import cs460.grouple.grouple.UserDataService;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -15,6 +15,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.util.SparseArray;
@@ -23,7 +24,18 @@ import android.util.SparseArray;
 public class User extends Entity
 {
 	private String location;
-	private int age;
+	private int age = -1;
+	private int points = 0;
+	protected int getPoints()
+	{
+		return points;
+	}
+
+	protected void setPoints(int points)
+	{
+		this.points = points;
+	}
+
 	private String birthday;
 	private String birthdayText;
 	private ArrayList<Group> groups = new ArrayList<Group>();
@@ -38,14 +50,14 @@ public class User extends Entity
 	private ArrayList<Badge> newBadges = new ArrayList<Badge>();
 	private SparseArray<String> groupRoles = new SparseArray<String>();
 	private SparseArray<String> eventRoles = new SparseArray<String>();
-	private DataService dataApp;
+	private UserDataService dataApp;
 	/*
 	 * Constructor for User class
 	 */
 	protected User(String email)
 	{
 		super();
-		dataApp = new DataService(GLOBAL, this);
+		dataApp = new UserDataService(GLOBAL, this);
 		setEmail(email);
 		initBadges();
 		System.out.println("Initializing new user.");
@@ -191,33 +203,47 @@ public class User extends Entity
 	// GETTERS
 	protected String getFirstName()
 	{
-		String[] n = getName().split(" ");
-		return n[0];
+		String first = "";
+		if (getName() != null)
+			first = getName().split(" ")[0];
+		return first;
 	}
 
 	protected String getLastName()
 	{
-		String[] n = getName().split(" ");
-		return n[1];
+		String last = "";
+		if (getName() != null)
+			last = getName().split(" ")[1];
+		return last;
 	}
 
 	protected String getLocation()
 	{
-		return location;
+		if (location != null)
+			return location;
+		else 
+			return "";
 	}
 
 	protected String getBirthday()
 	{
-		return birthday;
+		if (birthday != null)
+			return birthday;
+		else 
+			return "";
 	}
 
 	protected String getBirthdayText()
 	{
-		return birthdayText;
+		if (birthdayText != null)
+			return birthdayText;
+		else 
+			return "";
 	}
 
 	protected int getAge()
 	{
+		//returns -1 if not set, is checked for later
 		return age;
 	}
 
@@ -232,66 +258,42 @@ public class User extends Entity
 
 	protected int getNumGroups()
 	{
-		if (groups != null)
-			return groups.size();
-		else
-			return 0;
+		return groups.size();
 	}
 
 	protected int getNumFriendRequests()
 	{
-		if (friendRequests != null)
-			return friendRequests.size();
-		else
-			return 0;
+		return friendRequests.size();
 	}
 
 	protected int getNumGroupInvites()
 	{
-		if (groupInvites != null)
-			return groupInvites.size();
-		else
-			return 0;
+		return groupInvites.size();
 	}
 
 	protected int getNumEventsPending()
 	{
-		if (eventsPending != null)
-			return eventsPending.size();
-		else
-			return 0;
+		return eventsPending.size();
 	}
 
 	protected int getNumEventsDeclined()
 	{
-		if (eventsDeclined != null)
-			return eventsDeclined.size();
-		else
-			return 0;
+		return eventsDeclined.size();
 	}
 
 	protected int getNumEventsPast()
 	{
-		if (eventsPast != null)
-			return eventsPast.size();
-		else
-			return 0;
+		return eventsPast.size();
 	}
 
 	protected int getNumEventsInvites()
 	{
-		if (eventInvites != null)
-			return eventInvites.size();
-		else
-			return 0;
+		return eventInvites.size();
 	}
 
 	protected int getNumEventsUpcoming()
 	{
-		if (eventsUpcoming != null)
-			return eventsUpcoming.size();
-		else
-			return 0;
+		return eventsUpcoming.size();
 	}
 	protected int getNumNewBadges()
 	{
@@ -379,6 +381,13 @@ public class User extends Entity
 				t.setLevel(b.getLevel());
 			}
 	}
+	
+	protected void addToNewBadges(Badge b)
+	{
+		//just adding because it will be wiped when user views them
+		//TODO: check that there aren't lingering badges a user has not seen
+		newBadges.add(b);
+	}
 
 	protected void addToFriendRequests(User u)
 	{
@@ -386,8 +395,9 @@ public class User extends Entity
 		for (User t : friendRequests)
 			if (t.getEmail().equals(u.getEmail()))
 				inFriendRequests = true;
-		if (!inFriendRequests) // TODO: this?
+		if (!inFriendRequests) 
 			friendRequests.add(u);
+		//TODO: should make new function for update / add user, / make this one that, since storing stuff now
 	}
 
 	protected void addToGroups(Group g)
@@ -475,6 +485,7 @@ public class User extends Entity
 	{
 		if (groupRoles.get(id) != null)
 			return groupRoles.get(id);
+		//TODO: this shoul dnot return U if not found
 		return "U";
 	}
 
@@ -482,802 +493,80 @@ public class User extends Entity
 	{
 		if (eventRoles.get(id) != null)
 			return eventRoles.get(id);
-
+		//TODO: this shoul dnot return U if not found
 		return "U";
 	}
 
-	protected void fetchUserInfo()
+	//ALL DATA APP FETCH CALLS BELOW
+	protected void fetchUserInfo(Context context)
 	{
-		//call the application
-		dataApp.fetchContent("INFO");
-		//
+		dataApp.fetchContent("INFO", context);
 	}
 
-	protected int fetchFriends()
+	protected void fetchFriends(Context context)
 	{
-		AsyncTask<String, Void, String> task = new getFriendsTask()
-				.execute("http://68.59.162.183/android_connect/get_friends.php?email=" + getEmail());
-		try
-		{
-			task.get(10000, TimeUnit.MILLISECONDS);
-		}
-		catch (InterruptedException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (ExecutionException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (TimeoutException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		// while (task.getStatus() != Status.FINISHED);
-		return 1;
+		dataApp.fetchContent("FRIENDS_CURRENT", context);	
 	}
 
-	class getFriendsTask extends AsyncTask<String, Void, String>
+	protected void fetchFriendRequests(Context context)
 	{
-		@Override
-		protected String doInBackground(String... urls)
-		{
-			return GLOBAL.readJSONFeed(urls[0], null);
-		}
-
-		@Override
-		protected void onPostExecute(String result)
-		{
-			try
-			{
-				JSONObject jsonObject = new JSONObject(result);
-				if (jsonObject.getString("success").toString().equals("1"))
-				{
-					// gotta make a json array
-					JSONArray jsonArray = jsonObject.getJSONArray("friends");
-					for (int i = 0; i < jsonArray.length(); i++)
-					{
-						JSONObject o = (JSONObject) jsonArray.get(i);
-						// function adds friend to the friends map
-						User u = new User(o.getString("email"));
-						u.setName(o.getString("first") + " " + o.getString("last"));
-						addToUsers(u);
-					}
-				}
-				// user has no friends
-				if (jsonObject.getString("success").toString().equals("2"))
-				{
-					Log.d("fetchFriends", "failed = 2 return");
-				}
-			}
-			catch (Exception e)
-			{
-				Log.d("fetchFriends", "exception caught");
-				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
-			}
-		}
+		dataApp.fetchContent("FRIEND_INVITES", context);
 	}
 
-	/*
-	 * Should be getting the friendRequest key->vals here
-	 */
-	protected int fetchFriendRequests()
+	protected void fetchGroups(Context context)
 	{
-		AsyncTask<String, Void, String> task = new getFriendRequestsTask();
-		task.execute("http://68.59.162.183/android_connect/get_friend_requests.php?receiver=" + getEmail());
-		try
-		{
-			task.get(10000, TimeUnit.MILLISECONDS);
-		}
-		catch (InterruptedException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (ExecutionException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (TimeoutException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return 1;
+		dataApp.fetchContent("GROUPS_CURRENT", context);
 	}
 
-	class getFriendRequestsTask extends AsyncTask<String, Void, String>
+	
+	protected void fetchGroupInvites(Context context)
 	{
-		@Override
-		protected String doInBackground(String... urls)
-		{
-			return GLOBAL.readJSONFeed(urls[0], null);
-		}
-
-		@Override
-		protected void onPostExecute(String result)
-		{
-			try
-			{
-				JSONObject jsonObject = new JSONObject(result);
-				if (jsonObject.getString("success").toString().equals("1"))
-				{
-					// gotta make a json array
-					JSONArray jsonArray = jsonObject.getJSONArray("friendRequests");
-					// looping thru array
-					for (int i = 0; i < jsonArray.length(); i++)
-					{
-						// at each iteration set to hashmap friendEmail ->
-						// 'first last'
-						JSONObject o = (JSONObject) jsonArray.get(i);
-						// function adds friend to the friends map
-						addToFriendRequests(new User(o.getString("email")));
-					}
-				}
-				// user has no friend requests
-				if (jsonObject.getString("success").toString().equals("2"))
-				{
-					// no friend requests
-				}
-			}
-			catch (Exception e)
-			{
-				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
-			}
-		}
+		dataApp.fetchContent("GROUP_INVITES", context);
 	}
 
-	/*
-	 * should be getting the groups key->vals here
-	 */
-	protected int fetchGroups()
+	protected void fetchEventsPending(Context context)
 	{
-		AsyncTask<String, Void, String> task = new getGroupsTask()
-				.execute("http://68.59.162.183/android_connect/get_groups.php?email=" + getEmail());
-		try
-		{
-			task.get(10000, TimeUnit.MILLISECONDS);
-		}
-		catch (InterruptedException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (ExecutionException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (TimeoutException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return 1;
+		dataApp.fetchContent("EVENTS_PENDING", context);
+	}
+	
+	protected void fetchEventsDeclined(Context context)
+	{
+		dataApp.fetchContent("EVENTS_DECLINED", context);
 	}
 
-	private class getGroupsTask extends AsyncTask<String, Void, String>
+	protected void fetchEventsPast(Context context)
 	{
-		@Override
-		protected String doInBackground(String... urls)
-		{
-			return GLOBAL.readJSONFeed(urls[0], null);
-		}
-
-		@Override
-		protected void onPostExecute(String result)
-		{
-			try
-			{
-				// need to get gid, gname for each and put them in hashmap
-				JSONObject jsonObject = new JSONObject(result);
-				if (jsonObject.getString("success").toString().equals("1"))
-				{
-					// gotta make a json array
-					JSONArray jsonArray = jsonObject.getJSONArray("groups");
-					// looping thru array
-					for (int i = 0; i < jsonArray.length(); i++)
-					{
-						JSONObject o = (JSONObject) jsonArray.get(i);
-						// function adds friend to the friends map
-						Group g = new Group(Integer.parseInt(o.getString("gid")));
-						g.setName(o.getString("gname"));
-						addToGroups(g);
-					}
-				}
-				// user has no friends
-				if (jsonObject.getString("success").toString().equals("2"))
-				{
-					Log.d("getGroups", "ERROR WITH JSON");
-				}
-			}
-			catch (Exception e)
-			{
-				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
-			}
-		}
+		dataApp.fetchContent("EVENTS_PAST", context);
 	}
 
-	/*
-	 * 
-	 * should be getting the groupInvites key->vals here
-	 */
-	// Get numFriends, TODO: work on returning the integer
-	protected int fetchGroupInvites()
+	protected void fetchEventInvites(Context context)
 	{
-		AsyncTask<String, Void, String> task = new getGroupInvitesTask()
-				.execute("http://68.59.162.183/android_connect/get_group_invites.php?email=" + getEmail());
-		try
-		{
-			task.get(10000, TimeUnit.MILLISECONDS);
-		}
-		catch (InterruptedException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (ExecutionException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (TimeoutException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		// while (task.getStatus() != Status.FINISHED);
-		return 1;
+		dataApp.fetchContent("EVENT_INVITES", context);
 	}
 
-	private class getGroupInvitesTask extends AsyncTask<String, Void, String>
+	protected void fetchEventsUpcoming(Context context)
 	{
-		@Override
-		protected String doInBackground(String... urls)
-		{
-			return GLOBAL.readJSONFeed(urls[0], null);
-		}
-
-		@Override
-		protected void onPostExecute(String result)
-		{
-			try
-			{
-				JSONObject jsonObject = new JSONObject(result);
-				if (jsonObject.getString("success").toString().equals("1"))
-				{
-					// gotta make a json array
-					JSONArray jsonArray = jsonObject.getJSONArray("invites");
-					// looping thru array
-					for (int i = 0; i < jsonArray.length(); i++)
-					{
-						// at each iteration set to hashmap friendEmail ->
-						// 'first last'
-						JSONObject o = (JSONObject) jsonArray.get(i);
-						// function adds friend to the friends map
-						Group g = new Group(Integer.parseInt(o.getString("gid")));
-						g.setName(o.getString("gname"));
-						g.setInviter(o.getString("sender"));
-						addToGroupInvites(g);
-					}
-				}
-				// user has no group invites
-				if (jsonObject.getString("success").toString().equals("2"))
-				{
-					// setNumFriends(0); //PANDA need to set the user class not
-					// global
-				}
-			}
-			catch (Exception e)
-			{
-				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
-			}
-		}
+		dataApp.fetchContent("EVENTS_UPCOMING", context);
 	}
 
-	/*
-	 * 
-	 * should be getting the groupInvites key->vals here
-	 */
-	// Get numFriends, TODO: work on returning the integer
-	protected int fetchEventsPending()
+	protected void fetchNewBadges(Context context)
 	{
-		AsyncTask<String, Void, String> task = new getEventsPendingTask()
-				.execute("http://68.59.162.183/android_connect/get_events_pending.php");
-		try
-		{
-			task.get(10000, TimeUnit.MILLISECONDS);
-		}
-		catch (InterruptedException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (ExecutionException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (TimeoutException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		// while (task.getStatus() != Status.FINISHED);
-		return 1;
+		dataApp.fetchContent("BADGES_NEW", context);
 	}
 
-	private class getEventsPendingTask extends AsyncTask<String, Void, String>
+	protected void fetchBadges(Context context)
 	{
-		@Override
-		protected String doInBackground(String... urls)
-		{
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair("email", getEmail()));
-			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
-		}
-
-		@Override
-		protected void onPostExecute(String result)
-		{
-			try
-			{
-				JSONObject jsonObject = new JSONObject(result);
-				if (jsonObject.getString("success").toString().equals("1"))
-				{
-					// gotta make a json array
-					JSONArray jsonArray = jsonObject.getJSONArray("eventsPending");
-					// looping thru array
-					for (int i = 0; i < jsonArray.length(); i++)
-					{
-						JSONObject o = (JSONObject) jsonArray.get(i);
-						// function adds friend to the friends map
-						Event e = new Event(o.getInt("e_id"));
-						e.setName(o.getString("name"));
-						e.setInviter(o.getString("sender"));
-						e.setMinPart(o.getInt("minPart"));
-						e.setMaxPart(o.getInt("maxPart"));
-						e.setStartDate(o.getString("startDate"));
-						e.fetchParticipants();
-						addToEventsPending(e);
-					}
-				}
-				// user has no group invites
-				if (jsonObject.getString("success").toString().equals("2"))
-				{
-					// no group invites
-				}
-			}
-			catch (Exception e)
-			{
-				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
-			}
-		}
+		dataApp.fetchContent("BADGES", context);
+	}
+	
+	protected void fetchPoints(Context context)
+	{
+		dataApp.fetchContent("POINTS", context);
 	}
 
-	/*
-	 * 
-	 * should be getting the groupInvites key->vals here
-	 */
-	// Get numFriends, TODO: work on returning the integer
-	protected int fetchEventsDeclined()
+	protected void fetchImage(Context context)
 	{
-		AsyncTask<String, Void, String> task = new getEventsDeclinedTask()
-				.execute("http://68.59.162.183/android_connect/get_events_declined.php");
-		try
-		{
-			task.get(10000, TimeUnit.MILLISECONDS);
-		}
-		catch (InterruptedException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (ExecutionException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (TimeoutException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		// while (task.getStatus() != Status.FINISHED);
-		return 1;
+		dataApp.fetchContent("IMAGE", context);
 	}
 
-	private class getEventsDeclinedTask extends AsyncTask<String, Void, String>
-	{
-		@Override
-		protected String doInBackground(String... urls)
-		{
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair("email", getEmail()));
-			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
-		}
-
-		@Override
-		protected void onPostExecute(String result)
-		{
-			try
-			{
-				JSONObject jsonObject = new JSONObject(result);
-				if (jsonObject.getString("success").toString().equals("1"))
-				{
-					// gotta make a json array
-					JSONArray jsonArray = jsonObject.getJSONArray("eventsDeclined");
-					// looping thru array
-					for (int i = 0; i < jsonArray.length(); i++)
-					{
-						JSONObject o = (JSONObject) jsonArray.get(i);
-						// function adds friend to the friends map
-						Event e = new Event(o.getInt("e_id"));
-						e.setName(o.getString("name"));
-						e.setMinPart(o.getInt("minPart"));
-						e.setMaxPart(o.getInt("maxPart"));
-						e.setStartDate(o.getString("startDate"));
-						e.fetchParticipants();
-						addToEventsDeclined(e);
-					}
-				}
-				// user has no group invites
-				if (jsonObject.getString("success").toString().equals("2"))
-				{
-					// no group invites
-				}
-			}
-			catch (Exception e)
-			{
-				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
-			}
-		}
-	}
-
-	protected int fetchEventsPast()
-	{
-		AsyncTask<String, Void, String> task = new getEventsPastTask()
-				.execute("http://68.59.162.183/android_connect/get_events_past.php");
-		try
-		{
-			task.get(10000, TimeUnit.MILLISECONDS);
-		}
-		catch (InterruptedException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (ExecutionException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (TimeoutException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return 1;
-	}
-
-	private class getEventsPastTask extends AsyncTask<String, Void, String>
-	{
-		@Override
-		protected String doInBackground(String... urls)
-		{
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair("email", getEmail()));
-			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
-		}
-
-		@Override
-		protected void onPostExecute(String result)
-		{
-			try
-			{
-				JSONObject jsonObject = new JSONObject(result);
-				if (jsonObject.getString("success").toString().equals("1"))
-				{
-					// gotta make a json array
-					JSONArray jsonArray = jsonObject.getJSONArray("eventsPast");
-					// looping thru array
-					for (int i = 0; i < jsonArray.length(); i++)
-					{
-						JSONObject o = (JSONObject) jsonArray.get(i);
-						// function adds friend to the friends map
-						Event e = new Event(o.getInt("e_id"));
-						e.setName(o.getString("name"));
-						e.setInviter(o.getString("sender"));
-						e.setMinPart(o.getInt("minPart"));
-						e.setMaxPart(o.getInt("maxPart"));
-						e.setStartDate(o.getString("startDate"));
-						e.fetchParticipants();
-						addToEventsPast(e);
-					}
-				}
-				// user has no group invites
-				if (jsonObject.getString("success").toString().equals("2"))
-				{
-					// no group invites
-				}
-			}
-			catch (Exception e)
-			{
-				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
-			}
-		}
-	}
-
-	protected int fetchEventInvites()
-	{
-		AsyncTask<String, Void, String> task = new getEventsInvitesTask()
-				.execute("http://68.59.162.183/android_connect/get_event_invites.php");
-		try
-		{
-			task.get(10000, TimeUnit.MILLISECONDS);
-		}
-		catch (InterruptedException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (ExecutionException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (TimeoutException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return 1;
-	}
-
-	private class getEventsInvitesTask extends AsyncTask<String, Void, String>
-	{
-		@Override
-		protected String doInBackground(String... urls)
-		{
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair("email", getEmail()));
-			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
-		}
-
-		@Override
-		protected void onPostExecute(String result)
-		{
-			try
-			{
-				JSONObject jsonObject = new JSONObject(result);
-				if (jsonObject.getString("success").toString().equals("1"))
-				{
-					// gotta make a json array
-					JSONArray jsonArray = jsonObject.getJSONArray("eventsInvites");
-					// looping thru array
-					for (int i = 0; i < jsonArray.length(); i++)
-					{
-						JSONObject o = (JSONObject) jsonArray.get(i);
-						Event e = new Event(o.getInt("e_id"));
-						e.setName(o.getString("name"));
-						e.setInviter(o.getString("sender"));
-						e.setMinPart(o.getInt("minPart"));
-						e.setMaxPart(o.getInt("maxPart"));
-						e.setStartDate(o.getString("startDate"));
-						e.fetchParticipants();
-						addToEventsInvites(e);
-					}
-				}
-				// user has no group invites
-				if (jsonObject.getString("success").toString().equals("2"))
-				{
-					// no group invites
-				}
-			}
-			catch (Exception e)
-			{
-				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
-			}
-		}
-	}
-
-	protected int fetchEventsUpcoming()
-	{
-		AsyncTask<String, Void, String> task = new getEventsUpcomingTask()
-				.execute("http://68.59.162.183/android_connect/get_events_upcoming.php");
-		try
-		{
-			task.get(10000, TimeUnit.MILLISECONDS);
-		}
-		catch (InterruptedException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (ExecutionException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (TimeoutException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return 1;
-	}
-
-	private class getEventsUpcomingTask extends AsyncTask<String, Void, String>
-	{
-		@Override
-		protected String doInBackground(String... urls)
-		{
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair("email", getEmail()));
-			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
-		}
-
-		@Override
-		protected void onPostExecute(String result)
-		{
-			try
-			{
-				JSONObject jsonObject = new JSONObject(result);
-				if (jsonObject.getString("success").toString().equals("1"))
-				{
-					// gotta make a json array
-					JSONArray jsonArray = jsonObject.getJSONArray("eventsUpcoming");
-					// looping thru array
-					for (int i = 0; i < jsonArray.length(); i++)
-					{
-						JSONObject o = (JSONObject) jsonArray.get(i);
-						Event e = new Event(Integer.parseInt(o.getString("eid")));
-						e.setName(o.getString("name"));
-						e.setStartDate(o.getString("startDate"));
-						addToEventsUpcoming(e);
-					}
-				}
-				// user has no group invites
-				if (jsonObject.getString("success").toString().equals("2"))
-				{
-
-				}
-			}
-			catch (Exception e)
-			{
-				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
-			}
-		}
-	}
-
-	protected int fetchNewBadges()
-	{
-		AsyncTask<String, Void, String> task = new getNewBadgesTask()
-				.execute("http://68.59.162.183/android_connect/get_new_badges.php");
-		try
-		{
-			task.get(10000, TimeUnit.MILLISECONDS);
-		}
-		catch (InterruptedException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (ExecutionException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (TimeoutException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return 1;
-	}
-
-	private class getNewBadgesTask extends AsyncTask<String, Void, String>
-	{
-		@Override
-		protected String doInBackground(String... urls)
-		{
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair("email", getEmail()));
-			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
-		}
-
-		@Override
-		protected void onPostExecute(String result)
-		{
-			try
-			{
-				JSONObject jsonObject = new JSONObject(result);
-				JSONArray jsonArray = jsonObject.getJSONArray("badges");
-				if (jsonObject.getString("success").toString().equals("1"))
-				{
-
-					for (int i = 0; i < jsonArray.length(); i++)
-					{
-						JSONObject o = (JSONObject) jsonArray.get(i);
-						Badge b = new Badge(o.getString("name"), o.getString("date"));
-						b.setLevel(Integer.parseInt(o.getString("level")));
-						newBadges.add(b);
-					}
-				}
-
-			}
-			catch (Exception e)
-			{
-				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
-			}
-		}
-	}
-
-	protected int fetchBadges()
-	{
-		AsyncTask<String, Void, String> task = new getBadgesTask()
-				.execute("http://68.59.162.183/android_connect/get_badges.php");
-		try
-		{
-			task.get(10000, TimeUnit.MILLISECONDS);
-		}
-		catch (InterruptedException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (ExecutionException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (TimeoutException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return 1;
-	}
-
-	private class getBadgesTask extends AsyncTask<String, Void, String>
-	{
-		@Override
-		protected String doInBackground(String... urls)
-		{
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair("email", getEmail()));
-			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
-		}
-
-		@Override
-		protected void onPostExecute(String result)
-		{
-			try
-			{
-				JSONObject jsonObject = new JSONObject(result);
-
-				if (jsonObject.getString("success").toString().equals("1"))
-				{
-					JSONArray jsonArray = jsonObject.getJSONArray("badges");
-					for (int i = 0; i < jsonArray.length(); i++)
-					{
-						JSONObject o = (JSONObject) jsonArray.get(i);
-						Badge b = new Badge(o.getString("name"),
-								o.getString("date"));
-						b.setLevel(Integer.parseInt(o.getString("level")));
-						addToBadges(b);
-					}
-				}
-
-			}
-			catch (Exception e)
-			{
-				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
-			}
-		}
-	}
 }

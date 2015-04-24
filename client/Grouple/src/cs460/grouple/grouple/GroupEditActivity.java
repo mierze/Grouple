@@ -219,7 +219,6 @@ public class GroupEditActivity extends BaseActivity
 					toast.show();
 					//TODO: switch activities?
 					user.removeGroup(group.getID());
-					user.fetchGroups();
 					Intent i = new Intent(GroupEditActivity.this, GroupsActivity.class);
 					startActivity(i);;
 				} else

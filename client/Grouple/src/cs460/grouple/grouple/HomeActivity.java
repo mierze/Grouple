@@ -8,14 +8,18 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -52,6 +56,9 @@ public class HomeActivity extends BaseActivity
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		// Register with the GCM servers and store it in the db.
 		context = getApplicationContext();
+		GLOBAL = ((Global) getApplicationContext());
+		// grabbing the logged in user
+		user = GLOBAL.getCurrentUser();
 
 		if (checkPlayServices())
 		{
@@ -68,21 +75,53 @@ public class HomeActivity extends BaseActivity
 		{
 			Log.i(TAG, "No valid Google Play Services APK found.");
 		}
-		load();
-	}
-
-	private void load()
-	{
-		GLOBAL = ((Global) getApplicationContext());
-		// grabbing the logged in user
-		user = GLOBAL.getCurrentUser();
-
 		// Load in user_settings from database and update sharedpreferences file
 		new GetSettingsTask().execute("http://68.59.162.183/"
 				+ "android_connect/get_userssettings.php");
+		//call to fetch
+		user.fetchUserInfo(this);
+		load();
 
+	}
+
+	//This listens for pings from the data service to let it know that there are updates
+	private BroadcastReceiver mReceiver = new BroadcastReceiver()
+	{
+		@Override
+		public void onReceive(Context context, Intent intent)
+		{
+			// Extract data included in the Intent
+			String type = intent.getStringExtra("message");
+			//repopulate views
+			load();
+			//populateProfile();
+			//GLOBAL.getToast(UserProfileActivity.this, type).show();
+		}
+	};
+	
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
+		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("user_data"));
+		load();
+	}
+
+	@Override
+	protected void onPause()
+	{
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
+		super.onPause();
+
+	}
+
+	//rename to ui something something, this gets called to update ui views, right now just the actionbar i think
+	private void load()
+	{
+		
 		// initializing action bar and killswitch listener
 		initActionBar("Welcome, " + user.getFirstName() + "!", false);
+		//below not working TODO: test / make it a function
 		if (user.getNumNewBadges() > 0)
 		{
 			for (Badge b : user.getNewBadges())
@@ -129,36 +168,20 @@ public class HomeActivity extends BaseActivity
 		{
 		case R.id.friendsButtonHA:
 			intent = new Intent(this, FriendsActivity.class);
-			user.fetchFriendRequests();
-			user.fetchFriends();
 			break;
 		case R.id.settingsButtonHA:
 			intent = new Intent(this, SettingsActivity.class);
 			break;
 		case R.id.eventsButtonHA:
-			user.fetchEventInvites();
-			user.fetchEventsPending();
-			user.fetchEventsUpcoming();
-			user.fetchEventsDeclined();
-			user.fetchEventsPast();
 			intent = new Intent(this, EventsActivity.class);
 			break;
 		case R.id.messagesButtonHA:
 			intent = new Intent(this, RecentMessagesActivity.class);
 			break;
 		case R.id.groupsButtonHA:
-			user.fetchGroupInvites();
-			user.fetchGroups();
 			intent = new Intent(this, GroupsActivity.class);
 			break;
 		case R.id.userButtonHA:
-			user.fetchUserInfo();
-			user.fetchEventsPast();
-			user.fetchEventsUpcoming();
-			user.fetchNewBadges();
-			user.fetchBadges();
-			user.fetchFriends();
-			user.fetchGroups();
 			intent = new Intent(this, UserProfileActivity.class);
 			break;
 		default: // default just break out

@@ -40,7 +40,7 @@ public class EventListActivity extends BaseActivity
 	// CLASS-WIDE DECLARATIONS
 	private User user; // user whose current groups displayed
 	private Event event;
-	private Bundle EXTRAS; // extras passed in from the activity that called
+	private String EMAIL; // extras passed in from the activity that called
 							// ListActivity
 	private String CONTENT; // type of content to display in list, passed in
 							// from other activities
@@ -219,24 +219,17 @@ public class EventListActivity extends BaseActivity
 		setContentView(R.layout.activity_list);
 		listView = (ListView) findViewById(R.id.listView);
 		// INSTANTIATIONS
-		EXTRAS = getIntent().getExtras();
-		CONTENT = EXTRAS.getString("content");
+		Bundle extras = getIntent().getExtras();
+		CONTENT = extras.getString("content");
+		EMAIL = extras.getString("email");
 		listViewLayout = (LinearLayout) findViewById(R.id.listViewLayout);
 		addNew = (Button) findViewById(R.id.addNewButtonLiA);
 		String actionBarTitle = "";
 		addNew.setVisibility(View.GONE); // GONE FOR NOW
 
 		// GRABBING A USER
-		if (EXTRAS.getString("email") != null)
-			if (GLOBAL.isCurrentUser(EXTRAS.getString("email")))
-			{
-				System.out.println("MAKING USER THE CURRENT USER");
-				user = GLOBAL.getCurrentUser();
-			}
-			else if (GLOBAL.getUserBuffer() != null
-					&& GLOBAL.getUserBuffer().getEmail().equals(EXTRAS.getString("email")))
-				user = GLOBAL.getUserBuffer();
-
+		if (EMAIL != null)
+			user = GLOBAL.getUser(EMAIL);
 		// CALL APPROPRIATE METHODS TO POPULATE LIST
 		// CONTENT_TYPE -> POPULATEGROUPS
 		// setting the bottom button gone
@@ -346,42 +339,6 @@ public class EventListActivity extends BaseActivity
 		super.onBackPressed();
 		// refresh pertinent info
 
-		if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString())
-				|| CONTENT.equals(CONTENT_TYPE.EVENT_INVITES.toString())
-				|| CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString())
-				|| CONTENT.equals(CONTENT_TYPE.EVENTS_DECLINED.toString()))
-		{
-			// EVENTS
-			user.fetchEventsUpcoming();
-			if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
-			{
-				// profile case
-				user.fetchFriends();
-				user.fetchGroups();
-			}
-			if (GLOBAL.isCurrentUser(user.getEmail()))
-			{
-				user.fetchEventInvites();
-				user.fetchEventsPending();
-				user.fetchEventsDeclined();
-			}
-		}
-		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
-		{
-			// nothing yet
-			// user.fetchEventsInvites();
-			user.fetchEventsPast();
-		}
-
-		// SETTING GLOBALS
-		if (user != null)
-			if (GLOBAL.isCurrentUser(user.getEmail()))
-			{
-				GLOBAL.setCurrentUser(user);
-			}
-			else
-				GLOBAL.setUserBuffer(user);
-
 		if (event != null)
 			GLOBAL.setEventBuffer(event);
 	}
@@ -418,22 +375,22 @@ public class EventListActivity extends BaseActivity
 					if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
 					{
 						user.removeEventPending(bufferID);
-						user.fetchEventsPending();
+	
 					}
 					else if (CONTENT.equals(CONTENT_TYPE.EVENTS_DECLINED.toString()))
 					{
 						user.removeEventDeclined(bufferID);
-						user.fetchEventsDeclined();
+
 					}
 					else if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
 					{
 						user.removeEventUpcoming(bufferID);
-						user.fetchEventsUpcoming();
+
 					}
 					else if (CONTENT.equals(CONTENT_TYPE.EVENT_INVITES.toString()))
 					{
 						user.removeEventInvite(bufferID);
-						user.fetchEventInvites();
+
 						// since leave_event and decline event call same php
 						if (!message.equals("Event invite accepted!"))
 							message = "Event invite declined!";
@@ -442,7 +399,7 @@ public class EventListActivity extends BaseActivity
 					{
 						user.removeEventPast(bufferID);
 						message = "Past event removed!";
-						user.fetchEventsPast();
+
 					}
 					Toast toast = GLOBAL.getToast(context, message);
 					toast.show();
