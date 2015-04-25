@@ -270,14 +270,13 @@ public class EventEditActivity extends BaseActivity
 			iv.setImageBitmap(event.getImage());
 		minEditText.setText(String.valueOf(event.getMinPart()));
 		if (event.getMaxPart() > 0)
-			maxEditText.setText(String.valueOf(event.getMaxPart()));
-		if(!getIntent().getExtras().containsKey("reproposed"))
 		{
-			startEditText.setText(event.getStartText());
-			startDate = event.getStartDate();
-			endEditText.setText(event.getEndText());
-			endDate = event.getEndDate();
+			maxEditText.setText(String.valueOf(event.getMaxPart()));
 		}
+		startEditText.setText(event.getStartText());
+		startDate = event.getStartDate();
+		endEditText.setText(event.getEndText());
+		endDate = event.getEndDate();
 		recurring = event.getRecurringType();
 		if(recurring.equals("A"))
 		{
@@ -696,7 +695,13 @@ public class EventEditActivity extends BaseActivity
 						.create();
 				builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
 				byte[] data;
-				System.out.println("about to proceess photo");
+				
+				//check to see if this a reproposed event and if pic has not been reset, re-use the old image loaded from old event
+				if(bmp == null && EXTRAS.containsKey("reproposed"))
+				{
+					bmp = event.getImage();					
+				}
+				
 				// process photo if set and add it to builder
 				if (bmp != null)
 				{
@@ -709,8 +714,13 @@ public class EventEditActivity extends BaseActivity
 					data = null;
 					bab = null;
 					bos.close();
+					System.out.println("Done with proceess photo.");
 				}
-				System.out.println("Done with proceess photo");
+				else
+				{
+					System.out.println("No photo set... skipping image processing.");
+				}
+				
 				System.out.println("about to add other fields");
 				// add remaining fields to builder (g_name, about, public,
 				// g_id), then execute
@@ -789,7 +799,7 @@ public class EventEditActivity extends BaseActivity
 				{
 					// reproposed event has been successfully created
 					if (jsonObject.getString("success").toString().equals("1"))
-					{
+					{						
 						// now we can grab the newly created e_id returned from the
 						// server
 						// Note: e_id is the only unique identifier of an event and
@@ -798,10 +808,10 @@ public class EventEditActivity extends BaseActivity
 						ID = jsonObject.getString("e_id").toString();
 						System.out.println("MEssage: " + jsonObject.getString("message"));
 						System.out.println("e_id of newly created group is: " + ID);
-
 						Event e = new Event(Integer.parseInt(ID));
 						e.fetchEventInfo();
 						e.fetchParticipants();
+						GLOBAL.setCurrentUser(user);
 						GLOBAL.setEventBuffer(e);
 
 						// display confirmation box

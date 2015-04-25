@@ -1,7 +1,11 @@
 package cs460.grouple.grouple;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -9,7 +13,17 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.StatusLine;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.ByteArrayBody;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
@@ -25,6 +39,7 @@ import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -43,6 +58,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 /*
  * GroupCreateActivity allows a user to create a new group.
@@ -114,6 +130,7 @@ public class EventCreateActivity extends BaseActivity
 		// grab the email of current users from our GLOBAL class
 		user = GLOBAL.getCurrentUser();
 		initActionBar("Create Event", true);
+		recurring = "";
 	}
 
 	// onClick for items to bring
@@ -548,38 +565,100 @@ public class EventCreateActivity extends BaseActivity
 		@Override
 		protected String doInBackground(String... urls)
 		{
-			// grab group name and bio from textviews
-			String name = nameEditText.getText().toString();
-			String about = aboutEditText.getText().toString();
-			if(recurring.equals(""))
-			{
-				recurring = "O";
-			}
-
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair("e_name", name));
-			nameValuePairs.add(new BasicNameValuePair("about", about));
-			nameValuePairs.add(new BasicNameValuePair("creator", user.getEmail()));
-			nameValuePairs.add(new BasicNameValuePair("start_date", startDate));
-			nameValuePairs.add(new BasicNameValuePair("end_date", endDate));
-			nameValuePairs.add(new BasicNameValuePair("category", category));
-			nameValuePairs.add(new BasicNameValuePair("min_part", minimum));
-			nameValuePairs.add(new BasicNameValuePair("max_part", maximum));
-			nameValuePairs.add(new BasicNameValuePair("location", location));
-			nameValuePairs.add(new BasicNameValuePair("recurring", recurring));
-			
-			// loop through toBringList, adding each member into php array
-			// toBring[]
-			for (int i = 0; i < itemNames.size(); i++)
-			{
-				System.out.println("adding the toBring entries");
-				nameValuePairs.add(new BasicNameValuePair("toBring[]", itemNames.get(i)));
-			}
-
-			// pass url and nameValuePairs off to GLOBAL to do the JSON call.
-			// Code continues at onPostExecute when JSON returns.
-			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+			return readJSONFeed(urls[0]);
 		}
+		
+		// Grab the data from the editTexts and push it to the database.
+				public String readJSONFeed(String URL)
+				{
+					StringBuilder stringBuilder = new StringBuilder();
+					HttpClient httpClient = new DefaultHttpClient();
+					// update_event.php using name/value pair
+					HttpPost httpPost = new HttpPost(URL);
+					try
+					{
+						MultipartEntityBuilder builder = MultipartEntityBuilder
+								.create();
+						builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+						byte[] data;
+						System.out.println("about to proceess photo");
+						// process photo if set and add it to builder
+						if (bmp != null)
+						{
+							System.out.println("We are processing photo!");
+							ByteArrayOutputStream bos = new ByteArrayOutputStream();
+							bmp.compress(CompressFormat.JPEG, 100, bos);
+							data = bos.toByteArray();
+							ByteArrayBody bab = new ByteArrayBody(data, ".jpg");
+							builder.addPart("pic", bab);
+							data = null;
+							bab = null;
+							bos.close();
+						}
+						if(recurring.equals(""))
+						{
+							recurring = "O";
+						}
+						System.out.println("Done with proceess photo");
+						System.out.println("about to add other fields");
+						// add remaining fields to builder
+						builder.addTextBody("e_name",
+								nameEditText.getText().toString(),
+								ContentType.TEXT_PLAIN);
+						builder.addTextBody("about",
+								aboutEditText.getText().toString(),
+								ContentType.TEXT_PLAIN);
+						System.out.println("About to add start date as " + startDate);
+						builder.addTextBody("start_date", startDate,
+								ContentType.TEXT_PLAIN);
+						builder.addTextBody("end_date", endDate, ContentType.TEXT_PLAIN);
+						builder.addTextBody("recurring", recurring, ContentType.TEXT_PLAIN);
+						builder.addTextBody("category", category, ContentType.TEXT_PLAIN);
+						builder.addTextBody("min_part", minimum, ContentType.TEXT_PLAIN);
+						builder.addTextBody("max_part", maximum, ContentType.TEXT_PLAIN);
+						builder.addTextBody("location", locationEditText.getText()
+								.toString(), ContentType.TEXT_PLAIN);
+						builder.addTextBody("creator", user.getEmail(), ContentType.TEXT_PLAIN);
+						//loop through toBringList, adding each member into php array toBring[]
+						
+						// loop through toBringList, adding each member into php array
+						// toBring[]
+					    for (String itemName : itemNames) 
+					    {
+					    	System.out.println("attempting to add item: "+itemName);
+					        builder.addTextBody("toBring[]", itemName);
+					    }
+						System.out.println("done adding other fields");
+						httpPost.setEntity(builder.build());
+						HttpResponse response = httpClient.execute(httpPost);
+						StatusLine statusLine = response.getStatusLine();
+						int statusCode = statusLine.getStatusCode();
+						if (statusCode == 200)
+						{
+							HttpEntity entity = response.getEntity();
+							InputStream inputStream = entity.getContent();
+							BufferedReader reader = new BufferedReader(
+									new InputStreamReader(inputStream));
+							String line;
+							while ((line = reader.readLine()) != null)
+							{
+								stringBuilder.append(line);
+							}
+							// cleanup
+							inputStream.close();
+							reader.close();
+							bmp = null;
+							builder = null;
+						} else
+						{
+							Log.d("SetProfileJSON", "Failed to download file");
+						}
+					} catch (Exception e)
+					{
+						Log.d("readJSONFeed", e.getLocalizedMessage());
+					}
+					return stringBuilder.toString();
+				}
 
 		@Override
 		protected void onPostExecute(String result)
@@ -596,12 +675,12 @@ public class EventCreateActivity extends BaseActivity
 				{
 					// now we can grab the newly created e_id returned from the
 					// server
-					// Note: g_id is the only unique identifier of a group and
+					// Note: e_id is the only unique identifier of an event and
 					// therefore must be used for any future calls concerning
-					// that group.
+					// that event.
 					ID = jsonObject.getString("e_id").toString();
 					System.out.println("MEssage: " + jsonObject.getString("message"));
-					System.out.println("e_id of newly created group is: " + ID);
+					System.out.println("e_id of newly created event is: " + ID);
 					Event e = new Event(Integer.parseInt(ID));
 					e.fetchEventInfo();
 					e.fetchParticipants();
