@@ -1,11 +1,25 @@
 package cs460.grouple.grouple;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.StatusLine;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.ByteArrayBody;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
@@ -13,6 +27,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -334,7 +349,7 @@ public class GroupCreateActivity extends BaseActivity
 			break;
 		}
 	}
-	
+
 	//aSynch class to create group 
 	private class CreateGroupTask extends AsyncTask<String, Void, String>
 	{
@@ -342,30 +357,91 @@ public class GroupCreateActivity extends BaseActivity
 		@Override
 		protected String doInBackground(String... urls)
 		{
-			RadioButton privateButton = (RadioButton) findViewById(R.id.privateButton);
-			
-			//grab group name and bio from textviews
-			String groupname = nameEditText.getText().toString();
-			String groupbio = aboutEditText.getText().toString();	
-			
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair("g_name", groupname));
-			nameValuePairs.add(new BasicNameValuePair("about", groupbio));
-			nameValuePairs.add(new BasicNameValuePair("creator", user.getEmail()));
-			
-			//1 for public, 0 for private.
-			int publicStatus = 1;
-			
-			if(privateButton.isChecked())
+			return readJSONFeed(urls[0]);
+		}
+		
+		public String readJSONFeed(String URL)
+		{
+			StringBuilder stringBuilder = new StringBuilder();
+			HttpClient httpClient = new DefaultHttpClient();
+			// update_event.php using name/value pair
+			HttpPost httpPost = new HttpPost(URL);
+			try
 			{
-				publicStatus = 0;
+				MultipartEntityBuilder builder = MultipartEntityBuilder
+						.create();
+				builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+				byte[] data;
+				// process photo if set and add it to builder
+				if (bmp != null)
+				{
+					System.out.println("We are processing photo!");
+					ByteArrayOutputStream bos = new ByteArrayOutputStream();
+					bmp.compress(CompressFormat.JPEG, 100, bos);
+					data = bos.toByteArray();
+					ByteArrayBody bab = new ByteArrayBody(data, ".jpg");
+					builder.addPart("pic", bab);
+					data = null;
+					bab = null;
+					bos.close();
+					System.out.println("Done with proceess photo");
+				}
+				else
+				{
+					System.out.println("No photo set... skipping image processing.");
+				}
+				
+				RadioButton privateButton = (RadioButton) findViewById(R.id.privateButton);
+				
+				//grab group name and bio from textviews
+				String groupname = nameEditText.getText().toString();
+				String groupbio = aboutEditText.getText().toString();	
+								
+				//1 for public, 0 for private.
+				int publicStatus = 1;
+				
+				if(privateButton.isChecked())
+				{
+					publicStatus = 0;
+				}
+				
+				System.out.println("about to add other fields");
+				// add remaining fields to builder
+				builder.addTextBody("g_name",groupname,ContentType.TEXT_PLAIN);
+				builder.addTextBody("about",groupbio,ContentType.TEXT_PLAIN);
+				builder.addTextBody("public", Integer.toString(publicStatus), ContentType.TEXT_PLAIN);
+				builder.addTextBody("creator", user.getEmail(), ContentType.TEXT_PLAIN);
+			
+				System.out.println("done adding other fields");
+				httpPost.setEntity(builder.build());
+				HttpResponse response = httpClient.execute(httpPost);
+				StatusLine statusLine = response.getStatusLine();
+				int statusCode = statusLine.getStatusCode();
+				if (statusCode == 200)
+				{
+					HttpEntity entity = response.getEntity();
+					InputStream inputStream = entity.getContent();
+					BufferedReader reader = new BufferedReader(
+							new InputStreamReader(inputStream));
+					String line;
+					while ((line = reader.readLine()) != null)
+					{
+						stringBuilder.append(line);
+					}
+					// cleanup
+					inputStream.close();
+					reader.close();
+					bmp = null;
+					builder = null;
+				} else
+				{
+					Log.d("SetProfileJSON", "Failed to download file");
+				}
+			} catch (Exception e)
+			{
+				Log.d("readJSONFeed", e.getLocalizedMessage());
 			}
-			//Add the privacy setting
-			nameValuePairs.add(new BasicNameValuePair("public", Integer.toString(publicStatus)));
-			
-			//pass url and nameValuePairs off to global to do the JSON call.  Code continues at onPostExecute when JSON returns.
-			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
-			
+			return stringBuilder.toString();
 		}
 
 		@Override
@@ -486,6 +562,10 @@ public class GroupCreateActivity extends BaseActivity
 			}
 		}
 	}
+	
+	
+	
+	
 	
 	public void onClick(View v)
 	{

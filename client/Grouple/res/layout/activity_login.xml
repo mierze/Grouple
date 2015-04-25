@@ -91,6 +91,7 @@
                 android:fontFamily="sans-serif-condensed"
                 android:gravity="center"
                 android:text="Keep Me Logged In"
+                android:checked="true"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/text_color" />
 
