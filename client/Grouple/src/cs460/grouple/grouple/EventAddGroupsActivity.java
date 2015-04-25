@@ -44,9 +44,10 @@ public class EventAddGroupsActivity extends BaseActivity
 	{
 		//grab the email of current users from our global class
 		user = GLOBAL.getCurrentUser();
+		email = user.getEmail();
 		Bundle extras = getIntent().getExtras();
 		//grab the e_id from extras
-		ID = Integer.toString(extras.getInt("EID"));
+		ID = Integer.toString(extras.getInt("e_id"));
 		//load our list of current groups.  key is group id -> value is group name
 		allGroups = user.getGroups();
 		if (allGroups != null)

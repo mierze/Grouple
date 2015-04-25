@@ -747,9 +747,7 @@ public class EventEditActivity extends BaseActivity
 						.toString(), ContentType.TEXT_PLAIN);
 				builder.addTextBody("location", locationEditText.getText()
 						.toString(), ContentType.TEXT_PLAIN);
-				//sender is being sent in to identify who updated when creating email notification to participants.
-				builder.addTextBody("sender", user.getEmail(), ContentType.TEXT_PLAIN);
-				//Note: creator only used in case of reproposeEvent case, however we can send it either way
+							//Note: creator only used in case of reproposeEvent case, however we can send it either way
 				builder.addTextBody("creator", GLOBAL.getCurrentUser().getEmail(), ContentType.TEXT_PLAIN);
 				//loop through toBringList, adding each member into php array toBring[]
 			    for (String itemName : itemNames) 
