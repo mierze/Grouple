@@ -8,11 +8,14 @@ import org.json.JSONObject;
 
 import cs460.grouple.grouple.EventListActivity.CONTENT_TYPE;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -83,6 +86,7 @@ public class GroupListActivity extends BaseActivity
 			actionBarTitle = user.getFirstName() + "'s Group Invites";
 		if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
 			actionBarTitle = user.getFirstName() + "'s Groups";
+		fetchData();
 		populateGroups();
 		// CONTENT_TYPE -> POPULATEEVENTS
 
@@ -91,6 +95,15 @@ public class GroupListActivity extends BaseActivity
 
 	}
 
+	private void fetchData()
+	{
+		if (user != null)
+		{
+			user.fetchGroupInvites(this);
+			user.fetchGroups(this);
+		}
+		
+	}
 	private class GroupListAdapter extends ArrayAdapter<Group>
 	{
 		public GroupListAdapter()
@@ -144,6 +157,38 @@ public class GroupListActivity extends BaseActivity
 			}
 		});
 	}
+	
+
+	@Override
+	protected void onPause()
+	{
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
+		super.onPause();
+
+	}
+
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
+		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("user_data"));
+		load();
+	}
+
+	// This listens for pings from the data service to let it know that there
+	// are updates
+	private BroadcastReceiver mReceiver = new BroadcastReceiver()
+	{
+		@Override
+		public void onReceive(Context context, Intent intent)
+		{
+			// Extract data included in the Intent
+			String type = intent.getStringExtra("message");
+			// repopulate views
+			populateGroups();
+		}
+	};
+
 
 	// populates a list of groups
 	// populateListView
@@ -193,13 +238,6 @@ public class GroupListActivity extends BaseActivity
 		CONTENT = extras.getString("content");
 		EMAIL = extras.getString("email");
 		// registerClickCallback();
-	}
-
-	@Override
-	protected void onResume()
-	{
-		super.onResume();
-		load();
 	}
 
 	// ONCLICK METHODS BELOW
@@ -259,24 +297,10 @@ public class GroupListActivity extends BaseActivity
 
 		intent.putExtra("g_id", id);
 		intent.putExtra("email", user.getEmail());
-		g.fetchGroupInfo();
-		g.fetchMembers();
-		GLOBAL.setGroupBuffer(g);
 
 		startActivity(intent);
 	}
 
-	@Override
-	public void onBackPressed()
-	{
-		super.onBackPressed();
-
-
-
-		if (group != null)
-			GLOBAL.setGroupBuffer(group);
-
-	}
 
 	private class performActionTask extends AsyncTask<String, Void, String>
 	{

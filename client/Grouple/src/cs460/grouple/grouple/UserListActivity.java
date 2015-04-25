@@ -43,7 +43,7 @@ public class UserListActivity extends BaseActivity
 	 */
 	enum CONTENT_TYPE
 	{
-		FRIENDS_CURRENT, FRIEND_REQUESTS, GROUP_MEMBERS, EVENTS_ATTENDING, SELECT_FRIEND;
+		FRIENDS_CURRENT, FRIEND_REQUESTS, GROUP_MEMBERS, EVENT_PARTICIPANTS, SELECT_FRIEND;
 	}
 
 	// CLASS-WIDE DECLARATIONS
@@ -71,8 +71,6 @@ public class UserListActivity extends BaseActivity
 	{
 		String actionBarTitle = "";
 		addNew.setVisibility(View.GONE); // GONE FOR NOW
-
-
 		// CONTENT_TYPE -> POPULATEUSERS
 		if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
 		{
@@ -82,7 +80,6 @@ public class UserListActivity extends BaseActivity
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.GROUP_MEMBERS.toString()))
 		{
-			group = GLOBAL.getGroupBuffer();
 			setRole();
 			actionBarTitle = "Group Members";
 		}
@@ -91,9 +88,8 @@ public class UserListActivity extends BaseActivity
 		else if (CONTENT.equals(CONTENT_TYPE.SELECT_FRIEND.toString()))
 			actionBarTitle = "Message Who?";
 		else
-		// EVENTS_ATTENDING
+		// EVENT_PARTICIPANTS
 		{
-			event = GLOBAL.getEventBuffer();
 			setRole();
 			actionBarTitle = "Attending " + event.getName();
 		}
@@ -122,7 +118,6 @@ public class UserListActivity extends BaseActivity
 			// find group to work with
 			User u = users.get(position);
 
-	
 			TextView nameView = (TextView) itemView.findViewById(R.id.nameTextViewLI);
 			nameView.setText(u.getName());
 			itemView.setId(position);
@@ -130,7 +125,7 @@ public class UserListActivity extends BaseActivity
 			// fill the view
 			return itemView;
 		}
-		
+
 		@Override
 		public int getItemViewType(int position)
 		{
@@ -145,7 +140,8 @@ public class UserListActivity extends BaseActivity
 				if (!GLOBAL.isCurrentUser(user.getEmail()))
 					listItemID = R.layout.list_row_nobutton;
 			}
-			else if (CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()) || CONTENT.equals(CONTENT_TYPE.GROUP_MEMBERS.toString()))
+			else if (CONTENT.equals(CONTENT_TYPE.EVENT_PARTICIPANTS.toString())
+					|| CONTENT.equals(CONTENT_TYPE.GROUP_MEMBERS.toString()))
 				listItemID = R.layout.list_row_nobutton;
 			return listItemID;
 		}
@@ -155,13 +151,15 @@ public class UserListActivity extends BaseActivity
 	private void populateUsers()
 	{
 		String sadGuyText = "";
-		
+
 		if (CONTENT.equals(CONTENT_TYPE.GROUP_MEMBERS.toString()))
 		{
 			sadGuyText = "There are no members in this group.";
 			users = group.getUsers();
 		}
-		else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))// to																	// +
+		else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))// to
+																			// //
+																			// +
 		{
 			sadGuyText = "You have no friends.";
 			users = user.getUsers();
@@ -193,38 +191,42 @@ public class UserListActivity extends BaseActivity
 		{
 			ArrayAdapter<User> adapter = new UserListAdapter();
 			listView.setAdapter(adapter);
-			listView.setOnTouchListener(new OnTouchListener() {
+			listView.setOnTouchListener(new OnTouchListener()
+			{
 				float historicX = Float.NaN, historicY = Float.NaN;
 				final int DELTA = 50;
-			    @Override
-			    public boolean onTouch(View v, MotionEvent event) 
-			    {
-			        // TODO Auto-generated method stub
-			        switch (event.getAction()) 
-			        {
-			            case MotionEvent.ACTION_DOWN:
-			            historicX = event.getX();
-			            historicY = event.getY();
-			            break;
 
-			            case MotionEvent.ACTION_UP:
-			            if (event.getX() - historicX < -DELTA) 
-			            {
-			               GLOBAL.getToast(UserListActivity.this, "HASJDFHLAHSFDJHAF").show();
-			               //populateUsers();
-			                return true;
-			            }
-			            else if (event.getX() - historicX > DELTA)  
-			            {
-			            	GLOBAL.getToast(UserListActivity.this, "HASJDFHLAHSFDJHAF").show();
-			            	 //users.remove(position);
-			            	// populateUsers();
-			                return true;
-			            } break;
-			            default: return false;
-			        }
-			        return false;
-			    }
+				@Override
+				public boolean onTouch(View v, MotionEvent event)
+				{
+					// TODO Auto-generated method stub
+					switch (event.getAction())
+					{
+					case MotionEvent.ACTION_DOWN:
+						historicX = event.getX();
+						historicY = event.getY();
+						break;
+
+					case MotionEvent.ACTION_UP:
+						if (event.getX() - historicX < -DELTA)
+						{
+							GLOBAL.getToast(UserListActivity.this, "HASJDFHLAHSFDJHAF").show();
+							// populateUsers();
+							return true;
+						}
+						else if (event.getX() - historicX > DELTA)
+						{
+							GLOBAL.getToast(UserListActivity.this, "HASJDFHLAHSFDJHAF").show();
+							// users.remove(position);
+							// populateUsers();
+							return true;
+						}
+						break;
+					default:
+						return false;
+					}
+					return false;
+				}
 			});
 		}
 		else
@@ -242,7 +244,7 @@ public class UserListActivity extends BaseActivity
 	private void setRole()
 	{
 		ArrayList<User> users = new ArrayList<User>();
-		if (CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()))
+		if (CONTENT.equals(CONTENT_TYPE.EVENT_PARTICIPANTS.toString()))
 		{
 			users = event.getUsers();
 			addNew.setText("Invite Groups");// TODO: Mod checks
@@ -275,33 +277,40 @@ public class UserListActivity extends BaseActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list);
-		//grabbing xml elements
+		// grabbing xml elements
 		listView = (ListView) findViewById(R.id.listView);
 		listViewLayout = (LinearLayout) findViewById(R.id.listViewLayout);
 		// INSTANTIATIONS
 		Bundle extras = getIntent().getExtras();
 		EMAIL = extras.getString("email");
-		CONTENT =extras.getString("content");
-		// GRABBING A USER
+		CONTENT = extras.getString("content");
+
+		if (CONTENT.equals(CONTENT_TYPE.GROUP_MEMBERS.toString()))
+		{
+			group = GLOBAL.getGroup(extras.getInt("g_id"));
+		}
+		else if (CONTENT.equals(CONTENT_TYPE.EVENT_PARTICIPANTS.toString()))
+		{
+			event = GLOBAL.getEvent(extras.getInt("e_id"));
+		}
 		if (EMAIL != null)
 			user = GLOBAL.getUser(EMAIL);
 		addNew = (Button) findViewById(R.id.addNewButtonLiA);
 		fetchData();
 	}
-	
-	
-	
+
 	/*
-	 * fetchData fetches all data needed to be displayed in the UI for user profile activity
+	 * fetchData fetches all data needed to be displayed in the UI for user
+	 * profile activity
 	 */
 	private void fetchData()
 	{
 		user.fetchFriends(this);
 		user.fetchFriendRequests(this);
 		if (group != null)
-			group.fetchMembers();
+			group.fetchMembers(this);
 		if (event != null)
-			event.fetchParticipants();
+			event.fetchParticipants(this);
 
 	}
 
@@ -312,16 +321,28 @@ public class UserListActivity extends BaseActivity
 		super.onPause();
 
 	}
+
 	@Override
 	protected void onResume()
 	{
 		super.onResume();
+		if (CONTENT.equals(CONTENT_TYPE.EVENT_PARTICIPANTS.toString()))
+		{
+			LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("event_data"));
+		}
+		else if (CONTENT.equals(CONTENT_TYPE.GROUP_MEMBERS.toString()))
+		{
+			LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("group_data"));
+		}
+		else
+		{
 		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("user_data"));
+		}
 		load();
 	}
-	
 
-	//This listens for pings from the data service to let it know that there are updates
+	// This listens for pings from the data service to let it know that there
+	// are updates
 	private BroadcastReceiver mReceiver = new BroadcastReceiver()
 	{
 		@Override
@@ -329,11 +350,10 @@ public class UserListActivity extends BaseActivity
 		{
 			// Extract data included in the Intent
 			String type = intent.getStringExtra("message");
-			//repopulate views
+			// repopulate views
 			populateUsers();
 		}
 	};
-
 
 	// ONCLICK METHODS BELOW
 	public void onClick(View view)
@@ -402,9 +422,8 @@ public class UserListActivity extends BaseActivity
 		else if (CONTENT.equals(CONTENT_TYPE.GROUP_MEMBERS.toString()))
 		{
 			intent = new Intent(this, InviteActivity.class);
-			group.fetchMembers();
 		}
-		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()))
+		else if (CONTENT.equals(CONTENT_TYPE.EVENT_PARTICIPANTS.toString()))
 		{
 			intent = new Intent(this, EventAddGroupsActivity.class);
 		}
@@ -415,7 +434,6 @@ public class UserListActivity extends BaseActivity
 		if (group != null)
 		{
 			intent.putExtra("g_id", group.getID());
-			GLOBAL.setGroupBuffer(group);
 		}
 		startActivity(intent);
 	}
@@ -423,13 +441,13 @@ public class UserListActivity extends BaseActivity
 	// Starts a USER/GROUP/EVENT profile
 	public void startProfileActivity(View view)
 	{
-		//loadDialog.show();
+		// loadDialog.show();
 		int id = view.getId();
 		Intent intent = new Intent(this, UserProfileActivity.class);
 
 		if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString())
 				|| CONTENT.equals(CONTENT_TYPE.GROUP_MEMBERS.toString())
-				|| CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString())
+				|| CONTENT.equals(CONTENT_TYPE.EVENT_PARTICIPANTS.toString())
 				|| CONTENT.equals(CONTENT_TYPE.FRIEND_REQUESTS.toString())
 				|| CONTENT.equals(CONTENT_TYPE.SELECT_FRIEND.toString()))
 		{
@@ -446,47 +464,6 @@ public class UserListActivity extends BaseActivity
 			intent.putExtra("email", friendEmail);
 		}
 		startActivity(intent);
-	}
-
-	@Override
-	public void onBackPressed()
-	{
-		super.onBackPressed();
-		// refresh pertinent info
-		if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString())
-				|| CONTENT.equals(CONTENT_TYPE.FRIEND_REQUESTS.toString()))
-		{
-			// FRIENDS
-
-			if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
-			{
-				// USER PROFILE
-				// FRIEND PROFILE
-
-			}
-		}
-		else if (CONTENT.equals(CONTENT_TYPE.GROUP_MEMBERS.toString()))
-		{
-			// GROUP PROFILE
-			group.fetchMembers();
-		}
-		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()))
-		{
-			// EVENT PROFILE
-			event.fetchParticipants();
-		}
-		// SETTING GLOBALS
-		if (user != null)
-			if (GLOBAL.isCurrentUser(user.getEmail()))
-			{
-				GLOBAL.setCurrentUser(user);
-			}
-			else
-				GLOBAL.setUserBuffer(user);
-		if (group != null)
-			GLOBAL.setGroupBuffer(group);
-		if (event != null)
-			GLOBAL.setEventBuffer(event);
 	}
 
 	/* Gets the role of the current user in a group / event */
@@ -518,7 +495,7 @@ public class UserListActivity extends BaseActivity
 					ROLE = jsonObject.getString("role").toString();
 					System.out.println("ROLE IS BEING SET TO " + ROLE);
 					if (!ROLE.equals("U"))
-						if (CONTENT.equals(CONTENT_TYPE.EVENTS_ATTENDING.toString()))
+						if (CONTENT.equals(CONTENT_TYPE.EVENT_PARTICIPANTS.toString()))
 						{
 							if (!event.getEventState().equals("Ended"))
 								addNew.setVisibility(View.VISIBLE);

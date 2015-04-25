@@ -6,11 +6,14 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -257,11 +260,34 @@ public class EventListActivity extends BaseActivity
 	}
 
 	@Override
+	protected void onPause()
+	{
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
+		super.onPause();
+
+	}
+
+	@Override
 	protected void onResume()
 	{
 		super.onResume();
+		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("user_data"));
 		populateEvents();
 	}
+
+	// This listens for pings from the data service to let it know that there
+	// are updates
+	private BroadcastReceiver mReceiver = new BroadcastReceiver()
+	{
+		@Override
+		public void onReceive(Context context, Intent intent)
+		{
+			// Extract data included in the Intent
+			String type = intent.getStringExtra("message");
+			// repopulate views
+			populateEvents();
+		}
+	};
 
 	// ONCLICK METHODS BELOW
 	public void onClick(View view)
@@ -324,23 +350,9 @@ public class EventListActivity extends BaseActivity
 			intent = new Intent(this, EventProfileActivity.class);
 			intent.putExtra("e_id", id);
 			intent.putExtra("email", user.getEmail());
-			Event e = new Event(id);
-			e.fetchEventInfo();
-			e.fetchParticipants();
-			GLOBAL.setEventBuffer(e);
 		}
 
 		startActivity(intent);
-	}
-
-	@Override
-	public void onBackPressed()
-	{
-		super.onBackPressed();
-		// refresh pertinent info
-
-		if (event != null)
-			GLOBAL.setEventBuffer(event);
 	}
 
 	

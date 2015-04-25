@@ -108,13 +108,11 @@ public class EntityMessagesActivity extends BaseActivity
 		CONTENT = extras.getString("content");
 		if (CONTENT.equals("GROUP"))
 		{
-			group = GLOBAL.getGroupBuffer();
 			NAME = group.getName();
 			ID = extras.getString("g_id");
 		}
 		else
 		{
-			event = GLOBAL.getEventBuffer();
 			NAME = event.getName();
 			ID = extras.getString("e_id");
 		}
@@ -229,24 +227,6 @@ public class EntityMessagesActivity extends BaseActivity
 				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 			}
 		}
-	}
-
-	@Override
-	public void onBackPressed()
-	{
-		super.onBackPressed();
-		if (CONTENT.equals("GROUP"))
-		{
-			group.fetchGroupInfo();
-			group.fetchMembers();
-		}
-		else
-		{
-			event.fetchEventInfo();
-			event.fetchParticipants();
-		}
-		// finish();
-		return;
 	}
 
 	// Stores the message in the database.

@@ -136,7 +136,7 @@ public class EventEditActivity extends BaseActivity
 		errorTextView = (TextView) findViewById(R.id.errorTextViewEPA);
 		EXTRAS = getIntent().getExtras();
 		iv = (ImageView) findViewById(R.id.editEventImageView);
-		event = GLOBAL.getEventBuffer();
+		event = GLOBAL.getEvent(EXTRAS.getInt("e_id"));
 		if (event != null)
 			getEventProfile();
 		
@@ -808,11 +808,7 @@ public class EventEditActivity extends BaseActivity
 						ID = jsonObject.getString("e_id").toString();
 						System.out.println("MEssage: " + jsonObject.getString("message"));
 						System.out.println("e_id of newly created group is: " + ID);
-						Event e = new Event(Integer.parseInt(ID));
-						e.fetchEventInfo();
-						e.fetchParticipants();
-						GLOBAL.setCurrentUser(user);
-						GLOBAL.setEventBuffer(e);
+
 
 						// display confirmation box
 						AlertDialog dialog = new AlertDialog.Builder(EventEditActivity.this)
@@ -893,9 +889,6 @@ public class EventEditActivity extends BaseActivity
 						Toast toast = GLOBAL.getToast(context,
 								"Event profile changed successfully!");
 						toast.show();
-						event.fetchEventInfo();
-						event.fetchParticipants();
-						GLOBAL.setEventBuffer(event);
 						finish();
 					} else
 					{

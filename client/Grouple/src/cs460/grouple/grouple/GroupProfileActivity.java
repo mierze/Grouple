@@ -5,10 +5,14 @@ import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
+
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -46,6 +50,7 @@ public class GroupProfileActivity extends BaseActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_group_profile);
 
+		
 		xpBar = findViewById(R.id.xpBar);
 		xpProgressBar = (ProgressBar) findViewById(R.id.xpProgressBar);
 		levelTextView = (TextView) findViewById(R.id.levelTextView);
@@ -56,30 +61,63 @@ public class GroupProfileActivity extends BaseActivity
 		profileButton6 = (Button) findViewById(R.id.profileEditButton);
 		iv = (ImageView) findViewById(R.id.profileImageUPA);
 		gcmUtil = new GcmUtility(GLOBAL);
-	}
-
-	@Override
-	protected void onResume()
-	{
-		super.onResume();
 		load();
 	}
 
+
 	public void load()
 	{
+		Bundle extras = getIntent().getExtras();
 		String title = "";
 		user = GLOBAL.getCurrentUser();
 		xpBar.setVisibility(View.VISIBLE);
-		group = GLOBAL.getGroupBuffer();
+		group = GLOBAL.getGroup(extras.getInt("g_id"));
 		title = group.getName();
 		setRole();
 		//getGroupExperience();
-		new getImageTask().execute("http://68.59.162.183/android_connect/get_profile_image.php");
+	
 		populateProfile(); // populates a group / user profile
 		// initializing the action bar and killswitch listener
 		initActionBar(title, true);
 	}
 
+
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
+		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("group_data"));
+		fetchData();
+	}
+
+	@Override
+	protected void onPause()
+	{
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
+		super.onPause();
+
+	}
+
+	//This listens for pings from the data service to let it know that there are updates
+	private BroadcastReceiver mReceiver = new BroadcastReceiver()
+	{
+		@Override
+		public void onReceive(Context context, Intent intent)
+		{
+			// Extract data included in the Intent
+			String type = intent.getStringExtra("message");
+			//repopulate views
+
+			populateProfile();// for group / event
+		}
+	};
+	
+	private void fetchData()
+	{
+		group.fetchInfo(this);
+		group.fetchMembers(this);
+		group.fetchImage(this);
+	}
 	private void setRole()
 	{
 		int pub;
@@ -183,56 +221,7 @@ public class GroupProfileActivity extends BaseActivity
 		xpTextView.setText(groupPoints + " / " + pointsEnd);
 	}
 
-	// TASK FOR GRABBING IMAGE OF EVENT/USER/GROUP
-	private class getImageTask extends AsyncTask<String, Void, String>
-	{
-		@Override
-		protected String doInBackground(String... urls)
-		{
-			String type;
-			String id;
 
-			type = "gid";
-			id = Integer.toString(group.getID());
-
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair(type, id));
-			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
-		}
-
-		@Override
-		protected void onPostExecute(String result)
-		{
-			try
-			{
-				JSONObject jsonObject = new JSONObject(result);
-				// json fetch was successful
-				if (jsonObject.getString("success").toString().equals("1"))
-				{
-					String image = jsonObject.getString("image").toString();
-
-					group.setImage(image);
-					if (group.getImage() != null)
-						iv.setImageBitmap(group.getImage());
-					else
-						iv.setImageResource(R.drawable.group_image_default);
-
-					iv.setScaleType(ScaleType.CENTER_CROP);
-					setNotifications(); // for group / event
-				}
-				else
-				{
-					// failed
-					Log.d("fetchImage", "FAILED");
-				}
-			}
-			catch (Exception e)
-			{
-				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
-			}
-			// do next thing here
-		}
-	}
 
 	/* CLASS TO FETCH THE ROLE OF THE USER IN GROUP / EVENT */
 	private class getRoleTask extends AsyncTask<String, Void, String>
@@ -338,6 +327,8 @@ public class GroupProfileActivity extends BaseActivity
 			profileButton6.setText("Edit Group");
 			profileButton6.setVisibility(View.VISIBLE);
 		}
+		
+
 
 	}
 
@@ -354,10 +345,7 @@ public class GroupProfileActivity extends BaseActivity
 			// members
 			intent.putExtra("content", "GROUP_MEMBERS");
 			System.out.println("Loading a group with id: " + group.getID());
-			group.fetchMembers();
-			GLOBAL.setGroupBuffer(group);
 			intent.putExtra("g_id", group.getID());
-
 			break;
 		case R.id.profileButton2:
 			intent = new Intent(this, EntityMessagesActivity.class);
@@ -384,16 +372,12 @@ public class GroupProfileActivity extends BaseActivity
 		}
 		if (user != null)
 		{
-			if (!GLOBAL.isCurrentUser(user.getEmail()))
-				GLOBAL.setUserBuffer(user);
-			else
-				GLOBAL.setCurrentUser(user);
+
 			intent.putExtra("email", user.getEmail());
 		}
 		if (group != null)
 		{
 			intent.putExtra("g_id", Integer.toString(group.getID()));
-			GLOBAL.setGroupBuffer(group);
 		}
 
 		if (!noIntent) // TODO, move buttons elsewhere that dont start list
@@ -412,11 +396,18 @@ public class GroupProfileActivity extends BaseActivity
 		TextView aboutTitle = (TextView) findViewById(R.id.aboutTitlePA);
 		TextView info = (TextView) findViewById(R.id.profileInfoTextView);
 		TextView about = (TextView) findViewById(R.id.profileAboutTextView);
-
+		setNotifications();
 		aboutTitle.setText("About Group:");
 		// iv.setImageBitmap(group.getImage());
 		info.setText("Creator: " + group.getEmail() + "\nCreated: " + group.getDateCreatedText());
 		about.setText(group.getAbout());
+		if (group.getImage() != null)
+			iv.setImageBitmap(group.getImage());
+		else
+			iv.setImageResource(R.drawable.group_image_default);
+
+		iv.setScaleType(ScaleType.CENTER_CROP);
+		
 	}
 
 	// aSynch task to add individual member to group.
@@ -448,8 +439,7 @@ public class GroupProfileActivity extends BaseActivity
 					Toast toast = GLOBAL.getToast(context, jsonObject.getString("message"));
 					toast.show();
 					profileButton2.setVisibility(View.GONE);
-					group.fetchMembers();
-					group.addToUsers(user);
+					group.fetchMembers(GroupProfileActivity.this);
 					load();
 					// all working correctly, continue to next user or finish.
 					loadDialog.hide();

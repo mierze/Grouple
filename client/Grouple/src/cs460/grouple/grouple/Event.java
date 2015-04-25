@@ -11,32 +11,36 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
 public class Event extends Entity
 {
 	private int id;
-	private String eventState;
-	private String startDate;
-	private String startText;
-	private String startTextNoTime;
-	private String startTextListDisplay;
-	private String endText;
-	private String endDate;
+	private String eventState = "";
+	private String startDate = "";
+	private String startText = "";
+	private String startTextNoTime = "";
+	private String startTextListDisplay = "";
+	private String endText = "";
+	private String endDate = "";
 	private String recurringType;
-	private String category;
+	private String category = "";
 	private int minPart;
-	private String location;
+	private String location = "";
 	private int maxPart;
-	private ArrayList<String> itemList; // will come into play soon
+	private EventDataService dataService;
+	private ArrayList<String> itemList = new ArrayList<String>(); //TODO: load this in data service
 	/*
 	 * Constructor for User class
 	 */
 
 	protected Event(int id)
 	{
+		super();
 		this.id = id;
+		dataService = new EventDataService(GLOBAL, this);
 	}
 
 	protected void setID(int id)
@@ -155,166 +159,20 @@ public class Event extends Entity
 		return startTextListDisplay;
 	}
 
-	/**
-	 * 
-	 * fetches the user name, bio, and everything
-	 * 
-	 */
-	protected int fetchEventInfo()
+	protected void fetchInfo(Context context)
 	{
-		AsyncTask<String, Void, String> task = new getEventInfoTask()
-				.execute("http://68.59.162.183/android_connect/get_event_info.php");
-		try
-		{
-			task.get(10000, TimeUnit.MILLISECONDS);
-		} catch (InterruptedException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ExecutionException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TimeoutException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		// while (task.getStatus() != Status.FINISHED);
-		return 1;
+		dataService.fetchContent("INFO", context);
 	}
 
-	private class getEventInfoTask extends AsyncTask<String, Void, String>
+	protected void fetchImage(Context context)
 	{
-		@Override
-		protected String doInBackground(String... urls)
-		{
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
-			nameValuePairs.add(new BasicNameValuePair("eid", Integer
-					.toString(getID())));
-			// ADD ALL NAME VALUE REQuirEMENTS
-			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
-		}
-
-		@Override
-		protected void onPostExecute(String result)
-		{
-			try
-			{
-				// getting json object from the result string
-				JSONObject jsonObject = new JSONObject(result);
-				// gotta make a json array
-				// JSONArray jsonArray = jsonObject.getJSONArray("userInfo");
-				// json fetch was successful
-				if (jsonObject.getString("success").toString().equals("1"))
-				{
-					JSONArray jsonArray = jsonObject.getJSONArray("eventInfo");
-					Log.d("getEventInfoOnPost", "success1");
-					// $name, $state, $startdate, $enddate, $category, $about,
-					// $location, $minpart, $maxpart, $mustbringlist, $creator);
-					// at each iteration set to hashmap friendEmail -> 'first
-					// last'
-					setName((String) jsonArray.get(0));
-					setEventState((String) jsonArray.get(1));
-					setStartDate((String) jsonArray.get(2));
-					setEndDate((String) jsonArray.get(3));
-					setRecurringType((String) jsonArray.getString(4));
-					setCategory((String) jsonArray.get(5));
-					setAbout((String) jsonArray.get(6));
-					setLocation((String) jsonArray.get(7));
-					setMinPart((Integer) jsonArray.get(8));
-					setMaxPart((Integer) jsonArray.get(9));
-					// 9 = mustbringlist
-					setEmail((String) jsonArray.get(10));
-					// setImage((String) jsonArray.get(11));
-					setPub((Integer) jsonArray.get(11));
-				}
-				// unsuccessful
-				else
-				{
-					// failed
-					Log.d("UserFetchInfoOnPost", "FAILED");
-				}
-			} catch (Exception e)
-			{
-				Log.d("atherjsoninuserpost", "here");
-				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
-			}
-			// do next thing here
-		}
+		dataService.fetchContent("IMAGE", context);
 	}
 
-	/*
-	 * 
-	 * will be fetching the confirmed participants (email -> name)
-	 */
-	protected int fetchParticipants()
+
+	protected void fetchParticipants(Context context)
 	{
-		AsyncTask<String, Void, String> task = new getParticipantsTask()
-				.execute("http://68.59.162.183/android_connect/get_event_participants.php?eid="
-						+ getID());
-		try
-		{
-			task.get(10000, TimeUnit.MILLISECONDS);
-		} catch (InterruptedException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ExecutionException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TimeoutException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return 1; // return success
+		 dataService.fetchContent("PARTICIPANTS", context);
 	}
 
-	private class getParticipantsTask extends AsyncTask<String, Void, String>
-	{
-		@Override
-		protected String doInBackground(String... urls)
-		{
-			return GLOBAL.readJSONFeed(urls[0], null);
-		}
-
-		@Override
-		protected void onPostExecute(String result)
-		{
-			try
-			{
-				JSONObject jsonObject = new JSONObject(result);
-				if (jsonObject.getString("success").toString().equals("1"))
-				{
-					if (getUsers() != null)
-						getUsers().clear();
-					// gotta make a json array
-					JSONArray jsonArray = jsonObject.getJSONArray("eattending");
-					// looping thru array
-					for (int i = 0; i < jsonArray.length(); i++)
-					{
-						JSONObject o = (JSONObject) jsonArray.get(i);
-						User u = new User(o.getString("email"));
-						System.out.println("ADDIGN NEW PARTICIPANT - "
-								+ u.getEmail());
-						u.setName(o.getString("first") + " "
-								+ o.getString("last"));
-						addToUsers(u);
-					}
-				}
-				// event has none attending
-				if (jsonObject.getString("success").toString().equals("2"))
-				{
-					Log.d("Fetch Event Attending", "failed = 2 return");
-					// setNumFriends(0); //PANDA need to set the user class not
-					// global
-				}
-			} catch (Exception e)
-			{
-				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
-			}
-		}
-	}
 }

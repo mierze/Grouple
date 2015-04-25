@@ -71,9 +71,10 @@ public class GroupEditActivity extends BaseActivity
 
 	private void load()
 	{
+		Bundle extras = getIntent().getExtras();
 		// Resetting error text view
 		user = GLOBAL.getCurrentUser();
-		group = GLOBAL.getGroupBuffer();
+		group = GLOBAL.getGroup(extras.getInt("g_id"));
 		if (group != null)
 			getGroupProfile();
 		initActionBar("Edit " + group.getName(), true);
@@ -145,8 +146,6 @@ public class GroupEditActivity extends BaseActivity
 	{
 		Intent intent = new Intent(this, ManageMembersActivity.class);
 		intent.putExtra("g_id", group.getID());
-		group.fetchMembers();
-		GLOBAL.setGroupBuffer(group);
 		startActivity(intent);
 	}
 
@@ -395,9 +394,6 @@ public class GroupEditActivity extends BaseActivity
 					Toast toast = GLOBAL.getToast(context,
 							"Group profile changed successfully.");
 					toast.show();
-					group.fetchGroupInfo();
-					group.fetchMembers();
-					GLOBAL.setGroupBuffer(group);
 					finish();
 				} else
 				{

@@ -50,7 +50,7 @@ public class ManageMembersActivity extends BaseActivity {
 		CONTENT = EXTRAS.getString("content");
 		//should always be current user
 		user = GLOBAL.getCurrentUser();
-		group = GLOBAL.getGroupBuffer();
+		group = GLOBAL.getGroup(EXTRAS.getInt("g_id"));
 		setRoles();
 		initActionBar("Manage " + group.getName() + " Members", true);
 	}
@@ -300,7 +300,6 @@ public class ManageMembersActivity extends BaseActivity {
 								new UpdateGroupMembersTask().execute("http://68.59.162.183/android_connect/update_group_member.php", friendsEmail, "no", friendsRole, Integer.toString(g_id));
 							}
 						}
-						group.fetchMembers();
 						Context context = getApplicationContext();
 						Toast toast = GLOBAL.getToast(context, "Group members have been updated.");
 						toast.show();

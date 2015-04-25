@@ -681,11 +681,6 @@ public class EventCreateActivity extends BaseActivity
 					ID = jsonObject.getString("e_id").toString();
 					System.out.println("MEssage: " + jsonObject.getString("message"));
 					System.out.println("e_id of newly created event is: " + ID);
-					Event e = new Event(Integer.parseInt(ID));
-					e.fetchEventInfo();
-					e.fetchParticipants();
-					GLOBAL.setCurrentUser(user);
-					GLOBAL.setEventBuffer(e);
 
 					// display confirmation box
 					AlertDialog dialog = new AlertDialog.Builder(EventCreateActivity.this)

@@ -58,7 +58,7 @@ public class ManageParticipantsActivity extends BaseActivity
 		CONTENT = extras.getString("content");
 		// should always be current user
 		user = GLOBAL.getCurrentUser();
-		event = GLOBAL.getEventBuffer();
+		event = GLOBAL.getEvent(extras.getInt("e_id"));
 		setRoles();
 		// populateManageMembers();
 	}
@@ -349,7 +349,6 @@ public class ManageParticipantsActivity extends BaseActivity
 						}
 
 						// group.fetchGroupInfo();
-						event.fetchParticipants();
 						// user.fetchGroupInvites();
 						// user.fetchGroups();
 						// GLOBAL.setCurrentUser(user);

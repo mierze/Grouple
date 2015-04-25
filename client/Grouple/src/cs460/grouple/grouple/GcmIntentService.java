@@ -165,9 +165,6 @@ public class GcmIntentService extends IntentService
 			notificationIntent.putExtra("email", SENDER_EMAIL);
 			notificationIntent.putExtra("name", GROUP_NAME);
 			
-			Group g = new Group(Integer.parseInt(GROUP_ID));
-			g.fetchGroupInfo();
-			GLOBAL.setGroupBuffer(g);
 			
 			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this).setContentTitle(NAME)
 			.setStyle(new NotificationCompat.BigTextStyle()
@@ -192,9 +189,6 @@ public class GcmIntentService extends IntentService
 			notificationIntent.putExtra("email", SENDER_EMAIL);
 			notificationIntent.putExtra("name", EVENT_NAME);
 			
-			Event e = new Event(Integer.parseInt(EVENT_ID));
-			e.fetchEventInfo();
-			GLOBAL.setEventBuffer(e);
 			
 			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this).setContentTitle(NAME)
 			.setStyle(new NotificationCompat.BigTextStyle()

@@ -488,10 +488,6 @@ public class GroupCreateActivity extends BaseActivity
 					}
 					*/
 					
-					group = new Group(Integer.parseInt(g_id));
-					group.fetchMembers();
-					group.fetchGroupInfo();
-					GLOBAL.setGroupBuffer(group);
 					
 					//display confirmation box
 					AlertDialog dialog = new AlertDialog.Builder(GroupCreateActivity.this)

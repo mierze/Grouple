@@ -327,19 +327,6 @@ public class UserProfileActivity extends BaseActivity
 		}
 	}
 
-	@Override
-	public void onBackPressed()
-	{
-		super.onBackPressed();
-		// current friends case
-
-		// group members case
-		if (GLOBAL.getGroupBuffer() != null)
-			GLOBAL.getGroupBuffer().fetchMembers();
-		// event parts case
-		if (GLOBAL.getEventBuffer() != null)
-			GLOBAL.getEventBuffer().fetchParticipants();
-	}
 
 	private class BadgesListAdapter extends ArrayAdapter<Badge>
 	{

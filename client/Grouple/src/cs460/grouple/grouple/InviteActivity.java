@@ -48,7 +48,7 @@ public class InviteActivity extends BaseActivity {
 		CONTENT = EXTRAS.getString("content");
 		//should always be current user
 		user = GLOBAL.getCurrentUser();
-		group = GLOBAL.getGroupBuffer();
+		group = GLOBAL.getGroup(EXTRAS.getInt("g_id"));
 		userRole = user.getGroupRole(group.getID());
 		gcmUtil = new GcmUtility(GLOBAL);
 		populateInviteMembers();
@@ -243,10 +243,6 @@ public class InviteActivity extends BaseActivity {
 			
 			
 		}
-		group.fetchGroupInfo();
-		group.fetchMembers();
-		GLOBAL.setCurrentUser(user);  
-		GLOBAL.setGroupBuffer(group);
 		Context context = getApplicationContext();
 		Toast toast = GLOBAL.getToast(context, "Friends have been invited.");
 		toast.show();

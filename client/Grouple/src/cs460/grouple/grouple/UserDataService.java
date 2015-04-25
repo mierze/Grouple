@@ -52,7 +52,7 @@ public class UserDataService extends Service {
 		//	intent.setAction(")
 			//could potentially add how many things were updated
 
-
+			if (context != null)
 			LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 	}
 	public void fetchContent(final String FETCH, Context context)
@@ -420,7 +420,8 @@ public class UserDataService extends Service {
 						e.setMinPart(o.getInt("minPart"));
 						e.setMaxPart(o.getInt("maxPart"));
 						e.setStartDate(o.getString("startDate"));
-						e.fetchParticipants();
+						//TODO: may bneed to get the number of participants here
+					//	e.fetchParticipants();
 						user.addToEventsPending(e);
 					}
 					sendBroadcast();
@@ -469,7 +470,8 @@ public class UserDataService extends Service {
 						e.setMinPart(o.getInt("minPart"));
 						e.setMaxPart(o.getInt("maxPart"));
 						e.setStartDate(o.getString("startDate"));
-						e.fetchParticipants();
+						//TODO: may need to fetch in more data here 
+						//e.fetchParticipants();
 						user.addToEventsDeclined(e);
 					}
 					sendBroadcast();
@@ -518,7 +520,8 @@ public class UserDataService extends Service {
 						e.setMinPart(o.getInt("minPart"));
 						e.setMaxPart(o.getInt("maxPart"));
 						e.setStartDate(o.getString("startDate"));
-						e.fetchParticipants();
+						//TODO: may need to fetch in more data here 
+						//e.fetchParticipants();
 						user.addToEventsPast(e);
 					}
 					sendBroadcast();
@@ -566,7 +569,8 @@ public class UserDataService extends Service {
 						e.setMinPart(o.getInt("minPart"));
 						e.setMaxPart(o.getInt("maxPart"));
 						e.setStartDate(o.getString("startDate"));
-						e.fetchParticipants();
+						//TODO: may need to fetch in more data here 
+						//e.fetchParticipants();
 						user.addToEventsInvites(e);
 					}
 					sendBroadcast();

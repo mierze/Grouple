@@ -7,11 +7,14 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -42,7 +45,6 @@ public class EventProfileActivity extends BaseActivity
 	private Button profileButton3;
 	private Button profileButton6;
 	private Button itemListButton;
-	private AsyncTask getImageTask;
 	private TextView infoTextView;
 	private TextView aboutTextView;
 	private View itemListDialogView;
@@ -50,6 +52,44 @@ public class EventProfileActivity extends BaseActivity
 	private GcmUtility gcmUtil;
 	private ArrayList<EventItem> items = new ArrayList<EventItem>();
 
+	
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
+		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("group_data"));
+		load();
+		fetchData();
+	}
+
+	@Override
+	protected void onPause()
+	{
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
+		super.onPause();
+
+	}
+
+	//This listens for pings from the data service to let it know that there are updates
+	private BroadcastReceiver mReceiver = new BroadcastReceiver()
+	{
+		@Override
+		public void onReceive(Context context, Intent intent)
+		{
+			// Extract data included in the Intent
+			String type = intent.getStringExtra("message");
+			//repopulate views
+
+			populateProfile();// for group / event
+		}
+	};
+	
+	private void fetchData()
+	{
+		event.fetchInfo(this);
+		event.fetchParticipants(this);
+		event.fetchImage(this);
+	}
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -68,19 +108,12 @@ public class EventProfileActivity extends BaseActivity
 		gcmUtil = new GcmUtility(GLOBAL);
 	}
 
-	@Override
-	protected void onResume()
-	{
-		super.onResume();
-		load();
-	}
-
 	public void load()
 	{
 		EXTRAS = getIntent().getExtras();
 		String title = "";
 		user = GLOBAL.getCurrentUser();
-		event = GLOBAL.getEventBuffer();
+		event = GLOBAL.getEvent(EXTRAS.getInt("e_id"));
 		// TODO: testing different colors based on event types to bring some
 		// spice and push the color association
 		// profileLayout.setBackgroundColor(getResources().getColor(R.color.sports_background_color));
@@ -107,7 +140,7 @@ public class EventProfileActivity extends BaseActivity
 			profileLayout.setBackgroundColor(getResources().getColor(R.color.light_purple));
 		}
 		setRole();
-		getImageTask = new getImageTask().execute("http://68.59.162.183/android_connect/get_profile_image.php");
+		
 		populateProfile(); // populates a group / user profile
 		fetchItemsToBring();
 		// initializing the action bar and killswitch listener
@@ -222,51 +255,7 @@ public class EventProfileActivity extends BaseActivity
 		}
 	}
 
-	// TASK FOR GRABBING IMAGE OF EVENT/USER/GROUP
-	private class getImageTask extends AsyncTask<String, Void, String>
-	{
-		@Override
-		protected String doInBackground(String... urls)
-		{
-			String id = Integer.toString(event.getID());
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair("eid", id));
-			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
-		}
 
-		@Override
-		protected void onPostExecute(String result)
-		{
-			try
-			{
-				JSONObject jsonObject = new JSONObject(result);
-				// json fetch was successful
-				if (jsonObject.getString("success").toString().equals("1"))
-				{
-					String image = jsonObject.getString("image").toString();
-
-					// event
-					event.setImage(image);
-					if (event.getImage() != null)
-						iv.setImageBitmap(event.getImage());
-					else
-						iv.setImageResource(R.drawable.event_image_default);
-					iv.setScaleType(ScaleType.CENTER_CROP);
-					setNotifications(); // for group / event
-				}
-				else
-				{
-					// failed
-					Log.d("fetchImage", "FAILED");
-				}
-			}
-			catch (Exception e)
-			{
-				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
-			}
-			// do next thing here
-		}
-	}
 
 	/* CLASS TO FETCH THE ROLE OF THE USER IN GROUP / EVENT */
 	private class getRoleTask extends AsyncTask<String, Void, String>
@@ -441,10 +430,7 @@ public class EventProfileActivity extends BaseActivity
 		case R.id.profileButton1:
 
 			// events
-			intent.putExtra("content", "EVENTS_ATTENDING");
-			event.fetchParticipants();
-			GLOBAL.setEventBuffer(event);
-
+			intent.putExtra("content", "EVENT_PARTICIPANTS");
 			break;
 		case R.id.profileButton2:
 			intent = new Intent(this, EntityMessagesActivity.class);
@@ -476,10 +462,7 @@ public class EventProfileActivity extends BaseActivity
 		}
 		if (user != null)
 		{
-			if (!GLOBAL.isCurrentUser(user.getEmail()))
-				GLOBAL.setUserBuffer(user);
-			else
-				GLOBAL.setCurrentUser(user);
+
 			intent.putExtra("email", user.getEmail());
 		}
 		if (event != null)
@@ -600,7 +583,12 @@ public class EventProfileActivity extends BaseActivity
 		else
 			infoText += "\n(" + event.getNumUsers() + " confirmed / " + event.getMinPart() + " required)";
 		infoTextView.setText(infoText);
-
+		if (event.getImage() != null)
+			iv.setImageBitmap(event.getImage());
+		else
+			iv.setImageResource(R.drawable.event_image_default);
+		iv.setScaleType(ScaleType.CENTER_CROP);
+		setNotifications(); // for group / event
 	}
 
 	// aSynch task to add individual member to group.
@@ -634,9 +622,8 @@ public class EventProfileActivity extends BaseActivity
 					Toast toast = GLOBAL.getToast(context, jsonObject.getString("message"));
 					toast.show();
 					profileButton2.setVisibility(View.GONE);
-					event.fetchParticipants();
-					event.addToUsers(user);
-					load();
+
+					fetchData();
 					// all working correctly, continue to next user or finish.
 					loadDialog.hide();
 				}
