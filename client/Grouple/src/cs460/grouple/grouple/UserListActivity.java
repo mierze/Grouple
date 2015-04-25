@@ -8,11 +8,14 @@ import org.json.JSONObject;
 
 import cs460.grouple.grouple.EventListActivity.CONTENT_TYPE;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -283,14 +286,54 @@ public class UserListActivity extends BaseActivity
 		if (EMAIL != null)
 			user = GLOBAL.getUser(EMAIL);
 		addNew = (Button) findViewById(R.id.addNewButtonLiA);
+		fetchData();
+	}
+	
+	
+	
+	/*
+	 * fetchData fetches all data needed to be displayed in the UI for user profile activity
+	 */
+	private void fetchData()
+	{
+		user.fetchFriends(this);
+		user.fetchFriendRequests(this);
+		if (group != null)
+			group.fetchMembers();
+		if (event != null)
+			event.fetchParticipants();
+
 	}
 
+	@Override
+	protected void onPause()
+	{
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
+		super.onPause();
+
+	}
 	@Override
 	protected void onResume()
 	{
 		super.onResume();
+		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("user_data"));
 		load();
 	}
+	
+
+	//This listens for pings from the data service to let it know that there are updates
+	private BroadcastReceiver mReceiver = new BroadcastReceiver()
+	{
+		@Override
+		public void onReceive(Context context, Intent intent)
+		{
+			// Extract data included in the Intent
+			String type = intent.getStringExtra("message");
+			//repopulate views
+			populateUsers();
+		}
+	};
+
 
 	// ONCLICK METHODS BELOW
 	public void onClick(View view)

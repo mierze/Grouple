@@ -35,7 +35,6 @@ public class GroupProfileActivity extends BaseActivity
 	private Button profileButton2;
 	private Button profileButton3;
 	private Button profileButton6;
-	private AsyncTask getImageTask;
 	private ProgressBar xpProgressBar;
 	private TextView xpTextView;
 	private TextView levelTextView;
@@ -69,21 +68,16 @@ public class GroupProfileActivity extends BaseActivity
 	public void load()
 	{
 		String title = "";
-
 		user = GLOBAL.getCurrentUser();
-
 		xpBar.setVisibility(View.VISIBLE);
 		group = GLOBAL.getGroupBuffer();
 		title = group.getName();
-
 		setRole();
 		//getGroupExperience();
-		getImageTask = new getImageTask().execute("http://68.59.162.183/android_connect/get_profile_image.php");
+		new getImageTask().execute("http://68.59.162.183/android_connect/get_profile_image.php");
 		populateProfile(); // populates a group / user profile
-
 		// initializing the action bar and killswitch listener
 		initActionBar(title, true);
-
 	}
 
 	private void setRole()
@@ -329,7 +323,6 @@ public class GroupProfileActivity extends BaseActivity
 
 	private void setNotifications()
 	{
-
 		if (group.inUsers(user.getEmail()))
 		{
 			profileButton2.setVisibility(View.VISIBLE);
