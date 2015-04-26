@@ -317,7 +317,7 @@ public class EventProfileActivity extends BaseActivity
 	public void onClick(View view)
 	{
 		super.onClick(view);
-		loadDialog.show();
+		//TODO: this caused errors loadDialog.show();
 		boolean noIntent = view.getId() == R.id.backButton ? true : false;
 
 		Intent intent = new Intent(this, UserListActivity.class);

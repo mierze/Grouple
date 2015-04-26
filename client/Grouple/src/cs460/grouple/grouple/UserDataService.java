@@ -33,7 +33,7 @@ public class UserDataService extends Service {
 	{
 		INFO, IMAGE, FRIENDS_CURRENT, FRIEND_INVITES, GROUP_INVITES, GROUPS_CURRENT, 
 		EVENTS_UPCOMING, EVENTS_PAST, EVENTS_DECLINED, EVENTS_PENDING, EVENT_INVITES,
-		BADGES_NEW, BADGES, POINTS;
+		BADGES_NEW, BADGES, POINTS, CONTACTS;
 	}
 	
 	public UserDataService(Global g, User u) 
@@ -97,7 +97,10 @@ public class UserDataService extends Service {
 			new getBadgesTask().execute("http://68.59.162.183/android_connect/get_badges.php");
 		else if (FETCH.equals(FETCH_TYPE.POINTS.toString()))
 			new getUserExperienceTask().execute("http://68.59.162.183/android_connect/get_user_experience.php");
-
+		else if (FETCH.equals(FETCH_TYPE.CONTACTS.toString()))
+		{
+			new getContactsTask().execute("http://68.59.162.183/android_connect/get_recent_contacts.php");
+		}
 
 	}
 	
@@ -747,7 +750,54 @@ public class UserDataService extends Service {
 				// do next thing here
 			}
 		}
+		private class getContactsTask extends AsyncTask<String, Void, String>
+		{
+			@Override
+			protected String doInBackground(String... urls)
+			{
+				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+				nameValuePairs.add(new BasicNameValuePair("email", user.getEmail()));
+				return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+			}
 
+			@Override
+			protected void onPostExecute(String result)
+			{
+				try
+				{
+					JSONObject jsonObject = new JSONObject(result);
+					if (jsonObject.getString("success").toString().equals("1"))
+					{
+						ArrayList<Contact> contacts = user.getContacts();
+						// gotta make a json array
+					
+						JSONArray jsonArray = jsonObject.getJSONArray("contacts");
+						for (int i = 0; i < jsonArray.length(); i++)
+						{
+							JSONObject o = (JSONObject) jsonArray.get(i);
+							Contact contact = new Contact(o.getString("message"), o.getString("senddate"),
+									o.getString("sender"), o.getString("first") + " " + o.getString("last"),
+									o.getString("receiver"), o.getString("read_date"));
+							contact.setID(Integer.parseInt(o.getString("id")));
+							contact.setImage(o.getString("image"));
+
+							user.addToContacts(contact);
+						}
+						// done fetching, now populate to scrollview
+						sendBroadcast();
+					}
+					if (jsonObject.getString("success").toString().equals("2"))
+					{
+						Log.d("fetchRecentContacts", "failed = 2 return");
+					}
+				}
+				catch (Exception e)
+				{
+					Log.d("fetchRecentContacts", "exception caught");
+					Log.d("ReadJSONFINDCONTACTSFeedTask", e.getLocalizedMessage());
+				}
+			}
+		}
 
 	@Override
 	public IBinder onBind(Intent arg0)

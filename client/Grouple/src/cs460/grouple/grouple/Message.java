@@ -19,7 +19,6 @@ public class Message
     private String senderName;
     private String receiver; //GID/EID/EMAIL
     private String readByDateString;
-	private Bitmap image; //all entities have images
     
     protected Message(String message, String rawDateString, String sender, String senderName, String receiver, String readByDateString)
     {
@@ -75,10 +74,7 @@ public class Message
     {
     	return readByDateString;
     }
-    protected Bitmap getImage()
-    {
-    	return image;
-    }
+
     
     //SETTERS
     protected void setID(int id)
@@ -110,27 +106,7 @@ public class Message
     {
     	this.receiver = receiver;
     }
-  //img is taken from json string
-  	protected void setImage(String img)
-  	{
-  		Bitmap bmp;
-  		//jsonArray.getString("image");
-  	
-  		// decode image back to android bitmap format
-  		byte[] decodedString = Base64.decode(img, Base64.DEFAULT);
-  		if (decodedString != null)
-  		{
-  			bmp = BitmapFactory.decodeByteArray(decodedString, 0,
-  					decodedString.length);
-  			//setting bmp;
-  			this.image = bmp;
-  		}
-  		else
-  		{
-  			image = null;
-  		}
-  	}
- 
+
 	private String parseDate(String rawDateString)
 	{
 		String dateString = "";

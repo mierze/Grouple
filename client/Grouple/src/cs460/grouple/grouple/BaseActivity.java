@@ -28,6 +28,7 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class BaseActivity extends ActionBarActivity implements OnClickListener
@@ -44,6 +45,16 @@ public class BaseActivity extends ActionBarActivity implements OnClickListener
 		return;
 	}
 	
+	protected void scrollListView(final int index, final ListView listView)
+	{
+		   listView.post(new Runnable() {
+		        @Override
+		        public void run() {
+		            // Select the last row so it will scroll into view...
+		           listView.setSelection(index);
+		        }
+		    });
+	}
 	@Override
 	protected void onStop()
 	{

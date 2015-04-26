@@ -78,7 +78,7 @@ public class EntityMessagesActivity extends BaseActivity
 				if (id.equals(ID))
 				{
 					// messages.clear(); //TODO: smartly add to this
-					fetchMessages();
+					populateMessages();
 				}
 			}
 			else if (type.equals("EVENT_MESSAGE") && CONTENT.equals("EVENT"))
@@ -86,7 +86,7 @@ public class EntityMessagesActivity extends BaseActivity
 				if (id.equals(ID))
 				{
 					// messages.clear(); //TODO: smartly add to this
-					fetchMessages();
+					populateMessages();
 				}
 			}
 		}
@@ -181,16 +181,10 @@ public class EntityMessagesActivity extends BaseActivity
 	private void populateMessages()
 	{
 		// scrolling down to the bottom
-
-		/*
-		 * listView.post(new Runnable() {
-		 * 
-		 * @Override public void run() { // ((ScrollView)
-		 * listView).fullScroll(ScrollView.FOCUS_DOWN); } });
-		 */
-		ArrayAdapter<Message> adapter = new MessageListAdapter();
+		final ArrayAdapter<Message> adapter = new MessageListAdapter();
 		listView.setAdapter(adapter);
 		messageEditText.requestFocus();
+		scrollListView(adapter.getCount()-1, listView);
 		readMessages();
 	}
 
@@ -205,7 +199,7 @@ public class EntityMessagesActivity extends BaseActivity
 		@Override
 		protected String doInBackground(String... urls)
 		{
-			String type = CONTENT.equals("GROUP") ? "g_id" : "e_id";
+			String type = CONTENT.equals("GROUP") ? "g_id" : "e_id ";
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair(type, ID));
 			nameValuePairs.add(new BasicNameValuePair("email", user.getEmail()));
@@ -221,6 +215,7 @@ public class EntityMessagesActivity extends BaseActivity
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					System.out.println("WE HAD SUCCESS IN READ MESSAGES!");
+
 				}
 				// user has no friends
 				if (jsonObject.getString("success").toString().equals("2"))
@@ -419,6 +414,7 @@ public class EntityMessagesActivity extends BaseActivity
 								o.getString("sender"), o.getString("first") + " " + o.getString("last"), ID, null);
 						messages.add(m);
 					}
+					
 					populateMessages();
 				}
 				if (jsonObject.getString("success").toString().equals("2"))

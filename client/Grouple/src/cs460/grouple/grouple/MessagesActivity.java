@@ -54,7 +54,7 @@ public class MessagesActivity extends BaseActivity
 			String receiver = intent.getStringExtra("receiver");
 			if (receiver.equals(user.getEmail()))
 			{
-				fetchMessages();
+				populateMessages();
 			}
 		}
 	};
@@ -97,7 +97,10 @@ public class MessagesActivity extends BaseActivity
 	}
 	
 
-	public void fetchMessages()
+	/*
+	 * Exclusive to this activity
+	 */
+	private void fetchMessages()
 	{
 		new getMessagesTask().execute("http://68.59.162.183/android_connect/get_messages.php");
 	}
@@ -263,6 +266,7 @@ public class MessagesActivity extends BaseActivity
 		ArrayAdapter<Message> adapter = new MessageListAdapter();
 		listView.setAdapter(adapter);
 		messageEditText.requestFocus();
+		scrollListView(adapter.getCount()-1, listView);
 		readMessages();
 	}
 

@@ -26,6 +26,7 @@ public class User extends Entity
 	private String location;
 	private int age = -1;
 	private int points = 0;
+
 	protected int getPoints()
 	{
 		return points;
@@ -49,15 +50,17 @@ public class User extends Entity
 	private ArrayList<Badge> badges = new ArrayList<Badge>();
 	private ArrayList<Badge> newBadges = new ArrayList<Badge>();
 	private SparseArray<String> groupRoles = new SparseArray<String>();
+	private ArrayList<Contact> contacts = new ArrayList<Contact>();
 	private SparseArray<String> eventRoles = new SparseArray<String>();
-	private UserDataService dataApp;
+	private UserDataService dataService;
+
 	/*
 	 * Constructor for User class
 	 */
 	protected User(String email)
 	{
 		super();
-		dataApp = new UserDataService(GLOBAL, this);
+		dataService = new UserDataService(GLOBAL, this);
 		setEmail(email);
 		initBadges();
 		System.out.println("Initializing new user.");
@@ -221,7 +224,7 @@ public class User extends Entity
 	{
 		if (location != null)
 			return location;
-		else 
+		else
 			return "";
 	}
 
@@ -229,7 +232,7 @@ public class User extends Entity
 	{
 		if (birthday != null)
 			return birthday;
-		else 
+		else
 			return "";
 	}
 
@@ -237,13 +240,13 @@ public class User extends Entity
 	{
 		if (birthdayText != null)
 			return birthdayText;
-		else 
+		else
 			return "";
 	}
 
 	protected int getAge()
 	{
-		//returns -1 if not set, is checked for later
+		// returns -1 if not set, is checked for later
 		return age;
 	}
 
@@ -295,15 +298,22 @@ public class User extends Entity
 	{
 		return eventsUpcoming.size();
 	}
+
 	protected int getNumNewBadges()
 	{
 		return newBadges.size();
+	}
+
+	protected ArrayList<Contact> getContacts()
+	{
+		return contacts;
 	}
 
 	protected ArrayList<Badge> getBadges()
 	{
 		return badges;
 	}
+
 	protected ArrayList<Badge> getNewBadges()
 	{
 		return newBadges;
@@ -353,23 +363,24 @@ public class User extends Entity
 	private void initBadges()
 	{
 		// adding all badges to the user with level 0
-		badges.add(new Badge("Outdoorsman", null)); //nature count
-		badges.add(new Badge("Agile", null)); //fitness count
-		badges.add(new Badge("Gregarious", null)); //social count
-		badges.add(new Badge("Amused", null)); //entertainment count
-		badges.add(new Badge("Diligent", null)); //professional count
-		badges.add(new Badge("Extrovert", null)); //total count
-		
-		badges.add(new Badge("Health Nut", null)); //create fitness count
-		badges.add(new Badge("Productive", null)); //create professional count
-		badges.add(new Badge("Merrymaker", null)); //create entertainment count
-		badges.add(new Badge("Congregator", null)); //create social count
-		badges.add(new Badge("Environmentalist", null)); //create nature count
-		badges.add(new Badge("Creator", null)); //create total count
-		
-		badges.add(new Badge("Active", null)); //per week count
-		badges.add(new Badge("Well Rounded", null)); //participated in all categories
-		badges.add(new Badge("Helping Hand", null)); //bring items to event
+		badges.add(new Badge("Outdoorsman", null)); // nature count
+		badges.add(new Badge("Agile", null)); // fitness count
+		badges.add(new Badge("Gregarious", null)); // social count
+		badges.add(new Badge("Amused", null)); // entertainment count
+		badges.add(new Badge("Diligent", null)); // professional count
+		badges.add(new Badge("Extrovert", null)); // total count
+
+		badges.add(new Badge("Health Nut", null)); // create fitness count
+		badges.add(new Badge("Productive", null)); // create professional count
+		badges.add(new Badge("Merrymaker", null)); // create entertainment count
+		badges.add(new Badge("Congregator", null)); // create social count
+		badges.add(new Badge("Environmentalist", null)); // create nature count
+		badges.add(new Badge("Creator", null)); // create total count
+
+		badges.add(new Badge("Active", null)); // per week count
+		badges.add(new Badge("Well Rounded", null)); // participated in all
+														// categories
+		badges.add(new Badge("Helping Hand", null)); // bring items to event
 	}
 
 	protected void addToBadges(Badge b)
@@ -381,11 +392,42 @@ public class User extends Entity
 				t.setLevel(b.getLevel());
 			}
 	}
-	
+
+	protected void addToContacts(Contact contact)
+	{
+		boolean contains = false;
+		int indexFound = -1;
+		for (Contact c : contacts)
+		{
+			String otherEmail2 = c.getSender().equals(getEmail()) ? c.getReceiver() : c.getSender();
+			if (otherEmail2.equals(c.getOtherEmail()))
+			{
+				contains = true;
+				indexFound = contacts.indexOf(c);
+			}
+		}
+		if (!contains)
+		{
+			// recent messages does not contain a message from
+			// this user
+			contacts.add(contact);
+		}
+		else if (contacts.get(indexFound).getDate().compareTo(contact.getDate()) < 0)
+		{
+			contacts.set(indexFound, contact);
+			System.out.println("The old message has been replaced and is now:" + contacts.get(indexFound).getMessage());
+		}
+		else
+		{
+			System.out.println("no replace happened.  Message is same as before: "
+					+ contacts.get(indexFound).getMessage());
+		}
+	}
+
 	protected void addToNewBadges(Badge b)
 	{
-		//just adding because it will be wiped when user views them
-		//TODO: check that there aren't lingering badges a user has not seen
+		// just adding because it will be wiped when user views them
+		// TODO: check that there aren't lingering badges a user has not seen
 		newBadges.add(b);
 	}
 
@@ -395,9 +437,10 @@ public class User extends Entity
 		for (User t : friendRequests)
 			if (t.getEmail().equals(u.getEmail()))
 				inFriendRequests = true;
-		if (!inFriendRequests) 
+		if (!inFriendRequests)
 			friendRequests.add(u);
-		//TODO: should make new function for update / add user, / make this one that, since storing stuff now
+		// TODO: should make new function for update / add user, / make this one
+		// that, since storing stuff now
 	}
 
 	protected void addToGroups(Group g)
@@ -485,7 +528,7 @@ public class User extends Entity
 	{
 		if (groupRoles.get(id) != null)
 			return groupRoles.get(id);
-		//TODO: this shoul dnot return U if not found
+		// TODO: this shoul dnot return U if not found
 		return "U";
 	}
 
@@ -493,80 +536,84 @@ public class User extends Entity
 	{
 		if (eventRoles.get(id) != null)
 			return eventRoles.get(id);
-		//TODO: this shoul dnot return U if not found
+		// TODO: this shoul dnot return U if not found
 		return "U";
 	}
 
-	//ALL DATA APP FETCH CALLS BELOW
+	// ALL DATA APP FETCH CALLS BELOW
 	protected void fetchInfo(Context context)
 	{
-		dataApp.fetchContent("INFO", context);
+		dataService.fetchContent("INFO", context);
 	}
 
 	protected void fetchFriends(Context context)
 	{
-		dataApp.fetchContent("FRIENDS_CURRENT", context);	
+		dataService.fetchContent("FRIENDS_CURRENT", context);
 	}
 
 	protected void fetchFriendRequests(Context context)
 	{
-		dataApp.fetchContent("FRIEND_INVITES", context);
+		dataService.fetchContent("FRIEND_INVITES", context);
 	}
 
 	protected void fetchGroups(Context context)
 	{
-		dataApp.fetchContent("GROUPS_CURRENT", context);
+		dataService.fetchContent("GROUPS_CURRENT", context);
 	}
 
-	
 	protected void fetchGroupInvites(Context context)
 	{
-		dataApp.fetchContent("GROUP_INVITES", context);
+		dataService.fetchContent("GROUP_INVITES", context);
 	}
 
 	protected void fetchEventsPending(Context context)
 	{
-		dataApp.fetchContent("EVENTS_PENDING", context);
+		dataService.fetchContent("EVENTS_PENDING", context);
 	}
-	
+
 	protected void fetchEventsDeclined(Context context)
 	{
-		dataApp.fetchContent("EVENTS_DECLINED", context);
+		dataService.fetchContent("EVENTS_DECLINED", context);
 	}
 
 	protected void fetchEventsPast(Context context)
 	{
-		dataApp.fetchContent("EVENTS_PAST", context);
+		dataService.fetchContent("EVENTS_PAST", context);
 	}
 
 	protected void fetchEventInvites(Context context)
 	{
-		dataApp.fetchContent("EVENT_INVITES", context);
+		dataService.fetchContent("EVENT_INVITES", context);
 	}
 
 	protected void fetchEventsUpcoming(Context context)
 	{
-		dataApp.fetchContent("EVENTS_UPCOMING", context);
+		dataService.fetchContent("EVENTS_UPCOMING", context);
 	}
 
 	protected void fetchNewBadges(Context context)
 	{
-		dataApp.fetchContent("BADGES_NEW", context);
+		dataService.fetchContent("BADGES_NEW", context);
 	}
 
 	protected void fetchBadges(Context context)
 	{
-		dataApp.fetchContent("BADGES", context);
+		dataService.fetchContent("BADGES", context);
 	}
-	
+
 	protected void fetchPoints(Context context)
 	{
-		dataApp.fetchContent("POINTS", context);
+		dataService.fetchContent("POINTS", context);
 	}
 
 	protected void fetchImage(Context context)
 	{
-		dataApp.fetchContent("IMAGE", context);
+		dataService.fetchContent("IMAGE", context);
+	}
+
+	protected void fetchContacts(Context context)
+	{
+		dataService.fetchContent("CONTACTS", context);
 	}
 
 }
