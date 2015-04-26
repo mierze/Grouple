@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView.ScaleType;
 
 
@@ -30,7 +31,7 @@ public class EventDataService extends Service {
 
 	enum FETCH_TYPE
 	{
-		INFO, IMAGE, PARTICIPANTS;
+		INFO, IMAGE, PARTICIPANTS, ITEM_CHECKLIST;
 	}
 	
 	public EventDataService(Global global, Event e) 
@@ -66,6 +67,10 @@ public class EventDataService extends Service {
 		else if (FETCH.equals(FETCH_TYPE.PARTICIPANTS.toString()))
 		{
 			new getParticipantsTask().execute("http://68.59.162.183/android_connect/get_event_participants.php?eid=" + event.getID());
+		}
+		else if (FETCH.equals(FETCH_TYPE.ITEM_CHECKLIST.toString()))
+		{
+			new getItemsTask().execute("http://68.59.162.183/android_connect/get_items_tobring.php");
 		}
 		
 	}
@@ -202,6 +207,7 @@ public class EventDataService extends Service {
 								+ o.getString("last"));
 						event.addToUsers(u);
 					}
+					sendBroadcast();
 				}
 				// event has none attending
 				if (jsonObject.getString("success").toString().equals("2"))
@@ -217,7 +223,59 @@ public class EventDataService extends Service {
 		}
 	}
 	
-	
+
+	private class getItemsTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected String doInBackground(String... urls)
+		{
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("e_id", Integer.toString(event.getID())));
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+		}
+
+		@Override
+		protected void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					//clearing to avoid duplicates
+					event.getItems().clear();
+					// gotta make a json array
+					int numUnclaimed = 0;
+					JSONArray jsonArray = jsonObject.getJSONArray("itemsToBring");
+					for (int i = 0; i < jsonArray.length(); i++)
+					{
+						JSONObject o = (JSONObject) jsonArray.get(i);
+						// function adds friend to the friends map
+						EventItem item = new EventItem(Integer.parseInt(o.getString("id")), o.getString("name"), o.getString("email"));
+						event.addToItems(item);
+
+					}
+		
+						
+				}
+				// success, but no items returned
+				else if (jsonObject.getString("success").toString().equals("2"))
+				{
+				
+				}
+				else
+				{
+					System.out.println("\""+jsonObject.getString("success").toString()+"\"");
+					Log.d("fetchItems", "failed to return success");
+				}
+			}
+			catch (Exception e)
+			{
+				Log.d("fetchItems", "exception caught");
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
+			}
+		}
+	}
 	
 	@Override
 	public IBinder onBind(Intent arg0)

@@ -1,7 +1,11 @@
 package cs460.grouple.grouple;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -12,28 +16,58 @@ import android.widget.Button;
 public class FriendsActivity extends BaseActivity
 {
 	private User user; // the current user
-
+	//TODO: grab all ui elements here
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_friends);
-	}
 
-	public void load()
-	{
 		user = GLOBAL.getCurrentUser();
-		setNotifications();
 		initActionBar("Friends", true);
 	}
 
+	private void load()
+	{
+		fetchData();
+		updateUI();
+
+	}
+
+	private void fetchData()
+	{
+		
+	}
+
 	@Override
-	public void onResume()
+	protected void onResume()
 	{
 		super.onResume();
+		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("user_data"));
 		load();
 	}
 
+	@Override
+	protected void onPause()
+	{
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
+		super.onPause();
+
+	}
+
+	// This listens for pings from the data service to let it know that there
+	// are updates
+	private BroadcastReceiver mReceiver = new BroadcastReceiver()
+	{
+		@Override
+		public void onReceive(Context context, Intent intent)
+		{
+			// Extract data included in the Intent
+			String type = intent.getStringExtra("message");
+			// repopulate views
+			updateUI();
+		}
+	};
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
@@ -46,7 +80,7 @@ public class FriendsActivity extends BaseActivity
 		return super.onOptionsItemSelected(item);
 	}
 
-	private void setNotifications()
+	private void updateUI()
 	{
 		// setting notifications for the current view
 		Button currentFriendsButton = (Button) findViewById(R.id.currentFriendsButtonFA);

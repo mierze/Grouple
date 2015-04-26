@@ -99,7 +99,7 @@ public class EventListActivity extends BaseActivity
 			 * newStartDate; dateTextView.setText(e.getStartTextListDisplay());
 			 * numDateRows++; return dateRow; }
 			 */
-			TextView nameView = (TextView) itemView.findViewById(R.id.nameTextViewLI);
+			TextView nameView = (TextView) itemView.findViewById(R.id.nameTextView);
 			nameView.setText(e.getName());
 			itemView.setId(e.getID());
 			return itemView;

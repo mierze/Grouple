@@ -118,7 +118,7 @@ public class UserListActivity extends BaseActivity
 			// find group to work with
 			User u = users.get(position);
 
-			TextView nameView = (TextView) itemView.findViewById(R.id.nameTextViewLI);
+			TextView nameView = (TextView) itemView.findViewById(R.id.nameTextView);
 			nameView.setText(u.getName());
 			itemView.setId(position);
 			Button deleteButton;

@@ -16,6 +16,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView.ScaleType;
 
 
@@ -746,6 +747,7 @@ public class UserDataService extends Service {
 				// do next thing here
 			}
 		}
+
 
 	@Override
 	public IBinder onBind(Intent arg0)

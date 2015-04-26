@@ -57,7 +57,7 @@ public class EventProfileActivity extends BaseActivity
 	protected void onResume()
 	{
 		super.onResume();
-		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("group_data"));
+		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("event_data"));
 		load();
 		fetchData();
 	}
@@ -140,82 +140,13 @@ public class EventProfileActivity extends BaseActivity
 			profileLayout.setBackgroundColor(getResources().getColor(R.color.light_purple));
 		}
 		setRole();
-		
+		fetchData();
 		populateProfile(); // populates a group / user profile
-		fetchItemsToBring();
-		// initializing the action bar and killswitch listener
-		initActionBar(title, true);
+		
+
 
 	}
 
-	private void fetchItemsToBring()
-	{
-		new getItemsToBringTask().execute("http://68.59.162.183/android_connect/get_items_tobring.php");
-
-	}
-
-	private class getItemsToBringTask extends AsyncTask<String, Void, String>
-	{
-		@Override
-		protected String doInBackground(String... urls)
-		{
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair("e_id", Integer.toString(event.getID())));
-			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
-		}
-
-		@Override
-		protected void onPostExecute(String result)
-		{
-			try
-			{
-				JSONObject jsonObject = new JSONObject(result);
-				if (jsonObject.getString("success").toString().equals("1"))
-				{
-					//clearing to avoid duplicates
-					items.clear();
-					// gotta make a json array
-					int numUnclaimed = 0;
-					JSONArray jsonArray = jsonObject.getJSONArray("itemsToBring");
-					for (int i = 0; i < jsonArray.length(); i++)
-					{
-						JSONObject o = (JSONObject) jsonArray.get(i);
-						// function adds friend to the friends map
-						EventItem item = new EventItem(Integer.parseInt(o.getString("id")), o.getString("name"), o.getString("email"));
-						items.add(item);
-						if (item.getEmail().equals("null"))
-							numUnclaimed++;
-					}
-					if (numUnclaimed > 0)
-					{
-						itemListButton.setText("Item Checklist (" + numUnclaimed + " unclaimed)");
-					}
-					else if(numUnclaimed == 0)
-					{
-						itemListButton.setText("Item Checklist");
-					}
-						
-				}
-				// success, but no items returned
-				else if (jsonObject.getString("success").toString().equals("2"))
-				{
-					//clearing to avoid duplicates
-					items.clear();
-					itemListButton.setVisibility(View.GONE);
-				}
-				else
-				{
-					System.out.println("\""+jsonObject.getString("success").toString()+"\"");
-					Log.d("fetchItems", "failed to return success");
-				}
-			}
-			catch (Exception e)
-			{
-				Log.d("fetchItems", "exception caught");
-				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
-			}
-		}
-	}
 
 	private void setRole()
 	{
@@ -402,7 +333,7 @@ public class EventProfileActivity extends BaseActivity
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					System.out.println("WE HAD SUCCESS IN UPDATING TO BRING!");
-					fetchItemsToBring();
+					fetchData();
 				}
 				// user has no friends
 				if (jsonObject.getString("success").toString().equals("2"))
@@ -573,7 +504,23 @@ public class EventProfileActivity extends BaseActivity
 	 */
 	public void populateProfile()
 	{
-
+		String title = event.getName();
+		// initializing the action bar and killswitch listener
+		initActionBar(title, true);
+		items = event.getItems();
+		int numUnclaimed = event.getNumUnclaimedItems();
+		if (numUnclaimed > 0)
+		{
+			itemListButton.setText("Item Checklist (" + numUnclaimed + " unclaimed)");
+		}
+		else if(numUnclaimed == 0)
+		{
+			itemListButton.setText("Item Checklist");
+		}
+		else if (event.getItems().isEmpty())
+		{
+			itemListButton.setVisibility(View.GONE);
+		}
 		aboutTextView.setText(event.getAbout());
 		// iv.setImageBitmap(event.getImage());
 		String infoText = "Category: " + event.getCategory() + "\n" + event.getLocation() + "\n" + event.getStartText();

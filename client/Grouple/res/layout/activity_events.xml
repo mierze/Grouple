@@ -15,7 +15,7 @@
         android:orientation="vertical" >
 
         <Button
-            android:id="@+id/eventCreateButtonEA"
+            android:id="@+id/eventCreateButton"
             android:layout_width="match_parent"
             android:layout_height="80dp"
             android:layout_marginBottom="5dp"
@@ -28,7 +28,7 @@
             android:textSize="20sp" />
 
         <Button
-            android:id="@+id/eventsUpcomingButtonEA"
+            android:id="@+id/eventsUpcomingButton"
             android:layout_width="match_parent"
             android:layout_height="80dp"
             android:layout_marginBottom="5dp"
@@ -41,7 +41,7 @@
             android:textSize="20sp" />
 
         <Button
-            android:id="@+id/eventsPendingButtonEA"
+            android:id="@+id/eventsPendingButton"
             android:layout_width="match_parent"
             android:layout_height="80dp"
             android:layout_marginBottom="5dp"
@@ -54,7 +54,7 @@
             android:textSize="20sp" />
 
         <Button
-            android:id="@+id/eventInvitesButtonEA"
+            android:id="@+id/eventInvitesButton"
             android:layout_width="match_parent"
             android:layout_height="80dp"
             android:layout_marginBottom="5dp"
@@ -67,7 +67,7 @@
             android:textSize="20sp" />
 
         <Button
-            android:id="@+id/eventsPastButtonEA"
+            android:id="@+id/eventsPastButton"
             android:layout_width="match_parent"
             android:layout_height="80dp"
             android:layout_marginBottom="5dp"
@@ -80,7 +80,7 @@
             android:textSize="20sp" />
 
         <Button
-            android:id="@+id/eventsDeclinedButtonEA"
+            android:id="@+id/eventsDeclinedButton"
             android:layout_width="match_parent"
             android:layout_height="80dp"
             android:layout_marginBottom="5dp"

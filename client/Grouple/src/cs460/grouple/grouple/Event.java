@@ -1,4 +1,4 @@
- package cs460.grouple.grouple;
+package cs460.grouple.grouple;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,9 @@ public class Event extends Entity
 	private String location = "";
 	private int maxPart;
 	private EventDataService dataService;
-	private ArrayList<String> itemList = new ArrayList<String>(); //TODO: load this in data service
+
+	private ArrayList<EventItem> items = new ArrayList<EventItem>();
+
 	/*
 	 * Constructor for User class
 	 */
@@ -87,7 +89,7 @@ public class Event extends Entity
 		this.endDate = endDate;
 		endText = GLOBAL.toDayTextFormatFromRaw(endDate);
 	}
-	
+
 	protected void setRecurringType(String recurringType)
 	{
 		this.recurringType = recurringType;
@@ -119,6 +121,33 @@ public class Event extends Entity
 		return maxPart;
 	}
 
+	protected int getNumUnclaimedItems()
+	{
+		int numUnclaimed = 0;
+		for (EventItem i : items)
+			if (i.getEmail().equals("null"))
+				numUnclaimed++;
+		return numUnclaimed;
+	}
+
+	protected void addToItems(EventItem item)
+	{
+		boolean inItems = false;
+		for (EventItem i : items)
+			if (i.getID() == item.getID())
+				inItems = true;
+		if (!inItems)
+			items.add(item);
+		// TODO: should make new function for update / add user, / make this one
+		// that, since storing stuff now
+
+	}
+
+	protected ArrayList<EventItem> getItems()
+	{
+		return items;
+	}
+
 	protected String getLocation()
 	{
 		return location;
@@ -133,7 +162,7 @@ public class Event extends Entity
 	{
 		return endDate;
 	}
-	
+
 	protected String getRecurringType()
 	{
 		return recurringType;
@@ -148,12 +177,12 @@ public class Event extends Entity
 	{
 		return startText;
 	}
-	
+
 	protected String getStartTextNoTime()
 	{
 		return startTextNoTime;
 	}
-	
+
 	protected String getStartTextListDisplay()
 	{
 		return startTextListDisplay;
@@ -169,10 +198,14 @@ public class Event extends Entity
 		dataService.fetchContent("IMAGE", context);
 	}
 
-
 	protected void fetchParticipants(Context context)
 	{
-		 dataService.fetchContent("PARTICIPANTS", context);
+		dataService.fetchContent("PARTICIPANTS", context);
+	}
+
+	protected void fetchItems(Context context)
+	{
+		dataService.fetchContent("ITEMS", context);
 	}
 
 }

@@ -117,10 +117,10 @@ public class GroupListActivity extends BaseActivity
 			View itemView = convertView;
 			if (itemView == null)
 				itemView = inflater.inflate(getItemViewType(position), parent, false);
-			RelativeLayout itemLayout = (RelativeLayout) itemView.findViewById(R.id.listRowLayout);
+			//RelativeLayout itemLayout = (RelativeLayout) itemView.findViewById(R.id.listRowLayout);
 			// find group to work with
 			Group g = groups.get(position);
-			TextView nameView = (TextView) itemView.findViewById(R.id.nameTextViewLI);
+			TextView nameView = (TextView) itemView.findViewById(R.id.nameTextView);
 			nameView.setText(g.getName());
 			// nameView.setId(g.getID());
 			System.out.println(g.getID());

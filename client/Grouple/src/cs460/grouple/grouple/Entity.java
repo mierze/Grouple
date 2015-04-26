@@ -9,12 +9,12 @@ import android.util.Base64;
 public abstract class Entity
 {
 	private String email; //email of user, email of group creator, email of event creator
-	private String name; //fullname of user, fName of group creator, fName of event creator ?or possibly not
+	private String name = ""; //fullname of user, fName of group creator, fName of event creator ?or possibly not
 	private ArrayList<User> users = new ArrayList<User>(); //group users, event participants, friends
-	private String about; //about user, group, event
+	private String about = ""; //about user, group, event
 	private Bitmap image; //all entities have images
-	private String inviter;
-	private int pub; //public 1=yes, 0=no(private)
+	private String inviter = "";
+	private int pub = 0; //public 1=yes, 0=no(private)
 	protected static Global GLOBAL;// = new Global();
 
 	/*

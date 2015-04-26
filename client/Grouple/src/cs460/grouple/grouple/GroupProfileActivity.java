@@ -72,13 +72,13 @@ public class GroupProfileActivity extends BaseActivity
 		user = GLOBAL.getCurrentUser();
 		xpBar.setVisibility(View.VISIBLE);
 		group = GLOBAL.getGroup(extras.getInt("g_id"));
-		title = group.getName();
+		
 		setRole();
 		//getGroupExperience();
 	
 		populateProfile(); // populates a group / user profile
 		// initializing the action bar and killswitch listener
-		initActionBar(title, true);
+
 	}
 
 
@@ -345,7 +345,6 @@ public class GroupProfileActivity extends BaseActivity
 			// members
 			intent.putExtra("content", "GROUP_MEMBERS");
 			System.out.println("Loading a group with id: " + group.getID());
-			intent.putExtra("g_id", group.getID());
 			break;
 		case R.id.profileButton2:
 			intent = new Intent(this, EntityMessagesActivity.class);
@@ -377,7 +376,7 @@ public class GroupProfileActivity extends BaseActivity
 		}
 		if (group != null)
 		{
-			intent.putExtra("g_id", Integer.toString(group.getID()));
+			intent.putExtra("g_id", group.getID());
 		}
 
 		if (!noIntent) // TODO, move buttons elsewhere that dont start list
@@ -393,6 +392,8 @@ public class GroupProfileActivity extends BaseActivity
 	 */
 	public void populateProfile()
 	{
+		String title = group.getName();
+		initActionBar(title, true);
 		TextView aboutTitle = (TextView) findViewById(R.id.aboutTitlePA);
 		TextView info = (TextView) findViewById(R.id.profileInfoTextView);
 		TextView about = (TextView) findViewById(R.id.profileAboutTextView);
