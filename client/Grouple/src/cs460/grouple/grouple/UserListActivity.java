@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -121,7 +122,18 @@ public class UserListActivity extends BaseActivity
 			TextView nameView = (TextView) itemView.findViewById(R.id.nameTextView);
 			nameView.setText(u.getName());
 			itemView.setId(position);
-			Button deleteButton;
+			Button removeButton = (Button) itemView.findViewById(R.id.removeButton);
+			if (removeButton != null)
+			{
+				removeButton.setOnClickListener(new OnClickListener()
+				{
+					@Override
+					public void onClick(View view)
+					{
+						removeButton(position);
+					}
+				});
+			}
 			// fill the view
 			return itemView;
 		}
@@ -319,7 +331,6 @@ public class UserListActivity extends BaseActivity
 	{
 		LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
 		super.onPause();
-
 	}
 
 	@Override
@@ -383,7 +394,7 @@ public class UserListActivity extends BaseActivity
 	}
 
 	// Handles removing a friend when the remove friend button is pushed.
-	public void removeButton(View view)
+	public void removeButton(int index)
 	{
 		if (CONTENT.equals(CONTENT_TYPE.GROUP_MEMBERS.toString()))
 		{
@@ -391,7 +402,6 @@ public class UserListActivity extends BaseActivity
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
 		{
-			final int index = view.getId(); // position in friendArray
 			final String friendEmail = users.get(index).getEmail(); // friend to
 																	// remove
 			PANDABUFFER = friendEmail;// PANDA TODO

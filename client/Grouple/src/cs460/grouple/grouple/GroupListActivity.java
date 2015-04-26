@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -90,13 +91,24 @@ public class GroupListActivity extends BaseActivity
 				itemView = inflater.inflate(getItemViewType(position), parent, false);
 			//RelativeLayout itemLayout = (RelativeLayout) itemView.findViewById(R.id.listRowLayout);
 			// find group to work with
-			Group g = groups.get(position);
+			final Group g = groups.get(position);
 			TextView nameView = (TextView) itemView.findViewById(R.id.nameTextView);
 			nameView.setText(g.getName());
 			// nameView.setId(g.getID());
 			System.out.println(g.getID());
 			itemView.setId(g.getID());
-			Button deleteButton;
+			Button removeButton = (Button) itemView.findViewById(R.id.removeButton);
+			if (removeButton != null)
+			{
+				removeButton.setOnClickListener(new OnClickListener()
+				{
+					@Override
+					public void onClick(View view)
+					{
+						removeButton(g);
+					}
+				});
+			}
 			// fill the view
 			return itemView;
 		}
@@ -254,12 +266,12 @@ public class GroupListActivity extends BaseActivity
 	}
 
 	// Handles removing a friend when the remove friend button is pushed.
-	public void removeButton(View view)
+	public void removeButton(Group g)
 	{
 		if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
 		{
 			// Get the id.
-			bufferID = view.getId();
+			bufferID = g.getID();
 
 			new AlertDialog.Builder(this).setMessage("Are you sure you want to leave this group?").setCancelable(true)
 					.setPositiveButton("Yes", new DialogInterface.OnClickListener()

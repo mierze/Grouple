@@ -27,13 +27,10 @@ import android.widget.Toast;
 
 public class ManageMembersActivity extends BaseActivity {
 
-	private User user;
 	private Group group;
 	private SparseArray<String> toUpdate = new SparseArray<String>();    //holds list of name of all friend rows to be added
 	private SparseArray<String> toUpdateRole = new SparseArray<String>();   //holds list of role of all friend rows to be added
-	//private SparseArray<String> toRemove = new SparseArray<String>();    //holds list of name of all friend rows to be added
 	private ArrayList<User> members = new ArrayList<User>();   //holds list of all current friends
-	private String CONTENT; //type of content to display
 	private ArrayList<String> roles = new ArrayList<String>();
 	
 	@Override
@@ -46,9 +43,6 @@ public class ManageMembersActivity extends BaseActivity {
 	private void load()
 	{
 		Bundle extras = getIntent().getExtras();
-		CONTENT = extras.getString("content");
-		//should always be current user
-		user = GLOBAL.getCurrentUser();
 		group = GLOBAL.getGroup(extras.getInt("g_id"));
 		setRoles();
 		initActionBar("Manage " + group.getName() + " Members", true);
