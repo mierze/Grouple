@@ -63,7 +63,6 @@ public class EventListActivity extends BaseActivity
 	{
 		String startDate = "";
 		String newStartDate = "";
-		int numDateRows = 0;
 
 		public EventListAdapter()
 		{
@@ -78,6 +77,29 @@ public class EventListActivity extends BaseActivity
 				itemView = inflater.inflate(getItemViewType(position), parent, false);
 			final Event e = events.get(position);
 			// newStartDate = e.getStartTextNoTime();
+			TextView dateTextView = (TextView) itemView.findViewById(R.id.dateTextView);
+			LinearLayout dateLayout = (LinearLayout) itemView.findViewById(R.id.dateLayout);
+			newStartDate = e.getStartTextNoTime();
+			if (dateLayout != null)
+			{
+				if (position == 0)
+				{
+					startDate = newStartDate;
+					dateTextView.setText(e.getStartTextListDisplay());
+				}
+				else if (startDate.compareTo(newStartDate) < 0)
+				{
+
+					startDate = newStartDate;
+					dateTextView.setText(e.getStartTextListDisplay());
+
+				}
+				else
+				{
+					dateLayout.setVisibility(View.GONE);
+				}
+
+			}
 			Button removeButton = (Button) itemView.findViewById(R.id.removeButton);
 			if (removeButton != null)
 			{
@@ -90,15 +112,7 @@ public class EventListActivity extends BaseActivity
 					}
 				});
 			}
-			/*
-			 * if (position == 0) startDate = newStartDate; else if
-			 * (startDate.compareTo(newStartDate) < 0) { View dateRow =
-			 * inflater.inflate(R.layout.list_row_date, null); TextView
-			 * dateTextView = (TextView)
-			 * dateRow.findViewById(R.id.dateTextView); startDate =
-			 * newStartDate; dateTextView.setText(e.getStartTextListDisplay());
-			 * numDateRows++; return dateRow; }
-			 */
+
 			TextView nameView = (TextView) itemView.findViewById(R.id.nameTextView);
 			nameView.setText(e.getName());
 			itemView.setId(e.getID());
@@ -108,7 +122,7 @@ public class EventListActivity extends BaseActivity
 		@Override
 		public int getItemViewType(int position)
 		{
-			int listItemID = R.layout.list_row;
+			int listItemID = R.layout.list_row_event;
 
 			if (CONTENT.equals(CONTENT_TYPE.EVENT_INVITES.toString()))
 			{
@@ -125,10 +139,10 @@ public class EventListActivity extends BaseActivity
 		/*
 		 * 
 		 * TextView dateTextView = (TextView)
-		 * dateRow.findViewById(R.id.dateTextView); String newStartDate =
-		 * e.getStartTextNoTime(); if (startDate == null) { //first event to
-		 * display, show its time, and set startDate = to it startDate =
-		 * newStartDate; dateTextView.setText(e.getStartTextListDisplay());
+		 * dateRow.findViewById(R.id.dateTextView); String if (startDate ==
+		 * null) { //first event to display, show its time, and set startDate =
+		 * to it startDate = newStartDate;
+		 * dateTextView.setText(e.getStartTextListDisplay());
 		 * listLayout.addView(dateRow); } else if
 		 * (startDate.compareTo(newStartDate) < 0) { //if previous start date
 		 * less than new start date, display date startDate =
@@ -339,23 +353,14 @@ public class EventListActivity extends BaseActivity
 	{
 		loadDialog.show();
 		int id = view.getId();
-		Intent intent = new Intent(this, GroupProfileActivity.class);
+		Intent intent = new Intent(this, EventProfileActivity.class);
 
-		if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString())
-				|| CONTENT.equals(CONTENT_TYPE.EVENTS_DECLINED.toString())
-				|| CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString())
-				|| CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString())
-				|| CONTENT.equals(CONTENT_TYPE.EVENT_INVITES.toString()))
-		{
-			intent = new Intent(this, EventProfileActivity.class);
-			intent.putExtra("e_id", id);
-			intent.putExtra("email", user.getEmail());
-		}
+		intent.putExtra("e_id", id);
+		intent.putExtra("email", user.getEmail());
 
 		startActivity(intent);
 	}
 
-	
 	private class performActionTask extends AsyncTask<String, Void, String>
 	{
 		@Override
@@ -387,7 +392,7 @@ public class EventListActivity extends BaseActivity
 					if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
 					{
 						user.removeEventPending(bufferID);
-	
+
 					}
 					else if (CONTENT.equals(CONTENT_TYPE.EVENTS_DECLINED.toString()))
 					{

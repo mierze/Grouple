@@ -64,8 +64,6 @@ public class UserListActivity extends BaseActivity
 	private Button addNew;
 	// TESTING
 	private ArrayList<User> users;
-	private ArrayList<Group> groups;
-	private ArrayList<Event> events;
 
 	/* loading in everything needed to generate the list */
 	public void load()
@@ -118,7 +116,6 @@ public class UserListActivity extends BaseActivity
 			RelativeLayout itemLayout = (RelativeLayout) itemView.findViewById(R.id.listRowLayout);
 			// find group to work with
 			User u = users.get(position);
-
 			TextView nameView = (TextView) itemView.findViewById(R.id.nameTextView);
 			nameView.setText(u.getName());
 			itemView.setId(position);
