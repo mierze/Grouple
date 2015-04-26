@@ -29,12 +29,11 @@ import android.widget.Toast;
 public class GroupProfileActivity extends BaseActivity
 {
 
-	private ImageView iv;
 	private Group group;
 	private User user;
 
 	private View xpBar;
-
+	private ImageView iv;
 	private Button profileButton1;
 	private Button profileButton2;
 	private Button profileButton3;
@@ -61,22 +60,22 @@ public class GroupProfileActivity extends BaseActivity
 		profileButton6 = (Button) findViewById(R.id.profileEditButton);
 		iv = (ImageView) findViewById(R.id.profileImageUPA);
 		gcmUtil = new GcmUtility(GLOBAL);
-		load();
-	}
-
-
-	public void load()
-	{
 		Bundle extras = getIntent().getExtras();
 		String title = "";
 		user = GLOBAL.getCurrentUser();
 		xpBar.setVisibility(View.VISIBLE);
 		group = GLOBAL.getGroup(extras.getInt("g_id"));
+	}
+
+
+	public void load()
+	{
+
 		
 		setRole();
 		//getGroupExperience();
-	
-		populateProfile(); // populates a group / user profile
+		fetchData();
+		updateUI(); // populates a group / user profile
 		// initializing the action bar and killswitch listener
 
 	}
@@ -87,7 +86,7 @@ public class GroupProfileActivity extends BaseActivity
 	{
 		super.onResume();
 		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("group_data"));
-		fetchData();
+		load();
 	}
 
 	@Override
@@ -108,7 +107,7 @@ public class GroupProfileActivity extends BaseActivity
 			String type = intent.getStringExtra("message");
 			//repopulate views
 
-			populateProfile();// for group / event
+			updateUI();// for group / event
 		}
 	};
 	
@@ -349,7 +348,6 @@ public class GroupProfileActivity extends BaseActivity
 		case R.id.profileButton2:
 			intent = new Intent(this, EntityMessagesActivity.class);
 			intent.putExtra("content", "GROUP");
-			intent.putExtra("name", group.getName());
 			break;
 		case R.id.profileButton3:
 			// events UPCOMING
@@ -390,7 +388,7 @@ public class GroupProfileActivity extends BaseActivity
 	 * Get profile executes get_profile.php. It uses the current users email
 	 * address to retrieve the users name, age, and bio.
 	 */
-	public void populateProfile()
+	public void updateUI()
 	{
 		String title = group.getName();
 		initActionBar(title, true);

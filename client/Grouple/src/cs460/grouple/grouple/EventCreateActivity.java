@@ -711,7 +711,7 @@ public class EventCreateActivity extends BaseActivity
 									// e_id as extra so correct event
 									// profile can be loaded)
 									Intent intent = new Intent(EventCreateActivity.this, EventProfileActivity.class);
-									intent.putExtra("e_id", ID);
+									intent.putExtra("e_id", Integer.parseInt(ID));
 									intent.putExtra("email", user.getEmail());
 									startActivity(intent);
 									finish();

@@ -28,15 +28,18 @@ import org.json.JSONObject;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -77,7 +80,10 @@ public class UserEditActivity extends BaseActivity
 		aboutEditText = (EditText) findViewById(R.id.aboutEditTextEPA);
 		submitButton = (Button) findViewById(R.id.submitButtonEPA);
 		errorTextView = (TextView) findViewById(R.id.errorTextView);
+
+		user = GLOBAL.getCurrentUser();
 		load();
+		initActionBar("Edit Profile", true);
 	}
 
 	private void load()
@@ -85,14 +91,44 @@ public class UserEditActivity extends BaseActivity
 		// Resetting error text view
 
 		errorTextView.setVisibility(View.GONE);
-
-		user = GLOBAL.getCurrentUser();
-		if (user != null)
-			getProfile();
-
-		initActionBar("Edit Profile", true);
+		fetchData();
+		
 	}
 
+	private void fetchData()
+	{
+		user.fetchImage(this);
+		user.fetchInfo(this);
+	}
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
+		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("user_data"));
+		updateUI();
+	}
+
+	@Override
+	protected void onPause()
+	{
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
+		super.onPause();
+
+	}
+
+	// This listens for pings from the data service to let it know that there
+	// are updates
+	private BroadcastReceiver mReceiver = new BroadcastReceiver()
+	{
+		@Override
+		public void onReceive(Context context, Intent intent)
+		{
+			// Extract data included in the Intent
+			String type = intent.getStringExtra("message");
+			// repopulate views
+			updateUI();
+		}
+	};
 	// TASK FOR GRABBING IMAGE OF EVENT/USER/GROUP
 	private class getImageTask extends AsyncTask<String, Void, String>
 	{
@@ -138,7 +174,7 @@ public class UserEditActivity extends BaseActivity
 	 * Get profile executes get_profile.php. It uses the current users email
 	 * address to retrieve the users name, age, and bio.
 	 */
-	private void getProfile()
+	private void updateUI()
 	{
 		// Add the info to the textviews for editing.
 		nameEditText.setText(user.getName());
@@ -146,9 +182,7 @@ public class UserEditActivity extends BaseActivity
 		birthday = user.getBirthday();
 		aboutEditText.setText(user.getAbout());
 		locationEditText.setText(user.getLocation());
-		if (user.getImage() == null)
-			new getImageTask();
-		else
+		if (!(user.getImage() == null))
 			iv.setImageBitmap(user.getImage());
 	}
 
@@ -320,7 +354,7 @@ public class UserEditActivity extends BaseActivity
 					toast.show();
 					finish();
 				}
-				user.fetchUserInfo(UserEditActivity.this);
+				user.fetchInfo(UserEditActivity.this);
 				GLOBAL.setCurrentUser(user);
 			}
 			catch (Exception e)

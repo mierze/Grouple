@@ -64,36 +64,7 @@ public class GroupListActivity extends BaseActivity
 
 	// TESTING
 
-	/* loading in everything needed to generate the list */
-	public void load()
-	{
-		String actionBarTitle = "";
-		addNew.setVisibility(View.GONE); // GONE FOR NOW
 
-		// GRABBING A USER
-		if (EMAIL != null)
-		{
-			user = GLOBAL.getUser(EMAIL);
-		}
-
-		// CLEAR LIST
-		// listLayout.removeAllViews();
-
-		// CALL APPROPRIATE METHODS TO POPULATE LIST
-		// CONTENT_TYPE -> POPULATEGROUPS
-
-		if (CONTENT.equals(CONTENT_TYPE.GROUP_INVITES.toString()))
-			actionBarTitle = user.getFirstName() + "'s Group Invites";
-		if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
-			actionBarTitle = user.getFirstName() + "'s Groups";
-		fetchData();
-		populateGroups();
-		// CONTENT_TYPE -> POPULATEEVENTS
-
-		// calling next functions to execute
-		initActionBar(actionBarTitle, true);
-
-	}
 
 	private void fetchData()
 	{
@@ -172,7 +143,7 @@ public class GroupListActivity extends BaseActivity
 	{
 		super.onResume();
 		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("user_data"));
-		load();
+		updateUI();
 	}
 
 	// This listens for pings from the data service to let it know that there
@@ -185,16 +156,23 @@ public class GroupListActivity extends BaseActivity
 			// Extract data included in the Intent
 			String type = intent.getStringExtra("message");
 			// repopulate views
-			populateGroups();
+			updateUI();
 		}
 	};
 
 
 	// populates a list of groups
 	// populateListView
-	private void populateGroups()
+	private void updateUI()
 	{
+		String actionBarTitle = "";
+		if (CONTENT.equals(CONTENT_TYPE.GROUP_INVITES.toString()))
+			actionBarTitle = user.getFirstName() + "'s Group Invites";
+		if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
+			actionBarTitle = user.getFirstName() + "'s Groups";
+		initActionBar(actionBarTitle, true);
 		String sadGuyText = "";
+		
 		if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
 		{
 			groups = user.getGroups();
@@ -237,6 +215,15 @@ public class GroupListActivity extends BaseActivity
 		Bundle extras = getIntent().getExtras();
 		CONTENT = extras.getString("content");
 		EMAIL = extras.getString("email");
+		String actionBarTitle = "";
+		addNew.setVisibility(View.GONE); // GONE FOR NOW
+
+		// GRABBING A USER
+		if (EMAIL != null)
+		{
+			user = GLOBAL.getUser(EMAIL);
+		}
+	
 		// registerClickCallback();
 	}
 
@@ -351,7 +338,7 @@ public class GroupListActivity extends BaseActivity
 					bufferID = -1;
 					// CALLING CORRESPONDING METHOD TO REPOPULATE
 
-					populateGroups();
+					updateUI();
 
 				}
 				else

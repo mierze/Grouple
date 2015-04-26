@@ -24,14 +24,18 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -70,12 +74,6 @@ public class GroupCreateActivity extends BaseActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_group_create);
-		load();	
-	}
-
-	private void load()
-	{
-		//grab the email of current users from our global class
 		user = GLOBAL.getCurrentUser();
 		//load our list of current friends.  key is friend email -> value is full names
 		allFriends = user.getUsers();
@@ -86,202 +84,8 @@ public class GroupCreateActivity extends BaseActivity
 		//populateGroupCreate(); //no longer allowing invites during create itself
 		initActionBar("Create Group", true);
 	}
-		
-	//no longer allowing invites during create itself
-	/*
-	private void populateGroupCreate()
-	{
-		// begin building the interface
-		LayoutInflater inflater = getLayoutInflater();
-		LinearLayout membersToAdd = (LinearLayout) findViewById(R.id.linearLayoutNested1);
-		
-		if(allFriends.isEmpty())
-		{
-			View row = inflater.inflate(
-					R.layout.list_item_sadguy, null);
-			//SADGUY
-			((TextView) row.findViewById(R.id.sadGuyTextView))
-					.setText("You don't have any friends to add!");
-			membersToAdd.addView(row);
-		}
-		else
-		{
-			//setup for each friend
-			for(int i=0; i<allFriends.size(); i++)
-			{
-				final View view = inflater.inflate(R.layout.list_row_invitefriend, null);
-				final RelativeLayout row = (RelativeLayout) view.findViewById(R.id.friendManageLayout);
-				final Button makeAdminButton = (Button) view.findViewById(R.id.removeFriendButtonNoAccess);
-				final TextView friendNameButton = (TextView) view.findViewById(R.id.friendNameTextView);
-				final CheckBox cb = (CheckBox) view.findViewById(R.id.addToGroupBox);
-				row.setId(i);
-				makeAdminButton.setId(i);
-				cb.setId(i);
-				row.setOnClickListener(new OnClickListener()
-				{
-					@Override
-					public void onClick(View view) 
-					{
-						if (makeAdminButton.getText().toString().equals("P")) 
-						{
-							makeAdminButton.setText("A");
-							if (cb.isChecked()) 
-							{
-								role.put(view.getId(), 'A');
-							}
-	
-							makeAdminButton.setTextColor(getResources().getColor(
-									R.color.light_green));
-						} 
-						else if (makeAdminButton.getText().toString().equals("A")) 
-						{
-							makeAdminButton.setText("U");
-							if (cb.isChecked()) 
-							{
-								role.put(view.getId(), 'U');
-							}
-	
-							makeAdminButton.setTextColor(getResources().getColor(
-									R.color.orange));
-						} 
-						else if (makeAdminButton.getText().toString().equals("-"))
-						{
-							makeAdminButton.setText("U");
-							cb.setChecked(true);
-							role.put(view.getId(), 'U');
-	
-							makeAdminButton.setTextColor(getResources().getColor(
-									R.color.orange));
-						}
-						else
-						{
-							makeAdminButton.setText("P");
-							if (cb.isChecked()) 
-							{
-								role.put(view.getId(), 'P');
-							}
-	
-							makeAdminButton.setTextColor(getResources().getColor(
-									R.color.purple));
-						}
-					}		
-				});
-				
-				//listener when clicking makeAdmin button
-				makeAdminButton.setOnClickListener(new OnClickListener() 
-				{
-					@Override
-					public void onClick(View view) 
-					{
-						if (makeAdminButton.getText().toString().equals("P")) 
-						{
-							makeAdminButton.setText("A");
-							if (cb.isChecked()) 
-							{
-								role.put(view.getId(), 'A');
-							}
-	
-							makeAdminButton.setTextColor(getResources().getColor(
-									R.color.light_green));
-						} 
-						else if (makeAdminButton.getText().toString().equals("A")) 
-						{
-							makeAdminButton.setText("U");
-							if (cb.isChecked()) 
-							{
-								role.put(view.getId(), 'U');
-							}
-	
-							makeAdminButton.setTextColor(getResources().getColor(
-									R.color.orange));
-						} 
-						else if (makeAdminButton.getText().toString().equals("-"))
-						{
-							makeAdminButton.setText("U");
-							cb.setChecked(true);
-							role.put(view.getId(), 'U');
-	
-							makeAdminButton.setTextColor(getResources().getColor(
-									R.color.orange));
-						}
-						else
-						{
-							makeAdminButton.setText("P");
-							if (cb.isChecked()) 
-							{
-								role.put(view.getId(), 'P');
-							}
-							makeAdminButton.setTextColor(getResources().getColor(
-									R.color.purple));
-						}
-					}
-				});
-						
-				//listener when clicking checkbox
-				cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
-				{
-					@Override
-					public void onCheckedChanged(CompoundButton view, boolean isChecked)
-					{
-						String text = friendNameButton.getLayout()
-								.getText().toString();
-					
-						if(makeAdminButton.getText().toString().equals("A") && cb.isChecked())
-						{
-							added.put(view.getId(), text);
-							role.put(view.getId(), 'A');
-							System.out.println("Added size: "+added.size());
-							System.out.println("Role size: "+role.size());
-						}
-						else if(makeAdminButton.getText().toString().equals("P") && cb.isChecked())
-						{
-							added.put(view.getId(), text);
-							role.put(view.getId(), 'P');
-							
-							System.out.println("Added size: "+added.size());
-							System.out.println("Role size: "+role.size());
-						}
-						else if (makeAdminButton.getText().toString().equals("U") && cb.isChecked())
-						{
-							added.put(view.getId(), text);
-							role.put(view.getId(), 'U');
-							
-							System.out.println("Added size: "+added.size());
-							System.out.println("Role size: "+role.size());
-						}
-						else if (makeAdminButton.getText().toString().equals("-") && cb.isChecked())
-						{
-							added.put(view.getId(), text);
-							role.put(view.getId(), 'U');
-							makeAdminButton.setText("U");
 
-							makeAdminButton.setTextColor(getResources().getColor(
-									R.color.orange));
-							System.out.println("Added size: "+added.size());
-							System.out.println("Role size: "+role.size());
-						}
-						else
-						{
-							added.remove(view.getId());
-							role.remove(view.getId());
-							makeAdminButton.setText("-");
 
-							makeAdminButton.setTextColor(getResources().getColor(
-									R.color.black));
-							
-							System.out.println("Added size: "+added.size());
-							System.out.println("Role size: "+role.size());
-						}
-					}
-				});
-				friendNameButton.setText(allFriends.get(i).getName());
-				friendNameButton.setId(i);
-				row.setId(i);
-				membersToAdd.addView(row);	
-			}
-		}
-	}
-	*/
 	
 	//onClick for Confirm create group button
 	public void createGroupButton(View view)

@@ -84,6 +84,7 @@ public class RecentMessagesActivity extends BaseActivity
 		user = GLOBAL.getCurrentUser();
 		/* Action bar */
 		initActionBar("Messages", true);
+	
 		// new
 		// getContactsTask().execute("http://68.59.162.183/android_connect/get_chat_id.php");
 		// Check device for Play Services APK. If check succeeds, proceed with

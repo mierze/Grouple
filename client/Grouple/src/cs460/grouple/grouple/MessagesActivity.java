@@ -97,11 +97,9 @@ public class MessagesActivity extends BaseActivity
 	}
 	
 
-	// Get numFriends, TODO: work on returning the integer
-	public int fetchMessages()
+	public void fetchMessages()
 	{
 		new getMessagesTask().execute("http://68.59.162.183/android_connect/get_messages.php");
-		return 1;
 	}
 
 	class getMessagesTask extends AsyncTask<String, Void, String>

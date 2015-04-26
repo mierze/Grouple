@@ -52,14 +52,13 @@ public class EventProfileActivity extends BaseActivity
 	private GcmUtility gcmUtil;
 	private ArrayList<EventItem> items = new ArrayList<EventItem>();
 
-	
 	@Override
 	protected void onResume()
 	{
 		super.onResume();
 		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("event_data"));
-		load();
 		fetchData();
+		updateUI();
 	}
 
 	@Override
@@ -70,7 +69,8 @@ public class EventProfileActivity extends BaseActivity
 
 	}
 
-	//This listens for pings from the data service to let it know that there are updates
+	// This listens for pings from the data service to let it know that there
+	// are updates
 	private BroadcastReceiver mReceiver = new BroadcastReceiver()
 	{
 		@Override
@@ -78,18 +78,19 @@ public class EventProfileActivity extends BaseActivity
 		{
 			// Extract data included in the Intent
 			String type = intent.getStringExtra("message");
-			//repopulate views
+			// repopulate views
 
-			populateProfile();// for group / event
+			updateUI();// for group / event
 		}
 	};
-	
+
 	private void fetchData()
 	{
 		event.fetchInfo(this);
 		event.fetchParticipants(this);
 		event.fetchImage(this);
 	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -106,47 +107,12 @@ public class EventProfileActivity extends BaseActivity
 		itemListButton = (Button) findViewById(R.id.itemListButton);
 		iv = (ImageView) findViewById(R.id.profileImageUPA);
 		gcmUtil = new GcmUtility(GLOBAL);
-	}
-
-	public void load()
-	{
 		EXTRAS = getIntent().getExtras();
-		String title = "";
 		user = GLOBAL.getCurrentUser();
 		event = GLOBAL.getEvent(EXTRAS.getInt("e_id"));
-		// TODO: testing different colors based on event types to bring some
-		// spice and push the color association
-		// profileLayout.setBackgroundColor(getResources().getColor(R.color.sports_background_color));
-		title = event.getName();
 		
-		if (event.getCategory().equals("Social"))
-		{
-			profileLayout.setBackgroundColor(getResources().getColor(R.color.light_red));
-		}
-		else if (event.getCategory().equals("Professional"))
-		{
-			profileLayout.setBackgroundColor(getResources().getColor(R.color.light_blue));
-		}
-		else if (event.getCategory().equals("Fitness"))
-		{
-			profileLayout.setBackgroundColor(getResources().getColor(R.color.light_yellow));
-		}
-		else if (event.getCategory().equals("Nature"))
-		{
-			profileLayout.setBackgroundColor(getResources().getColor(R.color.light_green));
-		}
-		else if (event.getCategory().equals("Entertainment"))
-		{
-			profileLayout.setBackgroundColor(getResources().getColor(R.color.light_purple));
-		}
-		setRole();
-		fetchData();
-		populateProfile(); // populates a group / user profile
 		
-
-
 	}
-
 
 	private void setRole()
 	{
@@ -185,8 +151,6 @@ public class EventProfileActivity extends BaseActivity
 
 		}
 	}
-
-
 
 	/* CLASS TO FETCH THE ROLE OF THE USER IN GROUP / EVENT */
 	private class getRoleTask extends AsyncTask<String, Void, String>
@@ -296,19 +260,20 @@ public class EventProfileActivity extends BaseActivity
 			profileButton6.setVisibility(View.VISIBLE);
 		}
 	}
-	
+
 	private int updateItemChecklist()
 	{
 		for (EventItem item : items)
 		{
 			int id = item.getID();
-			//grab the email of friend to add
+			// grab the email of friend to add
 			String email = item.getEmail();
-			//grab the role of friend to add
+			// grab the role of friend to add
 			if (email.equals(user.getEmail()) || email.equals(""))
 			{
-				new updateItemChecklistTask().execute("http://68.59.162.183/android_connect/update_item_checklist.php", Integer.toString(id), email);
-			}	
+				new updateItemChecklistTask().execute("http://68.59.162.183/android_connect/update_item_checklist.php",
+						Integer.toString(id), email);
+			}
 		}
 		return 1;
 	}
@@ -340,7 +305,7 @@ public class EventProfileActivity extends BaseActivity
 				{
 					Log.d("readMessage", "failed = 2 return");
 				}
-			} 
+			}
 			catch (Exception e)
 			{
 				Log.d("readMessage", "exception caught");
@@ -370,8 +335,9 @@ public class EventProfileActivity extends BaseActivity
 
 			break;
 		case R.id.profileButton3:
-			//joining public event, defaulting to a promoter status
-			new JoinPublicTask().execute("http://68.59.162.183/android_connect/join_public_event.php", user.getEmail(), "P", Integer.toString(event.getID()));
+			// joining public event, defaulting to a promoter status
+			new JoinPublicTask().execute("http://68.59.162.183/android_connect/join_public_event.php", user.getEmail(),
+					"P", Integer.toString(event.getID()));
 			noIntent = true;
 			break;
 		case R.id.itemListButton:
@@ -380,8 +346,9 @@ public class EventProfileActivity extends BaseActivity
 			break;
 		case R.id.profileEditButton:
 			intent = new Intent(this, EventEditActivity.class);
-			//add reprososed extra if clicking this button when it says "repropose event" instead of "edit event"
-			if(!profileButton6.getText().toString().equals("Edit Event"))
+			// add reprososed extra if clicking this button when it says
+			// "repropose event" instead of "edit event"
+			if (!profileButton6.getText().toString().equals("Edit Event"))
 			{
 				System.out.println("adding reproposed extra!");
 				intent.putExtra("reproposed", 1);
@@ -391,23 +358,18 @@ public class EventProfileActivity extends BaseActivity
 		default:
 			break;
 		}
-		if (user != null)
-		{
+		intent.putExtra("email", user.getEmail());
 
-			intent.putExtra("email", user.getEmail());
-		}
-		if (event != null)
-			intent.putExtra("e_id", Integer.toString(event.getID()));
+		intent.putExtra("e_id", event.getID());
 		if (!noIntent) // TODO, move buttons elsewhere that dont start list
 			startActivity(intent);
 		else
 			loadDialog.hide(); // did not launch intent, cancel load dialog
 	}
 
-
 	private void itemListDialog()
 	{
-		//make our builder
+		// make our builder
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Item Checklist");
 		// inflate dialog with dialog layout for the list
@@ -420,17 +382,17 @@ public class EventProfileActivity extends BaseActivity
 			for (final EventItem item : items)
 			{
 				final int id = item.getID();
-				//grab the email of friend to add
+				// grab the email of friend to add
 				final String itemName = item.getName();
 				final String email = item.getEmail();
-				//grab the role of friend to add
-				
-				System.out.println("itemName found was: "+itemName+"\nemail of item was: "+email);
+				// grab the role of friend to add
+
+				System.out.println("itemName found was: " + itemName + "\nemail of item was: " + email);
 
 				View row = inflater.inflate(R.layout.list_row_checklist, null);
 				final CheckBox itemCheckBox = (CheckBox) row.findViewById(R.id.itemCheckBox);
 				final TextView itemUserNameTextView = (TextView) row.findViewById(R.id.itemUsernameTextView);
-				
+
 				itemCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
 				{
 					@Override
@@ -438,7 +400,7 @@ public class EventProfileActivity extends BaseActivity
 					{
 						if (itemCheckBox.isChecked())
 						{
-							if(itemUserNameTextView.getText().equals(""))
+							if (itemUserNameTextView.getText().equals(""))
 							{
 								itemUserNameTextView.setText(user.getEmail());
 								item.setEmail(user.getEmail());
@@ -446,13 +408,12 @@ public class EventProfileActivity extends BaseActivity
 						}
 						else if (!itemCheckBox.isChecked())
 						{
-							if(!itemUserNameTextView.getText().equals(user.getEmail()))
+							if (!itemUserNameTextView.getText().equals(user.getEmail()))
 							{
 								System.out.println("this is not your claim");
 								itemCheckBox.setChecked(true);
 								Context context = getApplicationContext();
-								Toast toast = GLOBAL.getToast(context,
-										"Sorry, someone has already claimed that item.");
+								Toast toast = GLOBAL.getToast(context, "Sorry, someone has already claimed that item.");
 								toast.show();
 							}
 							else
@@ -491,36 +452,63 @@ public class EventProfileActivity extends BaseActivity
 			@Override
 			public void onCancel(DialogInterface dialog)
 			{
-				updateItemChecklist();	
+				updateItemChecklist();
 			}
 		});
 		itemListAlertDialog.show();
-		//updateItemChecklist();
+		// updateItemChecklist();
 	}
 
 	/*
 	 * Get profile executes get_profile.php. It uses the current users email
 	 * address to retrieve the users name, age, and bio.
 	 */
-	public void populateProfile()
+	public void updateUI()
 	{
 		String title = event.getName();
 		// initializing the action bar and killswitch listener
 		initActionBar(title, true);
+		// TODO: testing different colors based on event types to bring some
+		// spice and push the color association
+		// profileLayout.setBackgroundColor(getResources().getColor(R.color.sports_background_color));
+		title = event.getName();
+
+		if (event.getCategory().equals("Social"))
+		{
+			profileLayout.setBackgroundColor(getResources().getColor(R.color.light_red));
+		}
+		else if (event.getCategory().equals("Professional"))
+		{
+			profileLayout.setBackgroundColor(getResources().getColor(R.color.light_blue));
+		}
+		else if (event.getCategory().equals("Fitness"))
+		{
+			profileLayout.setBackgroundColor(getResources().getColor(R.color.light_yellow));
+		}
+		else if (event.getCategory().equals("Nature"))
+		{
+			profileLayout.setBackgroundColor(getResources().getColor(R.color.light_green));
+		}
+		else if (event.getCategory().equals("Entertainment"))
+		{
+			profileLayout.setBackgroundColor(getResources().getColor(R.color.light_purple));
+		}
+		setRole();
 		items = event.getItems();
 		int numUnclaimed = event.getNumUnclaimedItems();
-		if (numUnclaimed > 0)
-		{
-			itemListButton.setText("Item Checklist (" + numUnclaimed + " unclaimed)");
-		}
-		else if(numUnclaimed == 0)
-		{
-			itemListButton.setText("Item Checklist");
-		}
-		else if (event.getItems().isEmpty())
+		if (event.getItems().isEmpty())
 		{
 			itemListButton.setVisibility(View.GONE);
 		}
+		else if (numUnclaimed > 0)
+		{
+			itemListButton.setText("Item Checklist (" + numUnclaimed + " unclaimed)");
+		}
+		else if (numUnclaimed == 0)
+		{
+			itemListButton.setText("Item Checklist");
+		}
+
 		aboutTextView.setText(event.getAbout());
 		// iv.setImageBitmap(event.getImage());
 		String infoText = "Category: " + event.getCategory() + "\n" + event.getLocation() + "\n" + event.getStartText();

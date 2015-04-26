@@ -1,6 +1,7 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/eventProfileContainer"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_color"
@@ -9,7 +10,8 @@
     <ScrollView
         android:id="@+id/profileScrollView"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_weight="2"
         android:layout_margin="0dp"
         android:background="@color/layout_background_color"
         android:padding="0dp" >
@@ -79,6 +81,7 @@
             <LinearLayout
                 android:id="@+id/friendProfileInnerLayout2"
                 android:layout_width="match_parent"
+               	android:layout_weight="2"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="0dp"
                 android:orientation="horizontal" >
@@ -102,7 +105,8 @@
             <Button
                 android:id="@+id/profileButton1"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/selector_button"
                 android:fontFamily="sans-serif-condensed"
@@ -114,7 +118,8 @@
             <Button
                 android:id="@+id/profileButton2"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                 android:layout_height="fill_parent"
+                android:layout_weight="1"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/selector_button"
                 android:fontFamily="sans-serif-condensed"
@@ -127,7 +132,8 @@
             <Button
                 android:id="@+id/profileButton3"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/selector_button"
                 android:fontFamily="sans-serif-condensed"
@@ -140,7 +146,8 @@
             <Button
                 android:id="@+id/itemListButton"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/selector_button"
                 android:fontFamily="sans-serif-condensed"
@@ -153,7 +160,8 @@
             <Button
                 android:id="@+id/profileEditButton"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                  android:layout_height="fill_parent"
+                android:layout_weight="1"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/selector_button"
                 android:fontFamily="sans-serif-condensed"
@@ -162,28 +170,8 @@
                 android:textColor="@color/button_text_color"
                 android:textSize="18sp"
                 android:visibility="gone" />
-          	<LinearLayout
-                android:id="@+id/itemsToBringLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone" >
-                
-          	    <TextView
-                android:id="@+id/checkListTitleTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:background="@color/black"
-                android:fontFamily="sans-serif-condensed"
-                android:gravity="left"
-                android:padding="5dp"
-                android:text="Item Checklist:"
-                android:textColor="@color/white" />
-
-            </LinearLayout>
             
         </LinearLayout>
     </ScrollView>
 
-</RelativeLayout>
+</LinearLayout>

@@ -54,7 +54,7 @@ public class Global extends Application
 	protected void login(String email, Context context)
 	{
 		User u = new User(email);
-		u.fetchUserInfo(context);
+		u.fetchInfo(context);
 		u.fetchFriendRequests(context);
 		u.fetchFriends(context);
 		u.fetchGroups(context);

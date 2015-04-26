@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.content.IntentFilter;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -84,6 +85,13 @@ public class UserProfileActivity extends BaseActivity
 		gcmUtil = new GcmUtility(GLOBAL);
 		Bundle extras = getIntent().getExtras();
 		EMAIL = extras.getString("email");
+		pastEventsBadgesLayout.setVisibility(View.VISIBLE);
+		// grabbing the user with the given email in the EXTRAS
+		if (!GLOBAL.isCurrentUser(EMAIL))
+			user = GLOBAL.getUser(EMAIL);
+		else
+			user = GLOBAL.getCurrentUser();
+
 	}
 
 	@Override
@@ -91,7 +99,9 @@ public class UserProfileActivity extends BaseActivity
 	{
 		super.onResume();
 		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("user_data"));
-		load();
+		fetchData();
+		updateUI(); // populates a group / user profile
+
 	}
 
 	@Override
@@ -99,10 +109,10 @@ public class UserProfileActivity extends BaseActivity
 	{
 		LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
 		super.onPause();
-
 	}
 
-	//This listens for pings from the data service to let it know that there are updates
+	// This listens for pings from the data service to let it know that there
+	// are updates
 	private BroadcastReceiver mReceiver = new BroadcastReceiver()
 	{
 		@Override
@@ -110,41 +120,27 @@ public class UserProfileActivity extends BaseActivity
 		{
 			// Extract data included in the Intent
 			String type = intent.getStringExtra("message");
-			//repopulate views
-			populateProfile();
+			// repopulate views
+			updateUI();
 		}
 	};
 
-	public void load()
-	{
-		pastEventsBadgesLayout.setVisibility(View.VISIBLE);
-		// grabbing the user with the given email in the EXTRAS
-		if (!GLOBAL.isCurrentUser(EMAIL))
-			user = GLOBAL.getUser(EMAIL);
-		else
-			user = GLOBAL.getCurrentUser();
-		
-		fetchData();
-		//TODO: move this task and the image to the user data app
-		
-		populateProfile(); // populates a group / user profile
-	}
-	
 	/*
-	 * fetchData fetches all data needed to be displayed in the UI for user profile activity
+	 * fetchData fetches all data needed to be displayed in the UI for user
+	 * profile activity
 	 */
 	private void fetchData()
 	{
-		user.fetchUserInfo(this);
+		user.fetchInfo(this);
 		user.fetchGroups(this);
 		user.fetchFriends(this);
+		user.fetchBadges(this);
+		user.fetchNewBadges(this);
 		user.fetchEventsUpcoming(this);
 		user.fetchEventsPast(this);
 		user.fetchImage(this);
 		user.fetchPoints(this);
 	}
-
-	
 
 	private void setExperience(int userPoints)
 	{
@@ -205,7 +201,7 @@ public class UserProfileActivity extends BaseActivity
 	public void onClick(View view)
 	{
 		super.onClick(view);
-		//loadDialog.show();
+		// loadDialog.show();
 		boolean noIntent = view.getId() == R.id.backButton ? true : false;
 
 		Intent intent = new Intent(this, EventListActivity.class);
@@ -216,12 +212,10 @@ public class UserProfileActivity extends BaseActivity
 			// friends
 			intent.putExtra("content", "FRIENDS_CURRENT");
 
-
 			break;
 		case R.id.profileButton2:
 			intent = new Intent(this, GroupListActivity.class);
 			intent.putExtra("content", "GROUPS_CURRENT");
-
 
 			break;
 		case R.id.profileButton3:
@@ -327,7 +321,6 @@ public class UserProfileActivity extends BaseActivity
 		}
 	}
 
-
 	private class BadgesListAdapter extends ArrayAdapter<Badge>
 	{
 		public BadgesListAdapter()
@@ -347,7 +340,9 @@ public class UserProfileActivity extends BaseActivity
 			badgeTextView.setText(b.getName());
 
 			if (b.getLevel() > 0)
-				badgeImageButton.setImageDrawable(getResources().getDrawable(R.drawable.badge_nature));
+			{
+				badgeImageButton.setImageDrawable(getBadgeImage(b));
+			}
 			else
 				badgeImageButton.setImageDrawable(getResources().getDrawable(R.drawable.badge_nature_grey));
 			// badgeImageButton.setId(position);
@@ -364,7 +359,80 @@ public class UserProfileActivity extends BaseActivity
 		}
 
 	}
+	
+	protected void badgeDialog(Badge b)
+	{
+		int level = b.getLevel();
+		View dialogView = inflater.inflate(R.layout.dialog_badge, null);
+		ImageView badgeImageView = (ImageView) dialogView.findViewById(R.id.badgeImageView);
+		TextView badgeTitleTextView = (TextView) dialogView.findViewById(R.id.badgeTitleTextView);
 
+		TextView badgeAboutTextView = (TextView) dialogView.findViewById(R.id.badgeAboutTextView);
+		if(level > 0)
+			badgeTitleTextView.setText("Congratulations! You just earned a badge!\n");
+		else
+			badgeTitleTextView.setText("You have not unlocked this badge, keep on working!\n");
+		badgeAboutTextView.setText(getResources().getString(b.getAboutID()));
+		if (b.getLevel() > 0)
+			badgeImageView.setImageDrawable(getBadgeImage(b));
+		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+		dialogBuilder.setTitle(b.getName() + " (Level " + b.getLevel() + ")");
+		dialogBuilder.setView(dialogView);
+		AlertDialog badgesDialog = dialogBuilder.create();
+		badgesDialog.show();
+	}
+
+	private Drawable getBadgeImage(Badge b)
+	{
+		Drawable d = null;
+		if (b.getName().equals("Outdoorsman"))
+		{
+			d = getResources().getDrawable(R.drawable.badge_outdoorsman);
+		}
+		else if (b.getName().equals("Agile"))
+		{
+			d = getResources().getDrawable(R.drawable.badge_agile);
+		}
+		else if (b.getName().equals("Gregarious"))
+		{
+			d = getResources().getDrawable(R.drawable.badge_gregarious);
+		}
+		else if (b.getName().equals("Amused"))
+		{
+			d = getResources().getDrawable(R.drawable.badge_amused);
+		}
+		else if (b.getName().equals("Environmentalist"))
+		{
+			d = getResources().getDrawable(R.drawable.badge_environmentalist);
+		}
+		else if (b.getName().equals("Regular"))
+		{
+			d = getResources().getDrawable(R.drawable.badge_regular);
+		}
+		else if (b.getName().equals("Diligent"))
+		{
+			d = getResources().getDrawable(R.drawable.badge_diligent2);
+		}
+		else if (b.getName().equals("Diversity"))
+		{
+			d = getResources().getDrawable(R.drawable.badge_diversity);
+		}
+		else if (b.getName().equals("Productive"))
+		{
+			d = getResources().getDrawable(R.drawable.badge_professionalcreate);
+		}
+		else if (b.getName().equals("Health Nut"))
+		{
+			d = getResources().getDrawable(R.drawable.badge_healthnut);
+		}
+		else if (b.getName().equals("Congregator"))
+		{
+			d = getResources().getDrawable(R.drawable.badge_environmentalist);
+		}
+		else
+			d = getResources().getDrawable(R.drawable.badge_regular);
+		return d;
+	}
 	private void badgesDialog()
 	{
 		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
@@ -390,14 +458,14 @@ public class UserProfileActivity extends BaseActivity
 		badgesDialog.show();
 	}
 
-	//should be responsible for updating all ui data
-	private void populateProfile()
+	// should be responsible for updating all ui data
+	private void updateUI()
 	{
 		String title = user.getFirstName() + "'s Profile";
 		String about = "";
 		String location = user.getLocation();
 		int age = user.getAge();
-		
+
 		initActionBar(title, true);
 		setButtons();
 		badges = user.getBadges();
@@ -408,7 +476,7 @@ public class UserProfileActivity extends BaseActivity
 		else
 			about = age + " yrs young\n" + location + "\n";
 		aboutTextView.setText(about + user.getAbout());
-		
+
 		if (user.getImage() != null)
 			iv.setImageBitmap(user.getImage());
 		else
@@ -417,4 +485,5 @@ public class UserProfileActivity extends BaseActivity
 		iv.setScaleType(ScaleType.CENTER_CROP);
 		setExperience(user.getPoints());
 	}
+
 }

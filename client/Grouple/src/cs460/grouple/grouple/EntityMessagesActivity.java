@@ -99,23 +99,30 @@ public class EntityMessagesActivity extends BaseActivity
 		setContentView(R.layout.activity_messages);
 		Bundle extras = getIntent().getExtras();
 		user = GLOBAL.getCurrentUser();
+		
 		messageEditText = (EditText) findViewById(R.id.messageEditText);
 		sendMessageButton = (Button) findViewById(R.id.sendButton);
 		listViewLayout = (LinearLayout) findViewById(R.id.listViewLayout);
 		listView = (ListView) findViewById(R.id.listView);
-		initActionBar(extras.getString("name"), true);
+		
 		gcm = GoogleCloudMessaging.getInstance(this);
 		CONTENT = extras.getString("content");
 		if (CONTENT.equals("GROUP"))
 		{
+			ID = Integer.toString(extras.getInt("g_id"));
+			group = GLOBAL.getGroup(Integer.parseInt(ID));
 			NAME = group.getName();
-			ID = extras.getString("g_id");
+
+			
 		}
 		else
 		{
+			ID = Integer.toString(extras.getInt("e_id"));
+			event = GLOBAL.getEvent(Integer.parseInt(ID));
 			NAME = event.getName();
-			ID = extras.getString("e_id");
 		}
+
+		initActionBar(NAME, true);
 		// Get the recipient
 		// new
 		// getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php",

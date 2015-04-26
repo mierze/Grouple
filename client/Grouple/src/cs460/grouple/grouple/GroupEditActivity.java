@@ -22,15 +22,18 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,21 +66,59 @@ public class GroupEditActivity extends BaseActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_group_edit);
 		iv = (ImageView) findViewById(R.id.groupEditImageView);
-		aboutEditText = (EditText) findViewById(R.id.groupAboutEditText);
-		nameEditText = (EditText) findViewById(R.id.groupNameEditText);
-		errorTextView = (TextView) findViewById(R.id.errorTextViewEPA);
-		load();
-	}
-
-	private void load()
-	{
 		Bundle extras = getIntent().getExtras();
 		// Resetting error text view
 		user = GLOBAL.getCurrentUser();
 		group = GLOBAL.getGroup(extras.getInt("g_id"));
-		if (group != null)
-			getGroupProfile();
+		aboutEditText = (EditText) findViewById(R.id.groupAboutEditText);
+		nameEditText = (EditText) findViewById(R.id.groupNameEditText);
+		errorTextView = (TextView) findViewById(R.id.errorTextViewEPA);
+	}
+
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
+		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("group_data"));
+		load();
+	}
+
+	@Override
+	protected void onPause()
+	{
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
+		super.onPause();
+
+	}
+
+	// This listens for pings from the data service to let it know that there
+	// are updates
+	private BroadcastReceiver mReceiver = new BroadcastReceiver()
+	{
+		@Override
+		public void onReceive(Context context, Intent intent)
+		{
+			// Extract data included in the Intent
+			String type = intent.getStringExtra("message");
+			// repopulate views
+			updateUI();
+		}
+	};
+
+
+	private void load()
+	{
+
+		
+		fetchData();
+		updateUI();
 		initActionBar("Edit " + group.getName(), true);
+	}
+	
+	private void fetchData()
+	{
+		group.fetchImage(this);
+		group.fetchInfo(this);
 	}
 
 	public void deleteGroup(View view)
@@ -124,7 +165,7 @@ public class GroupEditActivity extends BaseActivity
 	 * Get profile executes get_groupprofile.php. It uses the current groups gid
 	 * to retrieve the groups name, about, and other info.
 	 */
-	private void getGroupProfile()
+	private void updateUI()
 	{
 		// Add the info to the textviews for editing.
 		nameEditText.setText(group.getName());

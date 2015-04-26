@@ -79,9 +79,12 @@ public class HomeActivity extends BaseActivity
 		new GetSettingsTask().execute("http://68.59.162.183/"
 				+ "android_connect/get_userssettings.php");
 		//call to fetch
-		user.fetchUserInfo(this);
-		load();
+		
 
+	}
+	private void fetchData()
+	{
+		user.fetchInfo(this);
 	}
 
 	//This listens for pings from the data service to let it know that there are updates
@@ -118,7 +121,6 @@ public class HomeActivity extends BaseActivity
 	//rename to ui something something, this gets called to update ui views, right now just the actionbar i think
 	private void load()
 	{
-		
 		// initializing action bar and killswitch listener
 		initActionBar("Welcome, " + user.getFirstName() + "!", false);
 		//below not working TODO: test / make it a function

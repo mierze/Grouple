@@ -33,8 +33,7 @@ public class ManageMembersActivity extends BaseActivity {
 	private SparseArray<String> toUpdateRole = new SparseArray<String>();   //holds list of role of all friend rows to be added
 	//private SparseArray<String> toRemove = new SparseArray<String>();    //holds list of name of all friend rows to be added
 	private ArrayList<User> members = new ArrayList<User>();   //holds list of all current friends
-	private static String CONTENT; //type of content to display
-	private static Bundle EXTRAS; //type of content to display
+	private String CONTENT; //type of content to display
 	private ArrayList<String> roles = new ArrayList<String>();
 	
 	@Override
@@ -46,11 +45,11 @@ public class ManageMembersActivity extends BaseActivity {
 
 	private void load()
 	{
-		EXTRAS = getIntent().getExtras();
-		CONTENT = EXTRAS.getString("content");
+		Bundle extras = getIntent().getExtras();
+		CONTENT = extras.getString("content");
 		//should always be current user
 		user = GLOBAL.getCurrentUser();
-		group = GLOBAL.getGroup(EXTRAS.getInt("g_id"));
+		group = GLOBAL.getGroup(extras.getInt("g_id"));
 		setRoles();
 		initActionBar("Manage " + group.getName() + " Members", true);
 	}

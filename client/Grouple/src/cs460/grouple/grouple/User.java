@@ -498,7 +498,7 @@ public class User extends Entity
 	}
 
 	//ALL DATA APP FETCH CALLS BELOW
-	protected void fetchUserInfo(Context context)
+	protected void fetchInfo(Context context)
 	{
 		dataApp.fetchContent("INFO", context);
 	}
