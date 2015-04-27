@@ -176,10 +176,11 @@ public class EventAddGroupsActivity extends BaseActivity
 	//aSynch task to add individual group to event.
 	private class EventAddGroupTask extends AsyncTask<String,Void,String>
 	{
+		int tmpid;
 		@Override
 		protected String doInBackground(String... urls)
 		{
-			int tmpid = Integer.parseInt(urls[1]);
+			tmpid = Integer.parseInt(urls[1]);
 			System.out.println("tmpid: "+tmpid);
 			//pass url off to GLOBAL to do the JSON call.  Code continues at onPostExecute when JSON returns.
 			return GLOBAL.readJSONFeed("http://68.59.162.183/android_connect/get_group_members.php?gid="+tmpid, null);
@@ -205,7 +206,7 @@ public class EventAddGroupsActivity extends BaseActivity
 						String memberToAdd = o.getString("email");
 						System.out.println("FETCHING GROUP MEMBER" + memberToAdd + " EID is " + ID);
 						new EventAddMemberTask().execute("http://68.59.162.183/"
-								+ "android_connect/add_eventmember.php", memberToAdd, email, ID);
+								+ "android_connect/add_eventmember.php", memberToAdd, email, ID, Integer.toString(tmpid));
 					}
 					//making a success toast
 					String message = "Successfully invited groups!";
@@ -235,6 +236,7 @@ public class EventAddGroupsActivity extends BaseActivity
 				nameValuePairs.add(new BasicNameValuePair("email", urls[1]));
 				nameValuePairs.add(new BasicNameValuePair("sender", urls[2]));
 				nameValuePairs.add(new BasicNameValuePair("e_id", urls[3]));
+				nameValuePairs.add(new BasicNameValuePair("g_id", urls[4]));
 				//pass url and nameValuePairs off to GLOBAL to do the JSON call.  Code continues at onPostExecute when JSON returns.
 				return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}

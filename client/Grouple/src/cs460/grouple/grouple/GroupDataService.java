@@ -31,7 +31,7 @@ public class GroupDataService extends Service {
 
 	enum FETCH_TYPE
 	{
-		INFO, IMAGE, MEMBERS, POINTS;
+		INFO, IMAGE, MEMBERS, EXPERIENCE;
 	}
 	
 	public GroupDataService(Global global, Group g) 
@@ -68,9 +68,10 @@ public class GroupDataService extends Service {
 		{
 			new getMembersTask().execute("http://68.59.162.183/android_connect/get_group_members.php?gid=" + group.getID());
 		}
-		else if (FETCH.equals(FETCH_TYPE.POINTS.toString()))
+		else if (FETCH.equals(FETCH_TYPE.EXPERIENCE.toString()))
 		{
-			
+
+			new getExperienceTask().execute("http://68.59.162.183/android_connect/get_group_experience.php");
 		}
 		
 	}
@@ -223,7 +224,56 @@ public class GroupDataService extends Service {
 		}
 	}	
 	
-	
+	// TASK GOR GETTING gropu EXPERIENCE
+	private class getExperienceTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected String doInBackground(String... urls)
+		{
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("g_id", Integer.toString(group.getID())));
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+		}
+
+		@Override
+		protected void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+				// json fetch was successful
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					int numParticipants = Integer.parseInt(jsonObject.getString("numParticipants").toString());
+					int numProfessional = Integer.parseInt(jsonObject.getString("numProfessional").toString());
+					int numSocial = Integer.parseInt(jsonObject.getString("numSocial").toString());
+					int numEntertainment = Integer.parseInt(jsonObject.getString("numEntertainment").toString());
+					int numFitness = Integer.parseInt(jsonObject.getString("numFitness").toString());
+					int numNature = Integer.parseInt(jsonObject.getString("numNature").toString());
+					group.setNumParticipants(numParticipants);
+					group.setNumFitnessEvents(numFitness);
+					group.setNumNatureEvents(numNature);
+					group.setNumEntertainmentEvents(numEntertainment);
+					group.setNumProfessionalEvents(numProfessional);
+					group.setNumSocialEvents(numSocial);
+					group.setExperience();
+					//TODO: redo this section
+					//group.setPoints();
+					sendBroadcast();
+				}
+				else
+				{
+					// failed
+					Log.d("getUserExperience", "FAILED");
+				}
+			}
+			catch (Exception e)
+			{
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
+			}
+			// do next thing here
+		}
+	}
 	@Override
 	public IBinder onBind(Intent arg0)
 	{

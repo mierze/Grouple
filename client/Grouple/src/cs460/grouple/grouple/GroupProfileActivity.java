@@ -116,6 +116,7 @@ public class GroupProfileActivity extends BaseActivity
 		group.fetchInfo(this);
 		group.fetchMembers(this);
 		group.fetchImage(this);
+		group.fetchExperience(this);
 	}
 	private void setRole()
 	{
@@ -407,8 +408,34 @@ public class GroupProfileActivity extends BaseActivity
 
 		iv.setScaleType(ScaleType.CENTER_CROP);
 		
+		initXpBar();
+		
 	}
 
+	private void initXpBar()
+	{
+		int groupXp = group.getExperience();
+		int level = 1;
+		int pointsToNext = 10;
+		int pointsStart = 0;
+		int pointsEnd;
+		while (groupXp > (pointsStart + pointsToNext))
+		{
+			// means user is greater than this level threshold
+			// so increase level
+			level++;
+			// make a new start
+			pointsStart += pointsToNext;
+			// recalc pointsToNext
+			pointsToNext *= 2;
+		}
+		pointsEnd = pointsStart + pointsToNext;
+		// each level pointsToNext *= level
+		levelTextView.setText("Level " + level);
+		xpProgressBar.setMax(pointsToNext);
+		xpProgressBar.setProgress(groupXp - pointsStart);
+		xpTextView.setText(groupXp + " / " + pointsEnd);
+	}
 	// aSynch task to add individual member to group.
 	private class JoinPublicTask extends AsyncTask<String, Void, String>
 	{

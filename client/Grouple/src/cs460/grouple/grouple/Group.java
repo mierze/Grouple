@@ -1,6 +1,7 @@
 package cs460.grouple.grouple;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -21,6 +22,38 @@ public class Group extends Entity
 	private String dateCreated = "";
 	private GroupDataService dataService;
 	private String dateCreatedText = "";
+	private int experience = 0;
+	private int numParticipants = 0;
+	private int numSocialEvents = 0;
+	private int numEntertainmentEvents = 0;
+	private int numProfessionalEvents = 0;
+	private int numFitnessEvents = 0;
+	private int numNatureEvents = 0;
+	
+
+
+	protected int getExperience()
+	{
+		return experience;
+	}
+
+	protected void setExperience()
+	{
+		this.experience = numParticipants;
+		ArrayList<Integer> nums = new ArrayList<Integer>();
+		nums.add(numSocialEvents);
+		nums.add(numEntertainmentEvents);
+		nums.add(numProfessionalEvents);
+		nums.add(numFitnessEvents);
+		nums.add(numNatureEvents);
+		Collections.sort(nums);
+		
+		for (int i = 0; i < nums.size(); i++)
+		{
+			experience += nums.get(i) * (i+1);
+		}
+		
+	}
 	/*
 	 * Constructor for Group class
 	 */
@@ -55,7 +88,67 @@ public class Group extends Entity
 		dateCreatedText = GLOBAL.toYearTextFormatFromRaw(dateCreated);
 	}
 	
-	
+	protected int getNumParticipants()
+	{
+		return numParticipants;
+	}
+
+	protected void setNumParticipants(int numParticipants)
+	{
+		this.numParticipants = numParticipants;
+	}
+
+	protected int getNumSocialEvents()
+	{
+		return numSocialEvents;
+	}
+
+	protected void setNumSocialEvents(int numSocialEvents)
+	{
+		this.numSocialEvents = numSocialEvents;
+	}
+
+	protected int getNumEntertainmentEvents()
+	{
+		return numEntertainmentEvents;
+	}
+
+	protected void setNumEntertainmentEvents(int numEntertainmentEvents)
+	{
+		this.numEntertainmentEvents = numEntertainmentEvents;
+	}
+
+	protected int getNumProfessionalEvents()
+	{
+		return numProfessionalEvents;
+	}
+
+	protected void setNumProfessionalEvents(int numProfessionalEvents)
+	{
+		this.numProfessionalEvents = numProfessionalEvents;
+	}
+
+	protected int getNumFitnessEvents()
+	{
+		return numFitnessEvents;
+	}
+
+	protected void setNumFitnessEvents(int numFitnessEvents)
+	{
+		this.numFitnessEvents = numFitnessEvents;
+	}
+
+	protected int getNumNatureEvents()
+	{
+		return numNatureEvents;
+	}
+
+	protected void setNumNatureEvents(int numNatureEvents)
+	{
+		this.numNatureEvents = numNatureEvents;
+	}
+
+
 	protected void fetchMembers(Context context)
 	{
 
@@ -71,6 +164,10 @@ public class Group extends Entity
 	protected void fetchInfo(Context context)
 	{
 		dataService.fetchContent("INFO", context);
+	}
+	protected void fetchExperience(Context context)
+	{
+		dataService.fetchContent("EXPERIENCE", context);
 	}
 
 	
