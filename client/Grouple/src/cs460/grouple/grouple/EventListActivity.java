@@ -87,7 +87,16 @@ public class EventListActivity extends BaseActivity
 					startDate = newStartDate;
 					dateTextView.setText(e.getStartTextListDisplay());
 				}
-				else if (startDate.compareTo(newStartDate) < 0)
+				else if ((CONTENT.equals(CONTENT_TYPE.EVENTS_DECLINED.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
+						&& startDate.compareTo(newStartDate) > 0)
+				{
+
+					startDate = newStartDate;
+					dateTextView.setText(e.getStartTextListDisplay());
+
+				}
+				else if (!(CONTENT.equals(CONTENT_TYPE.EVENTS_DECLINED.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
+						&& startDate.compareTo(newStartDate) < 0)
 				{
 
 					startDate = newStartDate;
