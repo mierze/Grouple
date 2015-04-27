@@ -31,7 +31,7 @@ public class EventDataService extends Service {
 
 	enum FETCH_TYPE
 	{
-		INFO, IMAGE, PARTICIPANTS, ITEM_CHECKLIST;
+		INFO, IMAGE, PARTICIPANTS, ITEMS;
 	}
 	
 	public EventDataService(Global global, Event e) 
@@ -68,7 +68,7 @@ public class EventDataService extends Service {
 		{
 			new getParticipantsTask().execute("http://68.59.162.183/android_connect/get_event_participants.php?eid=" + event.getID());
 		}
-		else if (FETCH.equals(FETCH_TYPE.ITEM_CHECKLIST.toString()))
+		else if (FETCH.equals(FETCH_TYPE.ITEMS.toString()))
 		{
 			new getItemsTask().execute("http://68.59.162.183/android_connect/get_items_tobring.php");
 		}
@@ -129,8 +129,7 @@ public class EventDataService extends Service {
 				}
 			} catch (Exception e)
 			{
-				Log.d("atherjsoninuserpost", "here");
-				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 			}
 			// do next thing here
 		}
@@ -256,7 +255,7 @@ public class EventDataService extends Service {
 
 					}
 		
-						
+						sendBroadcast();
 				}
 				// success, but no items returned
 				else if (jsonObject.getString("success").toString().equals("2"))

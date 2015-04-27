@@ -376,10 +376,11 @@ public class User extends Entity
 		badges.add(new Badge("Congregator", null)); // create social count
 		badges.add(new Badge("Environmentalist", null)); // create nature count
 		badges.add(new Badge("Creator", null)); // create total count
-
+		badges.add(new Badge("Congregator", null));
+		
 		badges.add(new Badge("Active", null)); // per week count
-		badges.add(new Badge("Well Rounded", null)); // participated in all
-														// categories
+		badges.add(new Badge("Well Rounded", null)); // participated in all categories
+		badges.add(new Badge("Mingler", null));
 		badges.add(new Badge("Helping Hand", null)); // bring items to event
 	}
 

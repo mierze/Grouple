@@ -268,30 +268,6 @@ public class GroupCreateActivity extends BaseActivity
 					new AddGroupMembersTask().execute("http://68.59.162.183/"
 							+ "android_connect/add_groupmember.php", user.getEmail(), user.getEmail(), "C", g_id);
 					
-					//no longer doing during create. will instead just show confirmation box
-					
-					/*
-					//now loop through list of added to add all the additional users to the group
-					int size = added.size();
-					System.out.println("Total count of users to process: "+size);
-					for(int i = 0; i < size; i++) 
-					{
-						System.out.println("adding friend #"+i+"/"+added.size());
-						//get the user's email by matching indexes from added list with indexes from allFriendslist.
-						int key = added.keyAt(i);
-						User u = allFriends.get(key);
-						//grab the email of friend to add
-						String friendsEmail = u.getEmail();
-						//grab the role of friend to add
-						char tmpRole = role.valueAt(i);
-						String friendsRole = tmpRole + "";
-						System.out.println("adding member: "+friendsEmail+", role: "+friendsRole);
-						//initiate add of user
-						new AddGroupMembersTask().execute("http://68.59.162.183/"
-								+ "android_connect/add_groupmember.php", friendsEmail, user.getEmail(), friendsRole, g_id);
-					}
-					*/
-					
 					
 					//display confirmation box
 					AlertDialog dialog = new AlertDialog.Builder(GroupCreateActivity.this)
@@ -303,10 +279,10 @@ public class GroupCreateActivity extends BaseActivity
 						public void onClick(DialogInterface dialog, int id)
 						{
 							//add code here to take user to groupaddmembersactivity page.  (pass g_id as extra so invites can be sent to correct group id)
-							loadDialog.show();
+							//loadDialog.show();
 							Intent intent = new Intent(GroupCreateActivity.this, InviteActivity.class);
 							intent.putExtra("email", user.getEmail());
-							intent.putExtra("g_id", group.getID());
+							intent.putExtra("g_id", g_id);
 							startActivity(intent);
 							finish();
 						}
@@ -316,11 +292,10 @@ public class GroupCreateActivity extends BaseActivity
 						public void onClick(DialogInterface dialog, int which) 
 						{
 							//add code here to take user to newly created group profile page.  (pass g_id as extra so correct group profile can be loaded)
-							loadDialog.show();
+							//loadDialog.show();
 							Intent intent = new Intent(GroupCreateActivity.this, GroupProfileActivity.class);
 							intent.putExtra("email", user.getEmail());
-							intent.putExtra("g_id", group.getID());
-							intent.putExtra("CONTENT", "GROUP");
+							intent.putExtra("g_id", g_id);
 							startActivity(intent);	
 							finish();
 						}

@@ -235,6 +235,10 @@ public class GroupListActivity extends BaseActivity
 		{
 			user = GLOBAL.getUser(EMAIL);
 		}
+		else
+		{
+			user = GLOBAL.getCurrentUser();
+		}
 	
 		// registerClickCallback();
 	}

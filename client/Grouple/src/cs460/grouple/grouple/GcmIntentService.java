@@ -26,6 +26,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -62,7 +63,7 @@ public class GcmIntentService extends IntentService
 	// types of intents
 	enum CONTENT_TYPE
 	{
-		FRIEND_REQUEST, USER_MESSAGE, GROUP_MESSAGE, EVENT_MESSAGE, GROUP_INVITE, EVENT_INVITE, EVENT_UPDATE;
+		FRIEND_REQUEST, USER_MESSAGE, GROUP_MESSAGE, EVENT_MESSAGE, GROUP_INVITE, EVENT_INVITE, EVENT_UPDATE,EVENT_APPROVED,FRIEND_REQUEST_ACCEPTED;
 	}
 
 	// construcRECEIVERr
@@ -111,6 +112,34 @@ public class GcmIntentService extends IntentService
 				//???
 				RECEIVER = EXTRAS.getString("receiver");
 			}
+			else if(TYPE.equals(CONTENT_TYPE.EVENT_INVITE.toString()))
+			{
+				SENDER_FIRST = EXTRAS.getString("first");
+				SENDER_LAST = EXTRAS.getString("last");
+				SENDER_EMAIL = EXTRAS.getString("sender");
+				EVENT_ID = EXTRAS.getString("event_id");
+				EVENT_NAME = EXTRAS.getString("event_name");
+				//???
+				RECEIVER = EXTRAS.getString("receiver");
+			}
+			else if(TYPE.equals(CONTENT_TYPE.EVENT_APPROVED.toString()))
+			{
+				SENDER_FIRST = EXTRAS.getString("first");
+				SENDER_LAST = EXTRAS.getString("last");
+				SENDER_EMAIL = EXTRAS.getString("sender");
+				EVENT_ID = EXTRAS.getString("event_id");
+				EVENT_NAME = EXTRAS.getString("event_name");
+				//???
+				RECEIVER = EXTRAS.getString("receiver");
+			}
+			else if(TYPE.equals(CONTENT_TYPE.FRIEND_REQUEST_ACCEPTED.toString()))
+			{
+				SENDER_FIRST = EXTRAS.getString("first");
+				SENDER_LAST = EXTRAS.getString("last");
+				SENDER_EMAIL = EXTRAS.getString("sender");
+				//???
+				RECEIVER = EXTRAS.getString("receiver");
+			}
 		}
 
 		GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
@@ -151,6 +180,12 @@ public class GcmIntentService extends IntentService
 	// a GCM message.
 	private void sendNotification(String msg)
 	{
+		//checking a user is active, TODO: make sure receiver is always current user
+		if (GLOBAL.getCurrentUser() == null || !GLOBAL.isCurrentUser(RECEIVER))
+		{
+			User u = GLOBAL.getUser(RECEIVER);
+			GLOBAL.setCurrentUser(u);
+		}
 		updateMyActivity(this);// crash seems RECEIVER be here
 		Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
@@ -161,7 +196,7 @@ public class GcmIntentService extends IntentService
 			Intent notificationIntent = new Intent(this, EntityMessagesActivity.class);
 
 			notificationIntent.putExtra("CONTENT_TYPE", "GROUP");
-			notificationIntent.putExtra("GID", GROUP_ID);
+			notificationIntent.putExtra("g_id", GROUP_ID);
 			notificationIntent.putExtra("email", SENDER_EMAIL);
 			notificationIntent.putExtra("name", GROUP_NAME);
 			
@@ -185,7 +220,7 @@ public class GcmIntentService extends IntentService
 			Intent notificationIntent = new Intent(this, EntityMessagesActivity.class);
 			
 			notificationIntent.putExtra("CONTENT_TYPE", "EVENT");
-			notificationIntent.putExtra("EID", EVENT_ID);
+			notificationIntent.putExtra("e_id", EVENT_ID);
 			notificationIntent.putExtra("email", SENDER_EMAIL);
 			notificationIntent.putExtra("name", EVENT_NAME);
 			
@@ -213,6 +248,7 @@ public class GcmIntentService extends IntentService
 			//notificationIntent.putExtra("email", RECEIVER);
 			notificationIntent.putExtra("email", SENDER_EMAIL);
 			
+			
 			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
 			.setContentTitle(SENDER_FIRST + " " + SENDER_LAST).setStyle(new NotificationCompat.BigTextStyle()
 			.bigText(msg)).setSmallIcon(R.drawable.icon_grouple).setSound(soundUri).setContentText(msg);
@@ -228,11 +264,10 @@ public class GcmIntentService extends IntentService
 		//Friend request notification.
 		else if (TYPE.equals(CONTENT_TYPE.FRIEND_REQUEST.toString()))
 		{
-			Intent notificationIntent = new Intent(getApplicationContext(), EventListActivity.class);
-			notificationIntent.putExtra("email", GLOBAL.getCurrentUser().getEmail());
+			Intent notificationIntent = new Intent(getApplicationContext(), UserListActivity.class);
 			notificationIntent.putExtra("name", SENDER_FIRST + " " + SENDER_LAST);
 			notificationIntent.putExtra("content", "FRIEND_REQUESTS");
-
+			notificationIntent.putExtra("email", RECEIVER);
 			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
 			.setContentTitle("New friend request from " + SENDER_FIRST + " " + SENDER_LAST + "!")
 			.setStyle(new NotificationCompat.BigTextStyle().bigText(SENDER_FIRST + " " + SENDER_LAST))
@@ -250,9 +285,8 @@ public class GcmIntentService extends IntentService
 		//Group Invite notification.
 		else if (TYPE.equals(CONTENT_TYPE.GROUP_INVITE.toString()))
 		{
-			Intent notificationIntent = new Intent(getApplicationContext(), EventListActivity.class);
+			Intent notificationIntent = new Intent(getApplicationContext(), GroupListActivity.class);
 			
-			notificationIntent.putExtra("email", GLOBAL.getCurrentUser().getEmail());
 			notificationIntent.putExtra("name", SENDER_FIRST + " " + SENDER_LAST);
 			notificationIntent.putExtra("content", "GROUP_INVITES");
 			
@@ -276,8 +310,7 @@ public class GcmIntentService extends IntentService
 		else if (TYPE.equals(CONTENT_TYPE.EVENT_INVITE.toString()))
 		{
 			Intent notificationIntent = new Intent(getApplicationContext(), EventListActivity.class);
-			
-			notificationIntent.putExtra("email", GLOBAL.getCurrentUser().getEmail());
+		
 			notificationIntent.putExtra("name", SENDER_FIRST + " " + SENDER_LAST);
 			notificationIntent.putExtra("content", "EVENT_INVITES");
 
@@ -285,7 +318,8 @@ public class GcmIntentService extends IntentService
 			//GLOBAL.getCurrentUser().fetchUserInfo();
 			
 			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
-			.setContentTitle("New event invite to " + EVENT_NAME + " from " + SENDER_FIRST + " " + SENDER_LAST + "!")
+			.setContentTitle("New Event Invite")
+			.setContentText(EVENT_NAME)
 			.setStyle(new NotificationCompat.BigTextStyle().bigText(SENDER_FIRST + " " + SENDER_LAST))
 			.setSmallIcon(R.drawable.icon_grouple).setSound(soundUri).setContentText(msg);
 			notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -296,6 +330,51 @@ public class GcmIntentService extends IntentService
 			mBuilder.setContentIntent(contentIntent);
 			mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
 		}
+		//Event Invite Notification.
+		else if (TYPE.equals(CONTENT_TYPE.EVENT_APPROVED.toString()))
+		{
+			Intent notificationIntent = new Intent(getApplicationContext(), EventProfileActivity.class);
+			
+			notificationIntent.putExtra("e_id", EVENT_ID);
+			notificationIntent.putExtra("name", SENDER_FIRST + " " + SENDER_LAST);
+			//TODO
+			
+			//TODO:???GLOBAL.getCurrentUser().fetchFriendRequests();
+			//GLOBAL.getCurrentUser().fetchUserInfo();
+					
+			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
+			.setContentTitle("Grouple event has been approved!")
+			.setContentText(EVENT_NAME)
+			.setStyle(new NotificationCompat.BigTextStyle().bigText(SENDER_FIRST + " " + SENDER_LAST))
+			.setSmallIcon(R.drawable.icon_grouple).setSound(soundUri).setContentText(msg);
+			notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent,	PendingIntent.FLAG_UPDATE_CURRENT);
+			mBuilder.setAutoCancel(true);
+
+			// null check
+			mBuilder.setContentIntent(contentIntent);
+			mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+		}
+		else if (TYPE.equals(CONTENT_TYPE.FRIEND_REQUEST_ACCEPTED.toString()))
+		{
+			Intent notificationIntent = new Intent(getApplicationContext(), UserProfileActivity.class);
+			
+			notificationIntent.putExtra("email", SENDER_EMAIL);
+			notificationIntent.putExtra("name", SENDER_FIRST + " " + SENDER_LAST);
+					
+			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
+			.setContentTitle("Grouple")
+			.setContentText(SENDER_FIRST+" "+SENDER_LAST+" accepted your friend request!")
+			.setStyle(new NotificationCompat.BigTextStyle().bigText(SENDER_FIRST + " " + SENDER_LAST))
+			.setSmallIcon(R.drawable.icon_grouple).setSound(soundUri).setContentText(msg);
+			notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent,	PendingIntent.FLAG_UPDATE_CURRENT);
+			mBuilder.setAutoCancel(true);
+
+			// null check
+			mBuilder.setContentIntent(contentIntent);
+			mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+		}	
 	}
 
 	// This function will create an intent. This intent must take as parameter
@@ -339,9 +418,17 @@ public class GcmIntentService extends IntentService
 		{
 			//intent = new Intent("?");
 		}
+		else if (TYPE.equals(CONTENT_TYPE.EVENT_APPROVED.toString()))
+		{
+			//intent = new Intent("?");
+		}
+		else if (TYPE.equals(CONTENT_TYPE.FRIEND_REQUEST_ACCEPTED.toString()))
+		{
+			//intent = new Intent("?");
+		}
 
 		// send broadcast
 		if (intent != null)
-			context.sendBroadcast(intent);
+			LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 	}
 }

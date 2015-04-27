@@ -251,18 +251,6 @@ public class MessagesActivity extends BaseActivity
 
 	private void populateMessages()
 	{
-
-		// scrolling to last message
-		//final ScrollView scrollview = ((ScrollView) findViewById(R.id.messagesScrollView));
-		//scrollview.post(new Runnable()
-		//{
-
-			//@Override
-		//	public void run()
-			//{
-			//	scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-			//}
-		//});
 		ArrayAdapter<Message> adapter = new MessageListAdapter();
 		listView.setAdapter(adapter);
 		messageEditText.requestFocus();
@@ -404,21 +392,7 @@ public class MessagesActivity extends BaseActivity
 				System.out.println(jsonObject.getString("success"));
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					/*
-					 * //Message was successfully stored, now notify the user.
-					 * String msg = ""; try { Bundle data = new Bundle(); //Get
-					 * message from edit text EditText mymessage =
-					 * (EditText)findViewById(R.id.messageEditText); msg =
-					 * mymessage.getText().toString(); messages.add(msg);
-					 * data.putString("my_message", msg);
-					 * data.putString("my_action",
-					 * "cs460.grouple.grouple.ECHO_NOW");
-					 * data.putString("recipient",getRecipientRegID()); String
-					 * id = Integer.toString(msgId.incrementAndGet());
-					 * gcm.send(SENDER_ID + "@gcm.googleapis.com", id, data);
-					 * msg = "Sent message"; } catch (IOException ex) { msg =
-					 * "Error :" + ex.getMessage(); }
-					 */
+				
 				}
 				else
 				{

@@ -89,6 +89,7 @@ public class EventProfileActivity extends BaseActivity
 		event.fetchInfo(this);
 		event.fetchParticipants(this);
 		event.fetchImage(this);
+		event.fetchItems(this);
 	}
 
 	@Override
@@ -242,7 +243,6 @@ public class EventProfileActivity extends BaseActivity
 
 		if (event.inUsers(user.getEmail()))
 		{
-			itemListButton.setVisibility(View.VISIBLE);
 			profileButton2.setVisibility(View.VISIBLE);
 			profileButton2.setText("Event Messages");
 			new getUnreadEntityMessagesTask().execute(
@@ -496,11 +496,11 @@ public class EventProfileActivity extends BaseActivity
 		setRole();
 		items = event.getItems();
 		int numUnclaimed = event.getNumUnclaimedItems();
-		if (event.getItems().isEmpty())
+		if (!event.getItems().isEmpty())
 		{
-			itemListButton.setVisibility(View.GONE);
+			itemListButton.setVisibility(View.VISIBLE);
 		}
-		else if (numUnclaimed > 0)
+		if (numUnclaimed > 0)
 		{
 			itemListButton.setText("Item Checklist (" + numUnclaimed + " unclaimed)");
 		}

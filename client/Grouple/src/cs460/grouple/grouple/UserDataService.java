@@ -770,8 +770,9 @@ public class UserDataService extends Service {
 					{
 						ArrayList<Contact> contacts = user.getContacts();
 						// gotta make a json array
-					
+						
 						JSONArray jsonArray = jsonObject.getJSONArray("contacts");
+						contacts.clear();
 						for (int i = 0; i < jsonArray.length(); i++)
 						{
 							JSONObject o = (JSONObject) jsonArray.get(i);

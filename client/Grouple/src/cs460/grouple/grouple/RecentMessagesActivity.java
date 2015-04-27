@@ -15,6 +15,7 @@ import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -49,11 +50,11 @@ public class RecentMessagesActivity extends BaseActivity
 		{
 			// Extract data included in the Intent
 			String receiver = intent.getStringExtra("receiver");
-			if (user.getEmail().equals(receiver))
-			{
+		//	if (user.getEmail().equals(receiver))
+		//	{
 				// do this
 				updateUI();
-			}
+			//}
 			/*
 			 * for (Message m : contacts) { if
 			 * (m.getSender().equals(fromEmail) ||
@@ -69,7 +70,7 @@ public class RecentMessagesActivity extends BaseActivity
 	@Override
 	protected void onPause()
 	{
-		unregisterReceiver(mMessageReceiver);
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
 		super.onPause();
 	}
 	
@@ -96,7 +97,7 @@ public class RecentMessagesActivity extends BaseActivity
 	@Override
 	protected void onResume()
 	{
-		registerReceiver(mMessageReceiver, new IntentFilter("USER_MESSAGE"));
+		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("user_data"));
 		super.onResume();
 		fetchData();
 		// Check device for Play Services APK.
@@ -191,7 +192,7 @@ public class RecentMessagesActivity extends BaseActivity
 	{
 		
 		
-
+		
 
 		if (!contacts.isEmpty())
 		{

@@ -113,12 +113,14 @@ public class UserListActivity extends BaseActivity
 			View itemView = convertView;
 			if (itemView == null)
 				itemView = inflater.inflate(getItemViewType(position), parent, false);
-			RelativeLayout itemLayout = (RelativeLayout) itemView.findViewById(R.id.listRowLayout);
+			LinearLayout itemLayout = (LinearLayout) itemView.findViewById(R.id.listRowLayout);
 			// find group to work with
 			User u = users.get(position);
 			TextView nameView = (TextView) itemView.findViewById(R.id.nameTextView);
-			nameView.setText(u.getName());
+			
+			
 			itemView.setId(position);
+			//TODO: accept decline button onclicks here?
 			Button removeButton = (Button) itemView.findViewById(R.id.removeButton);
 			if (removeButton != null)
 			{
@@ -130,6 +132,33 @@ public class UserListActivity extends BaseActivity
 						removeButton(position);
 					}
 				});
+			}
+			if (CONTENT.equals(CONTENT_TYPE.FRIEND_REQUESTS.toString()))
+			{
+				nameView.setText(u.getEmail());//TODO: get name?
+				Button acceptButton = (Button) itemView.findViewById(R.id.acceptButton);
+				Button declineButton = (Button) itemView.findViewById(R.id.declineButton);
+				acceptButton.setOnClickListener(new OnClickListener()
+				{
+					@Override
+					public void onClick(View view)
+					{
+						acceptButton(users.get(position).getEmail());
+					}
+				});
+				declineButton.setOnClickListener(new OnClickListener()
+				{
+					@Override
+					public void onClick(View view)
+					{
+						declineButton(users.get(position).getEmail());
+					}
+				});
+			
+			}
+			else
+			{
+				nameView.setText(u.getName());
 			}
 			// fill the view
 			return itemView;
@@ -200,11 +229,12 @@ public class UserListActivity extends BaseActivity
 		{
 			ArrayAdapter<User> adapter = new UserListAdapter();
 			listView.setAdapter(adapter);
-			listView.setOnTouchListener(new OnTouchListener()
+			/*listView.setOnTouchListener(new OnTouchListener()
 			{
 				float historicX = Float.NaN, historicY = Float.NaN;
 				final int DELTA = 50;
 
+				
 				@Override
 				public boolean onTouch(View v, MotionEvent event)
 				{
@@ -236,7 +266,7 @@ public class UserListActivity extends BaseActivity
 					}
 					return false;
 				}
-			});
+			});*/
 		}
 		else
 		{
@@ -304,8 +334,14 @@ public class UserListActivity extends BaseActivity
 		}
 		if (EMAIL != null)
 			user = GLOBAL.getUser(EMAIL);
+		else
+			user = GLOBAL.getCurrentUser();
+		if (user == null)
+		{
+			user = GLOBAL.getUser(EMAIL);
+			GLOBAL.setCurrentUser(user);
+		}
 		addNew = (Button) findViewById(R.id.addNewButtonLiA);
-		fetchData();
 	}
 
 	/*
@@ -346,6 +382,7 @@ public class UserListActivity extends BaseActivity
 		{
 		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("user_data"));
 		}
+		fetchData();
 		load();
 	}
 
@@ -364,31 +401,24 @@ public class UserListActivity extends BaseActivity
 	};
 
 	// ONCLICK METHODS BELOW
-	public void onClick(View view)
+	public void acceptButton(String email)
 	{
-		super.onClick(view);
-		View parent = (View) view.getParent();
-		switch (view.getId())
-		{
-		case R.id.declineButton:
-			if (CONTENT.equals(CONTENT_TYPE.FRIEND_REQUESTS.toString()))
-			{
-				PANDABUFFER = users.get(parent.getId()).getEmail();
-				new performActionTask().execute("http://68.59.162.183/android_connect/decline_friend_request.php",
-						PANDABUFFER);
-			}
 
-			break;
-		case R.id.acceptButton:
-			if (CONTENT.equals(CONTENT_TYPE.FRIEND_REQUESTS.toString()))
-			{
-				PANDABUFFER = users.get(parent.getId()).getEmail();
+				PANDABUFFER = email;
 				new performActionTask().execute("http://68.59.162.183/android_connect/accept_friend_request.php",
 						PANDABUFFER);
-			}
-			break;
-		}
+
 	}
+
+	public void declineButton(String email)
+	{
+
+				PANDABUFFER = email;
+				new performActionTask().execute("http://68.59.162.183/android_connect/decline_friend_request.php",
+								PANDABUFFER);
+
+	}
+
 
 	// Handles removing a friend when the remove friend button is pushed.
 	public void removeButton(int index)

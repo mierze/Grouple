@@ -247,6 +247,8 @@ public class EventListActivity extends BaseActivity
 		// GRABBING A USER
 		if (EMAIL != null)
 			user = GLOBAL.getUser(EMAIL);
+		else
+			user = GLOBAL.getCurrentUser();
 		// CALL APPROPRIATE METHODS TO POPULATE LIST
 		// CONTENT_TYPE -> POPULATEGROUPS
 		// setting the bottom button gone

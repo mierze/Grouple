@@ -427,10 +427,26 @@ public class UserProfileActivity extends BaseActivity
 		}
 		else if (b.getName().equals("Congregator"))
 		{
-			d = getResources().getDrawable(R.drawable.badge_environmentalist);
+			d = getResources().getDrawable(R.drawable.badge_congregator);
+		}
+		else if (b.getName().equals("Congregator"))
+		{
+			d = getResources().getDrawable(R.drawable.badge_congregator);
+		}
+		else if (b.getName().equals("Merrymaker"))
+		{
+			d = getResources().getDrawable(R.drawable.badge_merrymaker);
+		}
+		else if (b.getName().equals("Active"))
+		{
+			d = getResources().getDrawable(R.drawable.badge_active);
+		}
+		else if (b.getName().equals("Well Rounded"))
+		{
+			d = getResources().getDrawable(R.drawable.badge_rounded);
 		}
 		else
-			d = getResources().getDrawable(R.drawable.badge_regular);
+			d = getResources().getDrawable(R.drawable.badge_active);
 		return d;
 	}
 	private void badgesDialog()

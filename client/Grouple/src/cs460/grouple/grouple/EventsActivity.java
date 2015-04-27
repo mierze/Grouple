@@ -86,7 +86,7 @@ public class EventsActivity extends BaseActivity
 	
 	public void onClick(View view)
 	{
-		loadDialog.show();
+		//loadDialog.show();
 		Intent intent =  new Intent(this, EventListActivity.class);
 		switch (view.getId())
 		{

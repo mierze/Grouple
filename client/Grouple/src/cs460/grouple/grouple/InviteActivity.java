@@ -2,6 +2,7 @@ package cs460.grouple.grouple;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -225,6 +226,7 @@ public class InviteActivity extends BaseActivity {
 		//now loop through list of added to add all the additional users to the group
 		int size = role.size();
 		System.out.println("Total count of users to process: "+size);
+		ArrayList<String> friendsEmailList = new ArrayList<String>();
 		for(int i = 0; i < size; i++) 
 		{
 			//get the user's email by matching indexes from added list with indexes from allFriendslist.
@@ -235,14 +237,23 @@ public class InviteActivity extends BaseActivity {
 			String friendsRole = role.get(key);
 			if (!(friendsRole.equals("-")))
 			{
-				new AddGroupMembersTask().execute("http://68.59.162.183/"+ "android_connect/add_groupmember.php", friendsEmail, user.getEmail(), friendsRole, Integer.toString(group.getID()));
+				try {
+					new AddGroupMembersTask().execute("http://68.59.162.183/"+ "android_connect/add_groupmember.php", friendsEmail, user.getEmail(), friendsRole, Integer.toString(group.getID())).get();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				//Send Push Notification TODO: move this to onpost somehow
-				gcmUtil.sendGroupNotification(friendsEmail,group.getName(),Integer.toString(group.getID()),"GROUP_INVITE");
+				//gcmUtil.sendGroupNotification(friendsEmail,group.getName(),Integer.toString(group.getID()),"GROUP_INVITE");
+				friendsEmailList.add(friendsEmail);
 			}
 				
-			
-			
 		}
+		//Send Group Notifications. Send list of friends email address, group id, and notificatoin type.
+		gcmUtil.sendGroupNotification(friendsEmailList,group.getName(),Integer.toString(group.getID()),"GROUP_INVITE");
 		Context context = getApplicationContext();
 		Toast toast = GLOBAL.getToast(context, "Friends have been invited.");
 		toast.show();
