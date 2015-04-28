@@ -261,7 +261,7 @@ public class EventProfileActivity extends BaseActivity
 		}
 	}
 
-	private int updateItemChecklist()
+	private void updateItemChecklist()
 	{
 		for (EventItem item : items)
 		{
@@ -275,7 +275,6 @@ public class EventProfileActivity extends BaseActivity
 						Integer.toString(id), email);
 			}
 		}
-		return 1;
 	}
 
 	private class updateItemChecklistTask extends AsyncTask<String, Void, String>
@@ -286,6 +285,7 @@ public class EventProfileActivity extends BaseActivity
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("id", urls[1]));
 			nameValuePairs.add(new BasicNameValuePair("email", urls[2]));
+			nameValuePairs.add(new BasicNameValuePair("name", ""));//nothing since it is not being changed
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
 

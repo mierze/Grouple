@@ -130,7 +130,7 @@ public class GroupEditActivity extends BaseActivity
 		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
 		dialogBuilder.setTitle("Confirm Delete Group");
 		LayoutInflater inflater = this.getLayoutInflater();
-		View dialogView = inflater.inflate(R.layout.dialog_delete_entity, null);
+		View dialogView = inflater.inflate(R.layout.dialog_delete_group, null);
 		dialogBuilder.setView(dialogView);
 		Button confirmDeleteButton = (Button) dialogView
 				.findViewById(R.id.confirmDeleteButton);

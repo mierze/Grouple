@@ -90,7 +90,7 @@ public class EventCreateActivity extends BaseActivity
 	private Button toBringButton;
 	private Bitmap bmp;
 	private ImageView iv;
-	private Button editEventImageButton;
+	private Button eventEditImageButton;
 	private View toBringLayout;
 	private Calendar currentCal;
 	private Calendar startCal;
@@ -126,7 +126,7 @@ public class EventCreateActivity extends BaseActivity
 		nameEditText = (EditText) findViewById(R.id.eventNameEditText);
 		recurringButton = (EditText) findViewById(R.id.recurringButton);
 		iv = (ImageView) findViewById(R.id.eventCreateImageView);
-		editEventImageButton = (Button) findViewById(R.id.editEventImageButton);
+		eventEditImageButton = (Button) findViewById(R.id.eventEditImageButton);
 		// grab the email of current users from our GLOBAL class
 		user = GLOBAL.getCurrentUser();
 		initActionBar("Create Event", true);

@@ -416,9 +416,8 @@ public class GroupProfileActivity extends BaseActivity
 					Context context = getApplicationContext();
 					Toast toast = GLOBAL.getToast(context, jsonObject.getString("message"));
 					toast.show();
-					profileButton2.setVisibility(View.GONE);
-					group.fetchMembers(GroupProfileActivity.this);
-					updateUI();
+					profileButton3.setVisibility(View.GONE);
+					fetchData();
 					// all working correctly, continue to next user or finish.
 					loadDialog.hide();
 				}

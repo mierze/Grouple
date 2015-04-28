@@ -335,7 +335,7 @@ public class EventListActivity extends BaseActivity
 	// Starts a USER/GROUP/EVENT profile
 	public void startProfileActivity(View view)
 	{
-		loadDialog.show();
+		//loadDialog.show();
 		int id = view.getId();
 		Intent intent = new Intent(this, EventProfileActivity.class);
 

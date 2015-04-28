@@ -780,7 +780,6 @@ public class UserDataService extends Service {
 					{
 						ArrayList<Contact> contacts = user.getContacts();
 						// gotta make a json array
-						
 						JSONArray jsonArray = jsonObject.getJSONArray("contacts");
 						contacts.clear();
 						for (int i = 0; i < jsonArray.length(); i++)
@@ -805,7 +804,7 @@ public class UserDataService extends Service {
 				catch (Exception e)
 				{
 					Log.d("fetchRecentContacts", "exception caught");
-					Log.d("ReadJSONFINDCONTACTSFeedTask", e.getLocalizedMessage());
+					Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 				}
 			}
 		}

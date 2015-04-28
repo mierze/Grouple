@@ -105,7 +105,7 @@
             <Button
                 android:id="@+id/profileButton1"
                 android:layout_width="match_parent"
-                android:layout_height="fill_parent"
+                android:layout_height="60dp"
                 android:layout_weight="1"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/selector_button"
@@ -118,7 +118,7 @@
             <Button
                 android:id="@+id/profileButton2"
                 android:layout_width="match_parent"
-                 android:layout_height="fill_parent"
+                 android:layout_height="60dp"
                 android:layout_weight="1"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/selector_button"
@@ -132,7 +132,7 @@
             <Button
                 android:id="@+id/profileButton3"
                 android:layout_width="match_parent"
-                android:layout_height="fill_parent"
+                android:layout_height="60dp"
                 android:layout_weight="1"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/selector_button"
@@ -146,7 +146,7 @@
             <Button
                 android:id="@+id/itemListButton"
                 android:layout_width="match_parent"
-                android:layout_height="fill_parent"
+                android:layout_height="60dp"
                 android:layout_weight="1"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/selector_button"
@@ -160,7 +160,7 @@
             <Button
                 android:id="@+id/profileEditButton"
                 android:layout_width="match_parent"
-                  android:layout_height="fill_parent"
+                  android:layout_height="60dp"
                 android:layout_weight="1"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/selector_button"

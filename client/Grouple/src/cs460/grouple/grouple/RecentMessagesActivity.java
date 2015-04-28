@@ -190,15 +190,10 @@ public class RecentMessagesActivity extends BaseActivity
 
 	private void updateUI()
 	{
-		
-		
-		
-
 		if (!contacts.isEmpty())
 		{
 			ArrayAdapter<Contact> adapter = new ContactListAdapter();
-			listView.setAdapter(adapter);
-			
+			listView.setAdapter(adapter);	
 		}
 		else
 		{
