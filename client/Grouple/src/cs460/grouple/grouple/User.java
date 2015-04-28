@@ -551,7 +551,7 @@ public class User extends Entity
 		badges.add(new Badge("Environmentalist", null)); // create nature count
 
 		badges.add(new Badge("Extrovert", null)); // total count
-		badges.add(new Badge("Creator", null)); // create total count
+		//badges.add(new Badge("Creator", null)); // create total count
 
 		badges.add(new Badge("Regular", null)); // the attend recurring event
 		badges.add(new Badge("Routinist", null)); // the create recurring event

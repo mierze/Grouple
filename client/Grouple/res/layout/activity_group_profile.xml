@@ -216,11 +216,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="10dp"
-                android:background="@drawable/selector_button"
+                android:background="@drawable/selector_offcolorbutton"
                 android:fontFamily="sans-serif-condensed"
                 android:onClick="onClick"
                 android:text="Edit Profile"
-                android:textColor="@color/button_text_color"
+                android:textColor="@color/text_color"
                 android:textSize="18sp"
                 android:visibility="gone" />
         </LinearLayout>

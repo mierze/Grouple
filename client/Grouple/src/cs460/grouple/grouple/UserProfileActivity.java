@@ -458,6 +458,10 @@ public class UserProfileActivity extends BaseActivity
 		{
 			d = getResources().getDrawable(R.drawable.badge_helpinghand);
 		}
+		else if (b.getName().equals("Extrovert"))
+		{
+			d = getResources().getDrawable(R.drawable.badge_extrovert);
+		}
 		else
 			d = getResources().getDrawable(R.drawable.badge_congregator);
 		return d;

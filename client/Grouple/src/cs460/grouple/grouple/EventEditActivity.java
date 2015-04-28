@@ -234,7 +234,6 @@ public class EventEditActivity extends BaseActivity
 		super.onResume();
 		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("event_data"));
 		fetchData();
-		updateUI();
 	}
 
 	@Override

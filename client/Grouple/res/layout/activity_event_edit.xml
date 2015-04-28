@@ -288,7 +288,7 @@
                 android:id="@+id/publicButtonContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/background_color"
+                android:background="@drawable/border"
                 android:orientation="horizontal" >
 
                 <RadioButton

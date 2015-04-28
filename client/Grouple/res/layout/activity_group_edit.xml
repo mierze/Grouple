@@ -121,10 +121,9 @@
                 android:id="@+id/publicButtonContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/layout_background_color"
+                android:background="@drawable/border"
                 android:orientation="horizontal"
-                android:padding="10dp"
-                tools:context="cs460.grouple.grouple.UserEditActivity" >
+                android:padding="10dp" >
 
                 <RadioButton
                     android:id="@+id/publicButton"

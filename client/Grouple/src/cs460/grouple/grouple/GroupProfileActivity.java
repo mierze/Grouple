@@ -23,6 +23,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+//TODO: add a button for inviting friends
 /*
  * UserActivity displays the profile page of any user
  */
@@ -278,9 +279,6 @@ public class GroupProfileActivity extends BaseActivity
 			profileButton6.setText("Edit Group");
 			profileButton6.setVisibility(View.VISIBLE);
 		}
-		
-
-
 	}
 
 	public void onClick(View view)

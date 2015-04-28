@@ -259,6 +259,11 @@ public class EventProfileActivity extends BaseActivity
 				profileButton6.setText("Edit Event");
 			profileButton6.setVisibility(View.VISIBLE);
 		}
+		else if (!event.getEventState().equals("Ended") && !event.getEventState().equals("Declined") && event.getPub() == 1)
+		{
+			profileButton6.setText("Join Event");
+			profileButton6.setVisibility(View.VISIBLE);
+		}
 	}
 
 	private void updateItemChecklist()
@@ -348,12 +353,19 @@ public class EventProfileActivity extends BaseActivity
 			intent = new Intent(this, EventEditActivity.class);
 			// add reprososed extra if clicking this button when it says
 			// "repropose event" instead of "edit event"
-			if (!profileButton6.getText().toString().equals("Edit Event"))
+			if (profileButton6.getText().toString().equals("Join Event"))
+			{
+				//join event task TODO here
+				new JoinPublicTask().execute("http://68.59.162.183/" + "android_connect/join_public_event.php",
+					user.getEmail(), "P", Integer.toString(event.getID()));
+			}
+			else if (!profileButton6.getText().toString().equals("Edit Event"))
 			{
 				System.out.println("adding reproposed extra!");
 				intent.putExtra("reproposed", 1);
 				finish();
 			}
+			
 			break;
 		default:
 			break;
@@ -532,12 +544,11 @@ public class EventProfileActivity extends BaseActivity
 		@Override
 		protected String doInBackground(String... urls)
 		{
-			String type = "e_id";
 			System.out.println("urls are " + urls[1] + " " + urls[2] + " " + urls[3]);
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("email", urls[1]));
 			nameValuePairs.add(new BasicNameValuePair("role", urls[2]));
-			nameValuePairs.add(new BasicNameValuePair(type, urls[3]));
+			nameValuePairs.add(new BasicNameValuePair("e_id", urls[3]));
 			// pass url and nameValuePairs off to GLOBAL to do the JSON call.
 			// Code continues at onPostExecute when JSON returns.
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
