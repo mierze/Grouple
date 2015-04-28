@@ -37,7 +37,7 @@ public class Badge
 			else
 				imageID = R.drawable.badge_nature_grey;
 		}
-		else if (name.equals("Social"))
+		else if (name.equals("Gregarious"))
 		{
 			if (level > 0)
 				imageID = R.drawable.badge_nature_grey;
@@ -73,7 +73,7 @@ public class Badge
 			else
 				imageID = R.drawable.badge_nature_grey;
 		}
-		else if (name.equals("Fun Creator"))
+		else if (name.equals("Merrymaker"))
 		{
 			if (level > 0)
 				imageID = R.drawable.badge_nature_grey;
@@ -94,17 +94,24 @@ public class Badge
 			else
 				imageID = R.drawable.badge_nature_grey;
 		}
-		else if (name.equals("Facilitator of Entertainment"))
+		else if (name.equals("Routinist"))
 		{
 			if (level > 0)
-				imageID = R.drawable.badge_nature_grey;
+				imageID = R.drawable.badge_routinist;
 			else
 				imageID = R.drawable.badge_nature_grey;
 		}
-		else if (name.equals("Healthy Lifestyle"))
+		else if (name.equals("Reaching Out"))
 		{
 			if (level > 0)
+				imageID = R.drawable.badge_reachingout;
+			else
 				imageID = R.drawable.badge_nature_grey;
+		}
+		else if (name.equals("Perseverance"))
+		{
+			if (level > 0)
+				imageID = R.drawable.badge_perseverance;
 			else
 				imageID = R.drawable.badge_nature_grey;
 		}

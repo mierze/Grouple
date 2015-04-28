@@ -51,10 +51,8 @@ public class EventListActivity extends BaseActivity
 											// layout
 	private ListView listView; // to inflate into)
 	private String ROLE = "U";// defaulting to lowest level
-	private String PANDABUFFER = ""; // same
-	private int bufferID; // same as below: could alternatively have json return
-							// the values instead of saving here
 	private Button addNew;
+	private String sadGuyText = "";
 	// TESTING
 	private ArrayList<User> users;
 	private ArrayList<Event> events;
@@ -87,16 +85,16 @@ public class EventListActivity extends BaseActivity
 					startDate = newStartDate;
 					dateTextView.setText(e.getStartTextListDisplay());
 				}
-				else if ((CONTENT.equals(CONTENT_TYPE.EVENTS_DECLINED.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
-						&& startDate.compareTo(newStartDate) > 0)
+				else if ((CONTENT.equals(CONTENT_TYPE.EVENTS_DECLINED.toString()) || CONTENT
+						.equals(CONTENT_TYPE.EVENTS_PAST.toString())) && startDate.compareTo(newStartDate) > 0)
 				{
 
 					startDate = newStartDate;
 					dateTextView.setText(e.getStartTextListDisplay());
 
 				}
-				else if (!(CONTENT.equals(CONTENT_TYPE.EVENTS_DECLINED.toString()) || CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
-						&& startDate.compareTo(newStartDate) < 0)
+				else if (!(CONTENT.equals(CONTENT_TYPE.EVENTS_DECLINED.toString()) || CONTENT
+						.equals(CONTENT_TYPE.EVENTS_PAST.toString())) && startDate.compareTo(newStartDate) < 0)
 				{
 
 					startDate = newStartDate;
@@ -145,79 +143,12 @@ public class EventListActivity extends BaseActivity
 			}
 			return listItemID;
 		}
-		/*
-		 * 
-		 * TextView dateTextView = (TextView)
-		 * dateRow.findViewById(R.id.dateTextView); String if (startDate ==
-		 * null) { //first event to display, show its time, and set startDate =
-		 * to it startDate = newStartDate;
-		 * dateTextView.setText(e.getStartTextListDisplay());
-		 * listLayout.addView(dateRow); } else if
-		 * (startDate.compareTo(newStartDate) < 0) { //if previous start date
-		 * less than new start date, display date startDate =
-		 * e.getStartTextNoTime();
-		 * dateTextView.setText(e.getStartTextListDisplay());
-		 * listLayout.addView(dateRow); } id = e.getID(); index =
-		 * events.indexOf(e); //Group group = GLOBAL.loadGroup(id); if
-		 * (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) ||
-		 * CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()) ||
-		 * CONTENT.equals(CONTENT_TYPE.EVENTS_DECLINED.toString()) ||
-		 * CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString())) {
-		 * System.out.println("IN FIRST EVENT IF"); if
-		 * (GLOBAL.isCurrentUser(user.getEmail())) { row =
-		 * li.inflate(R.layout.list_row, null); removeEventButton = (Button)
-		 * row.findViewById(R.id.removeButtonLI); removeEventButton.setId(id); }
-		 * else //user does not have ability to remove events row =
-		 * li.inflate(R.layout.list_row_nobutton, null);
-		 * 
-		 * nameTextView = (TextView)row.findViewById(R.id.nameTextViewLI);
-		 * 
-		 * if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()) ||
-		 * CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()) ||
-		 * CONTENT.equals(CONTENT_TYPE.EVENTS_DECLINED.toString()))
-		 * nameTextView.setText(e.getName());//future get date too? else
-		 * nameTextView.setText(e.getName() + "\n(" + e.getNumUsers() +
-		 * " confirmed / " + e.getMinPart() + " required)"); } else { row =
-		 * li.inflate(R.layout.list_row_acceptdecline, null); nameTextView =
-		 * (TextView)row.findViewById(R.id.emailTextView);
-		 * nameTextView.setText(e.getName() + "\n(" + e.getNumUsers() +
-		 * " confirmed / " + e.getMinPart() + " required)"); } //setting ids to
-		 * the id of the group for button functionality nameTextView.setId(id);
-		 * row.setId(id); //adding row to view listLayout.addView(row);
-		 */
 	}
 
 	// populates a list of events
-	private void populateEvents()
+	private void updateUI()
 	{
-		String sadGuyText = "";
 
-		// Checking which CONTENT we need to get
-		if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
-		{
-			events = user.getEventsPending();
-			sadGuyText = "You do not have any pending events.";
-		}
-		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
-		{
-			events = user.getEventsUpcoming();
-			sadGuyText = "You do not have any upcoming events.";
-		}
-		else if (CONTENT.equals(CONTENT_TYPE.EVENT_INVITES.toString()))
-		{
-			events = user.getEventInvites();
-			sadGuyText = "You do not have any event invites.";
-		}
-		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_DECLINED.toString()))
-		{
-			events = user.getEventsDeclined();
-			sadGuyText = "You do not have any events declined.";
-		}
-		else
-		{
-			events = user.getEventsPast();
-			sadGuyText = "You do not have any past events.";
-		}
 
 		// looping thru and populating list of events
 		if (events != null && !events.isEmpty())
@@ -266,22 +197,39 @@ public class EventListActivity extends BaseActivity
 		// setting the actionbar text
 		if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
 		{
+			events = user.getEventsPending();
+			sadGuyText = "You do not have any pending events.";
 			actionBarTitle = user.getFirstName() + "'s Pending Events";
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.EVENT_INVITES.toString()))
 		{
+			events = user.getEventInvites();
+			sadGuyText = "You do not have any event invites.";
 			actionBarTitle = user.getFirstName() + "'s Event Invites";
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
 		{
+			events = user.getEventsUpcoming();
+			sadGuyText = "You do not have any upcoming events.";
 			actionBarTitle = user.getFirstName() + "'s Upcoming Events";
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
+		{
+			events = user.getEventsPast();
+			sadGuyText = "You do not have any past events.";
 			actionBarTitle = user.getFirstName() + "'s Past Events";
+		}			
 		else
+		{
+			events = user.getEventsDeclined();
+			sadGuyText = "You do not have any events declined.";
 			actionBarTitle = user.getFirstName() + "'s Declined Events";
+		}
+		
 		// calling next functions to execute
 		initActionBar(actionBarTitle, true);
+		
+
 	}
 
 	@Override
@@ -297,7 +245,8 @@ public class EventListActivity extends BaseActivity
 	{
 		super.onResume();
 		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("user_data"));
-		populateEvents();
+		fetchData();
+		updateUI();
 	}
 
 	// This listens for pings from the data service to let it know that there
@@ -310,32 +259,56 @@ public class EventListActivity extends BaseActivity
 			// Extract data included in the Intent
 			String type = intent.getStringExtra("message");
 			// repopulate views
-			populateEvents();
+			updateUI();
 		}
 	};
+
+	private void fetchData()
+	{
+		if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
+		{
+			user.fetchEventsUpcoming(this);
+		}
+		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
+		{
+			user.fetchEventsPending(this);
+		}
+		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
+		{
+			user.fetchEventsPast(this);
+		}
+		else if (CONTENT.equals(CONTENT_TYPE.EVENT_INVITES.toString()))
+		{
+			user.fetchEventInvites(this);
+		}
+		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_DECLINED.toString()))
+		{
+			user.fetchEventsDeclined(this);
+		}
+
+	}
 
 	// ONCLICK METHODS BELOW
 	public void onClick(View view)
 	{
 		super.onClick(view);
 		View parent = (View) view.getParent();
+		int e_id = parent.getId();
 		switch (view.getId())
 		{
 		case R.id.declineButton:
 			if (CONTENT.equals(CONTENT_TYPE.EVENT_INVITES.toString()))
 			{
-				bufferID = parent.getId(); // PANDA
+
 				new performActionTask().execute("http://68.59.162.183/android_connect/leave_event.php",
-						Integer.toString(bufferID));
+						Integer.toString(e_id));
 			}
 			break;
 		case R.id.acceptButton:
 			if (CONTENT.equals(CONTENT_TYPE.EVENT_INVITES.toString()))
 			{
-				bufferID = parent.getId();
-				System.out.println("Accepting event invite, eid: " + bufferID);
 				new performActionTask().execute("http://68.59.162.183/android_connect/accept_event_invite.php",
-						Integer.toString(bufferID));
+						Integer.toString(e_id));
 			}
 			break;
 		}
@@ -345,7 +318,7 @@ public class EventListActivity extends BaseActivity
 	public void removeButton(Event e)
 	{
 		// Get the id.
-		bufferID = e.getID();
+		final int e_id = e.getID();
 		new AlertDialog.Builder(this).setMessage("Are you sure you want to leave this event?").setCancelable(true)
 				.setPositiveButton("Yes", new DialogInterface.OnClickListener()
 				{
@@ -353,7 +326,7 @@ public class EventListActivity extends BaseActivity
 					public void onClick(DialogInterface dialog, int id)
 					{
 						new performActionTask().execute("http://68.59.162.183/android_connect/leave_event.php",
-								Integer.toString(bufferID));
+								Integer.toString(e_id));
 					}
 				}).setNegativeButton("Cancel", null).show();
 
@@ -383,6 +356,7 @@ public class EventListActivity extends BaseActivity
 			// events pending past, upcoming or invites, all need email and
 			// eid
 			nameValuePairs.add(new BasicNameValuePair("email", user.getEmail()));
+			//TODO: change to e_id
 			nameValuePairs.add(new BasicNameValuePair("eid", urls[1]));
 
 			// calling readJSONFeed in Global, continues below in onPostExecute
@@ -400,43 +374,23 @@ public class EventListActivity extends BaseActivity
 					// successful
 					String message = jsonObject.getString("message");
 					Context context = getApplicationContext();
-					if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
-					{
-						user.removeEventPending(bufferID);
 
-					}
-					else if (CONTENT.equals(CONTENT_TYPE.EVENTS_DECLINED.toString()))
+					if (CONTENT.equals(CONTENT_TYPE.EVENT_INVITES.toString()))
 					{
-						user.removeEventDeclined(bufferID);
-
-					}
-					else if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
-					{
-						user.removeEventUpcoming(bufferID);
-
-					}
-					else if (CONTENT.equals(CONTENT_TYPE.EVENT_INVITES.toString()))
-					{
-						user.removeEventInvite(bufferID);
-
 						// since leave_event and decline event call same php
 						if (!message.equals("Event invite accepted!"))
 							message = "Event invite declined!";
 					}
-					else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
+					if (CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
 					{
-						user.removeEventPast(bufferID);
 						message = "Past event removed!";
-
 					}
 					Toast toast = GLOBAL.getToast(context, message);
 					toast.show();
 					// reset values, looking to move these
-					PANDABUFFER = "";
-					bufferID = -1;
+					fetchData();
 
-					// CALLING CORRESPONDING METHOD TO REPOPULATE
-					populateEvents();
+	
 				}
 				else
 				{

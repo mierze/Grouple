@@ -68,25 +68,17 @@ public class GroupProfileActivity extends BaseActivity
 	}
 
 
-	public void load()
-	{
-
-		
-		setRole();
-		//getGroupExperience();
-		fetchData();
-		updateUI(); // populates a group / user profile
-		// initializing the action bar and killswitch listener
-
-	}
-
 
 	@Override
 	protected void onResume()
 	{
 		super.onResume();
 		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("group_data"));
-		load();
+
+		//getGroupExperience();
+		fetchData();
+		updateUI(); // populates a group / user profile
+		// initializing the action bar and killswitch listener
 	}
 
 	@Override
@@ -153,57 +145,16 @@ public class GroupProfileActivity extends BaseActivity
 		}
 	}
 	
-	private void getGroupExperience()
-	{
-		new getGroupExperienceTask().execute("http://68.59.162.183/android_connect/get_group_experience.php");
-	}
 
-	// TASK GOR GETTING GROUP EXPERIENCE
-	private class getGroupExperienceTask extends AsyncTask<String, Void, String>
-	{
-		@Override
-		protected String doInBackground(String... urls)
-		{
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair("g_id", Integer.toString(group.getID())));
-			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
-		}
 
-		@Override
-		protected void onPostExecute(String result)
-		{
-			try
-			{
-				JSONObject jsonObject = new JSONObject(result);
-				// json fetch was successful
-				if (jsonObject.getString("success").toString().equals("1"))
-				{
-					int eventsIn = Integer.parseInt(jsonObject.getString("events").toString());
-					int eventsCreated = Integer.parseInt(jsonObject.getString("eventsCreated").toString());
-					int groupPoints = (eventsCreated * 2) + eventsIn;
-					setExperience(groupPoints);
-				}
-				else
-				{
-					// failed
-					Log.d("getUserExperience", "FAILED");
-				}
-			}
-			catch (Exception e)
-			{
-				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
-			}
-			// do next thing here
-		}
-	}
-
-	private void setExperience(int groupPoints)
+	private void setExperience()
 	{
+		int groupExperience = group.getExperience();
 		int level = 1;
 		int pointsToNext = 10;
 		int pointsStart = 0;
 		int pointsEnd;
-		while (groupPoints > (pointsStart + pointsToNext))
+		while (groupExperience > (pointsStart + pointsToNext))
 		{
 			//means user is greater than this level threshold
 			//so increase level
@@ -217,8 +168,8 @@ public class GroupProfileActivity extends BaseActivity
 		//each level pointsToNext *= level
 		levelTextView.setText("Level " + level);
 		xpProgressBar.setMax(pointsToNext);
-		xpProgressBar.setProgress(groupPoints - pointsStart);
-		xpTextView.setText(groupPoints + " / " + pointsEnd);
+		xpProgressBar.setProgress(groupExperience - pointsStart);
+		xpTextView.setText(groupExperience + " / " + pointsEnd);
 	}
 
 
@@ -407,7 +358,8 @@ public class GroupProfileActivity extends BaseActivity
 			iv.setImageResource(R.drawable.group_image_default);
 
 		iv.setScaleType(ScaleType.CENTER_CROP);
-		
+		setRole();
+		setExperience();
 		initXpBar();
 		
 	}
@@ -466,7 +418,7 @@ public class GroupProfileActivity extends BaseActivity
 					toast.show();
 					profileButton2.setVisibility(View.GONE);
 					group.fetchMembers(GroupProfileActivity.this);
-					load();
+					updateUI();
 					// all working correctly, continue to next user or finish.
 					loadDialog.hide();
 				}

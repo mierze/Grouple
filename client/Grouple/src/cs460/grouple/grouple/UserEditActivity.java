@@ -47,6 +47,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,7 +67,8 @@ public class UserEditActivity extends BaseActivity
 	private String birthday;
 	private Button submitButton;
 	private TextView errorTextView;
-
+	private RadioButton maleButton;
+	private RadioButton femaleButton;
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -80,20 +82,15 @@ public class UserEditActivity extends BaseActivity
 		aboutEditText = (EditText) findViewById(R.id.aboutEditTextEPA);
 		submitButton = (Button) findViewById(R.id.submitButtonEPA);
 		errorTextView = (TextView) findViewById(R.id.errorTextView);
-
+		maleButton = (RadioButton) findViewById(R.id.maleButton);
+		femaleButton = (RadioButton) findViewById(R.id.femaleButton);
 		user = GLOBAL.getCurrentUser();
-		load();
+		errorTextView.setVisibility(View.GONE);
+		fetchData();
 		initActionBar("Edit Profile", true);
 	}
 
-	private void load()
-	{
-		// Resetting error text view
 
-		errorTextView.setVisibility(View.GONE);
-		fetchData();
-		
-	}
 
 	private void fetchData()
 	{
@@ -129,44 +126,26 @@ public class UserEditActivity extends BaseActivity
 			updateUI();
 		}
 	};
-	// TASK FOR GRABBING IMAGE OF EVENT/USER/GROUP
-	private class getImageTask extends AsyncTask<String, Void, String>
+	
+	
+
+	public void genderRadioButton(View view)
 	{
-		@Override
-		protected String doInBackground(String... urls)
+		
+		switch (view.getId())
 		{
-			String type = "email";
-			String id = user.getEmail();
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair(type, id));
-			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
-		}
-
-		@Override
-		protected void onPostExecute(String result)
-		{
-			try
+		case R.id.maleButton:
+			if (maleButton.isChecked())
 			{
-				JSONObject jsonObject = new JSONObject(result);
-
-				// json fetch was successful
-				if (jsonObject.getString("success").toString().equals("1"))
-				{
-					String image = jsonObject.getString("image").toString();
-					user.setImage(image);
-					iv.setImageBitmap(user.getImage());
-				}
-				else
-				{
-					// failed
-					Log.d("getImage", "FAILED");
-				}
+				femaleButton.setChecked(false);
 			}
-			catch (Exception e)
+			break;
+		case R.id.femaleButton:
+			if (femaleButton.isChecked())
 			{
-				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
+				maleButton.setChecked(false);
 			}
-			// do next thing here
+			break;
 		}
 	}
 
@@ -184,6 +163,14 @@ public class UserEditActivity extends BaseActivity
 		locationEditText.setText(user.getLocation());
 		if (!(user.getImage() == null))
 			iv.setImageBitmap(user.getImage());
+		if (user.getGender().equals("M"))
+		{
+			maleButton.setChecked(true);
+		}
+		else if (user.getGender().equals("F"))
+		{
+			femaleButton.setChecked(true);
+		}
 	}
 
 	// Button Listener for selecting birthdate.
@@ -256,6 +243,15 @@ public class UserEditActivity extends BaseActivity
 			HttpPost httpPost = new HttpPost(URL);
 			try
 			{
+				String gender = "";
+				if (maleButton.isChecked())
+				{
+					gender = "M";
+				}
+				else if (femaleButton.isChecked())
+				{
+					gender = "F";
+				}
 				String email = user.getEmail();
 				String name = nameEditText.getText().toString();
 				// Split name by space because sleep.
@@ -286,10 +282,10 @@ public class UserEditActivity extends BaseActivity
 				builder.addTextBody("first", firstName, ContentType.TEXT_PLAIN);
 				builder.addTextBody("last", lastName, ContentType.TEXT_PLAIN);
 				builder.addTextBody("age", birthday, ContentType.TEXT_PLAIN);
-				builder.addTextBody("bio", about, ContentType.TEXT_PLAIN);
+				builder.addTextBody("about", about, ContentType.TEXT_PLAIN);
 				builder.addTextBody("location", location, ContentType.TEXT_PLAIN);
 				builder.addTextBody("email", email, ContentType.TEXT_PLAIN);
-
+				builder.addTextBody("gender", gender, ContentType.TEXT_PLAIN);
 				httpPost.setEntity(builder.build());
 
 				HttpResponse response = httpClient.execute(httpPost);
@@ -354,8 +350,6 @@ public class UserEditActivity extends BaseActivity
 					toast.show();
 					finish();
 				}
-				user.fetchInfo(UserEditActivity.this);
-				GLOBAL.setCurrentUser(user);
 			}
 			catch (Exception e)
 			{

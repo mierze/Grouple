@@ -33,7 +33,7 @@ public class UserDataService extends Service {
 	{
 		INFO, IMAGE, FRIENDS_CURRENT, FRIEND_INVITES, GROUP_INVITES, GROUPS_CURRENT, 
 		EVENTS_UPCOMING, EVENTS_PAST, EVENTS_DECLINED, EVENTS_PENDING, EVENT_INVITES,
-		BADGES_NEW, BADGES, POINTS, CONTACTS;
+		BADGES_NEW, BADGES, EXPERIENCE, CONTACTS;
 	}
 	
 	public UserDataService(Global g, User u) 
@@ -63,7 +63,7 @@ public class UserDataService extends Service {
 		this.context = context;
 		
 		if (FETCH.equals(FETCH_TYPE.INFO.toString()))
-			new getUserInfoTask().execute("http://68.59.162.183/android_connect/get_user_info.php");
+			new getInfoTask().execute("http://68.59.162.183/android_connect/get_user_info.php");
 		else if (FETCH.equals(FETCH_TYPE.IMAGE.toString()))
 			new getImageTask().execute("http://68.59.162.183/android_connect/get_profile_image.php");
 		else if (FETCH.equals(FETCH_TYPE.FRIENDS_CURRENT.toString()))
@@ -91,12 +91,10 @@ public class UserDataService extends Service {
 			new getEventsPendingTask().execute("http://68.59.162.183/android_connect/get_events_pending.php");
 		else if (FETCH.equals(FETCH_TYPE.EVENT_INVITES.toString()))
 			new getEventsInvitesTask().execute("http://68.59.162.183/android_connect/get_event_invites.php");
-		else if (FETCH.equals(FETCH_TYPE.BADGES_NEW.toString()))
-			new getNewBadgesTask().execute("http://68.59.162.183/android_connect/get_new_badges.php");
 		else if (FETCH.equals(FETCH_TYPE.BADGES.toString()))
 			new getBadgesTask().execute("http://68.59.162.183/android_connect/get_badges.php");
-		else if (FETCH.equals(FETCH_TYPE.POINTS.toString()))
-			new getUserExperienceTask().execute("http://68.59.162.183/android_connect/get_user_experience.php");
+		else if (FETCH.equals(FETCH_TYPE.EXPERIENCE.toString()))
+			new getExperienceTask().execute("http://68.59.162.183/android_connect/get_user_experience.php");
 		else if (FETCH.equals(FETCH_TYPE.CONTACTS.toString()))
 		{
 			new getContactsTask().execute("http://68.59.162.183/android_connect/get_recent_contacts.php");
@@ -106,7 +104,7 @@ public class UserDataService extends Service {
 	
 	//FETCHES BELOW
 	//USER FETCHES BELOW
-	private class getUserInfoTask extends AsyncTask<String, Void, String>
+	private class getInfoTask extends AsyncTask<String, Void, String>
 	{
 		@Override
 		protected String doInBackground(String... urls)
@@ -148,6 +146,12 @@ public class UserDataService extends Service {
 						user.setBirthday("");
 					else
 						user.setBirthday(dob.toString());// panda
+					
+					Object gender = jsonArray.get(5);
+					if (!gender.toString().equals("null"))
+					{
+						user.setGender(gender.toString());
+					}
 					
 					sendBroadcast();
 				}
@@ -278,7 +282,9 @@ public class UserDataService extends Service {
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					// gotta make a json array
+					
 					JSONArray jsonArray = jsonObject.getJSONArray("groups");
+					user.getGroups().clear();
 					// looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
@@ -321,6 +327,7 @@ public class UserDataService extends Service {
 				{
 					// gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("invites");
+					user.getGroupInvites().clear();
 					// looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
@@ -370,6 +377,7 @@ public class UserDataService extends Service {
 				{
 					// gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("eventsUpcoming");
+					user.getEventsUpcoming().clear();
 					// looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
@@ -413,6 +421,7 @@ public class UserDataService extends Service {
 				{
 					// gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("eventsPending");
+					user.getEventsPending().clear();
 					// looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
@@ -464,6 +473,7 @@ public class UserDataService extends Service {
 				{
 					// gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("eventsDeclined");
+					user.getEventsDeclined().clear();
 					// looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
@@ -513,6 +523,7 @@ public class UserDataService extends Service {
 				{
 					// gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("eventsPast");
+					user.getEventsPast().clear();
 					// looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
@@ -563,6 +574,7 @@ public class UserDataService extends Service {
 				{
 					// gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("eventsInvites");
+					user.getEventInvites().clear();
 					// looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
@@ -592,7 +604,7 @@ public class UserDataService extends Service {
 		}
 	}
 
-	private class getNewBadgesTask extends AsyncTask<String, Void, String>
+	private class getExperienceTask extends AsyncTask<String, Void, String>
 	{
 		@Override
 		protected String doInBackground(String... urls)
@@ -608,10 +620,49 @@ public class UserDataService extends Service {
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
-				JSONArray jsonArray = jsonObject.getJSONArray("badges");
+
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-
+					
+					
+					int numTotalEvents = jsonObject.getInt("numTotal");
+					int numSocialEvents = jsonObject.getInt("numSocial");
+					int numEntertainmentEvents = jsonObject.getInt("numEntertainment");
+					int numProfessionalEvents = jsonObject.getInt("numProfessional");
+					int numFitnessEvents = jsonObject.getInt("numFitness");
+					int numNatureEvents = jsonObject.getInt("numNature");
+					
+					int numTotalEventsCreated = jsonObject.getInt("numTotalCreate");
+					int numSocialEventsCreated = jsonObject.getInt("numSocialCreate");
+					int numEntertainmentEventsCreated = jsonObject.getInt("numEntertainmentCreate");
+					int numProfessionalEventsCreated = jsonObject.getInt("numProfessionalCreate");
+					int numFitnessEventsCreated = jsonObject.getInt("numFitnessCreate");
+					int numNatureEventsCreated = jsonObject.getInt("numNatureCreate");
+					
+					int numItemsBrought = jsonObject.getInt("numItems");
+					
+					//TODO: get count in each type
+					user.setNumTotalEvents(numTotalEvents);
+					user.setNumSocialEvents(numSocialEvents);
+					user.setNumEntertainmentEvents(numEntertainmentEvents);
+					user.setNumProfessionalEvents(numProfessionalEvents);
+					user.setNumFitnessEvents(numFitnessEvents);
+					user.setNumNatureEvents(numNatureEvents);
+					user.setNumTotalEventsCreated(numTotalEventsCreated);
+					user.setNumSocialEventsCreated(numSocialEventsCreated);
+					user.setNumEntertainmentEventsCreated(numEntertainmentEventsCreated);
+					user.setNumProfessionalEventsCreated(numProfessionalEventsCreated);
+					user.setNumFitnessEventsCreated(numFitnessEventsCreated);
+					user.setNumNatureEventsCreated(numNatureEventsCreated);
+					user.setNumItemsBrought(numItemsBrought);
+					user.setExperience();
+					
+					sendBroadcast();
+					
+					
+					int numSocial = jsonObject.getInt("numSocial");
+					JSONArray jsonArray = jsonObject.getJSONArray("badges");
+					user.getNewBadges().clear();
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
 						JSONObject o = (JSONObject) jsonArray.get(i);
@@ -650,6 +701,7 @@ public class UserDataService extends Service {
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					JSONArray jsonArray = jsonObject.getJSONArray("badges");
+					
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
 						JSONObject o = (JSONObject) jsonArray.get(i);
@@ -668,48 +720,6 @@ public class UserDataService extends Service {
 			}
 		}
 	}
-	
-
-	// TASK GOR GETTING USER EXPERIENCE
-	private class getUserExperienceTask extends AsyncTask<String, Void, String>
-	{
-		@Override
-		protected String doInBackground(String... urls)
-		{
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair("email", user.getEmail()));
-			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
-		}
-
-		@Override
-		protected void onPostExecute(String result)
-		{
-			try
-			{
-				JSONObject jsonObject = new JSONObject(result);
-				// json fetch was successful
-				if (jsonObject.getString("success").toString().equals("1"))
-				{
-					int eventsIn = Integer.parseInt(jsonObject.getString("eventsIn").toString());
-					int eventsCreated = Integer.parseInt(jsonObject.getString("eventsCreated").toString());
-					int userPoints = (eventsCreated * 2) + eventsIn;
-					user.setPoints(userPoints);
-					sendBroadcast();
-				}
-				else
-				{
-					// failed
-					Log.d("getUserExperience", "FAILED");
-				}
-			}
-			catch (Exception e)
-			{
-				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
-			}
-			// do next thing here
-		}
-	}
-	// TASK FOR GRABBING IMAGE OF EVENT/USER/GROUP
 		private class getImageTask extends AsyncTask<String, Void, String>
 		{
 			@Override

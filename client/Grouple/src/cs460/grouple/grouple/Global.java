@@ -64,7 +64,7 @@ public class Global extends Application
 		u.fetchEventsPast(context);
 		u.fetchEventsDeclined(context);
 		u.fetchEventsPending(context);
-		u.fetchNewBadges(context);
+		u.fetchExperience(context);
 		u.fetchBadges(context);
 		setCurrentUser(u);
 		addToUsers(u);

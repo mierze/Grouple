@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/listRowLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:onClick="startProfileActivity"
+    android:orientation="horizontal"
     android:background="@drawable/selector_listrow"
     android:clickable="true" >
 
   	<TextView
   	    android:id="@+id/nameTextView"
-  	    android:layout_width="wrap_content"
+  	    android:layout_width="match_parent"
   	    android:layout_height="50dp"
   	    android:layout_marginLeft="10dp"
+  	    android:layout_weight="2"
   	    android:layout_marginRight="10dp"
   	    android:textSize="18sp"
   	    android:layout_marginTop="0dp"
@@ -23,10 +25,9 @@
 
   	  	<Button
   	  	    android:id="@+id/removeButton"
-  	  	    android:layout_width="48dp"
+  	  	    android:layout_width="50dp"
   	  	    android:layout_height="match_parent"
-  	  	    android:layout_gravity="right|top"
-  	  	    android:layout_alignParentRight="true"
+  	  	    android:layout_weight="1"
   	  	    android:background="@color/red"
   	  	    android:gravity="center"
   	  	    android:onClick="removeButton"
@@ -34,4 +35,4 @@
   	  	    android:text="X"
   	  	    android:textColor="@color/white" />
 
-</RelativeLayout>
+</LinearLayout>

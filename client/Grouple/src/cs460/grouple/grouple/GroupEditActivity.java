@@ -58,6 +58,8 @@ public class GroupEditActivity extends BaseActivity
 	private EditText aboutEditText;
 	private EditText nameEditText;
 	private TextView errorTextView;
+	private RadioButton privateButton;
+	private RadioButton publicButton;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -73,6 +75,8 @@ public class GroupEditActivity extends BaseActivity
 		aboutEditText = (EditText) findViewById(R.id.groupAboutEditText);
 		nameEditText = (EditText) findViewById(R.id.groupNameEditText);
 		errorTextView = (TextView) findViewById(R.id.errorTextViewEPA);
+		privateButton = (RadioButton) findViewById(R.id.privateButton);
+		publicButton = (RadioButton) findViewById(R.id.publicButton);
 	}
 
 	@Override
@@ -147,6 +151,7 @@ public class GroupEditActivity extends BaseActivity
 				{
 					//dismiss 
 					deleteGroupDialog.cancel();
+					
 				}
 				else
 				{
@@ -170,16 +175,12 @@ public class GroupEditActivity extends BaseActivity
 		// Add the info to the textviews for editing.
 		nameEditText.setText(group.getName());
 		aboutEditText.setText(group.getAbout());
-		RadioButton publicButton = (RadioButton) findViewById(R.id.publicButton);
-		RadioButton privateButton = (RadioButton) findViewById(R.id.privateButton);
 		System.out.println("group.getpub() value is: " + group.getPub());
 		if (group.getPub() == 1)
 			publicButton.setChecked(true);
 		else
 			privateButton.setChecked(true);
-		if (group.getImage() == null)
-			new getImageTask();
-		else
+		if (group.getImage() != null)
 			iv.setImageBitmap(group.getImage());
 	}
 
@@ -213,8 +214,6 @@ public class GroupEditActivity extends BaseActivity
 
 	public void radio(View view)
 	{
-		RadioButton publicButton = (RadioButton) findViewById(R.id.publicButton);
-		RadioButton privateButton = (RadioButton) findViewById(R.id.privateButton);
 		switch (view.getId())
 		{
 		case R.id.publicButton:
@@ -257,10 +256,7 @@ public class GroupEditActivity extends BaseActivity
 				{
 					Toast toast = GLOBAL.getToast(GroupEditActivity.this, jsonObject.getString("message"));
 					toast.show();
-					//TODO: switch activities?
-					user.removeGroup(group.getID());
-					Intent i = new Intent(GroupEditActivity.this, GroupsActivity.class);
-					startActivity(i);;
+					finish();
 				} else
 				{
 					// failed
@@ -275,47 +271,7 @@ public class GroupEditActivity extends BaseActivity
 		}
 	}
 
-	/* TASK FOR GRABBING IMAGE OF EVENT/USER/GROUP */
-	private class getImageTask extends AsyncTask<String, Void, String>
-	{
-		@Override
-		protected String doInBackground(String... urls)
-		{
-			String type;
-			String id;
-			type = "gid";
-			id = Integer.toString(group.getID());
-
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair(type, id));
-			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
-		}
-
-		@Override
-		protected void onPostExecute(String result)
-		{
-			try
-			{
-				JSONObject jsonObject = new JSONObject(result);
-				// json fetch was successful
-				if (jsonObject.getString("success").toString().equals("1"))
-				{
-					String image = jsonObject.getString("image").toString();
-					group.setImage(image);
-					iv.setImageBitmap(group.getImage());
-				} else
-				{
-					// failed
-					Log.d("FETCH ROLE FAILED", "FAILED");
-				}
-			} 
-			catch (Exception e)
-			{
-				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
-			}
-			// do next thing here
-		}
-	}
+	
 
 	/*
 	 * Set profile executes update_profile.php. It uses the current users email
@@ -343,9 +299,9 @@ public class GroupEditActivity extends BaseActivity
 			{
 				// If private is not checked, then assume public. yes that means
 				// if the user selects nothing then it is assumed public.
-				RadioButton privateRadioButton = (RadioButton) findViewById(R.id.privateButton);
+				
 				int publicStatus = 1;
-				if (privateRadioButton.isChecked())
+				if (privateButton.isChecked())
 				{
 					// Set the public column in the database to false.
 					publicStatus = 0;

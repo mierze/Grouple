@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import cs460.grouple.grouple.UserDataService;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -25,18 +26,8 @@ public class User extends Entity
 {
 	private String location;
 	private int age = -1;
-	private int points = 0;
-
-	protected int getPoints()
-	{
-		return points;
-	}
-
-	protected void setPoints(int points)
-	{
-		this.points = points;
-	}
-
+	private int experience = 0;
+	private String gender = "";
 	private String birthday;
 	private String birthdayText;
 	private ArrayList<Group> groups = new ArrayList<Group>();
@@ -53,6 +44,19 @@ public class User extends Entity
 	private ArrayList<Contact> contacts = new ArrayList<Contact>();
 	private SparseArray<String> eventRoles = new SparseArray<String>();
 	private UserDataService dataService;
+	private int numSocialEvents = 0;
+	private int numEntertainmentEvents = 0;
+	private int numProfessionalEvents = 0;
+	private int numFitnessEvents = 0;
+	private int numNatureEvents = 0;
+	private int numSocialEventsCreated = 0;
+	private int numEntertainmentEventsCreated = 0;
+	private int numProfessionalEventsCreated = 0;
+	private int numFitnessEventsCreated = 0;
+	private int numNatureEventsCreated = 0;
+	private int numTotalEvents = 0;
+	private int numTotalEventsCreated = 0;
+	private int numItemsBrought = 0;
 
 	/*
 	 * Constructor for User class
@@ -66,95 +70,73 @@ public class User extends Entity
 		System.out.println("Initializing new user.");
 	}
 
-	protected void removeGroup(int id)
+	protected String getGender()
 	{
-		if (groups != null)
-			for (Group g : groups)
-				if (g.getID() == id)
-				{
-					groups.remove(groups.indexOf(g));
-					break;
-				}
+		return gender;
 	}
 
-	protected void removeGroupInvite(int id)
+	protected void setGender(String gender)
 	{
-		if (groupInvites != null)
-			for (Group g : groupInvites)
-				if (g.getID() == id)
-				{
-					groupInvites.remove(groupInvites.indexOf(g));
-					break;
-				}
+		this.gender = gender;
 	}
 
-	protected void removeEventUpcoming(int id)
+	protected int getExperience()
 	{
-		if (eventsUpcoming != null)
-			for (Event e : eventsUpcoming)
-				if (e.getID() == id)
-				{
-					eventsUpcoming.remove(eventsUpcoming.indexOf(e));
-					break;
-				}
+		return experience;
 	}
 
-	protected void removeEventPending(int id)
+	protected void setExperience()
 	{
-		if (eventsPending != null)
-			for (Event e : eventsPending)
-				if (e.getID() == id)
-				{
-					eventsPending.remove(eventsPending.indexOf(e));
-					break;
-				}
-	}
-
-	protected void removeEventInvite(int id)
-	{
-		if (eventInvites != null)
-			for (Event e : eventInvites)
-				if (e.getID() == id)
-				{
-					eventInvites.remove(eventInvites.indexOf(e));
-					break;
-				}
-	}
-
-	protected void removeEventPast(int id)
-	{
-		if (eventsPast != null)
-			for (Event e : eventsPast)
-				if (e.getID() == id)
-				{
-					eventsPast.remove(eventsPast.indexOf(e));
-					break;
-				}
-	}
-
-	protected void removeEventDeclined(int id)
-	{
-		if (eventsDeclined != null)
-			for (Event e : eventsDeclined)
-				if (e.getID() == id)
-				{
-					eventsDeclined.remove(eventsDeclined.indexOf(e));
-					break;
-				}
-	}
-
-	protected void removeFriendRequest(String email)
-	{
-		if (friendRequests != null)
-			for (User u : friendRequests)
-				if (u.getEmail().equals(email))
-				{
-					friendRequests.remove(friendRequests.indexOf(u));
-					break;
-				}
+		int xp = numTotalEventsCreated * 2;
+		ArrayList<Integer> nums = new ArrayList<Integer>();
+		nums.add(numSocialEvents);
+		nums.add(numEntertainmentEvents);
+		nums.add(numProfessionalEvents);
+		nums.add(numFitnessEvents);
+		nums.add(numNatureEvents);
+		Collections.sort(nums);
+		
+		for (int i = 0; i < nums.size(); i++)
+		{
+			experience += nums.get(i) * (i+1);
+		}
+		
+		xp += numItemsBrought;
+		experience = xp;
 	}
 
 	// SETTERS
+
+	protected int getNumTotalEvents()
+	{
+		return numTotalEvents;
+	}
+
+	protected void setNumTotalEvents(int numTotalEvents)
+	{
+		this.numTotalEvents = numTotalEvents;
+	}
+
+	protected int getNumTotalEventsCreated()
+	{
+		return numTotalEventsCreated;
+	}
+
+	protected void setNumTotalEventsCreated(int numTotalEventsCreated)
+	{
+		this.numTotalEventsCreated = numTotalEventsCreated;
+	}
+
+	protected int getNumItemsBrought()
+	{
+		return numItemsBrought;
+	}
+
+	protected void setNumItemsBrought(int numTotalItemsBrought)
+	{
+		this.numItemsBrought = numTotalItemsBrought;
+	}
+
 	protected void setLocation(String location)
 	{
 		this.location = location;
@@ -204,6 +186,107 @@ public class User extends Entity
 	}
 
 	// GETTERS
+
+	protected int getNumSocialEvents()
+	{
+		return numSocialEvents;
+	}
+
+	protected void setNumSocialEvents(int numSocialEvents)
+	{
+		this.numSocialEvents = numSocialEvents;
+	}
+
+	protected int getNumEntertainmentEvents()
+	{
+		return numEntertainmentEvents;
+	}
+
+	protected void setNumEntertainmentEvents(int numEntertainmentEvents)
+	{
+		this.numEntertainmentEvents = numEntertainmentEvents;
+	}
+
+	protected int getNumProfessionalEvents()
+	{
+		return numProfessionalEvents;
+	}
+
+	protected void setNumProfessionalEvents(int numProfessionalEvents)
+	{
+		this.numProfessionalEvents = numProfessionalEvents;
+	}
+
+	protected int getNumFitnessEvents()
+	{
+		return numFitnessEvents;
+	}
+
+	protected void setNumFitnessEvents(int numFitnessEvents)
+	{
+		this.numFitnessEvents = numFitnessEvents;
+	}
+
+	protected int getNumNatureEvents()
+	{
+		return numNatureEvents;
+	}
+
+	protected void setNumNatureEvents(int numNatureEvents)
+	{
+		this.numNatureEvents = numNatureEvents;
+	}
+
+	protected int getNumSocialEventsCreated()
+	{
+		return numSocialEventsCreated;
+	}
+
+	protected void setNumSocialEventsCreated(int numSocialEventsCreated)
+	{
+		this.numSocialEventsCreated = numSocialEventsCreated;
+	}
+
+	protected int getNumEntertainmentEventsCreated()
+	{
+		return numEntertainmentEventsCreated;
+	}
+
+	protected void setNumEntertainmentEventsCreated(int numEntertainmentEventsCreated)
+	{
+		this.numEntertainmentEventsCreated = numEntertainmentEventsCreated;
+	}
+
+	protected int getNumProfessionalEventsCreated()
+	{
+		return numProfessionalEventsCreated;
+	}
+
+	protected void setNumProfessionalEventsCreated(int numProfessionalEventsCreated)
+	{
+		this.numProfessionalEventsCreated = numProfessionalEventsCreated;
+	}
+
+	protected int getNumFitnessEventsCreated()
+	{
+		return numFitnessEventsCreated;
+	}
+
+	protected void setNumFitnessEventsCreated(int numFitnessEventsCreated)
+	{
+		this.numFitnessEventsCreated = numFitnessEventsCreated;
+	}
+
+	protected int getNumNatureEventsCreated()
+	{
+		return numNatureEventsCreated;
+	}
+
+	protected void setNumNatureEventsCreated(int numNatureEventsCreated)
+	{
+		this.numNatureEventsCreated = numNatureEventsCreated;
+	}
+
 	protected String getFirstName()
 	{
 		String first = "";
@@ -359,29 +442,128 @@ public class User extends Entity
 		return eventsPast;
 	}
 
+	protected void removeGroup(int id)
+	{
+		if (groups != null)
+			for (Group g : groups)
+				if (g.getID() == id)
+				{
+					groups.remove(groups.indexOf(g));
+					break;
+				}
+	}
+
+	protected void removeGroupInvite(int id)
+	{
+		if (groupInvites != null)
+			for (Group g : groupInvites)
+				if (g.getID() == id)
+				{
+					groupInvites.remove(groupInvites.indexOf(g));
+					break;
+				}
+	}
+
+	protected void removeEventUpcoming(int id)
+	{
+		if (eventsUpcoming != null)
+			for (Event e : eventsUpcoming)
+				if (e.getID() == id)
+				{
+					eventsUpcoming.remove(eventsUpcoming.indexOf(e));
+					break;
+				}
+	}
+
+	protected void removeEventPending(int id)
+	{
+		if (eventsPending != null)
+			for (Event e : eventsPending)
+				if (e.getID() == id)
+				{
+					eventsPending.remove(eventsPending.indexOf(e));
+					break;
+				}
+	}
+
+	protected void removeEventInvite(int id)
+	{
+		if (eventInvites != null)
+			for (Event e : eventInvites)
+				if (e.getID() == id)
+				{
+					eventInvites.remove(eventInvites.indexOf(e));
+					break;
+				}
+	}
+
+	protected void removeEventPast(int id)
+	{
+		if (eventsPast != null)
+			for (Event e : eventsPast)
+				if (e.getID() == id)
+				{
+					eventsPast.remove(eventsPast.indexOf(e));
+					break;
+				}
+	}
+
+	protected void removeEventDeclined(int id)
+	{
+		if (eventsDeclined != null)
+			for (Event e : eventsDeclined)
+				if (e.getID() == id)
+				{
+					eventsDeclined.remove(eventsDeclined.indexOf(e));
+					break;
+				}
+	}
+
+	protected void removeFriendRequest(String email)
+	{
+		if (friendRequests != null)
+			for (User u : friendRequests)
+				if (u.getEmail().equals(email))
+				{
+					friendRequests.remove(friendRequests.indexOf(u));
+					break;
+				}
+	}
+
 	// METHODS
 	private void initBadges()
 	{
 		// adding all badges to the user with level 0
-		badges.add(new Badge("Outdoorsman", null)); // nature count
-		badges.add(new Badge("Agile", null)); // fitness count
-		badges.add(new Badge("Gregarious", null)); // social count
-		badges.add(new Badge("Amused", null)); // entertainment count
-		badges.add(new Badge("Diligent", null)); // professional count
-		badges.add(new Badge("Extrovert", null)); // total count
 
-		badges.add(new Badge("Health Nut", null)); // create fitness count
-		badges.add(new Badge("Productive", null)); // create professional count
-		badges.add(new Badge("Merrymaker", null)); // create entertainment count
+		badges.add(new Badge("Gregarious", null)); // social count
 		badges.add(new Badge("Congregator", null)); // create social count
+
+		badges.add(new Badge("Amused", null)); // entertainment count
+		badges.add(new Badge("Merrymaker", null)); // create entertainment count
+
+		badges.add(new Badge("Diligent", null)); // professional count
+		badges.add(new Badge("Productive", null)); // create professional count
+
+		badges.add(new Badge("Agile", null)); // fitness count
+		badges.add(new Badge("Health Nut", null)); // create fitness count
+
+		badges.add(new Badge("Outdoorsman", null)); // nature count
 		badges.add(new Badge("Environmentalist", null)); // create nature count
+
+		badges.add(new Badge("Extrovert", null)); // total count
 		badges.add(new Badge("Creator", null)); // create total count
-		badges.add(new Badge("Congregator", null));
-		
+
+		badges.add(new Badge("Regular", null)); // the attend recurring event
+		badges.add(new Badge("Routinist", null)); // the create recurring event
+
 		badges.add(new Badge("Active", null)); // per week count
-		badges.add(new Badge("Well Rounded", null)); // participated in all categories
+		badges.add(new Badge("Well Rounded", null)); // participated in all
+														// categories
+		badges.add(new Badge("Reaching Out", null));
 		badges.add(new Badge("Mingler", null));
+		badges.add(new Badge("Perseverance", null));
 		badges.add(new Badge("Helping Hand", null)); // bring items to event
+
 	}
 
 	protected void addToBadges(Badge b)
@@ -592,19 +774,14 @@ public class User extends Entity
 		dataService.fetchContent("EVENTS_UPCOMING", context);
 	}
 
-	protected void fetchNewBadges(Context context)
-	{
-		dataService.fetchContent("BADGES_NEW", context);
-	}
-
 	protected void fetchBadges(Context context)
 	{
 		dataService.fetchContent("BADGES", context);
 	}
 
-	protected void fetchPoints(Context context)
+	protected void fetchExperience(Context context)
 	{
-		dataService.fetchContent("POINTS", context);
+		dataService.fetchContent("EXPERIENCE", context);
 	}
 
 	protected void fetchImage(Context context)

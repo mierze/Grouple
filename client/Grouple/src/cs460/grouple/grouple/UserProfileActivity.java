@@ -53,10 +53,8 @@ public class UserProfileActivity extends BaseActivity
 	private Button profileButton4;// for user profile, is past events
 	private Button profileButton5;
 	private Button profileButton6;
-	private AsyncTask getImageTask;
 	private ProgressBar xpProgressBar;
 	private TextView xpTextView;
-	private TextView infoTextView;
 	private TextView aboutTextView;
 	private TextView levelTextView;
 	private GcmUtility gcmUtil;
@@ -71,7 +69,6 @@ public class UserProfileActivity extends BaseActivity
 		xpBar = findViewById(R.id.xpBar);
 		xpProgressBar = (ProgressBar) findViewById(R.id.xpProgressBar);
 		levelTextView = (TextView) findViewById(R.id.levelTextView);
-		infoTextView = (TextView) findViewById(R.id.profileInfoTextView);
 		aboutTextView = (TextView) findViewById(R.id.profileAboutTextView);
 		xpTextView = (TextView) findViewById(R.id.xpTextView);
 		profileButton1 = (Button) findViewById(R.id.profileButton1);
@@ -135,11 +132,10 @@ public class UserProfileActivity extends BaseActivity
 		user.fetchGroups(this);
 		user.fetchFriends(this);
 		user.fetchBadges(this);
-		user.fetchNewBadges(this);
 		user.fetchEventsUpcoming(this);
 		user.fetchEventsPast(this);
 		user.fetchImage(this);
-		user.fetchPoints(this);
+		user.fetchExperience(this);
 	}
 
 	private void setExperience(int userPoints)
@@ -339,12 +335,13 @@ public class UserProfileActivity extends BaseActivity
 			ImageButton badgeImageButton = (ImageButton) itemView.findViewById(R.id.badgeImageButton);
 			badgeTextView.setText(b.getName());
 
+			//TODO: switch this back from testing
 			if (b.getLevel() > 0)
 			{
 				badgeImageButton.setImageDrawable(getBadgeImage(b));
 			}
 			else
-				badgeImageButton.setImageDrawable(getResources().getDrawable(R.drawable.badge_nature_grey));
+				badgeImageButton.setImageDrawable(getResources().getDrawable(R.drawable.badge_unknown));
 			// badgeImageButton.setId(position);
 			badgeImageButton.setOnClickListener(new OnClickListener()
 			{
@@ -359,7 +356,7 @@ public class UserProfileActivity extends BaseActivity
 		}
 
 	}
-	
+
 	protected void badgeDialog(Badge b)
 	{
 		int level = b.getLevel();
@@ -368,12 +365,12 @@ public class UserProfileActivity extends BaseActivity
 		TextView badgeTitleTextView = (TextView) dialogView.findViewById(R.id.badgeTitleTextView);
 
 		TextView badgeAboutTextView = (TextView) dialogView.findViewById(R.id.badgeAboutTextView);
-		if(level > 0)
+		if (level > 0)
 			badgeTitleTextView.setText("Congratulations! You just earned a badge!\n");
 		else
 			badgeTitleTextView.setText("You have not unlocked this badge, keep on working!\n");
 		badgeAboutTextView.setText(getResources().getString(b.getAboutID()));
-		if (b.getLevel() > 0)
+		if (b.getLevel() >= 0)
 			badgeImageView.setImageDrawable(getBadgeImage(b));
 		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
 		dialogBuilder.setTitle(b.getName() + " (Level " + b.getLevel() + ")");
@@ -409,6 +406,10 @@ public class UserProfileActivity extends BaseActivity
 		{
 			d = getResources().getDrawable(R.drawable.badge_regular);
 		}
+		else if (b.getName().equals("Routinist"))
+		{
+			d = getResources().getDrawable(R.drawable.badge_routinist);
+		}
 		else if (b.getName().equals("Diligent"))
 		{
 			d = getResources().getDrawable(R.drawable.badge_diligent2);
@@ -429,9 +430,9 @@ public class UserProfileActivity extends BaseActivity
 		{
 			d = getResources().getDrawable(R.drawable.badge_congregator);
 		}
-		else if (b.getName().equals("Congregator"))
+		else if (b.getName().equals("Reaching Out"))
 		{
-			d = getResources().getDrawable(R.drawable.badge_congregator);
+			d = getResources().getDrawable(R.drawable.badge_reachingout);
 		}
 		else if (b.getName().equals("Merrymaker"))
 		{
@@ -445,10 +446,23 @@ public class UserProfileActivity extends BaseActivity
 		{
 			d = getResources().getDrawable(R.drawable.badge_rounded);
 		}
+		else if (b.getName().equals("Mingler"))
+		{
+			d = getResources().getDrawable(R.drawable.badge_mingler);
+		}
+		else if (b.getName().equals("Perseverance"))
+		{
+			d = getResources().getDrawable(R.drawable.badge_perseverance);
+		}
+		else if (b.getName().equals("Helping Hand"))
+		{
+			d = getResources().getDrawable(R.drawable.badge_helpinghand);
+		}
 		else
-			d = getResources().getDrawable(R.drawable.badge_active);
+			d = getResources().getDrawable(R.drawable.badge_congregator);
 		return d;
 	}
+
 	private void badgesDialog()
 	{
 		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
@@ -480,18 +494,48 @@ public class UserProfileActivity extends BaseActivity
 		String title = user.getFirstName() + "'s Profile";
 		String about = "";
 		String location = user.getLocation();
+		String gender = user.getGender();
 		int age = user.getAge();
 
 		initActionBar(title, true);
 		setButtons();
 		badges = user.getBadges();
-		if (location == null)
-			location = "";
-		if (age == -1)
-			about = location + "\n";
-		else
-			about = age + " yrs young\n" + location + "\n";
-		aboutTextView.setText(about + user.getAbout());
+
+		if (age == -1 && !gender.equals(""))
+		{
+			if (gender.equals("M"))
+			{
+				about += "Male";
+			}
+			else
+			{
+				about += "Female";
+			}
+		}
+		else if (age != -1)
+		{
+
+			if (gender.equals(""))
+			{
+				about += age + " yrs young";
+			}
+			else if (gender.equals("M"))
+			{
+				about += age + " yr young male";
+			}
+			else
+			{
+				about += age + " yr young female";
+			}
+		}
+		if (!location.equals("") && !about.equals(""))
+		{
+			about += "\n" + location;
+		}
+		else if (!location.equals(""))
+			about += location;
+
+		aboutTextView.setText(about + "\n" + user.getAbout());
 
 		if (user.getImage() != null)
 			iv.setImageBitmap(user.getImage());
@@ -499,7 +543,7 @@ public class UserProfileActivity extends BaseActivity
 			iv.setImageResource(R.drawable.user_image_default);
 
 		iv.setScaleType(ScaleType.CENTER_CROP);
-		setExperience(user.getPoints());
+		setExperience(user.getExperience());
 	}
 
 }

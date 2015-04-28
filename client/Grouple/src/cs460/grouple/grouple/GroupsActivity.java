@@ -23,8 +23,8 @@ public class GroupsActivity extends BaseActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_groups);
-
 		user = GLOBAL.getCurrentUser();// loadUser(global.getCurrentUser().getEmail());
+		initActionBar("Groups", true);
 	}
 
 	@Override
@@ -32,7 +32,8 @@ public class GroupsActivity extends BaseActivity
 	{
 		super.onResume();
 		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("user_data"));
-		load();
+		fetchData();
+		updateUI();
 	}
 
 	@Override
@@ -63,12 +64,6 @@ public class GroupsActivity extends BaseActivity
 		super.onBackPressed();
 	}
 
-	private void load()
-	{
-		fetchData();
-		updateUI();
-		initActionBar("Groups", true);
-	}
 
 	private void fetchData()
 	{
