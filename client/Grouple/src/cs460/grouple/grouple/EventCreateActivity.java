@@ -56,6 +56,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -87,6 +88,8 @@ public class EventCreateActivity extends BaseActivity
 	private AlertDialog recurringDialog;
 	private AlertDialog toBringDialog;
 	private Button addToBringRowButton;
+	private RadioButton publicButton;
+	private RadioButton privateButton;
 	private Button toBringButton;
 	private Bitmap bmp;
 	private ImageView iv;
@@ -100,7 +103,8 @@ public class EventCreateActivity extends BaseActivity
 	private int year, month, day, hour, minute;
 	private ArrayList<String> itemNames = new ArrayList<String>();
 	private String recurring;
-
+	int publicStatus;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -125,12 +129,15 @@ public class EventCreateActivity extends BaseActivity
 		aboutEditText = (EditText) findViewById(R.id.eventAboutEditText);
 		nameEditText = (EditText) findViewById(R.id.eventNameEditText);
 		recurringButton = (EditText) findViewById(R.id.recurringButton);
+		publicButton = (RadioButton) findViewById(R.id.publicButton);
+		privateButton = (RadioButton) findViewById(R.id.privateButton);
 		iv = (ImageView) findViewById(R.id.eventCreateImageView);
 		eventEditImageButton = (Button) findViewById(R.id.eventEditImageButton);
 		// grab the email of current users from our GLOBAL class
 		user = GLOBAL.getCurrentUser();
 		initActionBar("Create Event", true);
 		recurring = "";
+		publicStatus = 1;
 	}
 
 	// onClick for items to bring
@@ -203,6 +210,28 @@ public class EventCreateActivity extends BaseActivity
 		}
 		toBringDialog.dismiss();
 		toBringButton.setText("Items (" + itemNames.size() + ")");
+	}
+	
+	//onClick for public/private buttons
+	public void radio (View view)
+	{
+		switch (view.getId())
+		{
+		case R.id.publicButton:
+			if (publicButton.isChecked())
+			{
+				privateButton.setChecked(false);
+			}
+				
+			break;
+		case R.id.privateButton:
+			
+			if (privateButton.isChecked())
+			{
+				publicButton.setChecked(false);
+			}
+			break;
+		}
 	}
 
 	// onClick for category button
@@ -481,6 +510,12 @@ public class EventCreateActivity extends BaseActivity
 		maximum = maximumEditText.getText().toString();
 		Date start = null;
 		Date end = null;
+						
+		//1 for public, 0 for private.		
+		if(privateButton.isChecked())
+		{
+			publicStatus = 0;
+		}
 
 		if (minimum.compareTo("") == 0)
 		{
@@ -611,6 +646,7 @@ public class EventCreateActivity extends BaseActivity
 						System.out.println("About to add start date as " + startDate);
 						builder.addTextBody("start_date", startDate,
 								ContentType.TEXT_PLAIN);
+						builder.addTextBody("public", Integer.toString(publicStatus), ContentType.TEXT_PLAIN);
 						builder.addTextBody("end_date", endDate, ContentType.TEXT_PLAIN);
 						builder.addTextBody("recurring", recurring, ContentType.TEXT_PLAIN);
 						builder.addTextBody("category", category, ContentType.TEXT_PLAIN);
@@ -696,7 +732,8 @@ public class EventCreateActivity extends BaseActivity
 									// can be sent to correct event id)
 									Intent intent = new Intent(EventCreateActivity.this, EventAddGroupsActivity.class);
 									intent.putExtra("CONTENT", "EVENT");
-									intent.putExtra("e_id", ID);
+									
+									intent.putExtra("e_id", Integer.parseInt(ID));
 									intent.putExtra("email", user.getEmail());
 									startActivity(intent);
 									finish();

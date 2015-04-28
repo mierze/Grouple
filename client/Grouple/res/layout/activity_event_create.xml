@@ -244,7 +244,7 @@
                 android:id="@+id/minmaxContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/background_color"
+                android:background="@color/layout_background_color"
                 android:orientation="horizontal" >
 
                 <EditText
@@ -275,6 +275,40 @@
                     android:padding="10dp"
                     android:textColor="@color/text_color"
                     android:textColorHint="@color/hint_text_color" />
+            </LinearLayout>
+            
+             <TextView
+                android:id="@+id/publicLabelTextViewEPA"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/black"
+                android:gravity="left"
+                android:padding="5dp"
+                android:text="Event privacy settings:"
+                android:textColor="@color/white" />
+
+            <LinearLayout
+                android:id="@+id/publicButtonContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/layout_background_color"
+                android:orientation="horizontal" >
+
+                <RadioButton
+                    android:id="@+id/publicButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:onClick="radio"
+                    android:text="Public" />
+
+                <RadioButton
+                    android:id="@+id/privateButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:onClick="radio"
+                    android:text="Private" />
             </LinearLayout>
 
             <Button
