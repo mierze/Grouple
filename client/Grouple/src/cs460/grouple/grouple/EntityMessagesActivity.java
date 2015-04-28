@@ -111,9 +111,7 @@ public class EntityMessagesActivity extends BaseActivity
 		{
 			ID = Integer.toString(extras.getInt("g_id"));
 			group = GLOBAL.getGroup(Integer.parseInt(ID));
-			NAME = group.getName();
-
-			
+			NAME = group.getName();	
 		}
 		else
 		{
@@ -167,12 +165,11 @@ public class EntityMessagesActivity extends BaseActivity
 		@Override
 		public int getItemViewType(int position)
 		{
-			int listItemID = R.layout.list_row;
+			int listItemID = R.layout.message_row_entity;
 			Message m = messages.get(position);
-			if (m.getSender().equals(user.getEmail()))
-				listItemID = R.layout.message_row_entity;
-			else
+			if (!m.getSender().equals(user.getEmail()))
 				listItemID = R.layout.message_row_entity_out;
+			
 
 			return listItemID;
 		}

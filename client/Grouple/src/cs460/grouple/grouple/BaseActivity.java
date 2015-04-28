@@ -150,7 +150,7 @@ public class BaseActivity extends ActionBarActivity implements OnClickListener
 			intent = new Intent(this, UserProfileActivity.class);
 			break;
 		case R.id.action_messages:
-			intent = new Intent(this, RecentMessagesActivity.class);
+			intent = new Intent(this, ContactsActivity.class);
 			break;
 		case R.id.action_friends:
 			intent = new Intent(this, FriendsActivity.class);

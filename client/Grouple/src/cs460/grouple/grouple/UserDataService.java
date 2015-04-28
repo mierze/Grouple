@@ -657,17 +657,15 @@ public class UserDataService extends Service {
 					user.setNumItemsBrought(numItemsBrought);
 					user.setExperience();
 					
-					sendBroadcast();
 					
-					
-					int numSocial = jsonObject.getInt("numSocial");
+				
 					JSONArray jsonArray = jsonObject.getJSONArray("badges");
 					user.getNewBadges().clear();
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
 						JSONObject o = (JSONObject) jsonArray.get(i);
-						Badge b = new Badge(o.getString("name"), o.getString("date"));
-						b.setLevel(Integer.parseInt(o.getString("level")));
+						Badge b = new Badge(o.getString("name"), null);
+						b.setLevel(o.getInt("level"));
 						user.addToNewBadges(b);
 					}
 					sendBroadcast();

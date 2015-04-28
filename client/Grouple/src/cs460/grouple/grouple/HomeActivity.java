@@ -85,6 +85,7 @@ public class HomeActivity extends BaseActivity
 	private void fetchData()
 	{
 		user.fetchInfo(this);
+		user.fetchExperience(this);
 	}
 
 	//This listens for pings from the data service to let it know that there are updates
@@ -96,7 +97,7 @@ public class HomeActivity extends BaseActivity
 			// Extract data included in the Intent
 			String type = intent.getStringExtra("message");
 			//repopulate views
-			load();
+			updateUI();
 			//populateProfile();
 			//GLOBAL.getToast(UserProfileActivity.this, type).show();
 		}
@@ -107,7 +108,7 @@ public class HomeActivity extends BaseActivity
 	{
 		super.onResume();
 		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("user_data"));
-		load();
+		fetchData();
 	}
 
 	@Override
@@ -115,20 +116,20 @@ public class HomeActivity extends BaseActivity
 	{
 		LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
 		super.onPause();
-
 	}
 
 	//rename to ui something something, this gets called to update ui views, right now just the actionbar i think
-	private void load()
+	private void updateUI()
 	{
 		// initializing action bar and killswitch listener
 		initActionBar("Welcome, " + user.getFirstName() + "!", false);
-		//below not working TODO: test / make it a function
 		if (user.getNumNewBadges() > 0)
 		{
 			for (Badge b : user.getNewBadges())
 				badgeDialog(b);
 		}
+		//below not working TODO: test / make it a function
+
 	}
 
 
@@ -178,7 +179,7 @@ public class HomeActivity extends BaseActivity
 			intent = new Intent(this, EventsActivity.class);
 			break;
 		case R.id.messagesButtonHA:
-			intent = new Intent(this, RecentMessagesActivity.class);
+			intent = new Intent(this, ContactsActivity.class);
 			break;
 		case R.id.groupsButtonHA:
 			intent = new Intent(this, GroupsActivity.class);

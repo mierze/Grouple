@@ -41,6 +41,7 @@
                     android:id="@+id/xpBar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:onClick="xpBarButton"
                     android:background="@color/black"
                     android:orientation="vertical" >
 
@@ -90,11 +91,11 @@
                         android:layout_height="match_parent"
                         android:layout_marginRight="10dp"
                         android:layout_weight="1"
-                        android:background="@drawable/selector_offcolorbutton"
+                        android:background="@drawable/selector_button"
                         android:fontFamily="sans-serif-condensed"
                         android:onClick="onClick"
                         android:text="Past Events"
-                        android:textColor="@color/text_color"
+                        android:textColor="@color/button_text_color"
                         android:textSize="18sp" />
 
                     <Button
@@ -103,11 +104,11 @@
                         android:layout_height="match_parent"
                         android:layout_marginLeft="10dp"
                         android:layout_weight="1"
-                        android:background="@drawable/selector_offcolorbutton"
+                        android:background="@drawable/selector_button"
                         android:fontFamily="sans-serif-condensed"
                         android:onClick="onClick"
-                        android:text="Badges\n(1)"
-                        android:textColor="@color/text_color"
+                        android:text="Badges\n(0)"
+                        android:textColor="@color/button_text_color"
                         android:textSize="18sp" />
                 </LinearLayout>
 
@@ -193,7 +194,7 @@
                     android:fontFamily="sans-serif-condensed"
                     android:onClick="onClick"
                     android:text="Edit Profile"
-                    android:textColor="@color/button_text_color"
+                    android:textColor="@color/text_color"
                     android:textSize="18sp"
                     android:visibility="gone" />
 

@@ -294,7 +294,7 @@
             android:name=".UserDataService" />
 
         <activity
-            android:name=".RecentMessagesActivity"
+            android:name=".ContactsActivity"
             android:label="@string/title_activity_contact_list" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
