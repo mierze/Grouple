@@ -177,9 +177,15 @@ public class GroupEditActivity extends BaseActivity
 		aboutEditText.setText(group.getAbout());
 		System.out.println("group.getpub() value is: " + group.getPub());
 		if (group.getPub() == 1)
+		{
 			publicButton.setChecked(true);
+			privateButton.setChecked(false);
+		}	
 		else
+		{
+			publicButton.setChecked(false);
 			privateButton.setChecked(true);
+		}
 		if (group.getImage() != null)
 			iv.setImageBitmap(group.getImage());
 	}

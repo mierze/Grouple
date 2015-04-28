@@ -52,6 +52,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -88,12 +89,15 @@ public class EventEditActivity extends BaseActivity
 	private TextView errorTextView;
 	private AlertDialog toBringDialog;
 	private Button addToBringRowButton;
+	private RadioButton privateButton;
+	private RadioButton publicButton;
 	private Button toBringButton;
 	private Button manageEventButton;
 	private Button submitButton;
 	private View toBringLayout;
 	private String recurring;
 	private User user;
+	private int publicStatus;
 	private final ArrayList<EditText> toBringEditTexts = new ArrayList<EditText>();
 	private ArrayList<EventItem> items = new ArrayList<EventItem>();
 
@@ -125,6 +129,9 @@ public class EventEditActivity extends BaseActivity
 		manageEventButton = (Button) findViewById(R.id.manageEventButton);
 		recurringButton = (EditText) findViewById(R.id.recurringButton);
 		submitButton = (Button) findViewById(R.id.submitButton);
+		publicButton = (RadioButton) findViewById(R.id.publicButton);
+		privateButton = (RadioButton) findViewById(R.id.privateButton);
+		publicStatus = 1;
 		// init variables
 		currentCal = Calendar.getInstance();
 		year = currentCal.get(Calendar.YEAR);
@@ -179,6 +186,16 @@ public class EventEditActivity extends BaseActivity
 		{
 			maxEditText.setText(String.valueOf(event.getMaxPart()));
 		}
+		//set the private/public radio buttons
+		if (event.getPub() == 1)
+		{
+			publicButton.setChecked(true);
+		}
+		else
+		{
+			privateButton.setChecked(true);
+		}
+			
 
 		toBringButton.setText("Items (" + items.size() + ")");
 		startEditText.setText(event.getStartText());
@@ -574,6 +591,28 @@ public class EventEditActivity extends BaseActivity
 		recurringDialog.show();
 
 	}
+	
+	//onClick for public/private radio buttons
+	public void radio(View view)
+	{
+		switch (view.getId())
+		{
+		case R.id.publicButton:
+			if (publicButton.isChecked())
+			{
+				System.out.println("Case public button and is checked.");
+				privateButton.setChecked(false);
+			}
+			break;
+		case R.id.privateButton:
+			if (privateButton.isChecked())
+			{
+				System.out.println("Case private button and is checked.");
+				publicButton.setChecked(false);
+			}
+			break;
+		}
+	}
 
 	// Button Listener for when user clicks on category.
 	public void selectCategoryButton(View view)
@@ -628,6 +667,12 @@ public class EventEditActivity extends BaseActivity
 		// Grab the data from the editTexts and push it to the database.
 		public String readJSONFeed(String URL)
 		{
+			//1 for public, 0 for private.		
+			if(privateButton.isChecked())
+			{
+				publicStatus = 0;
+			}
+			
 			StringBuilder stringBuilder = new StringBuilder();
 			HttpClient httpClient = new DefaultHttpClient();
 			// update_event.php using name/value pair
@@ -676,6 +721,7 @@ public class EventEditActivity extends BaseActivity
 				builder.addTextBody("start_date", startDate, ContentType.TEXT_PLAIN);
 				builder.addTextBody("end_date", endDate, ContentType.TEXT_PLAIN);
 				builder.addTextBody("recurring", recurring, ContentType.TEXT_PLAIN);
+				builder.addTextBody("public", Integer.toString(publicStatus), ContentType.TEXT_PLAIN);
 				builder.addTextBody("recurring_type", recurring, ContentType.TEXT_PLAIN);
 				builder.addTextBody("category", categoryEditText.getText().toString(), ContentType.TEXT_PLAIN);
 				builder.addTextBody("min_part", minEditText.getText().toString(), ContentType.TEXT_PLAIN);
