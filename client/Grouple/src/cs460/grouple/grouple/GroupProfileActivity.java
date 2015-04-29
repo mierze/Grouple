@@ -39,6 +39,7 @@ public class GroupProfileActivity extends BaseActivity
 	private Button profileButton2;
 	private Button profileButton3;
 	private Button profileButton6;
+	private Button inviteFriendsButton;
 	private ProgressBar xpProgressBar;
 	private TextView xpTextView;
 	private TextView levelTextView;
@@ -59,6 +60,7 @@ public class GroupProfileActivity extends BaseActivity
 		profileButton2 = (Button) findViewById(R.id.profileButton2);
 		profileButton3 = (Button) findViewById(R.id.profileButton3);
 		profileButton6 = (Button) findViewById(R.id.profileEditButton);
+		inviteFriendsButton = (Button) findViewById(R.id.inviteFriendsButton);
 		iv = (ImageView) findViewById(R.id.profileImageUPA);
 		gcmUtil = new GcmUtility(GLOBAL);
 		Bundle extras = getIntent().getExtras();
@@ -203,7 +205,7 @@ public class GroupProfileActivity extends BaseActivity
 					String role = jsonObject.getString("role").toString();
 
 					user.addToGroupRoles(group.getID(), role);
-
+					
 					setNotifications(); // for group / event
 				}
 				else
@@ -264,6 +266,7 @@ public class GroupProfileActivity extends BaseActivity
 
 	private void setNotifications()
 	{
+		
 		if (group.inUsers(user.getEmail()))
 		{
 			profileButton2.setVisibility(View.VISIBLE);
@@ -271,14 +274,27 @@ public class GroupProfileActivity extends BaseActivity
 			new getUnreadEntityMessagesTask().execute(
 					"http://68.59.162.183/android_connect/get_unread_entitymessages.php",
 					Integer.toString(group.getID()));
+			String role = user.getGroupRole(group.getID());
+			if (role.equals("A"))
+			{
+				profileButton6.setText("Edit Group");
+				profileButton6.setVisibility(View.VISIBLE);
+			}
+			if (role.equals("A") || role.equals("P"))
+			{
+				inviteFriendsButton.setVisibility(View.VISIBLE);
+			}
 		}
 		profileButton1.setText("Members\n(" + group.getNumUsers() + ")");
 
-		if (user.getGroupRole(group.getID()) != null && user.getGroupRole(group.getID()).equals("A"))
-		{
-			profileButton6.setText("Edit Group");
-			profileButton6.setVisibility(View.VISIBLE);
-		}
+		
+	}
+	
+	public void inviteFriendsButton(View view)
+	{
+		Intent intent = new Intent(this, InviteActivity.class);
+		intent.putExtra("g_id", group.getID());
+		startActivity(intent);
 	}
 
 	public void onClick(View view)

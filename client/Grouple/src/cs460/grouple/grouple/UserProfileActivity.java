@@ -29,9 +29,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -89,6 +87,41 @@ public class UserProfileActivity extends BaseActivity
 		else
 			user = GLOBAL.getCurrentUser();
 
+	}
+	
+
+	public void experienceDialog(View view)
+	{
+		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+		dialogBuilder.setTitle("User Statistics");
+		LayoutInflater inflater = this.getLayoutInflater();
+		View dialogView = inflater.inflate(R.layout.dialog_user_statistics, null);
+		TextView socialTextView = (TextView) dialogView.findViewById(R.id.socialTextView);
+		TextView entertainmentTextView = (TextView) dialogView.findViewById(R.id.entertainmentTextView);
+		TextView professionalTextView = (TextView) dialogView.findViewById(R.id.professionalTextView);
+		TextView fitnessTextView = (TextView) dialogView.findViewById(R.id.fitnessTextView);
+		TextView natureTextView = (TextView) dialogView.findViewById(R.id.natureTextView);
+		TextView socialCreateTextView = (TextView) dialogView.findViewById(R.id.socialCreateTextView);
+		TextView entertainmentCreateTextView = (TextView) dialogView.findViewById(R.id.entertainmentCreateTextView);
+		TextView professionalCreateTextView = (TextView) dialogView.findViewById(R.id.professionalCreateTextView);
+		TextView fitnessCreateTextView = (TextView) dialogView.findViewById(R.id.fitnessCreateTextView);
+		TextView natureCreateTextView = (TextView) dialogView.findViewById(R.id.natureCreateTextView);
+		TextView itemsBroughtTextView = (TextView) dialogView.findViewById(R.id.itemsBroughtTextView);
+		
+		socialTextView.setText(""+user.getNumSocialEvents());
+		professionalTextView.setText(""+user.getNumProfessionalEvents());
+		entertainmentTextView.setText(""+user.getNumEntertainmentEvents());
+		fitnessTextView.setText(""+user.getNumFitnessEvents());
+		natureTextView.setText(""+user.getNumNatureEvents());
+		socialCreateTextView.setText(""+user.getNumSocialEventsCreated());
+		professionalCreateTextView.setText(""+user.getNumProfessionalEventsCreated());
+		entertainmentCreateTextView.setText(""+user.getNumEntertainmentEventsCreated());
+		fitnessCreateTextView.setText(""+user.getNumFitnessEventsCreated());
+		natureCreateTextView.setText(""+user.getNumNatureEventsCreated());
+		itemsBroughtTextView.setText(""+user.getNumItemsBrought());
+		dialogBuilder.setView(dialogView);
+		final AlertDialog experienceDialog = dialogBuilder.create();
+		experienceDialog.show();
 	}
 
 	@Override

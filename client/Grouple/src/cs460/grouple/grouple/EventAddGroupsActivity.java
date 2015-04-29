@@ -21,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+//TODO: fetch in an event 
 /*
  * EventAddGroupsActivity allows a user to invite groups to a created event.
  */

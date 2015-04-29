@@ -211,6 +211,18 @@
                 android:textSize="18sp"
                 android:visibility="gone" />
 
+                        <Button
+                android:id="@+id/inviteFriendsButton"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/selector_offcolorbutton"
+                android:fontFamily="sans-serif-condensed"
+                android:onClick="inviteFriendsButton"
+                android:text="Invite Friends"
+                android:textColor="@color/text_color"
+                android:textSize="18sp"
+                android:visibility="gone" />
             <Button
                 android:id="@+id/profileEditButton"
                 android:layout_width="match_parent"

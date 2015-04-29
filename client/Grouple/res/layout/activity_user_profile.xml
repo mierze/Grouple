@@ -41,7 +41,7 @@
                     android:id="@+id/xpBar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:onClick="xpBarButton"
+                    android:onClick="experienceDialog"
                     android:background="@color/black"
                     android:orientation="vertical" >
 

@@ -41,6 +41,7 @@ public class EventProfileActivity extends BaseActivity
 	private Button profileButton2;
 	private Button profileButton3;
 	private Button profileButton6;
+	private Button inviteGroupsButton;
 	private Button itemListButton;
 	private TextView infoTextView;
 	private TextView aboutTextView;
@@ -64,6 +65,13 @@ public class EventProfileActivity extends BaseActivity
 		LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
 		super.onPause();
 
+	}
+
+	public void inviteGroupsButton(View view)
+	{
+		Intent intent = new Intent(this, EventAddGroupsActivity.class);
+		intent.putExtra("e_id", event.getID());
+		startActivity(intent);
 	}
 
 	// This listens for pings from the data service to let it know that there
@@ -101,6 +109,7 @@ public class EventProfileActivity extends BaseActivity
 		profileButton3 = (Button) findViewById(R.id.profileButton3);
 		profileButton6 = (Button) findViewById(R.id.profileEditButton);
 		infoTextView = (TextView) findViewById(R.id.profileInfoTextView);
+		inviteGroupsButton = (Button) findViewById(R.id.inviteGroupsButton);
 		aboutTextView = (TextView) findViewById(R.id.profileAboutTextView);
 		itemListButton = (Button) findViewById(R.id.itemListButton);
 		iv = (ImageView) findViewById(R.id.profileImageUPA);
@@ -108,8 +117,7 @@ public class EventProfileActivity extends BaseActivity
 		EXTRAS = getIntent().getExtras();
 		user = GLOBAL.getCurrentUser();
 		event = GLOBAL.getEvent(EXTRAS.getInt("e_id"));
-		
-		
+
 	}
 
 	private void setRole()
@@ -240,27 +248,33 @@ public class EventProfileActivity extends BaseActivity
 
 		if (event.inUsers(user.getEmail()))
 		{
+			String role = user.getEventRole(event.getID());
 			profileButton2.setVisibility(View.VISIBLE);
 			profileButton2.setText("Event Messages");
 			new getUnreadEntityMessagesTask().execute(
 					"http://68.59.162.183/android_connect/get_unread_entitymessages.php",
 					Integer.toString(event.getID()));
+			if (role.equals("A") && !event.getEventState().equals("Ended"))
+			{
+				if (event.getEventState().equals("Declined"))
+					profileButton6.setText("Edit and Re-propose Event");
+				else
+					profileButton6.setText("Edit Event");
+				profileButton6.setVisibility(View.VISIBLE);
+			}
+			if (role.equals("A") || role.equals("P"))
+			{
+				inviteGroupsButton.setVisibility(View.VISIBLE);
+			}
 		}
-		profileButton1.setText("Attending (" + event.getNumUsers() + ")");
-		if (user.getEventRole(event.getID()) != null && user.getEventRole(event.getID()).equals("A")
-				&& !event.getEventState().equals("Ended"))
-		{
-			if (event.getEventState().equals("Declined"))
-				profileButton6.setText("Edit and Re-propose Event");
-			else
-				profileButton6.setText("Edit Event");
-			profileButton6.setVisibility(View.VISIBLE);
-		}
-		else if (!event.getEventState().equals("Ended") && !event.getEventState().equals("Declined") && event.getPub() == 1)
+		else if (!event.getEventState().equals("Ended") && !event.getEventState().equals("Declined")
+				&& event.getPub() == 1)
 		{
 			profileButton6.setText("Join Event");
 			profileButton6.setVisibility(View.VISIBLE);
 		}
+		profileButton1.setText("Attending (" + event.getNumUsers() + ")");
+
 	}
 
 	private void updateItemChecklist()
@@ -323,7 +337,7 @@ public class EventProfileActivity extends BaseActivity
 	public void onClick(View view)
 	{
 		super.onClick(view);
-		//TODO: this caused errors loadDialog.show();
+		// TODO: this caused errors loadDialog.show();
 		boolean noIntent = view.getId() == R.id.backButton ? true : false;
 
 		Intent intent = new Intent(this, UserListActivity.class);
@@ -355,9 +369,9 @@ public class EventProfileActivity extends BaseActivity
 			// "repropose event" instead of "edit event"
 			if (profileButton6.getText().toString().equals("Join Event"))
 			{
-				//join event task TODO here
+				// join event task TODO here
 				new JoinPublicTask().execute("http://68.59.162.183/" + "android_connect/join_public_event.php",
-					user.getEmail(), "P", Integer.toString(event.getID()));
+						user.getEmail(), "P", Integer.toString(event.getID()));
 			}
 			else if (!profileButton6.getText().toString().equals("Edit Event"))
 			{
@@ -365,7 +379,7 @@ public class EventProfileActivity extends BaseActivity
 				intent.putExtra("reproposed", 1);
 				finish();
 			}
-			
+
 			break;
 		default:
 			break;
