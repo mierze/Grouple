@@ -128,13 +128,10 @@ public class HomeActivity extends BaseActivity
 	//rename to ui something something, this gets called to update ui views, right now just the actionbar i think
 	private void updateUI()
 	{
+		super.updateUI(user);
 		// initializing action bar and killswitch listener
 		initActionBar("Welcome, " + user.getFirstName() + "!", false);
-		if (user.getNumNewBadges() > 0)
-		{
-			for (Badge b : user.getNewBadges())
-				badgeDialog(b);
-		}
+		
 		//below not working TODO: test / make it a function
 
 	}

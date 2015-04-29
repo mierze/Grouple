@@ -85,7 +85,10 @@ public class UserProfileActivity extends BaseActivity
 		if (!GLOBAL.isCurrentUser(EMAIL))
 			user = GLOBAL.getUser(EMAIL);
 		else
+		{
 			user = GLOBAL.getCurrentUser();
+			user.fetchExperience(this);
+		}
 
 	}
 	
@@ -168,7 +171,6 @@ public class UserProfileActivity extends BaseActivity
 		user.fetchEventsUpcoming(this);
 		user.fetchEventsPast(this);
 		user.fetchImage(this);
-		user.fetchExperience(this);
 	}
 
 	private void setExperience(int userPoints)
@@ -390,28 +392,6 @@ public class UserProfileActivity extends BaseActivity
 
 	}
 
-	protected void badgeDialog(Badge b)
-	{
-		int level = b.getLevel();
-		View dialogView = inflater.inflate(R.layout.dialog_badge, null);
-		ImageView badgeImageView = (ImageView) dialogView.findViewById(R.id.badgeImageView);
-		TextView badgeTitleTextView = (TextView) dialogView.findViewById(R.id.badgeTitleTextView);
-
-		TextView badgeAboutTextView = (TextView) dialogView.findViewById(R.id.badgeAboutTextView);
-		if (level > 0)
-			badgeTitleTextView.setText("Congratulations! You just earned a badge!\n");
-		else
-			badgeTitleTextView.setText("You have not unlocked this badge, keep on working!\n");
-		badgeAboutTextView.setText(getResources().getString(b.getAboutID()));
-		if (b.getLevel() >= 0)
-			badgeImageView.setImageDrawable(getBadgeImage(b));
-		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-		dialogBuilder.setTitle(b.getName() + " (Level " + b.getLevel() + ")");
-		dialogBuilder.setView(dialogView);
-		AlertDialog badgesDialog = dialogBuilder.create();
-		badgesDialog.show();
-	}
-
 	private Drawable getBadgeImage(Badge b)
 	{
 		Drawable d = null;
@@ -528,6 +508,7 @@ public class UserProfileActivity extends BaseActivity
 	// should be responsible for updating all ui data
 	private void updateUI()
 	{
+		super.updateUI(user);
 		String title = user.getFirstName() + "'s Profile";
 		String about = "";
 		String location = user.getLocation();

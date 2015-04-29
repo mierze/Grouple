@@ -122,6 +122,16 @@ public class BaseActivity extends ActionBarActivity implements OnClickListener
 		badgesDialog.show();
 	}
 	
+	protected void updateUI(User user)
+	{
+		if (user.getNumNewBadges() > 0)
+		{
+			for (Badge b : user.getNewBadges())
+				badgeDialog(b);
+		}
+		user.getNewBadges().clear();
+	}
+	
 	//for images to blow them up throughout app
 	public void loadImage(View view)
 	{

@@ -127,7 +127,7 @@ public class ContactsActivity extends BaseActivity
 	// onClick for items to bring
 	public void newMessageButton(View view)
 	{
-		loadDialog.show();
+		//loadDialog.show();
 		final String CONTENT = "SELECT_FRIEND";
 		Intent intent = new Intent(this, UserListActivity.class);
 		intent.putExtra("email", user.getEmail());
@@ -149,9 +149,15 @@ public class ContactsActivity extends BaseActivity
 			if (itemView == null)
 				itemView = inflater.inflate(R.layout.list_row_contact, parent, false);
 			final Contact c = contacts.get(position);
-			TextView contactName = (TextView) itemView.findViewById(R.id.contactName);
 			TextView messageBody = (TextView) itemView.findViewById(R.id.messageBody);
 			TextView messageDate = (TextView) itemView.findViewById(R.id.messageDate);
+			TextView contactName = (TextView) itemView.findViewById(R.id.contactName);
+			if (c.getReadByDateString().equals("0000-00-00 00:00:00"))
+			{
+				//TODO: finish highlight of unread rows / test
+				messageBody.setBackgroundColor(getResources().getColor(R.color.yellow));
+			}
+			
 			ImageButton contactImage = (ImageButton) itemView.findViewById(R.id.contactImage);
 		    
 			if (user.getImage() != null)

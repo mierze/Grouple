@@ -92,7 +92,7 @@ public class UserListActivity extends BaseActivity
 			setRole();
 			actionBarTitle = "Attending " + event.getName();
 		}
-		populateUsers();
+		updateUI();
 
 		// calling next functions to execute
 		initActionBar(actionBarTitle, true);
@@ -186,8 +186,9 @@ public class UserListActivity extends BaseActivity
 	}
 
 	// populates a list of users
-	private void populateUsers()
+	private void updateUI()
 	{
+		super.updateUI(user);
 		String sadGuyText = "";
 
 		if (CONTENT.equals(CONTENT_TYPE.GROUP_MEMBERS.toString()))
@@ -250,14 +251,14 @@ public class UserListActivity extends BaseActivity
 						if (event.getX() - historicX < -DELTA)
 						{
 							GLOBAL.getToast(UserListActivity.this, "HASJDFHLAHSFDJHAF").show();
-							// populateUsers();
+							// updateUI();
 							return true;
 						}
 						else if (event.getX() - historicX > DELTA)
 						{
 							GLOBAL.getToast(UserListActivity.this, "HASJDFHLAHSFDJHAF").show();
 							// users.remove(position);
-							// populateUsers();
+							// updateUI();
 							return true;
 						}
 						break;
@@ -335,11 +336,15 @@ public class UserListActivity extends BaseActivity
 		if (EMAIL != null)
 			user = GLOBAL.getUser(EMAIL);
 		else
+		{		
 			user = GLOBAL.getCurrentUser();
+			user.fetchExperience(this);
+		}
 		if (user == null)
 		{
 			user = GLOBAL.getUser(EMAIL);
 			GLOBAL.setCurrentUser(user);
+			user.fetchExperience(this);
 		}
 		addNew = (Button) findViewById(R.id.addNewButtonLiA);
 	}
@@ -352,6 +357,7 @@ public class UserListActivity extends BaseActivity
 	{
 		user.fetchFriends(this);
 		user.fetchFriendRequests(this);
+		user.fetchExperience(this);
 		if (group != null)
 			group.fetchMembers(this);
 		if (event != null)
@@ -380,7 +386,7 @@ public class UserListActivity extends BaseActivity
 		}
 		else
 		{
-		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("user_data"));
+			LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("user_data"));
 		}
 		fetchData();
 		load();
@@ -396,7 +402,7 @@ public class UserListActivity extends BaseActivity
 			// Extract data included in the Intent
 			String type = intent.getStringExtra("message");
 			// repopulate views
-			populateUsers();
+			updateUI();
 		}
 	};
 
@@ -603,7 +609,7 @@ public class UserListActivity extends BaseActivity
 					bufferID = -1;
 
 					// CALLING CORRESPONDING METHOD TO REPOPULATE
-					populateUsers();
+					updateUI();
 				}
 				else
 				{
