@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -16,8 +15,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.util.SparseArray;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -270,14 +267,16 @@ public class EventProfileActivity extends BaseActivity
 	{
 		for (EventItem item : items)
 		{
-			int id = item.getID();
+			String id = Integer.toString(item.getID());
 			// grab the email of friend to add
 			String email = item.getEmail();
+			String name = item.getName();
+			String eventID = Integer.toString(event.getID());
 			// grab the role of friend to add
 			if (email.equals(user.getEmail()) || email.equals(""))
 			{
 				new updateItemChecklistTask().execute("http://68.59.162.183/android_connect/update_item_checklist.php",
-						Integer.toString(id), email);
+						id, email, name, eventID, "update");
 			}
 		}
 	}
@@ -290,7 +289,9 @@ public class EventProfileActivity extends BaseActivity
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("id", urls[1]));
 			nameValuePairs.add(new BasicNameValuePair("email", urls[2]));
-			nameValuePairs.add(new BasicNameValuePair("name", ""));//nothing since it is not being changed
+			nameValuePairs.add(new BasicNameValuePair("name", urls[3]));
+			nameValuePairs.add(new BasicNameValuePair("e_id", urls[4]));
+			nameValuePairs.add(new BasicNameValuePair("type", urls[5]));
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
 
@@ -329,7 +330,6 @@ public class EventProfileActivity extends BaseActivity
 		switch (view.getId())
 		{
 		case R.id.profileButton1:
-
 			// events
 			intent.putExtra("content", "EVENT_PARTICIPANTS");
 			break;

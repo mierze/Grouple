@@ -36,5 +36,4 @@ public class EventItem
 	{
 		this.id = id;
 	}
-	
 }

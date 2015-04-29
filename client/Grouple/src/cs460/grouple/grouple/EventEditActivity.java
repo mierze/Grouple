@@ -145,7 +145,7 @@ public class EventEditActivity extends BaseActivity
 		EXTRAS = getIntent().getExtras();
 		iv = (ImageView) findViewById(R.id.eventEditImageView);
 		event = GLOBAL.getEvent(EXTRAS.getInt("e_id"));
-
+		items = event.getItems();
 		// changes to layout in special case of repropose
 		if (EXTRAS.containsKey("reproposed"))
 		{
@@ -186,7 +186,7 @@ public class EventEditActivity extends BaseActivity
 		{
 			maxEditText.setText(String.valueOf(event.getMaxPart()));
 		}
-		//set the private/public radio buttons
+		// set the private/public radio buttons
 		if (event.getPub() == 1)
 		{
 			publicButton.setChecked(true);
@@ -197,9 +197,7 @@ public class EventEditActivity extends BaseActivity
 			privateButton.setChecked(true);
 			publicButton.setChecked(false);
 		}
-			
-
-		toBringButton.setText("Items (" + items.size() + ")");
+		toBringButton.setText("Items (" + getNumItemsSet() +  ")");
 		startEditText.setText(event.getStartText());
 		startDate = event.getStartDate();
 		endEditText.setText(event.getEndText());
@@ -256,6 +254,7 @@ public class EventEditActivity extends BaseActivity
 			// Extract data included in the Intent
 			String type = intent.getStringExtra("message");
 			// repopulate views
+			// TODO: this gets called a lot
 			updateUI();
 		}
 	};
@@ -312,19 +311,25 @@ public class EventEditActivity extends BaseActivity
 
 	public void saveToBringListButton(View view)
 	{
-		// first clear out final list to avoid any duplicate entries being added
-		// items.clear();
 		for (EditText toBringEditText : toBringEditTexts)
 		{
-			// when list is saved, save to final list but ignore any blank line
-			// entries
+			int index = toBringEditTexts.indexOf(toBringEditText);
+			// when list is saved, save to final list but ignore any blank lined
 			String name = toBringEditText.getText().toString();
+			EventItem item;
 			if (!name.equals(""))
 			{
-				int index = toBringEditTexts.indexOf(toBringEditText);
-				EventItem item = items.get(index);
-				if (item != null)
+				// was edited and has a name
+				if (index >= items.size())
 				{
+					// not in original item range
+					// make a new item and add it to items
+					item = new EventItem(-1, toBringEditText.getText().toString(), "");
+					items.add(item);
+				}
+				else
+				{
+					item = items.get(index);
 					// check names
 					if (!name.equals(item.getName()))
 					{
@@ -332,17 +337,34 @@ public class EventEditActivity extends BaseActivity
 						items.get(index).setName(name);
 					}
 				}
-				else
+			}
+			else
+			{
+				// name is blank
+				if (index < items.size())
 				{
-					// item doesn't exist, add it
-					item = new EventItem(-1, toBringEditText.getText().toString(), "");
-					items.add(item);
+					// if in index, flag it to delete
+					items.get(index).setName(name);
+					items.get(index).setEmail("");
 				}
 			}
 		}
 		updateItemChecklist();
 		toBringDialog.dismiss();
 
+	}
+	
+	private int getNumItemsSet()
+	{
+		int n = 0;
+		for (EventItem i : items)
+		{
+			if (!i.getName().equals(""))
+			{
+				n++;
+			}
+		}
+		return n;
 	}
 
 	// Button Listener for submit changes.
@@ -592,8 +614,8 @@ public class EventEditActivity extends BaseActivity
 		recurringDialog.show();
 
 	}
-	
-	//onClick for public/private radio buttons
+
+	// onClick for public/private radio buttons
 	public void radio(View view)
 	{
 		switch (view.getId())
@@ -668,12 +690,12 @@ public class EventEditActivity extends BaseActivity
 		// Grab the data from the editTexts and push it to the database.
 		public String readJSONFeed(String URL)
 		{
-			//1 for public, 0 for private.		
-			if(privateButton.isChecked())
+			// 1 for public, 0 for private.
+			if (privateButton.isChecked())
 			{
 				publicStatus = 0;
 			}
-			
+
 			StringBuilder stringBuilder = new StringBuilder();
 			HttpClient httpClient = new DefaultHttpClient();
 			// update_event.php using name/value pair
@@ -894,19 +916,26 @@ public class EventEditActivity extends BaseActivity
 	{
 		for (EventItem item : items)
 		{
-			String id = "";
-			if (item.getID() >= 0)
-				Integer.toString(item.getID());
+			String id = Integer.toString(item.getID());
 			// grab the email of friend to add
 			String email = item.getEmail();
 			String name = item.getName();
-			// grab the role of friend to add
-			if (email.equals(user.getEmail()) || email.equals(""))
+			String type = "update";
+			if (name.equals(""))
 			{
-				new updateItemChecklistTask().execute("http://68.59.162.183/android_connect/update_item_checklist.php",
-						id, email, name);
+				type = "delete";
 			}
+			if (item.getID() < 0)
+			{
+				type = "insert";
+			}
+			// grab the role of friend to add
+
+			new updateItemChecklistTask().execute("http://68.59.162.183/android_connect/update_item_checklist.php", id,
+					email, name, Integer.toString(event.getID()), type);
+
 		}
+		fetchData();
 	}
 
 	// TODO: make this submit no id so that php catches it and lets it auto-inc
@@ -919,6 +948,8 @@ public class EventEditActivity extends BaseActivity
 			nameValuePairs.add(new BasicNameValuePair("id", urls[1]));
 			nameValuePairs.add(new BasicNameValuePair("email", urls[2]));
 			nameValuePairs.add(new BasicNameValuePair("name", urls[3]));
+			nameValuePairs.add(new BasicNameValuePair("e_id", urls[4]));
+			nameValuePairs.add(new BasicNameValuePair("type", urls[5]));
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
 
@@ -964,7 +995,6 @@ public class EventEditActivity extends BaseActivity
 			{
 				if (confirmEditText.getText().toString().equals("Yes"))
 				{
-					System.out.println("DELETE THID BITCH");
 					new deleteEventTask().execute("http://68.59.162.183/android_connect/delete_event.php");
 				}
 				else if (confirmEditText.getText().toString().equals("No"))
