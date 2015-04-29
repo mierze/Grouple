@@ -11,6 +11,8 @@ import org.json.JSONObject;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -18,6 +20,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Process;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -66,10 +69,14 @@ public class HomeActivity extends BaseActivity
 			regid = getRegistrationId(context);
 			if (regid.isEmpty())
 			{
+				//Register then save to backend
 				registerInBackground();
 			}
-			//Store this in the backend, even though it may just store the same value.
-			sendRegistrationIdToBackend();
+			else
+			{
+				//Store this in the backend, even though it may just store the same value.
+				sendRegistrationIdToBackend();
+			}
 		} 
 		else
 		{
@@ -216,12 +223,22 @@ public class HomeActivity extends BaseActivity
 		{
 			if (GooglePlayServicesUtil.isUserRecoverableError(resultCode))
 			{
+				OnCancelListener playServicesCancel = new DialogInterface.OnCancelListener()
+				{
+
+					@Override
+					public void onCancel(DialogInterface dialog)
+					{
+						//could kill process here if they cancel the dialog however this is currently disabled to allow emulator development of the code.
+						//Process.killProcess(Process.myPid()); 
+					}
+				};
+				
 				GooglePlayServicesUtil.getErrorDialog(resultCode, this,
-						PLAY_SERVICES_RESOLUTION_REQUEST).show();
+						PLAY_SERVICES_RESOLUTION_REQUEST,playServicesCancel).show();
 			} else
 			{
-				Log.i(TAG, "This device is not supported.");
-				finish();
+				Process.killProcess(Process.myPid()); 
 			}
 			return false;
 		}
@@ -248,6 +265,7 @@ public class HomeActivity extends BaseActivity
 		editor.putString(PROPERTY_REG_ID, regId);
 		editor.putInt(PROPERTY_APP_VERSION, appVersion);
 		editor.commit();
+		sendRegistrationIdToBackend();
 	}
 
 	/**
