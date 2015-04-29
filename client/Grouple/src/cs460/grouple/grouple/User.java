@@ -583,10 +583,11 @@ public class User extends Entity
 		for (Contact c : contacts)
 		{
 			String otherEmail2 = c.getSender().equals(getEmail()) ? c.getReceiver() : c.getSender();
-			if (otherEmail2.equals(c.getOtherEmail()))
+			if (otherEmail2.equals(contact.getOtherEmail()))
 			{
 				contains = true;
 				indexFound = contacts.indexOf(c);
+				break;
 			}
 		}
 		if (!contains)
@@ -595,7 +596,7 @@ public class User extends Entity
 			// this user
 			contacts.add(contact);
 		}
-		else if (contacts.get(indexFound).getDate().compareTo(contact.getDate()) < 0)
+		else if (contacts.get(indexFound).getID() < contact.getID())
 		{
 			contacts.set(indexFound, contact);
 			System.out.println("The old message has been replaced and is now:" + contacts.get(indexFound).getMessage());

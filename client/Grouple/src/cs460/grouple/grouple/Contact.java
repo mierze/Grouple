@@ -18,13 +18,14 @@ public class Contact
     private String sender;
     private String senderName;
     private String otherEmail;
+    private Global GLOBAL;
     protected String getOtherEmail()
 	{
 		return otherEmail;
 	}
-	protected void setOtherEmail(String sender, String receiver, String email)
+	private void setOtherEmail()
 	{
-		String otherEmail = sender.equals(email) ? receiver : sender;
+		String otherEmail = sender.equals(GLOBAL.getCurrentUser().getEmail()) ? receiver : sender;
 		this.otherEmail = otherEmail;
 	}
 
@@ -34,6 +35,7 @@ public class Contact
     
     protected Contact(String message, String rawDateString, String sender, String senderName, String receiver, String readByDateString)
     {
+    	GLOBAL = new Global();
     	this.message = message;
     	this.rawDateString = rawDateString;
     	dateString = parseDate(rawDateString);
@@ -41,6 +43,7 @@ public class Contact
     	this.senderName = senderName;
     	this.receiver = receiver;
     	this.readByDateString = readByDateString;
+    	setOtherEmail();
     }
     protected Contact(String message, Date date, String sender, String senderName, String receiver, String readByDateString)
     {
