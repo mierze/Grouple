@@ -9,6 +9,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import android.app.Application;
@@ -33,7 +34,8 @@ public class GcmUtility extends Application {
 	private String eventName;
 	private String eventID;
 	private ArrayList<String> multipleEmailList = new ArrayList<String>();
-	private ArrayList<String> chat_ids = new ArrayList<String>();
+	private ArrayList<String> reg_ids = new ArrayList<String>();
+	private ArrayList<Integer> g_id_list = new ArrayList<Integer>();
 	
 	enum CONTENT_TYPE 
 	{
@@ -78,19 +80,50 @@ public class GcmUtility extends Application {
 	{
 			new getMultipleRegIDsTask().execute("http://68.59.162.183/android_connect/get_chat_id.php", multipleEmailList.get(multipleEmailList.size()-1));			
 	}
-	
-	public void sendEventNotification(ArrayList<String> multipleEmailList, String eName,String eid, String notificationType) 
+	//Pass a g_id and it will return all of the reg_ids. If a member is in both groups, it will only add the reg_id once.
+	public void getRegIdByGid(ArrayList<Integer> g_ids)
 	{
-		//Set class variables
-		eventName = eName;
-		eventID = eid;
-		this.notificationType = notificationType;
-		this.multipleEmailList = multipleEmailList;
-		
-		//Get the RegID for each user.
-		getMultipleRegIDs();
-		
+		//TODO: maybe use new php
+		new getRegIdsByGidTask().execute("http://68.59.162.183/android_connect/get_reg_ids_by_g_id.php",g_id_list.get(g_id_list.size()-1).toString());
 	}
+	
+	//Get the RegID for the given email address and add it to chat_ids
+	public void sendEventInvite(ArrayList<Integer> g_ids, String eid)
+	{
+		//Need this filler method so we can set the notification type and call getRegIdByGid.
+		notificationType = "EVENT_INVITE";
+		eventID = eid;
+		g_id_list = g_ids;
+		getRegIdByGid(g_id_list);		
+	}
+	
+	public void sendEventUpdated(String eName, String e_id)
+	{
+		notificationType = "EVENT_UPDATE";
+		eventName = eName;
+		eventID = e_id;
+		new getRegIdsByEidTask().execute("http://68.59.162.183/android_connect/get_reg_ids_by_e_id.php", e_id);	
+	}
+	
+	public void sendEventApproved(String eName, String e_id)
+	{
+		notificationType = "EVENT_APPROVED";
+		eventName = eName;
+		eventID = e_id;
+		new getRegIdsByEidTask().execute("http://68.59.162.183/android_connect/get_reg_ids_by_e_id.php", e_id);	
+	}
+	
+	//public void sendEventNotification(String eName,String e_id, String notificationType) 
+	//{
+		//Set class variables
+	//	eventName = eName;
+	//	eventID = e_id;
+	//	this.notificationType = notificationType;
+		
+		//Get the RegID for each user in the event.
+	//	new getRegIdsByEidTask().execute("http://68.59.162.183/android_connect/get_reg_ids_by_e_id.php", e_id);	
+		
+	//}
 
 
 	private void sendFriendRequest() 
@@ -220,7 +253,7 @@ public class GcmUtility extends Application {
 
 	}
 	
-	private void sendEventInvite(final String eName, final String eid, final ArrayList<String> chat_ids) 
+	private void sendEventInviteTask() 
 	{
         new AsyncTask<Void, Void, String>() {
             @Override
@@ -233,9 +266,9 @@ public class GcmUtility extends Application {
                    data.putString("my_action", "cs460.grouple.grouple.ECHO_NOW");
                    data.putString("content", "EVENT_INVITE");
                    data.putString("sender", user.getEmail());
-                   data.putString("recipient",recipientRegID);
-                   data.putString("event_name", eName);
-                   data.putString("event_id", eid);
+                   data.putString("recipient",reg_ids.get(reg_ids.size()-1));
+                   //data.putString("event_name", eventName);
+                   data.putString("event_id", eventID);
                    //This is where we put our first and last name. That way the recipient knows who sent it.
                    data.putString("first", user.getFirstName());
                    data.putString("last", user.getLastName());
@@ -256,19 +289,20 @@ public class GcmUtility extends Application {
             @Override
             protected void onPostExecute(String msg)
             {
+            	
             	//Remove that regID from the need-to-send list.
-            	chat_ids.remove(chat_ids.size()-1);
-            	//Use fucking recurrsion to send it to the next user.
-            	if(!chat_ids.isEmpty())
+            	reg_ids.remove(reg_ids.size()-1);
+            	//Use  recurrsion to send it to the next user.
+            	if(!reg_ids.isEmpty())
             	{
-            		sendEventInvite(groupName,groupID,chat_ids);
+            		sendEventInviteTask();
             	}
             }
         }.execute(null, null, null);       
 
 	}
 	
-	private void sendEventApproved(final String eName, final String eid) 
+	private void sendEventApprovedTask() 
 	{
         new AsyncTask<Void, Void, String>() {
             @Override
@@ -282,8 +316,8 @@ public class GcmUtility extends Application {
                    data.putString("content", "EVENT_APPROVED");
                    data.putString("sender", user.getEmail());
                    data.putString("recipient",recipientRegID);
-                   data.putString("event_name", eName);
-                   data.putString("event_id", eid);
+                   data.putString("event_name", eventName);
+                   data.putString("event_id", eventID);
                    //This is where we put our first and last name. That way the recipient knows who sent it.
                    data.putString("first", user.getFirstName());
                    data.putString("last", user.getLastName());
@@ -302,14 +336,21 @@ public class GcmUtility extends Application {
             }
 
             @Override
-            protected void onPostExecute(String msg) {
-            	
+            protected void onPostExecute(String msg) 
+            {
+            	//Remove that regID from the need-to-send list.
+            	reg_ids.remove(reg_ids.size()-1);
+            	//Use  recurrsion to send it to the next user.
+            	if(!reg_ids.isEmpty())
+            	{
+            		sendEventApprovedTask();
+            	}
             }
         }.execute(null, null, null);
 
 	}
 	
-	private void sendEventUpdated(final String eName, final String eid) 
+	private void sendEventUpdatedTask() 
 	{
         new AsyncTask<Void, Void, String>() {
             @Override
@@ -323,8 +364,8 @@ public class GcmUtility extends Application {
                    data.putString("content", "EVENT_UPDATED");
                    data.putString("sender", user.getEmail());
                    data.putString("recipient",recipientRegID);
-                   data.putString("event_name", eName);
-                   data.putString("event_id", eid);
+                   data.putString("event_name", eventName);
+                   data.putString("event_id", eventID);
                    //This is where we put our first and last name. That way the recipient knows who sent it.
                    data.putString("first", user.getFirstName());
                    data.putString("last", user.getLastName());
@@ -343,8 +384,15 @@ public class GcmUtility extends Application {
             }
 
             @Override
-            protected void onPostExecute(String msg) {
-            	
+            protected void onPostExecute(String msg) 
+            {
+            	//Remove that regID from the need-to-send list.
+            	reg_ids.remove(reg_ids.size()-1);
+            	//Use  recurrsion to send it to the next user.
+            	if(!reg_ids.isEmpty())
+            	{
+            		sendEventUpdatedTask();
+            	}
             }
         }.execute(null, null, null);
 
@@ -381,22 +429,6 @@ public class GcmUtility extends Application {
 					else if(notificationType.equals("FRIEND_REQUEST_ACCEPTED"))
 					{
 						sendFriendRequestAccepted();
-					}
-					else if(notificationType.equals("GROUP_INVITE"))
-					{
-						sendGroupInvite(groupName,groupID,chat_ids);
-					}
-					else if(notificationType.equals("EVENT_INVITE"))
-					{
-						sendEventInvite(eventName,eventID,chat_ids);
-					}
-					else if(notificationType.equals("EVENT_APPROVED"))
-					{
-						sendEventApproved(eventName,eventID);
-					}
-					else if(notificationType.equals("EVENT_UPDATED"))
-					{
-						sendEventUpdated(eventName,eventID);
 					}
 				} 
 				else
@@ -436,7 +468,7 @@ public class GcmUtility extends Application {
 					
 					recipientRegID = id;
 					
-					chat_ids.add(recipientRegID);
+					reg_ids.add(recipientRegID);
 					
 					multipleEmailList.remove(multipleEmailList.size()-1);	
 					
@@ -450,14 +482,120 @@ public class GcmUtility extends Application {
 						//We have all the IDs, now let send the push notifications, based on type.
 						if(notificationType.equals("GROUP_INVITE"))
 						{
-							sendGroupInvite(groupName,groupID,chat_ids);
+							sendGroupInvite(groupName,groupID,reg_ids);
 						}
-						else if (notificationType.equals("EVENT_INVITE"))
+					}
+				} 
+				else
+				{
+					//Toast toast = GLOBAL.getToast(MessagesActivity.this, "Error getting GCM REG_ID.");
+					//toast.show();
+				}
+			} catch (Exception e)
+			{
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
+			}
+		}
+	}
+    
+	//This task gets your friend's regid
+    private class getRegIdsByEidTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected String doInBackground(String... urls)
+		{
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			//The recipient's email is urls[1]
+			nameValuePairs.add(new BasicNameValuePair("email", urls[1]));
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+		}
+
+		@Override
+		protected void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+				JSONArray jsonArray = jsonObject.getJSONArray("reg_ids");
+				System.out.println(jsonObject.getString("success"));
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					for(int i = 0; i < jsonArray.length(); i++)
+					{
+						JSONObject o = (JSONObject) jsonArray.get(i);
+						reg_ids.add(o.getString("reg_id"));
+					}
+					
+					if(notificationType.equals("EVENT_APPROVED"))
+					{
+						sendEventApprovedTask();
+					}
+					else if(notificationType.equals("EVENT_UPDATE"))
+					{
+						sendEventUpdatedTask();
+					}
+				} 
+				else
+				{
+					//Toast toast = GLOBAL.getToast(MessagesActivity.this, "Error getting GCM REG_ID.");
+					//toast.show();
+				}
+			} catch (Exception e)
+			{
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
+			}
+		}
+	}
+    
+  //This task gets your friend's regid
+    private class getRegIdsByGidTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected String doInBackground(String... urls)
+		{
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			//The recipient's email is urls[1]
+			nameValuePairs.add(new BasicNameValuePair("g_id", urls[1]));
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+		}
+
+		@Override
+		//TODO: 
+		protected void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+				JSONArray jsonArray = jsonObject.getJSONArray("reg_ids");
+				System.out.println(jsonObject.getString("success"));
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					for(int i = 0; i < jsonArray.length(); i++)
+					{
+						JSONObject o = (JSONObject) jsonArray.get(i);
+						if(!reg_ids.contains(o.getString("reg_id")))
 						{
-							sendEventInvite(eventName,groupID,chat_ids);
+							reg_ids.add(o.getString("reg_id"));
 						}
 						
 					}
+					
+					g_id_list.remove(g_id_list.size()-1);	
+					
+					//Use  recursion to get the next regID
+					if(!g_id_list.isEmpty())
+					{
+						getRegIdByGid(g_id_list);
+					}
+					else
+					{
+						//We have all the IDs, now let send the push notifications, based on type.
+						if(notificationType.equals("EVENT_INVITE"))
+						{
+							sendEventInviteTask();
+						}
+					}
+					
 				} 
 				else
 				{
