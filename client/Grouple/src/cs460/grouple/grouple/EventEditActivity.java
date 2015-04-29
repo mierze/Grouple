@@ -190,10 +190,12 @@ public class EventEditActivity extends BaseActivity
 		if (event.getPub() == 1)
 		{
 			publicButton.setChecked(true);
+			privateButton.setChecked(false);
 		}
 		else
 		{
 			privateButton.setChecked(true);
+			publicButton.setChecked(false);
 		}
 			
 

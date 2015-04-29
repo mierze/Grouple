@@ -166,7 +166,12 @@ public class BaseActivity extends ActionBarActivity implements OnClickListener
 			break;
 		case R.id.action_logout:
 			//Remove RegID
-			new deleteRegIDTask().execute("http://68.59.162.183/android_connect/delete_chat_id.php", user.getEmail());
+			//We can never remove regid from database without replacing it with another.
+			//if a user does clear their reg id from db, any other users who are trying to message this user will no longer be able to fetch the user's reg_id to use in GCM calls.
+			//It is okay to have multiple emails linked to the same reg_id.  (This will be common for such as a user who has two accounts and switches between them on the same device)
+			//However we must not display push notifications if the GCM recipient is not the user who is currently logged in.  We will simply discard those GCMs if they are received.
+			
+			//new deleteRegIDTask().execute("http://68.59.162.183/android_connect/delete_chat_id.php", user.getEmail());
 			GLOBAL.destroySession();
 			intent = new Intent(this, LoginActivity.class);
 			Intent CLOSE_ALL = new Intent("CLOSE_ALL");
@@ -258,7 +263,9 @@ public class BaseActivity extends ActionBarActivity implements OnClickListener
 		return builder;
 	}
 	
-	//This task gets your friend's regid
+	//no one should ever be calling this method
+	/*
+	//This task deletes your stored regid
     private class deleteRegIDTask extends AsyncTask<String, Void, String>
 	{
 		@Override
@@ -293,4 +300,5 @@ public class BaseActivity extends ActionBarActivity implements OnClickListener
 			}
 		}
 	}
+	*/
 }
