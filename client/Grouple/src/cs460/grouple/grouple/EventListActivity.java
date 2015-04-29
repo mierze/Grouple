@@ -319,17 +319,50 @@ public class EventListActivity extends BaseActivity
 	{
 		// Get the id.
 		final int e_id = e.getID();
-		new AlertDialog.Builder(this).setMessage("Are you sure you want to leave this event?").setCancelable(true)
-				.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+		
+		//check first to see if we're in 'declined' or 'past'
+		if(CONTENT.equals(CONTENT_TYPE.EVENTS_DECLINED.toString()))
+		{
+			//simply hide event from list
+			new AlertDialog.Builder(this).setMessage("Are you sure?  This will remove the event from your 'Declined Events' history.").setCancelable(true)
+			.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+			{
+				@Override
+				public void onClick(DialogInterface dialog, int id)
 				{
-					@Override
-					public void onClick(DialogInterface dialog, int id)
-					{
-						new performActionTask().execute("http://68.59.162.183/android_connect/leave_event.php",
-								Integer.toString(e_id));
-					}
-				}).setNegativeButton("Cancel", null).show();
-
+					new performActionTask().execute("http://68.59.162.183/android_connect/update_event_member.php",
+							Integer.toString(e_id));
+				}
+			}).setNegativeButton("Cancel", null).show();
+		}
+		else if(CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
+		{
+			//simply hide event from list
+			new AlertDialog.Builder(this).setMessage("Are you sure?  This will remove the event from your 'Past Events' history.").setCancelable(true)
+			.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+			{
+				@Override
+				public void onClick(DialogInterface dialog, int id)
+				{
+					new performActionTask().execute("http://68.59.162.183/android_connect/update_event_member.php",
+							Integer.toString(e_id));
+				}
+			}).setNegativeButton("Cancel", null).show();
+		}
+		else
+		{
+			//actually leave the event
+			new AlertDialog.Builder(this).setMessage("Are you sure you want to leave this event?").setCancelable(true)
+			.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+			{
+				@Override
+				public void onClick(DialogInterface dialog, int id)
+				{
+					new performActionTask().execute("http://68.59.162.183/android_connect/leave_event.php",
+							Integer.toString(e_id));
+				}
+			}).setNegativeButton("Cancel", null).show();
+		}
 	}
 
 	// Starts a USER/GROUP/EVENT profile
@@ -357,7 +390,20 @@ public class EventListActivity extends BaseActivity
 			// eid
 			nameValuePairs.add(new BasicNameValuePair("email", user.getEmail()));
 			//TODO: change to e_id
-			nameValuePairs.add(new BasicNameValuePair("eid", urls[1]));
+
+			if(urls[0].equals("http://68.59.162.183/android_connect/update_event_member.php"))
+			{
+				nameValuePairs.add(new BasicNameValuePair("remove", "no"));
+				nameValuePairs.add(new BasicNameValuePair("hidden", "1"));
+				nameValuePairs.add(new BasicNameValuePair("e_id", urls[1]));	
+			}
+			else
+			{
+				System.out.println("we werent in update_event_member.php");
+				nameValuePairs.add(new BasicNameValuePair("eid", urls[1]));
+			}
+			
+					
 
 			// calling readJSONFeed in Global, continues below in onPostExecute
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
@@ -381,9 +427,13 @@ public class EventListActivity extends BaseActivity
 						if (!message.equals("Event invite accepted!"))
 							message = "Event invite declined!";
 					}
+					if (CONTENT.equals(CONTENT_TYPE.EVENTS_DECLINED.toString()))
+					{
+						message = "Event cleared from Declined history!";
+					}
 					if (CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
 					{
-						message = "Past event removed!";
+						message = "Event cleared from Past history!";
 					}
 					Toast toast = GLOBAL.getToast(context, message);
 					toast.show();
