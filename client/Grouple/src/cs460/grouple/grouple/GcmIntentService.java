@@ -28,6 +28,7 @@ import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
@@ -167,10 +168,28 @@ public class GcmIntentService extends IntentService
 		{
 			Log.i(TAG, "Completed work @ " + SystemClock.elapsedRealtime());
 			// Post notification of received message.
-			sendNotification(MESSAGE);
+			if(GLOBAL.getCurrentUser() != null)
+			{
+				if(GLOBAL.isCurrentUser(RECEIVER))
+				{
+					//SEND THE NOTIFICATION TO A DEVICE IF AND ONLY WHEN RECEIVER IS THE USER LOGGED IN ON THAT DEVICE
+					// Release the wake lock provided by the WakefulBroadcastReceiver.
+					sendNotification(MESSAGE);
+				}
+				else
+				{
+					//CURRENT USER FOR THIS DEVICE DIDNT MATCH RECEIPIENT
+				}
+			}
+			else
+			{
+				//NO CURRENT USER FOR THIS DEVICE
+			}
+			
 			Log.i(TAG, "Received: " + EXTRAS.toString());
 		}
-		
+
+		//SHOULD WE BLOCK THIS RELEASE BASED ON CURRENT USER AS WELL?
 		// Release the wake lock provided by the WakefulBroadcastReceiver.
 		GcmBroadcastReceiver.completeWakefulIntent(intent);
 	}
@@ -180,12 +199,6 @@ public class GcmIntentService extends IntentService
 	// a GCM message.
 	private void sendNotification(String msg)
 	{
-		//checking a user is active, TODO: make sure receiver is always current user
-		if (GLOBAL.getCurrentUser() == null || !GLOBAL.isCurrentUser(RECEIVER))
-		{
-			User u = GLOBAL.getUser(RECEIVER);
-			GLOBAL.setCurrentUser(u);
-		}
 		updateMyActivity(this);// crash seems RECEIVER be here
 		Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
