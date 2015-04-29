@@ -21,10 +21,12 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -158,11 +160,11 @@ public class GcmIntentService extends IntentService
 		 */
 		if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR.equals(messageType))
 		{
-			sendNotification("Send error: " + EXTRAS.toString());
+			sendNotification("Send error: " + EXTRAS.toString(), intent);
 		}
 		else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED.equals(messageType))
 		{
-			sendNotification("Deleted messages on server: " + EXTRAS.toString());
+			sendNotification("Deleted messages on server: " + EXTRAS.toString(), intent);
 		}
 		else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType))
 		{
@@ -173,221 +175,274 @@ public class GcmIntentService extends IntentService
 				if(GLOBAL.isCurrentUser(RECEIVER))
 				{
 					//SEND THE NOTIFICATION TO A DEVICE IF AND ONLY WHEN RECEIVER IS THE USER LOGGED IN ON THAT DEVICE
-					// Release the wake lock provided by the WakefulBroadcastReceiver.
-					sendNotification(MESSAGE);
+					sendNotification(MESSAGE, intent);
 				}
 				else
 				{
 					//CURRENT USER FOR THIS DEVICE DIDNT MATCH RECEIPIENT
+					//don't create notification on this device
+					//sendNotification(MESSAGE, intent);
 				}
 			}
 			else
 			{
 				//NO CURRENT USER FOR THIS DEVICE
+				//don't create notification on this device
 			}
 			
 			Log.i(TAG, "Received: " + EXTRAS.toString());
 		}
-
-		//SHOULD WE BLOCK THIS RELEASE BASED ON CURRENT USER AS WELL?
-		// Release the wake lock provided by the WakefulBroadcastReceiver.
-		GcmBroadcastReceiver.completeWakefulIntent(intent);
 	}
 
 	// Put the message inRECEIVER a notification and post it.
 	// This is just one simple example of what you might choose RECEIVER do with
 	// a GCM message.
-	private void sendNotification(String msg)
+	private void sendNotification(String msg, Intent intent)
 	{
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+
+
+		//Note to todd/brett:  This line (updateMyActivity) will be not be called if one of the two if statements above ("don't create //notification on this device") are tripped.
+		//This won't happen often but it is certainly possible. Don't know what it does so didn't know if that mattered.  
+		//If it NEEDS to be called, maybe move it up before sendNotification method is activated?
+		//-Scott 
+
 		updateMyActivity(this);// crash seems RECEIVER be here
+
 		Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
 		mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
 		//Group Message Notification.
 		if (TYPE.equals(CONTENT_TYPE.GROUP_MESSAGE.toString()))
 		{
-			Intent notificationIntent = new Intent(this, EntityMessagesActivity.class);
-
-			notificationIntent.putExtra("CONTENT_TYPE", "GROUP");
-			notificationIntent.putExtra("g_id", GROUP_ID);
-			notificationIntent.putExtra("email", SENDER_EMAIL);
-			notificationIntent.putExtra("name", GROUP_NAME);
+			//first check whether user had setting was set to 'ON'
+			String setting = prefs.getString("androidGroupMessage", null);
+			if(setting.equals("1"))
+			{
 			
-			
-			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this).setContentTitle(NAME)
-			.setStyle(new NotificationCompat.BigTextStyle()
-			.bigText(SENDER_FIRST + " " + SENDER_LAST + " in " +GROUP_NAME+ ":" + msg))
-			.setSmallIcon(R.drawable.icon_grouple).setSound(soundUri).setContentText(msg);
-			notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent,
-			PendingIntent.FLAG_UPDATE_CURRENT);
-			mBuilder.setAutoCancel(true);
+				Intent notificationIntent = new Intent(this, EntityMessagesActivity.class);
 
-			// null check
-			mBuilder.setContentIntent(contentIntent);
-			mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+				notificationIntent.putExtra("CONTENT_TYPE", "GROUP");
+				notificationIntent.putExtra("g_id", GROUP_ID);
+				notificationIntent.putExtra("email", SENDER_EMAIL);
+				notificationIntent.putExtra("name", GROUP_NAME);
+				
+				
+				NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this).setContentTitle(NAME)
+				.setStyle(new NotificationCompat.BigTextStyle()
+				.bigText(SENDER_FIRST + " " + SENDER_LAST + " in " +GROUP_NAME+ ":" + msg))
+				.setSmallIcon(R.drawable.icon_grouple).setSound(soundUri).setContentText(msg);
+				notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent,
+				PendingIntent.FLAG_UPDATE_CURRENT);
+				mBuilder.setAutoCancel(true);
+
+				// null check
+				mBuilder.setContentIntent(contentIntent);
+				mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());		
+			}
 		}
 		//Event Message Notification.
 		else if(TYPE.equals(CONTENT_TYPE.EVENT_MESSAGE.toString()))
 		{
-			Intent notificationIntent = new Intent(this, EntityMessagesActivity.class);
+			//first check whether user had setting was set to 'ON'
+			String setting = prefs.getString("androidEventMessage", null);
+			if(setting.equals("1"))
+			{
+				Intent notificationIntent = new Intent(this, EntityMessagesActivity.class);
+				
+				notificationIntent.putExtra("CONTENT_TYPE", "EVENT");
+				notificationIntent.putExtra("e_id", EVENT_ID);
+				notificationIntent.putExtra("email", SENDER_EMAIL);
+				notificationIntent.putExtra("name", EVENT_NAME);
+				
+				
+				NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this).setContentTitle(NAME)
+				.setStyle(new NotificationCompat.BigTextStyle()
+				.bigText(SENDER_FIRST + " " + SENDER_LAST + " in " +EVENT_NAME+ ":" + msg))
+				.setSmallIcon(R.drawable.icon_grouple).setSound(soundUri).setContentText(msg);
+				notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent,
+				PendingIntent.FLAG_UPDATE_CURRENT);
+				mBuilder.setAutoCancel(true);
 			
-			notificationIntent.putExtra("CONTENT_TYPE", "EVENT");
-			notificationIntent.putExtra("e_id", EVENT_ID);
-			notificationIntent.putExtra("email", SENDER_EMAIL);
-			notificationIntent.putExtra("name", EVENT_NAME);
-			
-			
-			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this).setContentTitle(NAME)
-			.setStyle(new NotificationCompat.BigTextStyle()
-			.bigText(SENDER_FIRST + " " + SENDER_LAST + " in " +EVENT_NAME+ ":" + msg))
-			.setSmallIcon(R.drawable.icon_grouple).setSound(soundUri).setContentText(msg);
-			notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent,
-			PendingIntent.FLAG_UPDATE_CURRENT);
-			mBuilder.setAutoCancel(true);
-
-			// null check
-			mBuilder.setContentIntent(contentIntent);
-			mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+				// null check
+				mBuilder.setContentIntent(contentIntent);
+				mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+			}
 		}
 		//User Message Notification
 		else if (TYPE.equals(CONTENT_TYPE.USER_MESSAGE.toString()))
 		{
-			Intent notificationIntent = new Intent(getApplicationContext(), MessagesActivity.class);
-			
-			notificationIntent.putExtra("sender", SENDER_EMAIL);
-			notificationIntent.putExtra("name", SENDER_FIRST + " " + SENDER_LAST);
-			//notificationIntent.putExtra("email", RECEIVER);
-			notificationIntent.putExtra("email", SENDER_EMAIL);
-			
-			
-			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
-			.setContentTitle(SENDER_FIRST + " " + SENDER_LAST).setStyle(new NotificationCompat.BigTextStyle()
-			.bigText(msg)).setSmallIcon(R.drawable.icon_grouple).setSound(soundUri).setContentText(msg);
-			notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent,
-			PendingIntent.FLAG_UPDATE_CURRENT);
-			mBuilder.setAutoCancel(true);
-
-			// null check
-			mBuilder.setContentIntent(contentIntent);
-			mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+			//first check whether user had setting was set to 'ON'
+			String setting = prefs.getString("androidFriendMessage", null);
+			if(setting.equals("1"))
+			{
+				Intent notificationIntent = new Intent(getApplicationContext(), MessagesActivity.class);
+				
+				notificationIntent.putExtra("sender", SENDER_EMAIL);
+				notificationIntent.putExtra("name", SENDER_FIRST + " " + SENDER_LAST);
+				//notificationIntent.putExtra("email", RECEIVER);
+				notificationIntent.putExtra("email", SENDER_EMAIL);
+				
+				
+				NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
+				.setContentTitle(SENDER_FIRST + " " + SENDER_LAST).setStyle(new NotificationCompat.BigTextStyle()
+				.bigText(msg)).setSmallIcon(R.drawable.icon_grouple).setSound(soundUri).setContentText(msg);
+				notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent,
+				PendingIntent.FLAG_UPDATE_CURRENT);
+				mBuilder.setAutoCancel(true);
+	
+				// null check
+				mBuilder.setContentIntent(contentIntent);
+				mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+			}
 		}
 		//Friend request notification.
 		else if (TYPE.equals(CONTENT_TYPE.FRIEND_REQUEST.toString()))
 		{
-			Intent notificationIntent = new Intent(getApplicationContext(), UserListActivity.class);
-			notificationIntent.putExtra("name", SENDER_FIRST + " " + SENDER_LAST);
-			notificationIntent.putExtra("content", "FRIEND_REQUESTS");
-			notificationIntent.putExtra("email", RECEIVER);
-			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
-			.setContentTitle("New friend request from " + SENDER_FIRST + " " + SENDER_LAST + "!")
-			.setStyle(new NotificationCompat.BigTextStyle().bigText(SENDER_FIRST + " " + SENDER_LAST))
-			.setSmallIcon(R.drawable.icon_grouple).setSound(soundUri).setContentText(msg);
-
-			notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent,
-			PendingIntent.FLAG_UPDATE_CURRENT);
-			mBuilder.setAutoCancel(true);
-
-			// null check
-			mBuilder.setContentIntent(contentIntent);
-			mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+			//first check whether user had setting was set to 'ON'
+			String setting = prefs.getString("androidFriendReq", null);
+			if(setting.equals("1"))
+			{
+				Intent notificationIntent = new Intent(getApplicationContext(), UserListActivity.class);
+				notificationIntent.putExtra("name", SENDER_FIRST + " " + SENDER_LAST);
+				notificationIntent.putExtra("content", "FRIEND_REQUESTS");
+				notificationIntent.putExtra("email", RECEIVER);
+				NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
+				.setContentTitle("New friend request from " + SENDER_FIRST + " " + SENDER_LAST + "!")
+				.setStyle(new NotificationCompat.BigTextStyle().bigText(SENDER_FIRST + " " + SENDER_LAST))
+				.setSmallIcon(R.drawable.icon_grouple).setSound(soundUri).setContentText(msg);
+	
+				notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent,
+				PendingIntent.FLAG_UPDATE_CURRENT);
+				mBuilder.setAutoCancel(true);
+	
+				// null check
+				mBuilder.setContentIntent(contentIntent);
+				mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+			}
 		}
 		//Group Invite notification.
 		else if (TYPE.equals(CONTENT_TYPE.GROUP_INVITE.toString()))
 		{
-			Intent notificationIntent = new Intent(getApplicationContext(), GroupListActivity.class);
-			
-			notificationIntent.putExtra("name", SENDER_FIRST + " " + SENDER_LAST);
-			notificationIntent.putExtra("content", "GROUP_INVITES");
-			
-			//TODO:???GLOBAL.getCurrentUser().fetchFriendRequests();
-			//GLOBAL.getCurrentUser().fetchUserInfo();
-			
-			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
-			.setContentTitle("New group invite to " + GROUP_NAME + "!")
-			.setContentText("From: " + SENDER_FIRST + " " + SENDER_LAST + "!")
-			.setStyle(new NotificationCompat.BigTextStyle().bigText(SENDER_FIRST + " " + SENDER_LAST))
-			.setSmallIcon(R.drawable.icon_grouple).setSound(soundUri).setContentText(msg);
-			notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent,	PendingIntent.FLAG_UPDATE_CURRENT);
-			mBuilder.setAutoCancel(true);
+			//first check whether user had setting was set to 'ON'
+			String setting = prefs.getString("androidGroupReq", null);
+			if(setting.equals("1"))
+			{
+				Intent notificationIntent = new Intent(getApplicationContext(), GroupListActivity.class);
+				
+				notificationIntent.putExtra("name", SENDER_FIRST + " " + SENDER_LAST);
+				notificationIntent.putExtra("content", "GROUP_INVITES");
+				
+				//TODO:???GLOBAL.getCurrentUser().fetchFriendRequests();
+				//GLOBAL.getCurrentUser().fetchUserInfo();
+				
+				NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
+				.setContentTitle("New group invite to " + GROUP_NAME + "!")
+				.setContentText("From: " + SENDER_FIRST + " " + SENDER_LAST + "!")
+				.setStyle(new NotificationCompat.BigTextStyle().bigText(SENDER_FIRST + " " + SENDER_LAST))
+				.setSmallIcon(R.drawable.icon_grouple).setSound(soundUri).setContentText(msg);
+				notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent,	PendingIntent.FLAG_UPDATE_CURRENT);
+				mBuilder.setAutoCancel(true);
 
-			// null check
-			mBuilder.setContentIntent(contentIntent);
-			mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+				// null check
+				mBuilder.setContentIntent(contentIntent);
+				mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+			}
 		}
 		//Event Invite Notification.
-		else if (TYPE.equals(CONTENT_TYPE.EVENT_INVITE.toString()))
+		else if(TYPE.equals(CONTENT_TYPE.EVENT_INVITE.toString()))
 		{
-			Intent notificationIntent = new Intent(getApplicationContext(), EventListActivity.class);
-		
-			notificationIntent.putExtra("name", SENDER_FIRST + " " + SENDER_LAST);
-			notificationIntent.putExtra("content", "EVENT_INVITES");
-
-			//TODO:???GLOBAL.getCurrentUser().fetchFriendRequests();
-			//GLOBAL.getCurrentUser().fetchUserInfo();
+			//first check whether user had setting was set to 'ON'
+			String setting = prefs.getString("androidEventReq", null);
+			if(setting.equals("1"))
+			{
+				Intent notificationIntent = new Intent(getApplicationContext(), EventListActivity.class);
 			
-			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
-			.setContentTitle("New Event Invite")
-			.setContentText(EVENT_NAME)
-			.setStyle(new NotificationCompat.BigTextStyle().bigText(SENDER_FIRST + " " + SENDER_LAST))
-			.setSmallIcon(R.drawable.icon_grouple).setSound(soundUri).setContentText(msg);
-			notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent,	PendingIntent.FLAG_UPDATE_CURRENT);
-			mBuilder.setAutoCancel(true);
-
-			// null check
-			mBuilder.setContentIntent(contentIntent);
-			mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+				notificationIntent.putExtra("name", SENDER_FIRST + " " + SENDER_LAST);
+				notificationIntent.putExtra("content", "EVENT_INVITES");
+	
+				//TODO:???GLOBAL.getCurrentUser().fetchFriendRequests();
+				//GLOBAL.getCurrentUser().fetchUserInfo();
+				
+				NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
+				.setContentTitle("New Event Invite")
+				.setContentText(EVENT_NAME)
+				.setStyle(new NotificationCompat.BigTextStyle().bigText(SENDER_FIRST + " " + SENDER_LAST))
+				.setSmallIcon(R.drawable.icon_grouple).setSound(soundUri).setContentText(msg);
+				notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent,	PendingIntent.FLAG_UPDATE_CURRENT);
+				mBuilder.setAutoCancel(true);
+	
+				// null check
+				mBuilder.setContentIntent(contentIntent);
+				mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+			}
 		}
 		//Event Invite Notification.
 		else if (TYPE.equals(CONTENT_TYPE.EVENT_APPROVED.toString()))
 		{
-			Intent notificationIntent = new Intent(getApplicationContext(), EventProfileActivity.class);
-			
-			notificationIntent.putExtra("e_id", EVENT_ID);
-			notificationIntent.putExtra("name", SENDER_FIRST + " " + SENDER_LAST);
-			//TODO
-			
-			//TODO:???GLOBAL.getCurrentUser().fetchFriendRequests();
-			//GLOBAL.getCurrentUser().fetchUserInfo();
-					
-			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
-			.setContentTitle("Grouple event has been approved!")
-			.setContentText(EVENT_NAME)
-			.setStyle(new NotificationCompat.BigTextStyle().bigText(SENDER_FIRST + " " + SENDER_LAST))
-			.setSmallIcon(R.drawable.icon_grouple).setSound(soundUri).setContentText(msg);
-			notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent,	PendingIntent.FLAG_UPDATE_CURRENT);
-			mBuilder.setAutoCancel(true);
-
-			// null check
-			mBuilder.setContentIntent(contentIntent);
-			mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+			//first check whether user had setting was set to 'ON'
+			//this setting is the one called 'Event Updates' button in settingsActivity
+			String setting = prefs.getString("androidEventUpcoming", null);
+			if(setting.equals("1"))
+			{
+				Intent notificationIntent = new Intent(getApplicationContext(), EventProfileActivity.class);
+				
+				notificationIntent.putExtra("e_id", EVENT_ID);
+				notificationIntent.putExtra("name", SENDER_FIRST + " " + SENDER_LAST);
+				//TODO
+				
+				//TODO:???GLOBAL.getCurrentUser().fetchFriendRequests();
+				//GLOBAL.getCurrentUser().fetchUserInfo();
+						
+				NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
+				.setContentTitle("Grouple event has been approved!")
+				.setContentText(EVENT_NAME)
+				.setStyle(new NotificationCompat.BigTextStyle().bigText(SENDER_FIRST + " " + SENDER_LAST))
+				.setSmallIcon(R.drawable.icon_grouple).setSound(soundUri).setContentText(msg);
+				notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent,	PendingIntent.FLAG_UPDATE_CURRENT);
+				mBuilder.setAutoCancel(true);
+	
+				// null check
+				mBuilder.setContentIntent(contentIntent);
+				mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+			}
 		}
 		else if (TYPE.equals(CONTENT_TYPE.FRIEND_REQUEST_ACCEPTED.toString()))
 		{
-			Intent notificationIntent = new Intent(getApplicationContext(), UserProfileActivity.class);
-			
-			notificationIntent.putExtra("email", SENDER_EMAIL);
-			notificationIntent.putExtra("name", SENDER_FIRST + " " + SENDER_LAST);
-					
-			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
-			.setContentTitle("Grouple")
-			.setContentText(SENDER_FIRST+" "+SENDER_LAST+" accepted your friend request!")
-			.setStyle(new NotificationCompat.BigTextStyle().bigText(SENDER_FIRST + " " + SENDER_LAST))
-			.setSmallIcon(R.drawable.icon_grouple).setSound(soundUri).setContentText(msg);
-			notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent,	PendingIntent.FLAG_UPDATE_CURRENT);
-			mBuilder.setAutoCancel(true);
-
-			// null check
-			mBuilder.setContentIntent(contentIntent);
-			mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+			//first check whether user had setting was set to 'ON'
+			String setting = prefs.getString("androidFriendReq", null);
+			if(setting.equals("1"))
+			{
+				Intent notificationIntent = new Intent(getApplicationContext(), UserProfileActivity.class);
+				
+				notificationIntent.putExtra("email", SENDER_EMAIL);
+				notificationIntent.putExtra("name", SENDER_FIRST + " " + SENDER_LAST);
+						
+				NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
+				.setContentTitle("Grouple")
+				.setContentText(SENDER_FIRST+" "+SENDER_LAST+" accepted your friend request!")
+				.setStyle(new NotificationCompat.BigTextStyle().bigText(SENDER_FIRST + " " + SENDER_LAST))
+				.setSmallIcon(R.drawable.icon_grouple).setSound(soundUri).setContentText(msg);
+				notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent,	PendingIntent.FLAG_UPDATE_CURRENT);
+				mBuilder.setAutoCancel(true);
+	
+				// null check
+				mBuilder.setContentIntent(contentIntent);
+				mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+			}
 		}	
+		
+		// Now that GCM creation is finished, release the wake lock provided by the WakefulBroadcastReceiver.
+		GcmBroadcastReceiver.completeWakefulIntent(intent);
 	}
 
 	// This function will create an intent. This intent must take as parameter
