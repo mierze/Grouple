@@ -32,6 +32,7 @@ public class EventAddGroupsActivity extends BaseActivity
 	private User user;
 	private String email;
 	private String ID;
+	private GcmUtility gcmUtil;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -51,6 +52,7 @@ public class EventAddGroupsActivity extends BaseActivity
 		ID = Integer.toString(extras.getInt("e_id"));
 		//load our list of current groups.  key is group id -> value is group name
 		allGroups = user.getGroups();
+		gcmUtil = new GcmUtility(GLOBAL);
 		if (allGroups != null)
 			System.out.println("AT THIS TIME ALL GROUPS IS THIS BIG: " + allGroups.size());
 		else
@@ -158,6 +160,7 @@ public class EventAddGroupsActivity extends BaseActivity
 		//loop through list of added to add all the groups to the event
 		int size = added.size();
 		System.out.println("Total count of groups to process: "+size);
+		ArrayList<Integer> addedIdList = new ArrayList<Integer>();
 		for(int i = 0; i < size; i++) 
 		{
 			System.out.println("adding group #"+i+"/"+added.size());
@@ -165,13 +168,15 @@ public class EventAddGroupsActivity extends BaseActivity
 			int key = added.keyAt(i);
 			//grab the gid of group to add
 			String ID = String.valueOf(allGroups.get(key).getID());
-				
+			addedIdList.add(Integer.parseInt(ID));	
 			System.out.println("adding group: "+ID);		
 			
 			//initiate add of group
 			new EventAddGroupTask().execute("http://68.59.162.183/"
 					+ "android_connect/add_eventmember.php", ID, email, ID);
-		}		
+		}
+
+		gcmUtil.sendEventInvite(addedIdList,ID);
 	}
 	
 	//aSynch task to add individual group to event.

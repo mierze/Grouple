@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2013 The Android Open Source Project
  *
@@ -66,7 +67,7 @@ public class GcmIntentService extends IntentService
 	// types of intents
 	enum CONTENT_TYPE
 	{
-		FRIEND_REQUEST, USER_MESSAGE, GROUP_MESSAGE, EVENT_MESSAGE, GROUP_INVITE, EVENT_INVITE, EVENT_UPDATE,EVENT_APPROVED,FRIEND_REQUEST_ACCEPTED;
+		FRIEND_REQUEST, USER_MESSAGE, GROUP_MESSAGE, EVENT_MESSAGE, GROUP_INVITE, EVENT_INVITE, EVENT_UPDATED,EVENT_APPROVED,FRIEND_REQUEST_ACCEPTED;
 	}
 
 	// construcRECEIVERr
@@ -222,6 +223,7 @@ public class GcmIntentService extends IntentService
 			{
 			
 				Intent notificationIntent = new Intent(this, EntityMessagesActivity.class);
+<<<<<<< HEAD
 
 				notificationIntent.putExtra("CONTENT_TYPE", "GROUP");
 				notificationIntent.putExtra("g_id", GROUP_ID);
@@ -238,6 +240,24 @@ public class GcmIntentService extends IntentService
 				PendingIntent.FLAG_UPDATE_CURRENT);
 				mBuilder.setAutoCancel(true);
 
+=======
+
+				notificationIntent.putExtra("CONTENT_TYPE", "GROUP");
+				notificationIntent.putExtra("g_id", GROUP_ID);
+				notificationIntent.putExtra("email", SENDER_EMAIL);
+				notificationIntent.putExtra("name", GROUP_NAME);
+				
+				
+				NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this).setContentTitle(NAME)
+				.setStyle(new NotificationCompat.BigTextStyle()
+				.bigText(SENDER_FIRST + " " + SENDER_LAST + " in " +GROUP_NAME+ ":" + msg))
+				.setSmallIcon(R.drawable.icon_grouple).setSound(soundUri).setContentText(msg);
+				notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent,
+				PendingIntent.FLAG_UPDATE_CURRENT);
+				mBuilder.setAutoCancel(true);
+
+>>>>>>> origin/master
 				// null check
 				mBuilder.setContentIntent(contentIntent);
 				mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());		
@@ -414,6 +434,39 @@ public class GcmIntentService extends IntentService
 				mBuilder.setContentIntent(contentIntent);
 				mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
 			}
+<<<<<<< HEAD
+		}
+		else if (TYPE.equals(CONTENT_TYPE.EVENT_UPDATED.toString()))
+		{
+			//first check whether user had setting was set to 'ON'
+			//this setting is the one called 'Event Updates' button in settingsActivity
+			String setting = prefs.getString("androidEventUpcoming", null);
+			if(setting.equals("1"))
+			{
+				Intent notificationIntent = new Intent(getApplicationContext(), EventProfileActivity.class);
+				
+				notificationIntent.putExtra("e_id", EVENT_ID);
+				notificationIntent.putExtra("name", SENDER_FIRST + " " + SENDER_LAST);
+				//TODO
+				
+				//TODO:???GLOBAL.getCurrentUser().fetchFriendRequests();
+				//GLOBAL.getCurrentUser().fetchUserInfo();
+						
+				NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
+				.setContentTitle("Grouple event has been updated!")
+				.setContentText(EVENT_NAME)
+				.setStyle(new NotificationCompat.BigTextStyle().bigText(SENDER_FIRST + " " + SENDER_LAST))
+				.setSmallIcon(R.drawable.icon_grouple).setSound(soundUri).setContentText(msg);
+				notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent,	PendingIntent.FLAG_UPDATE_CURRENT);
+				mBuilder.setAutoCancel(true);
+	
+				// null check
+				mBuilder.setContentIntent(contentIntent);
+				mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+			}
+=======
+>>>>>>> origin/master
 		}
 		else if (TYPE.equals(CONTENT_TYPE.FRIEND_REQUEST_ACCEPTED.toString()))
 		{
