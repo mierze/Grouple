@@ -30,7 +30,9 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
-/*
+/**
+ * 
+ * @author Brett, Todd, Scott
  * HomeActivity displays the primary navigation and welcome screen after logging in.
  */
 public class HomeActivity extends BaseActivity

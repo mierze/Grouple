@@ -18,7 +18,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView.ScaleType;
 
-
+/**
+ * 
+ * @author Brett, Todd, Scott
+ * EventDataService helps generate event information updates
+ *
+ */
 public class EventDataService extends Service {
 	
 	private User user;

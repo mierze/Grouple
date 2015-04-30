@@ -9,9 +9,11 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-
-/*
- * EventsActivity has not been implemented yet.
+/**
+ * 
+ * @author Brett, Todd, Scott
+ * EventsActivity is the main menu for the Events navigation, allowing the user to create an event or view events of various types.
+ * 
  */
 public class EventsActivity extends BaseActivity
 {

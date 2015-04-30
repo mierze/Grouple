@@ -26,9 +26,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-/*
- * ListActivity is an activity that displays lists of different types, 
- * and performs relevant functions based on the situation
+/**
+ * 
+ * @author Brett, Todd, Scott
+ * EventListActivity displays vertical event lists of different types and performs relevant
+ * functions based on the situation and type
  */
 public class EventListActivity extends BaseActivity
 {

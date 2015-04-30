@@ -9,9 +9,10 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-
-/*
- * FriendsActivity displays displays the friend navigation page for the user.
+/**
+ * 
+ * @author Brett, Todd, Scott
+ * FriendsActivity is the navigation menu of Friends, allowing user to view or add friends.
  */
 public class FriendsActivity extends BaseActivity
 {

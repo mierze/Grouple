@@ -24,8 +24,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 //TODO: add a button for inviting friends
-/*
- * UserActivity displays the profile page of any user
+/**
+ * 
+ * @author Brett, Todd, Scott
+ * GroupProfileActivity displays the current profile of a Group
  */
 public class GroupProfileActivity extends BaseActivity
 {

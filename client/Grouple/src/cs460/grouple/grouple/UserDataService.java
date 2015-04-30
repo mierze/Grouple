@@ -19,7 +19,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView.ScaleType;
 
-
+/**
+ * 
+ * @author Brett, Todd, Scott
+ * UserDataService helps generate User information updates
+ * 
+ */
 public class UserDataService extends Service {
 	
 	private User user;

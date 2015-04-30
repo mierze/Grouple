@@ -1,5 +1,9 @@
 package cs460.grouple.grouple;
-
+/**
+ * 
+ * @author Brett, Todd, Scott
+ * Badge holds information about an individual user reward
+ */
 public class Badge
 {
 	private static int id_AUTOINC = 0;

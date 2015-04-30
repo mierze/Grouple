@@ -25,6 +25,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+/**
+ * 
+ * @author Brett, Todd, Scott
+ * ManageMembersActivity displays a vertical list of group members and allows for various functions.
+ * 
+ */
 public class ManageMembersActivity extends BaseActivity {
 
 	private Group group;

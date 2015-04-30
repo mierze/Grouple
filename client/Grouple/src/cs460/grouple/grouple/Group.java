@@ -16,6 +16,12 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+/**
+ * 
+ * @author Brett, Todd, Scott
+ * Group holds information about an individual Group.
+ * 
+ */
 public class Group extends Entity 
 {
 	private int id; //id of the group

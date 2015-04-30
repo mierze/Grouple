@@ -15,6 +15,12 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+/**
+ * 
+ * @author Brett, Todd, Scott
+ * Event contains information about a specific event
+ *
+ */
 public class Event extends Entity
 {
 	private int id;

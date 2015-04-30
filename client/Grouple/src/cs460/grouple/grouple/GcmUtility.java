@@ -1,11 +1,8 @@
 package cs460.grouple.grouple;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -13,12 +10,16 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import android.app.Application;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
+/**
+ * 
+ * @author Brett, Todd, Scott
+ * GcmUtility handles the GCM for various areas of the application
+ * 
+ */
 public class GcmUtility extends Application {
 	
 	private String SENDER_ID = "957639483805"; 

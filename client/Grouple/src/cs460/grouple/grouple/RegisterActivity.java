@@ -20,8 +20,10 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-/*
- * HomeActivity allows the user to register for a new Grouple account.
+/**
+ * 
+ * @author Brett, Todd, Scott
+ * RegisterActivity allows the user to register for a new Grouple account.
  */
 public class RegisterActivity extends Activity
 {

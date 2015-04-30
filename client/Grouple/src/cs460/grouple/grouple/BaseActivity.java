@@ -31,6 +31,11 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+/**
+ * 
+ * @author Brett, Todd, Scott
+ * BaseActivity is a helper class for other Activities that share common functions
+ */
 public class BaseActivity extends ActionBarActivity implements OnClickListener
 {
 	protected Global GLOBAL;

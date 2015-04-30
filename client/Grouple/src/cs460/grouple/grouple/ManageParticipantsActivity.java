@@ -27,6 +27,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+/**
+ * 
+ * @author Brett, Todd, Scott
+ * displays a vertical list of event participants and allows for various functions.
+ * 
+ */
 public class ManageParticipantsActivity extends BaseActivity
 {
 	private User user;

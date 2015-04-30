@@ -21,6 +21,12 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.util.SparseArray;
 
+/**
+ * 
+ * @author Brett, Todd, Scott
+ * User holds information about an individual User.
+ * 
+ */
 @SuppressLint("SimpleDateFormat")
 public class User extends Entity
 {

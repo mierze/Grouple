@@ -16,7 +16,6 @@ import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
@@ -25,13 +24,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
-import cs460.grouple.grouple.EventListActivity.CONTENT_TYPE;
-
+/**
+ * 
+ * @author Brett, Todd, Scott
+ * EntityMessagesActivity 
+ *
+ */
 public class EntityMessagesActivity extends BaseActivity
 {
 	private User user; // will be null for now

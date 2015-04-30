@@ -14,7 +14,6 @@ import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -29,8 +28,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-/*
- * HomeActivity is Launcher activity and allows the user to log in to his/her acccount.
+/**
+ * 
+ * @author Brett, Todd, Scott
+ * LoginActivity is Launcher activity and allows the user to perform various account functions.
  */
 public class LoginActivity extends Activity
 {

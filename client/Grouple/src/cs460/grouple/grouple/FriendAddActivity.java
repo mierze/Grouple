@@ -7,7 +7,6 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,8 +15,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-/*
- * AddFriendActivity allows user to add another user as a friend.
+/**
+ * 
+ * @author Brett, Todd, Scott
+ * FriendAddActivity allows user to add another user as a friend.
+ * 
  */
 public class FriendAddActivity extends BaseActivity
 {
