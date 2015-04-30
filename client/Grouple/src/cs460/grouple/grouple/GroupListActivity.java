@@ -30,9 +30,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-/*
- * ListActivity is an activity that displays lists of different types, 
- * and performs relevant functions based on the situation
+/**
+ * 
+ * @author Brett, Todd, Scott
+ * GroupListActivity displays vertical group lists of different types and performs relevant
+ * functions based on the situation and type
  */
 public class GroupListActivity extends BaseActivity
 {

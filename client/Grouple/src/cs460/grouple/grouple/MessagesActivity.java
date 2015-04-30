@@ -28,8 +28,12 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-/*
- * MessagesActivity has not been implemented yet.
+
+/**
+ * 
+ * @author Brett, Todd, Scott
+ * MessagesActivity creates the vertical list of side-by-side messaging and provides messaging functions.
+ * 
  */
 public class MessagesActivity extends BaseActivity
 {

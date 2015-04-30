@@ -26,6 +26,12 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+/**
+ * 
+ * @author Brett, Todd, Scott
+ * SettingsActivity allows for user to modify push and email notification settings and other account-specific functions.
+ * 
+ */
 public class SettingsActivity extends BaseActivity
 {
     private ArrayList<String> settingsArray;

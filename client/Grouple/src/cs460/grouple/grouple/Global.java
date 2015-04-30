@@ -33,7 +33,9 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-/*
+/**
+ * 
+ * @author Brett, Todd, Scott
  * Global holds data that has been loaded into the application
  */
 public class Global extends Application

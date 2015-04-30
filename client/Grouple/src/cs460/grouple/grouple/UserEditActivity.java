@@ -51,8 +51,10 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-/*
- * EditProfileActivity allows user to make changes to his/her profile.
+/**
+ * 
+ * @author Brett, Todd, Scott
+ * UserEditActivity allows user to make changes to user profile information.
  */
 public class UserEditActivity extends BaseActivity
 {

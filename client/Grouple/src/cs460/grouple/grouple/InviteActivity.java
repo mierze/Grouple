@@ -23,6 +23,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+/**
+ * 
+ * @author Brett, Todd, Scott
+ * InviteActivity invites a list of users to a created group.
+ */
 public class InviteActivity extends BaseActivity {
 
 	private User user;

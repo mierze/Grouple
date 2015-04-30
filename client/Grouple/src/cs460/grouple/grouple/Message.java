@@ -4,10 +4,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Base64;
-
+/**
+ * 
+ * @author Brett, Todd, Scott
+ * Message holds information about an individual message.
+ * 
+ */
 public class Message
 {
 	private int id;
@@ -23,7 +25,7 @@ public class Message
     protected Message(String message, String rawDateString, String sender, String senderName, String receiver, String readByDateString)
     {
     	this.message = message;
-    	this.rawDateString = rawDateString;
+    	this.setRawDateString(rawDateString);
     	dateString = parseDate(rawDateString);
     	this.sender = sender;
     	this.senderName = senderName;
@@ -91,7 +93,7 @@ public class Message
     }
     protected void setDate(String rawDateString)
     {
-    	this.rawDateString = rawDateString;
+    	this.setRawDateString(rawDateString);
     	this.dateString = parseDate(rawDateString);
     }
     protected void setSender(String sender)
@@ -138,5 +140,11 @@ public class Message
 			// date = raw.format(parsedDate);
 
 		return dateString;
+	}
+	public String getRawDateString() {
+		return rawDateString;
+	}
+	public void setRawDateString(String rawDateString) {
+		this.rawDateString = rawDateString;
 	}
 }

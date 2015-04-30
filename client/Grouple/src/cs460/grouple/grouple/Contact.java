@@ -8,6 +8,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
 
+/**
+ * 
+ * @author Brett, Todd, Scott
+ * Contact holds an information about an individual user/group/event contact.
+ *
+ */
 public class Contact
 {
 	private int id;

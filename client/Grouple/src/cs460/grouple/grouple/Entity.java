@@ -6,6 +6,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
 
+/**
+ * 
+ * @author Brett, Todd, Scott
+ * Entity contains information about a user, group, or event
+ *
+ */
 public abstract class Entity
 {
 	private String email; //email of user, email of group creator, email of event creator

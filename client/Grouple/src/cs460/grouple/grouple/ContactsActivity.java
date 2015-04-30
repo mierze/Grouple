@@ -30,6 +30,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
+/**
+ * 
+ * @author Brett, Todd, Scott
+ * ContactsActivity is list of recent conversations
+ *
+ */
 public class ContactsActivity extends BaseActivity
 {
 	private int IMAGE_INDEX = 0;// holy shit

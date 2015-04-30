@@ -1,5 +1,11 @@
 package cs460.grouple.grouple;
 
+/**
+ * 
+ * @author Brett, Todd, Scott
+ * EventItem holds information about an individual event item.
+ *
+ */
 public class EventItem
 {
 	private String name;

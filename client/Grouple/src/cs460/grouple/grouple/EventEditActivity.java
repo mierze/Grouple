@@ -57,8 +57,11 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-/*
- * EventEditActivity allows user to make changes to his/her event.
+/**
+ * 
+ * @author Brett, Todd, Scott
+ * EventEditActivity allows user to make changes to a event.
+ *
  */
 public class EventEditActivity extends BaseActivity
 {

@@ -10,8 +10,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
-/*
- * GroupsActivity displays displays the group navigation page for the user.
+/**
+ * 
+ * @author Brett, Todd, Scott
+ * GroupsActivity is the main menu for the Groups navigation, allowing the user to create a group or view groups.
  */
 public class GroupsActivity extends BaseActivity
 {

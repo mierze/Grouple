@@ -25,8 +25,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-/*
- * UserActivity displays the profile page of any user
+/**
+ * 
+ * @author Brett, Todd, Scott
+ * EventProfileActivity displays the current profile of an Event
+ *
  */
 public class EventProfileActivity extends BaseActivity
 {

@@ -31,8 +31,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.Toast;
-
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 /**
@@ -223,8 +221,6 @@ public class GcmIntentService extends IntentService
 			{
 			
 				Intent notificationIntent = new Intent(this, EntityMessagesActivity.class);
-<<<<<<< HEAD
-
 				notificationIntent.putExtra("CONTENT_TYPE", "GROUP");
 				notificationIntent.putExtra("g_id", GROUP_ID);
 				notificationIntent.putExtra("email", SENDER_EMAIL);
@@ -240,24 +236,6 @@ public class GcmIntentService extends IntentService
 				PendingIntent.FLAG_UPDATE_CURRENT);
 				mBuilder.setAutoCancel(true);
 
-=======
-
-				notificationIntent.putExtra("CONTENT_TYPE", "GROUP");
-				notificationIntent.putExtra("g_id", GROUP_ID);
-				notificationIntent.putExtra("email", SENDER_EMAIL);
-				notificationIntent.putExtra("name", GROUP_NAME);
-				
-				
-				NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this).setContentTitle(NAME)
-				.setStyle(new NotificationCompat.BigTextStyle()
-				.bigText(SENDER_FIRST + " " + SENDER_LAST + " in " +GROUP_NAME+ ":" + msg))
-				.setSmallIcon(R.drawable.icon_grouple).setSound(soundUri).setContentText(msg);
-				notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent,
-				PendingIntent.FLAG_UPDATE_CURRENT);
-				mBuilder.setAutoCancel(true);
-
->>>>>>> origin/master
 				// null check
 				mBuilder.setContentIntent(contentIntent);
 				mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());		
@@ -434,7 +412,6 @@ public class GcmIntentService extends IntentService
 				mBuilder.setContentIntent(contentIntent);
 				mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
 			}
-<<<<<<< HEAD
 		}
 		else if (TYPE.equals(CONTENT_TYPE.EVENT_UPDATED.toString()))
 		{
@@ -465,8 +442,6 @@ public class GcmIntentService extends IntentService
 				mBuilder.setContentIntent(contentIntent);
 				mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
 			}
-=======
->>>>>>> origin/master
 		}
 		else if (TYPE.equals(CONTENT_TYPE.FRIEND_REQUEST_ACCEPTED.toString()))
 		{

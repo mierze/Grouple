@@ -18,7 +18,12 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.ImageView.ScaleType;
 
-
+/**
+ * 
+ * @author Brett, Todd, Scott
+ * GroupDataService helps generate group information updates
+ * 
+ */
 public class GroupDataService extends Service {
 	
 	private User user;
