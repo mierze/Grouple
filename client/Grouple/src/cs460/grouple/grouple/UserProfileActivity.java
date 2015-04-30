@@ -33,10 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 /**
- * 
  * @author Brett, Todd, Scott
- * 
- * 
  */
 public class UserProfileActivity extends BaseActivity
 {
@@ -135,7 +132,6 @@ public class UserProfileActivity extends BaseActivity
 		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("user_data"));
 		fetchData();
 		updateUI(); // populates a group / user profile
-
 	}
 
 	@Override
@@ -152,9 +148,6 @@ public class UserProfileActivity extends BaseActivity
 		@Override
 		public void onReceive(Context context, Intent intent)
 		{
-			// Extract data included in the Intent
-			String type = intent.getStringExtra("message");
-			// repopulate views
 			updateUI();
 		}
 	};
@@ -180,7 +173,7 @@ public class UserProfileActivity extends BaseActivity
 		int pointsToNext = 10;
 		int pointsStart = 0;
 		int pointsEnd;
-		while (userPoints > (pointsStart + pointsToNext))
+		while (userPoints >= (pointsStart + pointsToNext))
 		{
 			// means user is greater than this level threshold
 			// so increase level

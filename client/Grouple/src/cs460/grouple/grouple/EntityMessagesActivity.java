@@ -61,7 +61,8 @@ public class EntityMessagesActivity extends BaseActivity
 		// new
 		// getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php",
 		// recipient);
-		fetchMessages();
+		fetchData();
+		updateUI();
 	}
 
 	@Override
@@ -191,6 +192,7 @@ public class EntityMessagesActivity extends BaseActivity
 			messageEditText.requestFocus();
 			scrollListView(adapter.getCount() - 1, listView);
 			readMessages();
+			listView.setVisibility(View.VISIBLE);
 		}
 		else
 		{
@@ -268,6 +270,7 @@ public class EntityMessagesActivity extends BaseActivity
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					System.out.println("Successfully stored message");
+					fetchData();
 				}
 				else
 				{
@@ -363,7 +366,6 @@ public class EntityMessagesActivity extends BaseActivity
 						messageEditText.setText("");
 						sendMessageButton.setClickable(true);
 						messageEditText.requestFocus();
-						updateUI();
 					}
 				}.execute(null, null, null);
 			}
@@ -376,7 +378,7 @@ public class EntityMessagesActivity extends BaseActivity
 	}
 
 	// grabs from the database group or event messages, respectively
-	private void fetchMessages()
+	private void fetchData()
 	{
 		if (CONTENT.equals("GROUP"))
 			new getMessagesTask().execute("http://68.59.162.183/android_connect/get_group_messages.php");

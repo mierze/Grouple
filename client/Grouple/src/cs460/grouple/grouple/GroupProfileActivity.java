@@ -34,7 +34,6 @@ public class GroupProfileActivity extends BaseActivity
 
 	private Group group;
 	private User user;
-
 	private View xpBar;
 	private ImageView iv;
 	private Button profileButton1;
@@ -78,7 +77,7 @@ public class GroupProfileActivity extends BaseActivity
 	protected void onResume()
 	{
 		super.onResume();
-		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("group_data"));
+		LocalBroadcastManager.getInstance(this).registerReceiver(dataReceiver, new IntentFilter("group_data"));
 
 		//getGroupExperience();
 		fetchData();
@@ -89,21 +88,17 @@ public class GroupProfileActivity extends BaseActivity
 	@Override
 	protected void onPause()
 	{
-		LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(dataReceiver);
 		super.onPause();
 
 	}
 
 	//This listens for pings from the data service to let it know that there are updates
-	private BroadcastReceiver mReceiver = new BroadcastReceiver()
+	private BroadcastReceiver dataReceiver = new BroadcastReceiver()
 	{
 		@Override
 		public void onReceive(Context context, Intent intent)
 		{
-			// Extract data included in the Intent
-			String type = intent.getStringExtra("message");
-			//repopulate views
-
 			updateUI();// for group / event
 		}
 	};
@@ -115,6 +110,7 @@ public class GroupProfileActivity extends BaseActivity
 		group.fetchImage(this);
 		group.fetchExperience(this);
 	}
+	
 	private void setRole()
 	{
 		int pub;
@@ -140,7 +136,7 @@ public class GroupProfileActivity extends BaseActivity
 				profileButton3.setText(pro2Text);
 
 			}
-			setNotifications();// call here since not checking role first
+			setButtons();// call here since not checking role first
 		}
 		else
 		// user is in group, check role
@@ -208,7 +204,7 @@ public class GroupProfileActivity extends BaseActivity
 
 					user.addToGroupRoles(group.getID(), role);
 					
-					setNotifications(); // for group / event
+					setButtons(); // for group / event
 				}
 				else
 				{
@@ -266,9 +262,8 @@ public class GroupProfileActivity extends BaseActivity
 		}
 	}
 
-	private void setNotifications()
-	{
-		
+	private void setButtons()
+	{	
 		if (group.inUsers(user.getEmail()))
 		{
 			profileButton2.setVisibility(View.VISIBLE);
@@ -363,7 +358,7 @@ public class GroupProfileActivity extends BaseActivity
 		TextView aboutTitle = (TextView) findViewById(R.id.aboutTitlePA);
 		TextView info = (TextView) findViewById(R.id.profileInfoTextView);
 		TextView about = (TextView) findViewById(R.id.profileAboutTextView);
-		setNotifications();
+		setButtons();
 		aboutTitle.setText("About Group:");
 		// iv.setImageBitmap(group.getImage());
 		info.setText("Creator: " + group.getEmail() + "\nCreated: " + group.getDateCreatedText());
