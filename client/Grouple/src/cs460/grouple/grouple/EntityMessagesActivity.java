@@ -472,8 +472,8 @@ public class EntityMessagesActivity extends BaseActivity
 				}
 				else
 				{
-					Toast toast = GLOBAL.getToast(EntityMessagesActivity.this, "Error getting regID list.");
-					toast.show();
+					//Toast toast = GLOBAL.getToast(EntityMessagesActivity.this, "Error getting regID list.");
+					//toast.show();
 				}
 			}
 			catch (Exception e)

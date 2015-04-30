@@ -164,8 +164,8 @@ public class ContactsActivity extends BaseActivity
 			
 			ImageButton contactImage = (ImageButton) itemView.findViewById(R.id.contactImage);
 		    
-			if (user.getImage() != null)
-				 contactImage.setImageBitmap(user.getImage());
+			if (c.getImage() != null)
+				 contactImage.setImageBitmap(c.getImage());
 			else
 				contactImage.setImageResource(R.drawable.user_image_default);
 		    

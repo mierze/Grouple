@@ -273,7 +273,7 @@ public class GroupCreateActivity extends BaseActivity
 							//loadDialog.show();
 							Intent intent = new Intent(GroupCreateActivity.this, InviteActivity.class);
 							intent.putExtra("email", user.getEmail());
-							intent.putExtra("g_id", g_id);
+							intent.putExtra("g_id", Integer.parseInt(g_id));
 							startActivity(intent);
 							finish();
 						}

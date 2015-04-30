@@ -265,7 +265,7 @@ public class EventProfileActivity extends BaseActivity
 					profileButton6.setText("Edit Event");
 				profileButton6.setVisibility(View.VISIBLE);
 			}
-			if (role.equals("A") || role.equals("P"))
+			if ((role.equals("A") || role.equals("P")) && (!event.getEventState().equals("Ended") && !event.getEventState().equals("Declined")))
 			{
 				inviteGroupsButton.setVisibility(View.VISIBLE);
 			}
