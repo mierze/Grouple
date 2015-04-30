@@ -34,7 +34,9 @@ public class GcmUtility extends Application {
 	private String notificationType;
 	private String eventName;
 	private String eventID;
+	private String recipientEmail;
 	private ArrayList<String> multipleEmailList = new ArrayList<String>();
+	private ArrayList<String> groupInviteEmailList = new ArrayList<String>();
 	private ArrayList<String> reg_ids = new ArrayList<String>();
 	private ArrayList<Integer> g_id_list = new ArrayList<Integer>();
 	
@@ -55,6 +57,7 @@ public class GcmUtility extends Application {
 	{
 		//Set class variables
 		this.notificationType = notificationType;
+		recipientEmail = recipient;
 		//Get Recipient's RegID
 		new getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php", recipient);
 	}
@@ -141,6 +144,7 @@ public class GcmUtility extends Application {
                    data.putString("content", "FRIEND_REQUEST");
                    data.putString("sender", user.getEmail());
                    data.putString("recipient",recipientRegID);
+                   data.putString("receiver", recipientEmail);
                    //This is where we put our first and last name. That way the recipient knows who sent it.
                    data.putString("first", user.getFirstName());
                    data.putString("last", user.getLastName());
@@ -220,8 +224,9 @@ public class GcmUtility extends Application {
                    data.putString("sender", user.getEmail());
                    //data.putString("recipient",recipientRegID);
                    data.putString("recipient",chat_ids.get(chat_ids.size()-1));
-                   data.putString("group_name", gName);
-                   data.putString("group_id", gid);
+                   data.putString("receiver",groupInviteEmailList.get(groupInviteEmailList.size()-1));
+                   data.putString("group_name", groupName);
+                   data.putString("group_id", groupID);
                    data.putString("first", user.getFirstName());
                    data.putString("last", user.getLastName());
                    String id = Integer.toString(msgId.incrementAndGet());
@@ -269,6 +274,7 @@ public class GcmUtility extends Application {
                    data.putString("sender", user.getEmail());
                    data.putString("recipient",reg_ids.get(reg_ids.size()-1));
                    //data.putString("event_name", eventName);
+                   data.putString("receiver",multipleEmailList.get(multipleEmailList.size()-1));
                    data.putString("event_id", eventID);
                    //This is where we put our first and last name. That way the recipient knows who sent it.
                    data.putString("first", user.getFirstName());
@@ -293,6 +299,7 @@ public class GcmUtility extends Application {
             	
             	//Remove that regID from the need-to-send list.
             	reg_ids.remove(reg_ids.size()-1);
+            	multipleEmailList.remove(multipleEmailList.size()-1);
             	//Use  recurrsion to send it to the next user.
             	if(!reg_ids.isEmpty())
             	{
@@ -471,7 +478,10 @@ public class GcmUtility extends Application {
 					
 					reg_ids.add(recipientRegID);
 					
+					groupInviteEmailList.add(multipleEmailList.get(multipleEmailList.size()-1));
+					
 					multipleEmailList.remove(multipleEmailList.size()-1);	
+					
 					
 					//Use fucking recursion to get the next regID
 					if(!multipleEmailList.isEmpty())
@@ -577,7 +587,9 @@ public class GcmUtility extends Application {
 						if(!reg_ids.contains(o.getString("reg_id")))
 						{
 							reg_ids.add(o.getString("reg_id"));
+							multipleEmailList.add(o.getString("email"));
 						}
+					
 						
 					}
 					

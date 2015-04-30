@@ -191,6 +191,8 @@ public class GcmIntentService extends IntentService
 			
 			Log.i(TAG, "Received: " + EXTRAS.toString());
 		}
+		
+		//GcmBroadcastReceiver.completeWakefulIntent(intent);
 	}
 
 	// Put the message inRECEIVER a notification and post it.
@@ -340,9 +342,9 @@ public class GcmIntentService extends IntentService
 				//GLOBAL.getCurrentUser().fetchUserInfo();
 				
 				NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
-				.setContentTitle("New group invite to " + GROUP_NAME + "!")
+				.setContentTitle("New Group Invite!")
 				.setContentText("From: " + SENDER_FIRST + " " + SENDER_LAST + "!")
-				.setStyle(new NotificationCompat.BigTextStyle().bigText(SENDER_FIRST + " " + SENDER_LAST))
+				.setStyle(new NotificationCompat.BigTextStyle().bigText("From "+SENDER_FIRST + " " + SENDER_LAST))
 				.setSmallIcon(R.drawable.icon_grouple).setSound(soundUri).setContentText(msg);
 				notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 				PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent,	PendingIntent.FLAG_UPDATE_CURRENT);
@@ -470,7 +472,7 @@ public class GcmIntentService extends IntentService
 		}	
 		
 		// Now that GCM creation is finished, release the wake lock provided by the WakefulBroadcastReceiver.
-		GcmBroadcastReceiver.completeWakefulIntent(intent);
+		 GcmBroadcastReceiver.completeWakefulIntent(intent);
 	}
 
 	// This function will create an intent. This intent must take as parameter
