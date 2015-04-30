@@ -6,10 +6,8 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import cs460.grouple.grouple.GcmIntentService.CONTENT_TYPE;
 import android.support.v4.content.LocalBroadcastManager;
-
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -21,94 +19,105 @@ import android.widget.ImageView.ScaleType;
 
 /**
  * 
- * @author Brett, Todd, Scott
- * UserDataService helps generate User information updates
+ * @author Brett, Todd, Scott UserDataService helps generate User information
+ *         updates
  * 
  */
-public class UserDataService extends Service {
-	
+public class UserDataService extends Service
+{
+
 	private User user;
-	//private Group group;
-	//private Event event;
+	// private Group group;
+	// private Event event;
 	private static Global GLOBAL;
-	private String FETCH;
+	private String fetch;
+	private String extra;
 	private Context context;
 
-	enum FETCH_TYPE
+	enum fetch_TYPE
 	{
-		INFO, IMAGE, FRIENDS_CURRENT, FRIEND_INVITES, GROUP_INVITES, GROUPS_CURRENT, 
-		EVENTS_UPCOMING, EVENTS_PAST, EVENTS_DECLINED, EVENTS_PENDING, EVENT_INVITES,
-		BADGES_NEW, BADGES, EXPERIENCE, CONTACTS;
+		INFO, IMAGE, FRIENDS_CURRENT, FRIEND_INVITES, GROUP_INVITES, GROUPS_CURRENT, EVENTS_UPCOMING, EVENTS_PAST, EVENTS_DECLINED, EVENTS_PENDING, EVENT_INVITES, BADGES_NEW, BADGES, EXPERIENCE, CONTACTS, MESSAGES;
 	}
-	
-	public UserDataService(Global g, User u) 
-	{		
+
+	public UserDataService(Global g, User u)
+	{
 		GLOBAL = g;
-		//user to update info of
+		// user to update info of
 		user = u;
 	}
-	
-	//FUNCTIONS BELOW
+
+	// FUNCTIONS BELOW
 	private void sendBroadcast()
 	{
 		Intent intent = new Intent("user_data");
 
-			//intent.setAction("USER_DATA");
-			intent.putExtra("message", "testing");
-		//	intent.setAction(")
-			//could potentially add how many things were updated
+		// intent.setAction("USER_DATA");
+		intent.putExtra("message", "testing");
+		// intent.setAction(")
+		// could potentially add how many things were updated
 
-			if (context != null)
+		if (context != null)
 			LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 	}
-	public void fetchContent(final String FETCH, Context context)
+
+	public void fetchContent(final String fetch, Context context, String extra)
 	{
-		//for access in onpost and beyond
-		this.FETCH = FETCH;
+		// for access in onpost and beyond
+		this.fetch = fetch;
 		this.context = context;
-		
-		if (FETCH.equals(FETCH_TYPE.INFO.toString()))
+		this.extra = extra;
+
+		if (fetch.equals(fetch_TYPE.INFO.toString()))
 			new getInfoTask().execute("http://68.59.162.183/android_connect/get_user_info.php");
-		else if (FETCH.equals(FETCH_TYPE.IMAGE.toString()))
+		else if (fetch.equals(fetch_TYPE.IMAGE.toString()))
 			new getImageTask().execute("http://68.59.162.183/android_connect/get_profile_image.php");
-		else if (FETCH.equals(FETCH_TYPE.FRIENDS_CURRENT.toString()))
+		else if (fetch.equals(fetch_TYPE.FRIENDS_CURRENT.toString()))
 		{
-			//TODO: switch this php to POST and make it nice nice
-			new getFriendsTask().execute("http://68.59.162.183/android_connect/get_friends.php?email=" + user.getEmail());
+			// TODO: switch this php to POST and make it nice nice
+			new getFriendsTask().execute("http://68.59.162.183/android_connect/get_friends.php?email="
+					+ user.getEmail());
 		}
-		else if (FETCH.equals(FETCH_TYPE.FRIEND_INVITES.toString()))
+		else if (fetch.equals(fetch_TYPE.FRIEND_INVITES.toString()))
 		{
-			//TODO: changing this to friend_invites throughout php / app
-			//also make this a post too
-			new getFriendInvitesTask().execute("http://68.59.162.183/android_connect/get_friend_requests.php?receiver=" + user.getEmail());
+			// TODO: changing this to friend_invites throughout php / app
+			// also make this a post too
+			new getFriendInvitesTask().execute("http://68.59.162.183/android_connect/get_friend_requests.php?receiver="
+					+ user.getEmail());
 		}
-		else if (FETCH.equals(FETCH_TYPE.GROUPS_CURRENT.toString()))
+		else if (fetch.equals(fetch_TYPE.GROUPS_CURRENT.toString()))
 			new getGroupsTask().execute("http://68.59.162.183/android_connect/get_groups.php?email=" + user.getEmail());
-		else if (FETCH.equals(FETCH_TYPE.GROUP_INVITES.toString()))
-			new getGroupInvitesTask().execute("http://68.59.162.183/android_connect/get_group_invites.php?email=" + user.getEmail());
-		else if (FETCH.equals(FETCH_TYPE.EVENTS_UPCOMING.toString()))
+		else if (fetch.equals(fetch_TYPE.GROUP_INVITES.toString()))
+			new getGroupInvitesTask().execute("http://68.59.162.183/android_connect/get_group_invites.php?email="
+					+ user.getEmail());
+		else if (fetch.equals(fetch_TYPE.EVENTS_UPCOMING.toString()))
 			new getEventsUpcomingTask().execute("http://68.59.162.183/android_connect/get_events_upcoming.php");
-		else if (FETCH.equals(FETCH_TYPE.EVENTS_PAST.toString()))
+		else if (fetch.equals(fetch_TYPE.EVENTS_PAST.toString()))
 			new getEventsPastTask().execute("http://68.59.162.183/android_connect/get_events_past.php");
-		else if (FETCH.equals(FETCH_TYPE.EVENTS_DECLINED.toString()))
+		else if (fetch.equals(fetch_TYPE.EVENTS_DECLINED.toString()))
 			new getEventsDeclinedTask().execute("http://68.59.162.183/android_connect/get_events_declined.php");
-		else if (FETCH.equals(FETCH_TYPE.EVENTS_PENDING.toString()))
+		else if (fetch.equals(fetch_TYPE.EVENTS_PENDING.toString()))
 			new getEventsPendingTask().execute("http://68.59.162.183/android_connect/get_events_pending.php");
-		else if (FETCH.equals(FETCH_TYPE.EVENT_INVITES.toString()))
+		else if (fetch.equals(fetch_TYPE.EVENT_INVITES.toString()))
 			new getEventsInvitesTask().execute("http://68.59.162.183/android_connect/get_event_invites.php");
-		else if (FETCH.equals(FETCH_TYPE.BADGES.toString()))
+		else if (fetch.equals(fetch_TYPE.BADGES.toString()))
 			new getBadgesTask().execute("http://68.59.162.183/android_connect/get_badges.php");
-		else if (FETCH.equals(FETCH_TYPE.EXPERIENCE.toString()))
+		else if (fetch.equals(fetch_TYPE.EXPERIENCE.toString()))
 			new getExperienceTask().execute("http://68.59.162.183/android_connect/get_user_experience.php");
-		else if (FETCH.equals(FETCH_TYPE.CONTACTS.toString()))
+		else if (fetch.equals(fetch_TYPE.CONTACTS.toString()))
 		{
 			new getContactsTask().execute("http://68.59.162.183/android_connect/get_recent_contacts.php");
 		}
+		else if (fetch.equals(fetch_TYPE.MESSAGES.toString()))
+		{
+
+			new getMessagesTask().execute("http://68.59.162.183/android_connect/get_messages.php", extra);
+
+		}
 
 	}
-	
-	//FETCHES BELOW
-	//USER FETCHES BELOW
+
+	// fetchES BELOW
+	// USER fetchES BELOW
 	private class getInfoTask extends AsyncTask<String, Void, String>
 	{
 		@Override
@@ -151,13 +160,13 @@ public class UserDataService extends Service {
 						user.setBirthday("");
 					else
 						user.setBirthday(dob.toString());// panda
-					
+
 					Object gender = jsonArray.get(5);
 					if (!gender.toString().equals("null"))
 					{
 						user.setGender(gender.toString());
 					}
-					
+
 					sendBroadcast();
 				}
 				// unsuccessful
@@ -172,19 +181,19 @@ public class UserDataService extends Service {
 				System.out.println("SATACK TRACE:\n" + e.getStackTrace().toString() + "\n\n\ncause:\n" + e.getCause());
 				System.out.println(e.getMessage());
 				System.out.println(e.getLocalizedMessage());
-		
+
 			}
 			catch (Exception e)
 			{
 				System.out.println("SATACK TRACE:\n" + e.getStackTrace().toString() + "\n\n\ncause:\n" + e.getCause());
 				System.out.println(e.getMessage());
 				System.out.println(e.getLocalizedMessage());
-				
+
 			}
 			// do next thing here
 		}
 	}
-	
+
 	private class getFriendsTask extends AsyncTask<String, Void, String>
 	{
 		@Override
@@ -268,7 +277,7 @@ public class UserDataService extends Service {
 			}
 		}
 	}
-	
+
 	private class getGroupsTask extends AsyncTask<String, Void, String>
 	{
 		@Override
@@ -287,7 +296,7 @@ public class UserDataService extends Service {
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					// gotta make a json array
-					
+
 					JSONArray jsonArray = jsonObject.getJSONArray("groups");
 					user.getGroups().clear();
 					// looping thru array
@@ -313,7 +322,7 @@ public class UserDataService extends Service {
 			}
 		}
 	}
-	
+
 	private class getGroupInvitesTask extends AsyncTask<String, Void, String>
 	{
 		@Override
@@ -360,7 +369,6 @@ public class UserDataService extends Service {
 			}
 		}
 	}
-	
 
 	private class getEventsUpcomingTask extends AsyncTask<String, Void, String>
 	{
@@ -406,6 +414,7 @@ public class UserDataService extends Service {
 			}
 		}
 	}
+
 	private class getEventsPendingTask extends AsyncTask<String, Void, String>
 	{
 		@Override
@@ -438,8 +447,9 @@ public class UserDataService extends Service {
 						e.setMinPart(o.getInt("minPart"));
 						e.setMaxPart(o.getInt("maxPart"));
 						e.setStartDate(o.getString("startDate"));
-						//TODO: may bneed to get the number of participants here
-					//	e.fetchParticipants();
+						// TODO: may bneed to get the number of participants
+						// here
+						// e.fetchParticipants();
 						user.addToEventsPending(e);
 					}
 					sendBroadcast();
@@ -456,7 +466,6 @@ public class UserDataService extends Service {
 			}
 		}
 	}
-
 
 	private class getEventsDeclinedTask extends AsyncTask<String, Void, String>
 	{
@@ -489,8 +498,8 @@ public class UserDataService extends Service {
 						e.setMinPart(o.getInt("minPart"));
 						e.setMaxPart(o.getInt("maxPart"));
 						e.setStartDate(o.getString("startDate"));
-						//TODO: may need to fetch in more data here 
-						//e.fetchParticipants();
+						// TODO: may need to fetch in more data here
+						// e.fetchParticipants();
 						user.addToEventsDeclined(e);
 					}
 					sendBroadcast();
@@ -540,8 +549,8 @@ public class UserDataService extends Service {
 						e.setMinPart(o.getInt("minPart"));
 						e.setMaxPart(o.getInt("maxPart"));
 						e.setStartDate(o.getString("startDate"));
-						//TODO: may need to fetch in more data here 
-						//e.fetchParticipants();
+						// TODO: may need to fetch in more data here
+						// e.fetchParticipants();
 						user.addToEventsPast(e);
 					}
 					sendBroadcast();
@@ -558,7 +567,7 @@ public class UserDataService extends Service {
 			}
 		}
 	}
-	
+
 	private class getEventsInvitesTask extends AsyncTask<String, Void, String>
 	{
 		@Override
@@ -590,8 +599,8 @@ public class UserDataService extends Service {
 						e.setMinPart(o.getInt("minPart"));
 						e.setMaxPart(o.getInt("maxPart"));
 						e.setStartDate(o.getString("startDate"));
-						//TODO: may need to fetch in more data here 
-						//e.fetchParticipants();
+						// TODO: may need to fetch in more data here
+						// e.fetchParticipants();
 						user.addToEventsInvites(e);
 					}
 					sendBroadcast();
@@ -628,25 +637,24 @@ public class UserDataService extends Service {
 
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					
-					
+
 					int numTotalEvents = jsonObject.getInt("numTotal");
 					int numSocialEvents = jsonObject.getInt("numSocial");
 					int numEntertainmentEvents = jsonObject.getInt("numEntertainment");
 					int numProfessionalEvents = jsonObject.getInt("numProfessional");
 					int numFitnessEvents = jsonObject.getInt("numFitness");
 					int numNatureEvents = jsonObject.getInt("numNature");
-					
+
 					int numTotalEventsCreated = jsonObject.getInt("numTotalCreate");
 					int numSocialEventsCreated = jsonObject.getInt("numSocialCreate");
 					int numEntertainmentEventsCreated = jsonObject.getInt("numEntertainmentCreate");
 					int numProfessionalEventsCreated = jsonObject.getInt("numProfessionalCreate");
 					int numFitnessEventsCreated = jsonObject.getInt("numFitnessCreate");
 					int numNatureEventsCreated = jsonObject.getInt("numNatureCreate");
-					
+
 					int numItemsBrought = jsonObject.getInt("numItems");
-					
-					//TODO: get count in each type
+
+					// TODO: get count in each type
 					user.setNumTotalEvents(numTotalEvents);
 					user.setNumSocialEvents(numSocialEvents);
 					user.setNumEntertainmentEvents(numEntertainmentEvents);
@@ -661,9 +669,7 @@ public class UserDataService extends Service {
 					user.setNumNatureEventsCreated(numNatureEventsCreated);
 					user.setNumItemsBrought(numItemsBrought);
 					user.setExperience();
-					
-					
-				
+
 					JSONArray jsonArray = jsonObject.getJSONArray("badges");
 					user.getNewBadges().clear();
 					for (int i = 0; i < jsonArray.length(); i++)
@@ -683,7 +689,7 @@ public class UserDataService extends Service {
 			}
 		}
 	}
-	
+
 	private class getBadgesTask extends AsyncTask<String, Void, String>
 	{
 		@Override
@@ -704,12 +710,11 @@ public class UserDataService extends Service {
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					JSONArray jsonArray = jsonObject.getJSONArray("badges");
-					
+
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
 						JSONObject o = (JSONObject) jsonArray.get(i);
-						Badge b = new Badge(o.getString("name"),
-								o.getString("date"));
+						Badge b = new Badge(o.getString("name"), o.getString("date"));
 						b.setLevel(Integer.parseInt(o.getString("level")));
 						user.addToBadges(b);
 					}
@@ -723,94 +728,147 @@ public class UserDataService extends Service {
 			}
 		}
 	}
-		private class getImageTask extends AsyncTask<String, Void, String>
+
+	private class getImageTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected String doInBackground(String... urls)
 		{
-			@Override
-			protected String doInBackground(String... urls)
+			String type = "email";
+			String id = user.getEmail();
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair(type, id));
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+		}
+
+		@Override
+		protected void onPostExecute(String result)
+		{
+			try
 			{
-				String type = "email";
-				String id = user.getEmail();
-				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-				nameValuePairs.add(new BasicNameValuePair(type, id));
-				return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+				JSONObject jsonObject = new JSONObject(result);
+				// json fetch was successful
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					String image = jsonObject.getString("image").toString();
+
+					user.setImage(image);
+
+					sendBroadcast();
+				}
+				else
+				{
+					// failed
+					Log.d("fetchImage", "FAILED");
+				}
 			}
-
-			@Override
-			protected void onPostExecute(String result)
+			catch (Exception e)
 			{
-				try
-				{
-					JSONObject jsonObject = new JSONObject(result);
-					// json fetch was successful
-					if (jsonObject.getString("success").toString().equals("1"))
-					{
-						String image = jsonObject.getString("image").toString();
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
+			}
+			// do next thing here
+		}
+	}
 
-						user.setImage(image);
-	
-						sendBroadcast();
-					}
-					else
-					{
-						// failed
-						Log.d("fetchImage", "FAILED");
-					}
-				}
-				catch (Exception e)
+	private class getContactsTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected String doInBackground(String... urls)
+		{
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("email", user.getEmail()));
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+		}
+
+		@Override
+		protected void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
+					ArrayList<Contact> contacts = user.getContacts();
+					// gotta make a json array
+					JSONArray jsonArray = jsonObject.getJSONArray("contacts");
+					contacts.clear();
+					for (int i = 0; i < jsonArray.length(); i++)
+					{
+						JSONObject o = (JSONObject) jsonArray.get(i);
+						Contact contact = new Contact(o.getString("message"), o.getString("senddate"),
+								o.getString("sender"), o.getString("first") + " " + o.getString("last"),
+								o.getString("receiver"), o.getString("read_date"));
+						contact.setID(Integer.parseInt(o.getString("id")));
+						contact.setImage(o.getString("image"));
+
+						user.addToContacts(contact);
+					}
+					// done fetching, now populate to scrollview
+					sendBroadcast();
 				}
-				// do next thing here
+				if (jsonObject.getString("success").toString().equals("2"))
+				{
+					Log.d("fetchRecentContacts", "failed = 2 return");
+				}
+			}
+			catch (Exception e)
+			{
+				Log.d("fetchRecentContacts", "exception caught");
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 			}
 		}
-		private class getContactsTask extends AsyncTask<String, Void, String>
+	}
+
+	private class getMessagesTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected String doInBackground(String... urls)
 		{
-			@Override
-			protected String doInBackground(String... urls)
+			String sender = urls[1];
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("sender", urls[1]));
+			nameValuePairs.add(new BasicNameValuePair("receiver", user.getEmail()));
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+		}
+
+		@Override
+		protected void onPostExecute(String result)
+		{
+			try
 			{
-				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-				nameValuePairs.add(new BasicNameValuePair("email", user.getEmail()));
-				return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+				JSONObject jsonObject = new JSONObject(result);
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					JSONArray jsonArray = jsonObject.getJSONArray("messages");
+					user.getMessages(extra).clear();
+					// looping thru array
+					for (int i = 0; i < jsonArray.length(); i++)
+					{
+						JSONObject o = (JSONObject) jsonArray.get(i);
+						Message m = new Message(o.getString("message"), o.getString("send_date"),
+								o.getString("sender"), "name", o.getString("receiver"), null);
+						user.addToMessages(extra, m); // adding message to message array
+					}
+			
+				}
+				// user has no friends
+				if (jsonObject.getString("success").toString().equals("2"))
+				{
+					Log.d("fetchMessages", "failed = 2 return");
+				}
+				if (jsonObject.getString("success").toString().equals("0"))
+				{
+
+				}
+				sendBroadcast();
 			}
-
-			@Override
-			protected void onPostExecute(String result)
+			catch (Exception e)
 			{
-				try
-				{
-					JSONObject jsonObject = new JSONObject(result);
-					if (jsonObject.getString("success").toString().equals("1"))
-					{
-						ArrayList<Contact> contacts = user.getContacts();
-						// gotta make a json array
-						JSONArray jsonArray = jsonObject.getJSONArray("contacts");
-						contacts.clear();
-						for (int i = 0; i < jsonArray.length(); i++)
-						{
-							JSONObject o = (JSONObject) jsonArray.get(i);
-							Contact contact = new Contact(o.getString("message"), o.getString("senddate"),
-									o.getString("sender"), o.getString("first") + " " + o.getString("last"),
-									o.getString("receiver"), o.getString("read_date"));
-							contact.setID(Integer.parseInt(o.getString("id")));
-							contact.setImage(o.getString("image"));
-
-							user.addToContacts(contact);
-						}
-						// done fetching, now populate to scrollview
-						sendBroadcast();
-					}
-					if (jsonObject.getString("success").toString().equals("2"))
-					{
-						Log.d("fetchRecentContacts", "failed = 2 return");
-					}
-				}
-				catch (Exception e)
-				{
-					Log.d("fetchRecentContacts", "exception caught");
-					Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
-				}
+				Log.d("fetchMessages", "exception caught");
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 			}
 		}
+	}
 
 	@Override
 	public IBinder onBind(Intent arg0)
@@ -818,6 +876,5 @@ public class UserDataService extends Service {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 
 }

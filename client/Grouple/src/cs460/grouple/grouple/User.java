@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -23,8 +25,7 @@ import android.util.SparseArray;
 
 /**
  * 
- * @author Brett, Todd, Scott
- * User holds information about an individual User.
+ * @author Brett, Todd, Scott User holds information about an individual User.
  * 
  */
 @SuppressLint("SimpleDateFormat")
@@ -63,6 +64,7 @@ public class User extends Entity
 	private int numTotalEvents = 0;
 	private int numTotalEventsCreated = 0;
 	private int numItemsBrought = 0;
+	private Map<String, ArrayList<Message>> messages = new HashMap<String, ArrayList<Message>>();
 
 	/*
 	 * Constructor for User class
@@ -101,12 +103,12 @@ public class User extends Entity
 		nums.add(numFitnessEvents);
 		nums.add(numNatureEvents);
 		Collections.sort(nums);
-		
+
 		for (int i = 0; i < nums.size(); i++)
 		{
-			experience += nums.get(i) * (i+1);
+			experience += nums.get(i) * (i + 1);
 		}
-		
+
 		xp += numItemsBrought;
 		experience = xp;
 	}
@@ -448,6 +450,16 @@ public class User extends Entity
 		return eventsPast;
 	}
 
+	protected ArrayList<Message> getMessages(String email)
+	{
+		if (!messages.containsKey(email))
+		{
+			ArrayList<Message> ms = new ArrayList<Message>();
+			messages.put(email, ms);
+		}
+		return messages.get(email);
+	}
+
 	protected void removeGroup(int id)
 	{
 		if (groups != null)
@@ -557,7 +569,7 @@ public class User extends Entity
 		badges.add(new Badge("Environmentalist", null)); // create nature count
 
 		badges.add(new Badge("Extrovert", null)); // total count
-		//badges.add(new Badge("Creator", null)); // create total count
+		// badges.add(new Badge("Creator", null)); // create total count
 
 		badges.add(new Badge("Regular", null)); // the attend recurring event
 		badges.add(new Badge("Routinist", null)); // the create recurring event
@@ -703,6 +715,20 @@ public class User extends Entity
 			eventsPast.add(e);
 	}
 
+	protected void addToMessages(String email, Message m)
+	{
+		if (messages.containsKey(email))
+		{
+			messages.get(email).add(m);
+		}
+		else
+		{
+			ArrayList<Message> ms = new ArrayList<Message>();
+			ms.add(m);
+			messages.put(email, ms);
+		}
+	}
+
 	protected void addToGroupRoles(int id, String role)
 	{
 		groupRoles.put(id, role);
@@ -726,79 +752,85 @@ public class User extends Entity
 	{
 		if (eventRoles.get(id) != null)
 			return eventRoles.get(id);
-		// TODO: this shoul dnot return U if not found
+		// TODO: this shoul dnot return U if not found, should check db (make a
+		// fetch like user messags)
 		return "U";
 	}
 
 	// ALL DATA APP FETCH CALLS BELOW
 	protected void fetchInfo(Context context)
 	{
-		dataService.fetchContent("INFO", context);
+		dataService.fetchContent("INFO", context, "");
 	}
 
 	protected void fetchFriends(Context context)
 	{
-		dataService.fetchContent("FRIENDS_CURRENT", context);
+		dataService.fetchContent("FRIENDS_CURRENT", context, "");
 	}
 
 	protected void fetchFriendRequests(Context context)
 	{
-		dataService.fetchContent("FRIEND_INVITES", context);
+		dataService.fetchContent("FRIEND_INVITES", context, "");
 	}
 
 	protected void fetchGroups(Context context)
 	{
-		dataService.fetchContent("GROUPS_CURRENT", context);
+		dataService.fetchContent("GROUPS_CURRENT", context, "");
 	}
 
 	protected void fetchGroupInvites(Context context)
 	{
-		dataService.fetchContent("GROUP_INVITES", context);
+		dataService.fetchContent("GROUP_INVITES", context, "");
 	}
 
 	protected void fetchEventsPending(Context context)
 	{
-		dataService.fetchContent("EVENTS_PENDING", context);
+		dataService.fetchContent("EVENTS_PENDING", context, "");
 	}
 
 	protected void fetchEventsDeclined(Context context)
 	{
-		dataService.fetchContent("EVENTS_DECLINED", context);
+		dataService.fetchContent("EVENTS_DECLINED", context, "");
 	}
 
 	protected void fetchEventsPast(Context context)
 	{
-		dataService.fetchContent("EVENTS_PAST", context);
+		dataService.fetchContent("EVENTS_PAST", context, "");
 	}
 
 	protected void fetchEventInvites(Context context)
 	{
-		dataService.fetchContent("EVENT_INVITES", context);
+		dataService.fetchContent("EVENT_INVITES", context, "");
 	}
 
 	protected void fetchEventsUpcoming(Context context)
 	{
-		dataService.fetchContent("EVENTS_UPCOMING", context);
+		dataService.fetchContent("EVENTS_UPCOMING", context, "");
 	}
 
 	protected void fetchBadges(Context context)
 	{
-		dataService.fetchContent("BADGES", context);
+		dataService.fetchContent("BADGES", context, "");
 	}
 
 	protected void fetchExperience(Context context)
 	{
-		dataService.fetchContent("EXPERIENCE", context);
+		dataService.fetchContent("EXPERIENCE", context, "");
 	}
 
 	protected void fetchImage(Context context)
 	{
-		dataService.fetchContent("IMAGE", context);
+		dataService.fetchContent("IMAGE", context, "");
 	}
 
 	protected void fetchContacts(Context context)
 	{
-		dataService.fetchContent("CONTACTS", context);
+		dataService.fetchContent("CONTACTS", context, "");
+	}
+
+	protected void fetchMessages(Context context, String email)
+	{
+		dataService.fetchContent("MESSAGES", context, email);
 	}
 
 }

@@ -38,7 +38,6 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
  */
 public class ContactsActivity extends BaseActivity
 {
-	private int IMAGE_INDEX = 0;// holy shit
 	private User user; // will be null for now
 	private ArrayList<Contact> contacts = new ArrayList<Contact>();
 	private GoogleCloudMessaging gcm;
@@ -47,7 +46,7 @@ public class ContactsActivity extends BaseActivity
 	private AtomicInteger msgId = new AtomicInteger();
 
 	// This is the handler that will manager to process the broadcast intent
-	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver()
+	private BroadcastReceiver dataReceiver = new BroadcastReceiver()
 	{
 		@Override
 		public void onReceive(Context context, Intent intent)
@@ -75,7 +74,7 @@ public class ContactsActivity extends BaseActivity
 	@Override
 	protected void onPause()
 	{
-		LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(dataReceiver);
 		super.onPause();
 	}
 	
@@ -102,7 +101,7 @@ public class ContactsActivity extends BaseActivity
 	@Override
 	protected void onResume()
 	{
-		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("user_data"));
+		LocalBroadcastManager.getInstance(this).registerReceiver(dataReceiver, new IntentFilter("user_data"));
 		super.onResume();
 		fetchData();
 		// Check device for Play Services APK.
@@ -122,11 +121,10 @@ public class ContactsActivity extends BaseActivity
 
 	public void startMessages(View view)
 	{
+		int id = view.getId();
 		Intent intent = new Intent(this, MessagesActivity.class);
-		String EMAIL = contacts.get(view.getId()).getReceiver().equals(user.getEmail()) ? contacts.get(
-				view.getId()).getSender() : contacts.get(view.getId()).getReceiver();
-		intent.putExtra("email", EMAIL);
-		intent.putExtra("name", contacts.get(view.getId()).getSenderName());
+		intent.putExtra("email", contacts.get(id).getOtherEmail());
+		intent.putExtra("name", contacts.get(id).getSenderName());
 		startActivity(intent);
 	}
 
@@ -158,7 +156,7 @@ public class ContactsActivity extends BaseActivity
 			TextView messageBody = (TextView) itemView.findViewById(R.id.messageBody);
 			TextView messageDate = (TextView) itemView.findViewById(R.id.messageDate);
 			TextView contactName = (TextView) itemView.findViewById(R.id.contactName);
-			if (c.getReadByDateString().equals("0000-00-00 00:00:00"))
+			if (!c.getSender().equals(user.getEmail()) && c.getReadByDateString().equals("0000-00-00 00:00:00"))
 			{
 				//TODO: finish highlight of unread rows / test
 				messageBody.setBackgroundColor(getResources().getColor(R.color.yellow));

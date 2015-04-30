@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,9 +31,8 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 /**
  * 
- * @author Brett, Todd, Scott
- * EntityMessagesActivity 
- *
+ * @author Brett, Todd, Scott EntityMessagesActivity
+ * 
  */
 public class EntityMessagesActivity extends BaseActivity
 {
@@ -54,20 +54,25 @@ public class EntityMessagesActivity extends BaseActivity
 	private AtomicInteger msgId = new AtomicInteger();
 
 	@Override
-	protected void onDestroy()
+	protected void onResume()
 	{
-		super.onDestroy();
+		LocalBroadcastManager.getInstance(this).registerReceiver(dataReceiver, new IntentFilter("ENTITY_MESSAGE"));
+		super.onResume();
+		// new
+		// getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php",
+		// recipient);
+		fetchMessages();
 	}
 
 	@Override
 	protected void onPause()
 	{
-		unregisterReceiver(mMessageReceiver);
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(dataReceiver);
 		super.onPause();
 	}
 
 	// This is the handler that will manager to process the broadcast intent
-	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver()
+	private BroadcastReceiver dataReceiver = new BroadcastReceiver()
 	{
 		@Override
 		public void onReceive(Context context, Intent intent)
@@ -80,7 +85,7 @@ public class EntityMessagesActivity extends BaseActivity
 				if (id.equals(ID))
 				{
 					// messages.clear(); //TODO: smartly add to this
-					populateMessages();
+					updateUI();
 				}
 			}
 			else if (type.equals("EVENT_MESSAGE") && CONTENT.equals("EVENT"))
@@ -88,7 +93,7 @@ public class EntityMessagesActivity extends BaseActivity
 				if (id.equals(ID))
 				{
 					// messages.clear(); //TODO: smartly add to this
-					populateMessages();
+					updateUI();
 				}
 			}
 		}
@@ -101,19 +106,19 @@ public class EntityMessagesActivity extends BaseActivity
 		setContentView(R.layout.activity_messages);
 		Bundle extras = getIntent().getExtras();
 		user = GLOBAL.getCurrentUser();
-		
+
 		messageEditText = (EditText) findViewById(R.id.messageEditText);
 		sendMessageButton = (Button) findViewById(R.id.sendButton);
 		listViewLayout = (LinearLayout) findViewById(R.id.listViewLayout);
 		listView = (ListView) findViewById(R.id.listView);
-		
+
 		gcm = GoogleCloudMessaging.getInstance(this);
 		CONTENT = extras.getString("content");
 		if (CONTENT.equals("GROUP"))
 		{
 			ID = Integer.toString(extras.getInt("g_id"));
 			group = GLOBAL.getGroup(Integer.parseInt(ID));
-			NAME = group.getName();	
+			NAME = group.getName();
 		}
 		else
 		{
@@ -171,26 +176,35 @@ public class EntityMessagesActivity extends BaseActivity
 			Message m = messages.get(position);
 			if (!m.getSender().equals(user.getEmail()))
 				listItemID = R.layout.message_row_entity_out;
-			
 
 			return listItemID;
 		}
 	}
 
-	private void populateMessages()
+	private void updateUI()
 	{
-		// scrolling down to the bottom
-		final ArrayAdapter<Message> adapter = new MessageListAdapter();
-		listView.setAdapter(adapter);
-		messageEditText.requestFocus();
-		scrollListView(adapter.getCount()-1, listView);
-		readMessages();
+		if (!messages.isEmpty())
+		{
+			// scrolling down to the bottom
+			final ArrayAdapter<Message> adapter = new MessageListAdapter();
+			listView.setAdapter(adapter);
+			messageEditText.requestFocus();
+			scrollListView(adapter.getCount() - 1, listView);
+			readMessages();
+		}
+		else
+		{
+			View row = inflater.inflate(R.layout.list_item_sadguy, null);
+			TextView sadGuyTextView = (TextView) row.findViewById(R.id.sadGuyTextView);
+			sadGuyTextView.setText("No messages to display!");
+			listView.setVisibility(View.GONE);
+			listViewLayout.addView(row);
+		}
 	}
 
-	private int readMessages()
+	private void readMessages()
 	{
 		new readMessagesTask().execute("http://68.59.162.183/android_connect/update_entitymessage_lastread.php");
-		return 1;
 	}
 
 	private class readMessagesTask extends AsyncTask<String, Void, String>
@@ -267,17 +281,6 @@ public class EntityMessagesActivity extends BaseActivity
 				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 			}
 		}
-	}
-
-	@Override
-	protected void onResume()
-	{
-		registerReceiver(mMessageReceiver, new IntentFilter("ENTITY_MESSAGE"));
-		super.onResume();
-		// new
-		// getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php",
-		// recipient);
-		fetchMessages();
 	}
 
 	// Starts a USER/GROUP/EVENT profile
@@ -360,7 +363,7 @@ public class EntityMessagesActivity extends BaseActivity
 						messageEditText.setText("");
 						sendMessageButton.setClickable(true);
 						messageEditText.requestFocus();
-						populateMessages();
+						updateUI();
 					}
 				}.execute(null, null, null);
 			}
@@ -373,14 +376,13 @@ public class EntityMessagesActivity extends BaseActivity
 	}
 
 	// grabs from the database group or event messages, respectively
-	public int fetchMessages()
+	private void fetchMessages()
 	{
 		if (CONTENT.equals("GROUP"))
 			new getMessagesTask().execute("http://68.59.162.183/android_connect/get_group_messages.php");
 		else
 			new getMessagesTask().execute("http://68.59.162.183/android_connect/get_event_messages.php");
 
-		return 1;
 	}
 
 	class getMessagesTask extends AsyncTask<String, Void, String>
@@ -413,8 +415,8 @@ public class EntityMessagesActivity extends BaseActivity
 								o.getString("sender"), o.getString("first") + " " + o.getString("last"), ID, null);
 						messages.add(m);
 					}
-					
-					populateMessages();
+
+					updateUI();
 				}
 				if (jsonObject.getString("success").toString().equals("2"))
 				{
@@ -422,11 +424,7 @@ public class EntityMessagesActivity extends BaseActivity
 				}
 				if (jsonObject.getString("success").toString().equals("0"))
 				{
-					View row = inflater.inflate(R.layout.list_item_sadguy, null);
-					TextView sadGuyTextView = (TextView) row.findViewById(R.id.sadGuyTextView);
-					sadGuyTextView.setText("No messages to display!");
-					listView.setVisibility(View.GONE);
-					listViewLayout.addView(row);
+
 				}
 			}
 			catch (Exception e)
