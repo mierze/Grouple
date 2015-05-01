@@ -1,13 +1,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/groupProfileContainer"
+    android:id="@+id/groupContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_color"
     android:padding="5dp" >
 
     <ScrollView
-        android:id="@+id/profileScrollView"
+        android:id="@+id/groupScrollView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_margin="0dp"
@@ -15,63 +15,39 @@
         android:padding="0dp" >
 
         <LinearLayout
-            android:id="@+id/profileLayout"
+            android:id="@+id/groupLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/layout_background_color"
             android:orientation="vertical" >
 
             <LinearLayout
-                android:id="@+id/userProfileInnerLayout1"
+                android:id="@+id/groupUpperLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal" >
 
                 <ImageView
-                    android:id="@+id/profileImage"
+                    android:id="@+id/groupImageView"
                     android:layout_width="match_parent"
                     android:layout_height="150dp"
                     android:adjustViewBounds="true"
-                    android:minWidth="300dp"
                     android:background="@color/image_background_color"
                     android:cropToPadding="true"
                     android:maxHeight="300dp"
                     android:minHeight="100dp"
+                    android:minWidth="300dp"
                     android:onClick="loadImage"
                     android:padding="3dp"
                     android:src="@drawable/abc_ab_bottom_solid_light_holo" />
-
-                <LinearLayout
-                    android:id="@+id/userProfileAgeLocationLayout"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:orientation="vertical" >
-
-                    <TextView
-                        android:id="@+id/profileInfoTextView"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center"
-                        android:layout_margin="5dp"
-                        android:fontFamily="sans-serif-condensed"
-                        android:gravity="left"
-                        android:maxLength="999"
-                        android:maxLines="6"
-                        android:padding="5dp"
-                        android:text="Stuff."
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:textColor="@color/text_color"
-                        android:textSize="14sp" />
-                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/xpBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:onClick="experienceDialog"
                 android:background="@color/black"
+                android:onClick="experienceDialog"
                 android:orientation="vertical" >
 
                 <TextView
@@ -79,10 +55,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:padding="0dp"
                     android:layout_margin="0dp"
                     android:background="#00000000"
                     android:gravity="center"
+                    android:padding="0dp"
                     android:text="Level 1"
                     android:textColor="@color/light_green"
                     android:textStyle="bold" />
@@ -92,57 +68,22 @@
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="0dp"/>
+                    android:layout_margin="0dp" />
 
                 <TextView
                     android:id="@+id/xpTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="0dp"
-                    android:padding="0dp"
                     android:layout_gravity="center"
+                    android:layout_margin="0dp"
                     android:background="#00000000"
                     android:gravity="center"
+                    android:padding="0dp"
                     android:textColor="@color/yellow" />
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/profilePastEventsBadgesLayout"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="5dp"
-                android:orientation="horizontal"
-                android:visibility="gone" >
-
-                <Button
-                    android:id="@+id/profileButton4"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginRight="10dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/background_yellow"
-                    android:fontFamily="sans-serif-condensed"
-                    android:onClick="onClick"
-                    android:text="Past Events"
-                    android:textColor="@color/text_color"
-                    android:textSize="18sp" />
-
-                <Button
-                    android:id="@+id/profileButton5"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="10dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/background_yellow"
-                    android:fontFamily="sans-serif-condensed"
-                    android:onClick="onClick"
-                    android:text="Badges\n(1)"
-                    android:textColor="@color/text_color"
-                    android:textSize="18sp" />
-            </LinearLayout>
-
             <TextView
-                android:id="@+id/aboutTitlePA"
+                android:id="@+id/aboutTitleTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
@@ -150,18 +91,18 @@
                 android:fontFamily="sans-serif-condensed"
                 android:gravity="left"
                 android:padding="5dp"
-                android:text="About User:"
+                android:text="About Group:"
                 android:textColor="@color/white" />
 
             <LinearLayout
-                android:id="@+id/friendProfileInnerLayout2"
+                android:id="@+id/aboutLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="0dp"
                 android:orientation="horizontal" >
 
                 <TextView
-                    android:id="@+id/profileAboutTextView"
+                    android:id="@+id/aboutTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="0dp"
@@ -170,71 +111,73 @@
                     android:fontFamily="sans-serif-condensed"
                     android:gravity="left"
                     android:padding="10dp"
-                    android:text="This is your friend&apos;s profile."
+                    android:text="This is a group profile."
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="@color/text_color"
                     android:textSize="14sp" />
             </LinearLayout>
 
             <Button
-                android:id="@+id/profileButton1"
+                android:id="@+id/membersButton"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/selector_button"
                 android:fontFamily="sans-serif-condensed"
-                android:onClick="onClick"
-                android:text=""
-                android:textColor="@color/button_text_color"
-                android:textSize="18sp" />
-
-            <Button
-                android:id="@+id/profileButton2"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/selector_button"
-                android:fontFamily="sans-serif-condensed"
-                android:onClick="onClick"
-                android:text=""
+                android:onClick="membersButton"
+                android:text="Members"
                 android:textColor="@color/button_text_color"
                 android:textSize="18sp"
                 android:visibility="gone" />
 
             <Button
-                android:id="@+id/profileButton3"
+                android:id="@+id/messagesButton"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/selector_button"
                 android:fontFamily="sans-serif-condensed"
-                android:onClick="onClick"
-                android:text=""
+                android:onClick="messagesButton"
+                android:text="Group Messages"
                 android:textColor="@color/button_text_color"
                 android:textSize="18sp"
                 android:visibility="gone" />
 
-                        <Button
-                android:id="@+id/inviteFriendsButton"
+            <Button
+                android:id="@+id/inviteButton"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/selector_button"
+                android:fontFamily="sans-serif-condensed"
+                android:onClick="inviteButton"
+                android:text="Invite Friends"
+                android:textColor="@color/button_text_color"
+                android:textSize="18sp"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/joinButton"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/selector_offcolorbutton"
                 android:fontFamily="sans-serif-condensed"
-                android:onClick="inviteFriendsButton"
-                android:text="Invite Friends"
+                android:onClick="joinButton"
+                android:text="Join Group"
                 android:textColor="@color/text_color"
                 android:textSize="18sp"
                 android:visibility="gone" />
+
             <Button
-                android:id="@+id/profileEditButton"
+                android:id="@+id/editButton"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/selector_offcolorbutton"
                 android:fontFamily="sans-serif-condensed"
-                android:onClick="onClick"
-                android:text="Edit Profile"
+                android:onClick="editButton"
+                android:text="Edit Group"
                 android:textColor="@color/text_color"
                 android:textSize="18sp"
                 android:visibility="gone" />

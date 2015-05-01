@@ -35,11 +35,7 @@ public class InviteActivity extends BaseActivity
 	private Group group;
 	private String userRole;
 	private SparseArray<String> role = new SparseArray<String>();
-	// holds list of role of all friend rows to be added
-	private String CONTENT; // type of content to display
-	private Bundle EXTRAS; // type of content to display
 	private GcmUtility gcmUtil;
-	private String receiver = "";
 	private String groupName = "";
 
 	@Override
@@ -47,17 +43,12 @@ public class InviteActivity extends BaseActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_invite);
-		load();
-	}
-
-	private void load()
-	{
-		EXTRAS = getIntent().getExtras();
-		CONTENT = EXTRAS.getString("content");
+		
+		Bundle extras = getIntent().getExtras();
 		// should always be current user
 		user = GLOBAL.getCurrentUser();
-		groupName = EXTRAS.getString("group_name");
-		group = GLOBAL.getGroup(EXTRAS.getInt("g_id"));
+		groupName = extras.getString("group_name");
+		group = GLOBAL.getGroup(extras.getInt("g_id"));
 		userRole = user.getGroupRole(group.getID());
 		try
 		{
@@ -67,16 +58,16 @@ public class InviteActivity extends BaseActivity
 		{
 		}
 		updateUI();
-		initActionBar("Invite to " + group.getName(), true);
 	}
+
 
 	private void updateUI()
 	{
+		initActionBar("Invite to " + group.getName(), true);
 		// could use content here
 		View view;
 		LinearLayout pickFriendsLayout = (LinearLayout) findViewById(R.id.pickFriendsLayout);
 		ArrayList<User> members;
-		LayoutInflater li = getLayoutInflater();
 		members = group.getUsers();
 		ArrayList<User> friends = user.getUsers();
 		users = new ArrayList<User>();
@@ -102,7 +93,7 @@ public class InviteActivity extends BaseActivity
 			// setup for each friend
 			for (User user : users)
 			{
-				view = li.inflate(R.layout.list_row_invitefriend, null);
+				view = inflater.inflate(R.layout.list_row_invitefriend, null);
 				final RelativeLayout row = (RelativeLayout) view.findViewById(R.id.friendManageLayout);
 				final Button makeAdminButton = (Button) row.findViewById(R.id.removeFriendButtonNoAccess);
 				final TextView friendName = (TextView) row.findViewById(R.id.friendNameTextView);
@@ -220,7 +211,7 @@ public class InviteActivity extends BaseActivity
 		else
 		{
 			// no friends that are not already in group
-			view = li.inflate(R.layout.list_item_sadguy, null);
+			view = inflater.inflate(R.layout.list_item_sadguy, null);
 			((TextView) view.findViewById(R.id.sadGuyTextView))
 					.setText("All of your friends are already in this group.");
 			pickFriendsLayout.addView(view);
@@ -271,11 +262,11 @@ public class InviteActivity extends BaseActivity
 		try
 		{
 			gcmUtil.sendGroupNotification(friendsEmailList, groupName, Integer.toString(group.getID()), "GROUP_INVITE");
-			GLOBAL.getToast(this, "No friends have been invited.").show();
+			GLOBAL.getToast(this, "Friends have been invited!").show();
 		}
 		catch (Exception e)
 		{
-			GLOBAL.getToast(this, "Friends have been invited!").show();
+			GLOBAL.getToast(this, "No friends have been invited.").show();	
 		}
 
 		// end activity, go back to previous activity

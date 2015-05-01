@@ -30,8 +30,9 @@ import android.widget.Toast;
  */
 public class EventAddGroupsActivity extends BaseActivity
 {
-	private SparseArray<String> added = new SparseArray<String>(); 
-	private ArrayList<Group> allGroups = new ArrayList<Group>(); // holds list															// groups
+	private SparseArray<String> added = new SparseArray<String>();
+	private ArrayList<Group> allGroups = new ArrayList<Group>(); // holds list
+																	// // groups
 	private User user;
 	private Event event;
 	private String email;
@@ -44,22 +45,22 @@ public class EventAddGroupsActivity extends BaseActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_event_addgroups);
 		// grab the email of current users from our global class
-				user = GLOBAL.getCurrentUser();
-				email = user.getEmail();
-				Bundle extras = getIntent().getExtras();
-				ID = Integer.toString(extras.getInt("e_id"));
-				event = GLOBAL.getEvent(Integer.parseInt(ID));
-				allGroups = user.getGroups();
-				try
-				{
-					gcmUtil = new GcmUtility(GLOBAL);
-				}
-				catch (Exception e)
-				{
-				}
-				initActionBar("Invite Groups to Event", true);
-				updateUI();
-				
+		user = GLOBAL.getCurrentUser();
+		email = user.getEmail();
+		Bundle extras = getIntent().getExtras();
+		ID = Integer.toString(extras.getInt("e_id"));
+		event = GLOBAL.getEvent(Integer.parseInt(ID));
+		allGroups = user.getGroups();
+		try
+		{
+			gcmUtil = new GcmUtility(GLOBAL);
+		}
+		catch (Exception e)
+		{
+		}
+		initActionBar("Invite Groups to Event", true);
+		updateUI();
+
 	}
 
 	private void updateUI()
@@ -160,7 +161,6 @@ public class EventAddGroupsActivity extends BaseActivity
 		ArrayList<Integer> addedIdList = new ArrayList<Integer>();
 		for (int i = 0; i < size; i++)
 		{
-			System.out.println("adding group #" + i + "/" + added.size());
 			// get the groups's g_id by matching indexes from added list with
 			// indexes from allGroupslist.
 			int key = added.keyAt(i);
@@ -169,6 +169,7 @@ public class EventAddGroupsActivity extends BaseActivity
 			addedIdList.add(Integer.parseInt(ID));
 			System.out.println("adding group: " + ID);
 
+			
 			// initiate add of group
 			new EventAddGroupTask().execute("http://68.59.162.183/" + "android_connect/add_eventmember.php", ID, email,
 					ID);
@@ -188,13 +189,13 @@ public class EventAddGroupsActivity extends BaseActivity
 	private class EventAddGroupTask extends AsyncTask<String, Void, String>
 	{
 		int tmpid;
+
 		@Override
 		protected String doInBackground(String... urls)
 		{
 			tmpid = Integer.parseInt(urls[1]);
 			System.out.println("tmpid: " + tmpid);
-			// pass url off to GLOBAL to do the JSON call. Code continues at
-			// onPostExecute when JSON returns.
+			// pass url off to GLOBAL to do the JSON call
 			return GLOBAL.readJSONFeed("http://68.59.162.183/android_connect/get_group_members.php?gid=" + tmpid, null);
 		}
 

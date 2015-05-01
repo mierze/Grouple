@@ -36,33 +36,36 @@ public class GroupProfileActivity extends BaseActivity
 
 	private Group group;
 	private User user;
-	private View xpBar;
 	private ImageView iv;
-	private Button profileButton1;
-	private Button profileButton2;
-	private Button profileButton3;
-	private Button profileButton6;
-	private Button inviteFriendsButton;
+	private Button membersButton;
+	private Button messagesButton;
+	private Button joinButton;
+	private Button editButton;
+	private Button inviteButton;
 	private ProgressBar xpProgressBar;
 	private TextView xpTextView;
 	private TextView levelTextView;
+	private TextView aboutTextView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_group_profile);
-
-		xpBar = findViewById(R.id.xpBar);
+		
+		//init views
 		xpProgressBar = (ProgressBar) findViewById(R.id.xpProgressBar);
 		levelTextView = (TextView) findViewById(R.id.levelTextView);
 		xpTextView = (TextView) findViewById(R.id.xpTextView);
-		profileButton1 = (Button) findViewById(R.id.profileButton1);
-		profileButton2 = (Button) findViewById(R.id.profileButton2);
-		profileButton3 = (Button) findViewById(R.id.profileButton3);
-		profileButton6 = (Button) findViewById(R.id.profileEditButton);
-		inviteFriendsButton = (Button) findViewById(R.id.inviteFriendsButton);
-		iv = (ImageView) findViewById(R.id.profileImage);
+		membersButton = (Button) findViewById(R.id.membersButton);
+		messagesButton = (Button) findViewById(R.id.messagesButton);
+		joinButton = (Button) findViewById(R.id.joinButton);
+		editButton = (Button) findViewById(R.id.editButton);
+		inviteButton = (Button) findViewById(R.id.inviteButton);
+		aboutTextView = (TextView) findViewById(R.id.aboutTextView);
+		iv = (ImageView) findViewById(R.id.groupImageView);
+		
+		//init variables
 		Bundle extras = getIntent().getExtras();
 		user = GLOBAL.getCurrentUser();
 		group = GLOBAL.getGroup(extras.getInt("g_id"));
@@ -85,7 +88,6 @@ public class GroupProfileActivity extends BaseActivity
 	{
 		LocalBroadcastManager.getInstance(this).unregisterReceiver(dataReceiver);
 		super.onPause();
-
 	}
 
 	// This listens for pings from the data service to let it know that there
@@ -105,6 +107,11 @@ public class GroupProfileActivity extends BaseActivity
 		group.fetchMembers(this);
 		group.fetchImage(this);
 		group.fetchExperience(this);
+		new getUnreadEntityMessagesTask().execute(
+				"http://68.59.162.183/android_connect/get_unread_entitymessages.php",
+				Integer.toString(group.getID()));
+		new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_group.php",
+				Integer.toString(group.getID()));
 	}
 
 	public void experienceDialog(View view)
@@ -129,41 +136,6 @@ public class GroupProfileActivity extends BaseActivity
 		experienceDialog.show();
 	}
 
-	
-	private void setRole()
-	{
-		int pub;
-		String pro2Text;
-		ArrayList<User> users = new ArrayList<User>();
-
-		pub = group.getPub();
-		users = group.getUsers();
-		pro2Text = "Join Group";
-
-		// checking if user is in group/event
-		boolean inEntity = false;
-		for (User u : users)
-			if (u.getEmail().equals(user.getEmail()))
-				inEntity = true;
-
-		if (!inEntity) // user not in group, check if public so they can join
-		{
-			if (pub == 1)
-			{
-
-				profileButton3.setVisibility(View.VISIBLE);
-				profileButton3.setText(pro2Text);
-
-			}
-			setButtons();// call here since not checking role first
-		}
-		else
-		// user is in group, check role
-		{
-			new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_group.php",
-					Integer.toString(group.getID()));
-		}
-	}
 
 	private void setExperience()
 	{
@@ -261,7 +233,7 @@ public class GroupProfileActivity extends BaseActivity
 					// adding role to users array of roles for future reference
 					int numUnread = jsonObject.getInt("numUnread");
 					if (numUnread > 0)
-						profileButton2.setText("Group Messages (" + numUnread + " unread)");
+						messagesButton.setText("Group Messages (" + numUnread + " unread)");
 
 				}
 				else
@@ -279,86 +251,79 @@ public class GroupProfileActivity extends BaseActivity
 
 	private void setButtons()
 	{
+		
+		membersButton.setVisibility(View.GONE);
+		inviteButton.setVisibility(View.GONE);
+		joinButton.setVisibility(View.GONE);
+		editButton.setVisibility(View.GONE);
+		messagesButton.setVisibility(View.GONE);
+		
+		//in group
 		if (group.inUsers(user.getEmail()))
 		{
-			profileButton2.setVisibility(View.VISIBLE);
-			profileButton2.setText("Group Messages");
-			new getUnreadEntityMessagesTask().execute(
-					"http://68.59.162.183/android_connect/get_unread_entitymessages.php",
-					Integer.toString(group.getID()));
+			membersButton.setText("Members\n(" + group.getNumUsers() + ")");
+			membersButton.setVisibility(View.VISIBLE);
+			messagesButton.setVisibility(View.VISIBLE);
 			String role = user.getGroupRole(group.getID());
 			if (role.equals("A"))
 			{
-				profileButton6.setText("Edit Group");
-				profileButton6.setVisibility(View.VISIBLE);
+				editButton.setVisibility(View.VISIBLE);
 			}
 			if (role.equals("A") || role.equals("P"))
 			{
-				inviteFriendsButton.setVisibility(View.VISIBLE);
+				inviteButton.setVisibility(View.VISIBLE);
 			}
 		}
-		profileButton1.setText("Members\n(" + group.getNumUsers() + ")");
+		//not in group
+		else
+		{
+			//public and not in, allow join
+			if (group.getPub() == 1)
+			{
+				joinButton.setVisibility(View.VISIBLE);
+			}
+		}
 
 	}
 
-	public void inviteFriendsButton(View view)
+	public void membersButton(View view)
+	{
+		Intent intent = new Intent(this, UserListActivity.class);
+		intent.putExtra("content", "GROUP_MEMBERS");
+		intent.putExtra("g_id", group.getID());
+		intent.putExtra("email", user.getEmail());
+		startActivity(intent);
+	}
+	public void inviteButton(View view)
 	{
 		Intent intent = new Intent(this, InviteActivity.class);
 		intent.putExtra("g_id", group.getID());
+		intent.putExtra("email", user.getEmail());
 		startActivity(intent);
 	}
-
-	public void onClick(View view)
+	public void messagesButton(View view)
 	{
-		super.onClick(view);
-		loadDialog.show();
-		boolean noIntent = view.getId() == R.id.backButton ? true : false;
-
-		Intent intent = new Intent(this, UserListActivity.class);
-		switch (view.getId())
-		{
-		case R.id.profileButton1:
-			// members
-			intent.putExtra("content", "GROUP_MEMBERS");
-			System.out.println("Loading a group with id: " + group.getID());
-			break;
-		case R.id.profileButton2:
-			intent = new Intent(this, EntityMessagesActivity.class);
-			intent.putExtra("content", "GROUP");
-			break;
-		case R.id.profileButton3:
-			// events UPCOMING
-			// join the public group
-
-			new JoinPublicTask().execute("http://68.59.162.183/" + "android_connect/join_public_group.php",
-					user.getEmail(), "P", Integer.toString(group.getID()));
-			System.out.println("NOW ADDING TO  GROUP");
-			noIntent = true;
-
-			break;
-		case R.id.profileEditButton:
-
-			intent = new Intent(this, GroupEditActivity.class);
-
-			break;
-		default:
-			break;
-		}
-		if (user != null)
-		{
-
-			intent.putExtra("email", user.getEmail());
-		}
-		if (group != null)
-		{
-			intent.putExtra("g_id", group.getID());
-		}
-
-		if (!noIntent) // TODO, move buttons elsewhere that dont start list
-			startActivity(intent);
-		else
-			loadDialog.hide(); // did not launch intent, cancel load dialog
+		Intent intent = new Intent(this, EntityMessagesActivity.class);
+		intent.putExtra("content", "GROUP");
+		intent.putExtra("g_id", group.getID());
+		intent.putExtra("email", user.getEmail());
+		startActivity(intent);
 	}
+	public void joinButton(View view)
+	{
+		new JoinPublicTask().execute("http://68.59.162.183/" + "android_connect/join_public_group.php",
+				user.getEmail(), "P", Integer.toString(group.getID()));
+	}
+	public void editButton(View view)
+	{
+		Intent intent = new Intent(this, GroupEditActivity.class);
+		intent.putExtra("g_id", group.getID());
+		intent.putExtra("email", user.getEmail());
+		startActivity(intent);
+	}
+	
+
+
 
 	/*
 	 * Get profile executes get_profile.php. It uses the current users email
@@ -368,24 +333,16 @@ public class GroupProfileActivity extends BaseActivity
 	{
 		String title = group.getName();
 		initActionBar(title, true);
-		TextView aboutTitle = (TextView) findViewById(R.id.aboutTitlePA);
-		TextView info = (TextView) findViewById(R.id.profileInfoTextView);
-		TextView about = (TextView) findViewById(R.id.profileAboutTextView);
 		setButtons();
-		aboutTitle.setText("About Group:");
 		// iv.setImageBitmap(group.getImage());
-		info.setText("Creator: " + group.getEmail() + "\nCreated: " + group.getDateCreatedText());
-		about.setText(group.getAbout());
+		aboutTextView.setText("Creator: " + group.getEmail() + "\nGroup Since: " + group.getDateCreatedText() + "\n" +group.getAbout());
 		if (group.getImage() != null)
 			iv.setImageBitmap(group.getImage());
 		else
 			iv.setImageResource(R.drawable.group_image_default);
-
 		iv.setScaleType(ScaleType.CENTER_CROP);
-		setRole();
 		setExperience();
 		initXpBar();
-
 	}
 
 	private void initXpBar()
@@ -441,7 +398,7 @@ public class GroupProfileActivity extends BaseActivity
 					Context context = getApplicationContext();
 					Toast toast = GLOBAL.getToast(context, jsonObject.getString("message"));
 					toast.show();
-					profileButton3.setVisibility(View.GONE);
+					joinButton.setVisibility(View.GONE);
 					fetchData();
 					// all working correctly, continue to next user or finish.
 					loadDialog.hide();

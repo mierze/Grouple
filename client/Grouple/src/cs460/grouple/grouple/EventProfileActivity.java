@@ -27,29 +27,25 @@ import android.widget.Toast;
 
 /**
  * 
- * @author Brett, Todd, Scott
- * EventProfileActivity displays the current profile of an Event
- *
+ * @author Brett, Todd, Scott EventProfileActivity displays the current profile
+ *         of an Event
+ * 
  */
 public class EventProfileActivity extends BaseActivity
 {
 	private ImageView iv;
 	private Event event;
 	private User user;
-	private Bundle EXTRAS;
-	private String CONTENT; // type of content to display in profile, passed in
-							// from other activities
-	private LinearLayout profileLayout;
-	private Button profileButton1;
-	private Button profileButton2;
-	private Button profileButton3;
-	private Button profileButton6;
-	private Button inviteGroupsButton;
-	private Button itemListButton;
-	private TextView infoTextView;
+	private LinearLayout eventContainer;
+	private Button attendingButton;
+	private Button messagesButton;
+	private Button joinButton;
+	private Button editButton;
+	private Button inviteButton;
+	private Button checklistButton;
 	private TextView aboutTextView;
-	private View itemListDialogView;
-	private AlertDialog itemListAlertDialog;
+	private View checklistDialogView;
+	private AlertDialog checklistAlertDialog;
 	private ArrayList<EventItem> items = new ArrayList<EventItem>();
 
 	@Override
@@ -69,12 +65,7 @@ public class EventProfileActivity extends BaseActivity
 
 	}
 
-	public void inviteGroupsButton(View view)
-	{
-		Intent intent = new Intent(this, EventAddGroupsActivity.class);
-		intent.putExtra("e_id", event.getID());
-		startActivity(intent);
-	}
+
 
 	// This listens for pings from the data service to let it know that there
 	// are updates
@@ -96,7 +87,9 @@ public class EventProfileActivity extends BaseActivity
 		event.fetchInfo(this);
 		event.fetchParticipants(this);
 		event.fetchImage(this);
-		event.fetchItems(this);
+		event.fetchItems(this);		// and check for not past
+		new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_event.php",
+				Integer.toString(event.getID()));
 	}
 
 	@Override
@@ -104,60 +97,25 @@ public class EventProfileActivity extends BaseActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_event_profile);
-		profileLayout = (LinearLayout) findViewById(R.id.profileLayout);
-
-		profileButton1 = (Button) findViewById(R.id.profileButton1);
-		profileButton2 = (Button) findViewById(R.id.profileButton2);
-		profileButton3 = (Button) findViewById(R.id.profileButton3);
-		profileButton6 = (Button) findViewById(R.id.profileEditButton);
-		infoTextView = (TextView) findViewById(R.id.profileInfoTextView);
-		inviteGroupsButton = (Button) findViewById(R.id.inviteGroupsButton);
-		aboutTextView = (TextView) findViewById(R.id.profileAboutTextView);
-		itemListButton = (Button) findViewById(R.id.itemListButton);
-		iv = (ImageView) findViewById(R.id.profileImageUPA);
-		EXTRAS = getIntent().getExtras();
+		Bundle extras = getIntent().getExtras();
+		
+		//init views
+		eventContainer = (LinearLayout) findViewById(R.id.eventContainer);
+		attendingButton = (Button) findViewById(R.id.attendingButton);
+		messagesButton = (Button) findViewById(R.id.messagesButton);
+		joinButton = (Button) findViewById(R.id.joinButton);
+		editButton = (Button) findViewById(R.id.editButton);
+		inviteButton = (Button) findViewById(R.id.inviteButton);
+		aboutTextView = (TextView) findViewById(R.id.aboutTextView);
+		checklistButton = (Button) findViewById(R.id.checklistButton);
+		iv = (ImageView) findViewById(R.id.eventImageView);
+		
+		//init variables
 		user = GLOBAL.getCurrentUser();
-		event = GLOBAL.getEvent(EXTRAS.getInt("e_id"));
-
+		event = GLOBAL.getEvent(extras.getInt("e_id"));
+		items = event.getItems();
 	}
 
-	private void setRole()
-	{
-		int pub;
-		String pro2Text;
-		ArrayList<User> users = new ArrayList<User>();
-		pub = event.getPub();
-		users = event.getUsers();
-		pro2Text = "Join Event";
-		// checking if user is in group/event
-		boolean inEntity = false;
-		for (User u : users)
-			if (u.getEmail().equals(user.getEmail()))
-				inEntity = true;
-		if (!inEntity) // user not in group, check if public so they can join
-		{
-			if (pub == 1)
-			{
-				if (event.getEventState().equals("Ended"))
-				{
-				}// do nothing, else it is public and joinable
-				else
-				{
-					profileButton3.setVisibility(View.VISIBLE);
-					profileButton3.setText(pro2Text);
-				}
-			}
-			setNotifications();// call here since not checking role first
-		}
-		else
-		// user is in group, check role
-		{
-			// and check for not past
-			new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_event.php",
-					Integer.toString(event.getID()));
-
-		}
-	}
 
 	/* CLASS TO FETCH THE ROLE OF THE USER IN GROUP / EVENT */
 	private class getRoleTask extends AsyncTask<String, Void, String>
@@ -187,7 +145,7 @@ public class EventProfileActivity extends BaseActivity
 					String role = jsonObject.getString("role").toString();
 
 					user.addToEventRoles(event.getID(), role);
-					setNotifications(); // for group / event
+					updateUI(); // for group / event
 				}
 				else
 				{
@@ -229,7 +187,7 @@ public class EventProfileActivity extends BaseActivity
 					// adding role to users array of roles for future reference
 					int numUnread = jsonObject.getInt("numUnread");
 					if (numUnread > 0)
-						profileButton2.setText("Event Messages (" + numUnread + " unread)");
+						messagesButton.setText("Event Messages (" + numUnread + " unread)");
 				}
 				else
 				{
@@ -244,38 +202,58 @@ public class EventProfileActivity extends BaseActivity
 		}
 	}
 
-	private void setNotifications()
+	private void setButtons()
 	{
+		messagesButton.setVisibility(View.GONE);
+		inviteButton.setVisibility(View.GONE);
+		attendingButton.setVisibility(View.GONE);
+		editButton.setVisibility(View.GONE);
+		joinButton.setVisibility(View.GONE);
+		messagesButton.setVisibility(View.GONE);
+		
 
+		
+		//in event
 		if (event.inUsers(user.getEmail()))
 		{
+			attendingButton.setText("Attending (" + event.getNumUsers() + ")");
 			String role = user.getEventRole(event.getID());
-			profileButton2.setVisibility(View.VISIBLE);
-			profileButton2.setText("Event Messages");
+			messagesButton.setVisibility(View.VISIBLE);
+			attendingButton.setVisibility(View.VISIBLE);
 			new getUnreadEntityMessagesTask().execute(
 					"http://68.59.162.183/android_connect/get_unread_entitymessages.php",
 					Integer.toString(event.getID()));
+			//admin and not ended
 			if (role.equals("A") && !event.getEventState().equals("Ended"))
 			{
 				if (event.getEventState().equals("Declined"))
-					profileButton6.setText("Edit and Re-propose Event");
+					editButton.setText("Edit and Repropose Event");
 				else
-					profileButton6.setText("Edit Event");
-				profileButton6.setVisibility(View.VISIBLE);
+					editButton.setText("Edit Event");
+				editButton.setVisibility(View.VISIBLE);
 			}
-			if ((role.equals("A") || role.equals("P")) && (!event.getEventState().equals("Ended") && !event.getEventState().equals("Declined")))
+			//admin or promoter
+			if ((role.equals("A") || role.equals("P"))
+					&& (!event.getEventState().equals("Ended") && !event.getEventState().equals("Declined")))
 			{
-				inviteGroupsButton.setVisibility(View.VISIBLE);
+				inviteButton.setVisibility(View.VISIBLE);
+			}
+			int numUnclaimed = event.getNumUnclaimedItems();
+			if (!event.getItems().isEmpty())
+			{
+				if (numUnclaimed > 0)
+				{
+					checklistButton.setText("Item Checklist (" + numUnclaimed + " unclaimed)");
+				}
+				checklistButton.setVisibility(View.VISIBLE);
 			}
 		}
+		//not in event, it is public and ready to join
 		else if (!event.getEventState().equals("Ended") && !event.getEventState().equals("Declined")
 				&& event.getPub() == 1)
 		{
-			profileButton6.setText("Join Event");
-			profileButton6.setVisibility(View.VISIBLE);
+			joinButton.setVisibility(View.VISIBLE);
 		}
-		profileButton1.setText("Attending (" + event.getNumUsers() + ")");
-
 	}
 
 	private void updateItemChecklist()
@@ -318,7 +296,6 @@ public class EventProfileActivity extends BaseActivity
 				JSONObject jsonObject = new JSONObject(result);
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					System.out.println("WE HAD SUCCESS IN UPDATING TO BRING!");
 					fetchData();
 				}
 				// user has no friends
@@ -334,73 +311,65 @@ public class EventProfileActivity extends BaseActivity
 			}
 		}
 	}
+	
+	//ONCLICK BUTTONS
 
-	public void onClick(View view)
+	public void inviteButton(View view)
 	{
-		super.onClick(view);
-		loadDialog.show();
-		boolean noIntent = view.getId() == R.id.backButton ? true : false;
-
-		Intent intent = new Intent(this, UserListActivity.class);
-		switch (view.getId())
-		{
-		case R.id.profileButton1:
-			// events
-			intent.putExtra("content", "EVENT_PARTICIPANTS");
-			break;
-		case R.id.profileButton2:
-			intent = new Intent(this, EntityMessagesActivity.class);
-			intent.putExtra("content", "EVENT");
-			intent.putExtra("name", event.getName());
-			break;
-		case R.id.profileButton3:
-			// joining public event, defaulting to a promoter status
-			new JoinPublicTask().execute("http://68.59.162.183/android_connect/join_public_event.php", user.getEmail(),
-					"P", Integer.toString(event.getID()));
-			noIntent = true;
-			break;
-		case R.id.itemListButton:
-			itemListDialog();
-			noIntent = true;
-			break;
-		case R.id.profileEditButton:
-			intent = new Intent(this, EventEditActivity.class);
-			// add reprososed extra if clicking this button when it says
-			// "repropose event" instead of "edit event"
-			if (profileButton6.getText().toString().equals("Join Event"))
-			{
-				// join event task TODO here
-				new JoinPublicTask().execute("http://68.59.162.183/" + "android_connect/join_public_event.php",
-						user.getEmail(), "P", Integer.toString(event.getID()));
-			}
-			else if (!profileButton6.getText().toString().equals("Edit Event"))
-			{
-				System.out.println("adding reproposed extra!");
-				intent.putExtra("reproposed", 1);
-				finish();
-			}
-
-			break;
-		default:
-			break;
-		}
-		intent.putExtra("email", user.getEmail());
-
+		Intent intent = new Intent(this, EventAddGroupsActivity.class);
 		intent.putExtra("e_id", event.getID());
-		if (!noIntent) // TODO, move buttons elsewhere that dont start list
-			startActivity(intent);
-		else
-			loadDialog.hide(); // did not launch intent, cancel load dialog
+		startActivity(intent);
 	}
 
-	private void itemListDialog()
+	public void editButton(View v)
+	{
+		loadDialog.show();
+		Intent intent = new Intent(this, EventEditActivity.class);
+		// add reprososed extra if clicking this button when it says
+		// "repropose event" instead of "edit event"
+
+		if (!editButton.getText().toString().equals("Edit Event"))
+		{
+			System.out.println("adding reproposed extra!");
+			intent.putExtra("reproposed", 1);
+			// finish();
+		}
+		if (user != null)
+			intent.putExtra("email", user.getEmail());
+		intent.putExtra("e_id", event.getID());
+		startActivity(intent);
+	}
+
+	public void attendingButton(View v)
+	{
+		loadDialog.show();
+		Intent intent = new Intent(this, UserListActivity.class);
+		intent.putExtra("content", "EVENT_PARTICIPANTS");
+		if (user != null)
+			intent.putExtra("email", user.getEmail());
+		intent.putExtra("e_id", event.getID());
+		startActivity(intent);
+	}
+
+	public void messagesButton(View v)
+	{
+		loadDialog.show();
+		Intent intent = new Intent(this, EntityMessagesActivity.class);
+		intent.putExtra("content", "EVENT");
+		if (user != null)
+			intent.putExtra("email", user.getEmail());
+		intent.putExtra("e_id", event.getID());
+		startActivity(intent);
+	}
+
+	public void checklistButton(View v)
 	{
 		// make our builder
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Item Checklist");
 		// inflate dialog with dialog layout for the list
-		itemListDialogView = inflater.inflate(R.layout.dialog_itemlist, null);
-		LinearLayout itemListLayout = (LinearLayout) itemListDialogView.findViewById(R.id.itemListLayout);
+		checklistDialogView = inflater.inflate(R.layout.dialog_itemlist, null);
+		LinearLayout itemListLayout = (LinearLayout) checklistDialogView.findViewById(R.id.itemListLayout);
 		// populate list with items
 		if (!items.isEmpty())
 		{
@@ -470,10 +439,10 @@ public class EventProfileActivity extends BaseActivity
 		}
 		// for itemNames -> make a new checklist row
 		// make this save on x out or back
-		builder.setView(itemListDialogView);
+		builder.setView(checklistDialogView);
 
-		itemListAlertDialog = builder.create();
-		itemListAlertDialog.setOnCancelListener(new DialogInterface.OnCancelListener()
+		checklistAlertDialog = builder.create();
+		checklistAlertDialog.setOnCancelListener(new DialogInterface.OnCancelListener()
 		{
 			@Override
 			public void onCancel(DialogInterface dialog)
@@ -481,75 +450,62 @@ public class EventProfileActivity extends BaseActivity
 				updateItemChecklist();
 			}
 		});
-		itemListAlertDialog.show();
+		checklistAlertDialog.show();
 		// updateItemChecklist();
 	}
 
-	/*
-	 * Get profile executes get_profile.php. It uses the current users email
-	 * address to retrieve the users name, age, and bio.
-	 */
+	public void joinButton(View v)
+	{
+		// joining public event, defaulting to a promoter status
+		new JoinPublicTask().execute("http://68.59.162.183/android_connect/join_public_event.php", user.getEmail(),
+				"P", Integer.toString(event.getID()));
+	}
+
+	//updating views
 	public void updateUI()
 	{
 		String title = event.getName();
-		// initializing the action bar and killswitch listener
 		initActionBar(title, true);
-		// TODO: testing different colors based on event types to bring some
-		// spice and push the color association
-		// profileLayout.setBackgroundColor(getResources().getColor(R.color.sports_background_color));
+		
 		title = event.getName();
 
 		if (event.getCategory().equals("Social"))
 		{
-			profileLayout.setBackgroundColor(getResources().getColor(R.color.light_red));
+			eventContainer.setBackgroundColor(getResources().getColor(R.color.light_red));
 		}
 		else if (event.getCategory().equals("Professional"))
 		{
-			profileLayout.setBackgroundColor(getResources().getColor(R.color.light_blue));
+			eventContainer.setBackgroundColor(getResources().getColor(R.color.light_blue));
 		}
 		else if (event.getCategory().equals("Fitness"))
 		{
-			profileLayout.setBackgroundColor(getResources().getColor(R.color.light_yellow));
+			eventContainer.setBackgroundColor(getResources().getColor(R.color.light_yellow));
 		}
 		else if (event.getCategory().equals("Nature"))
 		{
-			profileLayout.setBackgroundColor(getResources().getColor(R.color.light_green));
+			eventContainer.setBackgroundColor(getResources().getColor(R.color.light_green));
 		}
 		else if (event.getCategory().equals("Entertainment"))
 		{
-			profileLayout.setBackgroundColor(getResources().getColor(R.color.light_purple));
+			eventContainer.setBackgroundColor(getResources().getColor(R.color.light_purple));
 		}
-		setRole();
-		items = event.getItems();
-		int numUnclaimed = event.getNumUnclaimedItems();
-		if (!event.getItems().isEmpty())
-		{
-			itemListButton.setVisibility(View.VISIBLE);
-		}
-		if (numUnclaimed > 0)
-		{
-			itemListButton.setText("Item Checklist (" + numUnclaimed + " unclaimed)");
-		}
-		else if (numUnclaimed == 0)
-		{
-			itemListButton.setText("Item Checklist");
-		}
+
 
 		aboutTextView.setText(event.getAbout());
 		// iv.setImageBitmap(event.getImage());
-		String infoText = "Category: " + event.getCategory() + "\n" + event.getLocation() + "\n" + event.getStartText();
+		String about = "Category: " + event.getCategory() + "\n" + event.getLocation() + "\n" + event.getStartText();
 		if (event.getMaxPart() > 0)
-			infoText += "\n(" + event.getNumUsers() + " confirmed / " + event.getMinPart() + " required)"
+			about += "\n(" + event.getNumUsers() + " confirmed / " + event.getMinPart() + " required)"
 					+ "\nMax Participants: " + event.getMaxPart();
 		else
-			infoText += "\n(" + event.getNumUsers() + " confirmed / " + event.getMinPart() + " required)";
-		infoTextView.setText(infoText);
+			about += "\n(" + event.getNumUsers() + " confirmed / " + event.getMinPart() + " required)";
+		aboutTextView.setText(about);
 		if (event.getImage() != null)
 			iv.setImageBitmap(event.getImage());
 		else
 			iv.setImageResource(R.drawable.event_image_default);
 		iv.setScaleType(ScaleType.CENTER_CROP);
-		setNotifications(); // for group / event
+		setButtons(); // for group / event
 	}
 
 	// aSynch task to add individual member to group.
@@ -581,7 +537,7 @@ public class EventProfileActivity extends BaseActivity
 					Context context = getApplicationContext();
 					Toast toast = GLOBAL.getToast(context, jsonObject.getString("message"));
 					toast.show();
-					profileButton2.setVisibility(View.GONE);
+					messagesButton.setVisibility(View.GONE);
 
 					fetchData();
 					// all working correctly, continue to next user or finish.
