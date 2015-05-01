@@ -20,7 +20,6 @@ public class GroupsActivity extends BaseActivity
 	private User user;
 	private Button groupInvitesButton;
 	private Button groupsCurrentButton;
-	//TODO: grab all ui elements here
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -29,6 +28,7 @@ public class GroupsActivity extends BaseActivity
 		setContentView(R.layout.activity_groups);
 		user = GLOBAL.getCurrentUser();// loadUser(global.getCurrentUser().getEmail());
 		initActionBar("Groups", true);
+		//init views
 		groupInvitesButton = (Button) findViewById(R.id.groupInvitesButton);
 		groupsCurrentButton = (Button) findViewById(R.id.groupsCurrentButton);
 	}

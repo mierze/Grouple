@@ -110,7 +110,7 @@ public class BaseActivity extends ActionBarActivity implements OnClickListener
 	
 	// dialog pop up for a single badge with description
 	// TODO: add parameters about the badge?
-	protected void badgeDialog(Badge b)
+	protected void badgeDialog(Badge b, String gender)
 	{
 		int level = b.getLevel();
 		View dialogView = inflater.inflate(R.layout.dialog_badge, null);
@@ -119,16 +119,13 @@ public class BaseActivity extends ActionBarActivity implements OnClickListener
 
 		TextView badgeAboutTextView = (TextView) dialogView.findViewById(R.id.badgeAboutTextView);
 		if(level > 0)
-			badgeTitleTextView.setText("Congratulations! You just earned a badge!\n");
+			badgeTitleTextView.setText("Level " + level);
 		else
-			badgeTitleTextView.setText("You have not unlocked this badge, keep on working!\n");
+			badgeTitleTextView.setText("You have not unlocked this badge, keep on working!");
 		badgeAboutTextView.setText(getResources().getString(b.getAboutID()));
-		if (b.getLevel() > 0)
-			badgeImageView.setImageDrawable(getResources().getDrawable(R.drawable.badge_nature));
-		else
-			badgeImageView.setImageDrawable(getResources().getDrawable(R.drawable.badge_nature_grey));
+		badgeImageView.setImageDrawable(getResources().getDrawable(b.getImageID(gender)));
 		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-		dialogBuilder.setTitle(b.getName() + " (Level " + b.getLevel() + ")");
+		dialogBuilder.setTitle(b.getName());
 		dialogBuilder.setView(dialogView);
 		AlertDialog badgesDialog = dialogBuilder.create();
 		badgesDialog.show();
@@ -139,7 +136,7 @@ public class BaseActivity extends ActionBarActivity implements OnClickListener
 		if (user.getNumNewBadges() > 0)
 		{
 			for (Badge b : user.getNewBadges())
-				badgeDialog(b);
+				badgeDialog(b, user.getGender());
 		}
 		user.getNewBadges().clear();
 	}

@@ -52,7 +52,7 @@ public class EventProfileActivity extends BaseActivity
 	protected void onResume()
 	{
 		super.onResume();
-		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("event_data"));
+		LocalBroadcastManager.getInstance(this).registerReceiver(dataReceiver, new IntentFilter("event_data"));
 		fetchData();
 		updateUI();
 	}
@@ -60,7 +60,7 @@ public class EventProfileActivity extends BaseActivity
 	@Override
 	protected void onPause()
 	{
-		LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(dataReceiver);
 		super.onPause();
 	}
 
@@ -68,7 +68,7 @@ public class EventProfileActivity extends BaseActivity
 
 	// This listens for pings from the data service to let it know that there
 	// are updates
-	private BroadcastReceiver mReceiver = new BroadcastReceiver()
+	private BroadcastReceiver dataReceiver = new BroadcastReceiver()
 	{
 		@Override
 		public void onReceive(Context context, Intent intent)
@@ -493,7 +493,6 @@ public class EventProfileActivity extends BaseActivity
 		}
 
 
-		aboutTextView.setText(event.getAbout());
 		// iv.setImageBitmap(event.getImage());
 		String about = "Category: " + event.getCategory() + "\n" + event.getLocation() + "\n" + event.getStartText();
 		if (event.getMaxPart() > 0)

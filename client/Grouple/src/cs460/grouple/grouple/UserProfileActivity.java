@@ -75,7 +75,6 @@ public class UserProfileActivity extends BaseActivity
 		messageButton = (Button) findViewById(R.id.messageButton);
 		badgesButton = (Button) findViewById(R.id.badgesButton);
 		userEditButton = (Button) findViewById(R.id.userEditButton);
-		pastEventsBadgesLayout = findViewById(R.id.profilePastEventsBadgesLayout);
 		iv = (ImageView) findViewById(R.id.profileImage);
 
 		try
@@ -171,7 +170,6 @@ public class UserProfileActivity extends BaseActivity
 		user.fetchBadges(this);
 		user.fetchEventsUpcoming(this);
 		user.fetchEventsPast(this);
-		// user.fetchNewBadges(this);
 		user.fetchExperience(this);
 		user.fetchImage(this);
 	}
@@ -322,10 +320,6 @@ public class UserProfileActivity extends BaseActivity
 		}
 		startActivity(intent);
 	}
-	public void badgeButton(View v)
-	{
-		badgesDialog();
-	}
 	
 	public void inviteButton(View v)
 	{
@@ -413,21 +407,16 @@ public class UserProfileActivity extends BaseActivity
 			TextView badgeTextView = (TextView) itemView.findViewById(R.id.badgeNameTextView);
 			ImageButton badgeImageButton = (ImageButton) itemView.findViewById(R.id.badgeImageButton);
 			badgeTextView.setText(b.getName());
-
-			// TODO: switch this back from testing
-			if (b.getLevel() > 0)
-			{
-				badgeImageButton.setImageDrawable(getBadgeImage(b));
-			}
-			else
-				badgeImageButton.setImageDrawable(getResources().getDrawable(R.drawable.badge_unknown));
+			final String gender = user.getGender();
+			badgeImageButton.setImageDrawable(getResources().getDrawable(b.getImageID(gender)));
+			
 			// badgeImageButton.setId(position);
 			badgeImageButton.setOnClickListener(new OnClickListener()
 			{
 				@Override
 				public void onClick(View view)
 				{
-					badgeDialog(badges.get(position));
+					badgeDialog(badges.get(position), gender);
 				}
 			});
 			itemView.setId(position);
@@ -436,104 +425,8 @@ public class UserProfileActivity extends BaseActivity
 
 	}
 
-	private Drawable getBadgeImage(Badge b)
-	{
-		
-		//TODO: gender checking
-		String gender = user.getGender();
-		Drawable d = null;
-		if (b.getName().equals("Outdoorsman"))
-		{
-			if (gender.equals("F"))
-				d = getResources().getDrawable(R.drawable.badge_outdoorsman);
-			else
-				d = getResources().getDrawable(R.drawable.badge_outdoorsman);
-		}
-		else if (b.getName().equals("Agile"))
-		{
-			if (gender.equals("F"))
-				d = getResources().getDrawable(R.drawable.badge_agile);
-			else
-				d = getResources().getDrawable(R.drawable.badge_outdoorsman);
-		}
-		else if (b.getName().equals("Gregarious"))
-		{
-			d = getResources().getDrawable(R.drawable.badge_gregarious);
-		}
-		else if (b.getName().equals("Amused"))
-		{
-			d = getResources().getDrawable(R.drawable.badge_amused);
-		}
-		else if (b.getName().equals("Environmentalist"))
-		{
-			d = getResources().getDrawable(R.drawable.badge_environmentalist);
-		}
-		else if (b.getName().equals("Regular"))
-		{
-			d = getResources().getDrawable(R.drawable.badge_regular);
-		}
-		else if (b.getName().equals("Routinist"))
-		{
-			d = getResources().getDrawable(R.drawable.badge_routinist);
-		}
-		else if (b.getName().equals("Diligent"))
-		{
-			d = getResources().getDrawable(R.drawable.badge_diligent2);
-		}
-		else if (b.getName().equals("Diversity"))
-		{
-			d = getResources().getDrawable(R.drawable.badge_diversity);
-		}
-		else if (b.getName().equals("Productive"))
-		{
-			d = getResources().getDrawable(R.drawable.badge_professionalcreate);
-		}
-		else if (b.getName().equals("Health Nut"))
-		{
-			d = getResources().getDrawable(R.drawable.badge_healthnut);
-		}
-		else if (b.getName().equals("Congregator"))
-		{
-			d = getResources().getDrawable(R.drawable.badge_congregator);
-		}
-		else if (b.getName().equals("Reaching Out"))
-		{
-			d = getResources().getDrawable(R.drawable.badge_reachingout);
-		}
-		else if (b.getName().equals("Merrymaker"))
-		{
-			d = getResources().getDrawable(R.drawable.badge_merrymaker);
-		}
-		else if (b.getName().equals("Active"))
-		{
-			d = getResources().getDrawable(R.drawable.badge_active);
-		}
-		else if (b.getName().equals("Well Rounded"))
-		{
-			d = getResources().getDrawable(R.drawable.badge_rounded);
-		}
-		else if (b.getName().equals("Mingler"))
-		{
-			d = getResources().getDrawable(R.drawable.badge_mingler);
-		}
-		else if (b.getName().equals("Perseverance"))
-		{
-			d = getResources().getDrawable(R.drawable.badge_perseverance);
-		}
-		else if (b.getName().equals("Helping Hand"))
-		{
-			d = getResources().getDrawable(R.drawable.badge_helpinghand);
-		}
-		else if (b.getName().equals("Extrovert"))
-		{
-			d = getResources().getDrawable(R.drawable.badge_extrovert);
-		}
-		else
-			d = getResources().getDrawable(R.drawable.badge_congregator);
-		return d;
-	}
 
-	private void badgesDialog()
+	public void badgesButton(View view)
 	{
 		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
 		dialogBuilder.setTitle(user.getFirstName() + "'s Badges");
@@ -548,7 +441,7 @@ public class UserProfileActivity extends BaseActivity
 			public void onItemClick(AdapterView<?> parent, View itemClicked, int position, long id)
 			{
 
-				badgeDialog(badges.get(position));
+				badgeDialog(badges.get(position), user.getGender());
 
 			}
 		});

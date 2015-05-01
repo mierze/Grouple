@@ -50,7 +50,7 @@
 
 
                 <TextView
-                    android:id="@+id/aboutextView"
+                    android:id="@+id/aboutTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="0dp"
@@ -130,7 +130,7 @@
                 android:fontFamily="sans-serif-condensed"
                 android:onClick="inviteGroupsButton"
                 android:text="Invite Groups"
-                android:textColor="@color/text_color"
+                android:textColor="@color/button_text_color"
                 android:textSize="18sp"
                 android:visibility="gone" />
 

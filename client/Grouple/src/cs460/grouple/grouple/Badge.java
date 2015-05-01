@@ -32,100 +32,180 @@ public class Badge
 		return dateText;
 	}
 
-	protected void setImageID()
+	protected int getImageID(String gender)
 	{
-		if (name.equals("Environmentalist"))
+
+		if (name.equals("Health Nut"))
 		{
 			if (level > 0)
-				imageID = R.drawable.badge_nature_grey;
+				imageID = R.drawable.badge_healthnut;
 			else
-				imageID = R.drawable.badge_nature_grey;
+				imageID = R.drawable.badge_unknown;
+		}
+		else if (name.equals("Mingler"))
+		{
+			if (level > 0)
+				imageID = R.drawable.badge_mingler;
+			else
+				imageID = R.drawable.badge_unknown;
+		}
+		else if (name.equals("Agile"))
+		{
+			if (level > 0)
+				imageID = R.drawable.badge_agile;
+			else
+				imageID = R.drawable.badge_unknown;
+		}
+		else if (name.equals("Congregator"))
+		{
+			if (level > 0)
+				imageID = R.drawable.badge_congregator;
+			else
+				imageID = R.drawable.badge_unknown;
+		}
+		else if (name.equals("Well Rounded"))
+		{
+			if (level > 0)
+				imageID = R.drawable.badge_rounded;
+			else
+				imageID = R.drawable.badge_unknown;
+		}
+		else if (name.equals("Regular"))
+		{
+			if (level > 0)
+				imageID = R.drawable.badge_regular;
+			else
+				imageID = R.drawable.badge_unknown;
+		}
+		else if (name.equals("Environmentalist"))
+		{
+			if (level > 0)
+				imageID = R.drawable.badge_environmentalist;
+			else
+				imageID = R.drawable.badge_unknown;
 		}
 		else if (name.equals("Gregarious"))
 		{
 			if (level > 0)
-				imageID = R.drawable.badge_nature_grey;
+				imageID = R.drawable.badge_gregarious;
 			else
-				imageID = R.drawable.badge_nature_grey;
-		}
-		else if (name.equals("Active"))
-		{
-			if (level > 0)
-				imageID = R.drawable.badge_nature;
-			else
-				imageID = R.drawable.badge_nature_grey;
-			
-		}
-		else if (name.equals("Professional"))
-		{
-			if (level > 0)
-				imageID = R.drawable.badge_nature_grey;
-			else
-				imageID = R.drawable.badge_nature_grey;
+				imageID = R.drawable.badge_unknown;
 		}
 		else if (name.equals("Amused"))
 		{
 			if (level > 0)
-				imageID = R.drawable.badge_nature_grey;
+				imageID = R.drawable.badge_amused;
 			else
-				imageID = R.drawable.badge_nature_grey;
+				imageID = R.drawable.badge_unknown;
 		}
-		else if (name.equals("Extrovert"))
+		else if (name.equals("Active"))
 		{
 			if (level > 0)
-				imageID = R.drawable.badge_nature_grey;
+				imageID = R.drawable.badge_active;
 			else
-				imageID = R.drawable.badge_nature_grey;
-		}
-		else if (name.equals("Merrymaker"))
-		{
-			if (level > 0)
-				imageID = R.drawable.badge_nature_grey;
-			else
-				imageID = R.drawable.badge_nature_grey;
-		}
-		else if (name.equals("Creator"))
-		{
-			if (level > 0)
-				imageID = R.drawable.badge_nature_grey;
-			else
-				imageID = R.drawable.badge_nature_grey;
+				imageID = R.drawable.badge_unknown;
+			
 		}
 		else if (name.equals("Productive"))
 		{
 			if (level > 0)
-				imageID = R.drawable.badge_nature_grey;
+				imageID = R.drawable.badge_professionalcreate;
 			else
-				imageID = R.drawable.badge_nature_grey;
+				imageID = R.drawable.badge_unknown;
+		}
+		else if (name.equals("Extrovert"))
+		{
+			if (level > 0)
+				imageID = R.drawable.badge_extrovert;
+			else
+				imageID = R.drawable.badge_unknown;
+		}
+		else if (name.equals("Merrymaker"))
+		{
+			if (level > 0)
+				imageID = R.drawable.badge_merrymaker;
+			else
+				imageID = R.drawable.badge_unknown;
+		}
+		else if (name.equals("Creator"))
+		{
+			if (level > 0)
+				imageID = R.drawable.badge_unknown;
+			else
+				imageID = R.drawable.badge_unknown;
+		}
+		else if (name.equals("Outdoorsman"))
+		{
+			if (level > 0)
+				imageID = R.drawable.badge_outdoorsman;
+			else
+				imageID = R.drawable.badge_unknown;
+		}
+		else if (name.equals("Productive"))
+		{
+			if (level > 0)
+				imageID = R.drawable.badge_diligent2;
+			else
+				imageID = R.drawable.badge_unknown;
 		}
 		else if (name.equals("Routinist"))
 		{
 			if (level > 0)
 				imageID = R.drawable.badge_routinist;
 			else
-				imageID = R.drawable.badge_nature_grey;
+				imageID = R.drawable.badge_unknown;
 		}
 		else if (name.equals("Reaching Out"))
 		{
 			if (level > 0)
 				imageID = R.drawable.badge_reachingout;
 			else
-				imageID = R.drawable.badge_nature_grey;
+				imageID = R.drawable.badge_unknown;
 		}
 		else if (name.equals("Perseverance"))
 		{
 			if (level > 0)
 				imageID = R.drawable.badge_perseverance;
 			else
-				imageID = R.drawable.badge_nature_grey;
+				imageID = R.drawable.badge_unknown;
+		}
+		else if (name.equals("Diligent"))
+		{
+			if (level > 0)
+				imageID = R.drawable.badge_diligent2;
+			else
+				imageID = R.drawable.badge_unknown;
+		}
+		else if (name.equals("Diversity"))
+		{
+			if (level > 0)
+				imageID = R.drawable.badge_diversity;
+			else
+				imageID = R.drawable.badge_unknown;
+		}
+		else if (name.equals("Extrovert"))
+		{
+			if (level > 0)
+				imageID = R.drawable.badge_extrovert;
+			else
+				imageID = R.drawable.badge_unknown;
+		}
+		else if (name.equals("Helping Hand"))
+		{
+			if (level > 0)
+				imageID = R.drawable.badge_helpinghand;
+			else
+				imageID = R.drawable.badge_unknown;
 		}
 		else
 		{
 			if (level > 0)
-				imageID = R.drawable.badge_nature_grey;
+				imageID = R.drawable.badge_unknown;
 			else
-				imageID = R.drawable.badge_nature_grey;
+				imageID = R.drawable.badge_unknown;
 		}
+		
+		return imageID;
 	}
 
 	private String dateText;
@@ -134,7 +214,6 @@ public class Badge
 	{
 		this.name = name;
 		setDate(date);
-
 		setID();
 		setAbout();
 
@@ -171,13 +250,13 @@ public class Badge
 		{
 			aboutID = R.string.environmentalist_about;
 		}
-		else if (name.equals("Social"))
+		else if (name.equals("Gregarious"))
 		{
-			aboutID = R.string.social_about;
+			aboutID = R.string.gregarious_about;
 		}
-		else if (name.equals("Professional"))
+		else if (name.equals("Health Nut"))
 		{
-			aboutID = R.string.professional_about;
+			aboutID = R.string.healthnut_about;
 		}
 		else if (name.equals("Active"))
 		{
@@ -189,23 +268,23 @@ public class Badge
 		}
 		else if (name.equals("Extrovert"))
 		{
-			aboutID = R.string.wellrounded_about;
+			aboutID = R.string.extrovert_about;
 		}
-		else if (name.equals("Creator"))
-		{
-			aboutID = R.string.wellrounded_about;
-		}
-		else if (name.equals("Fun Creator"))
+		//else if (name.equals("Creator"))
+		//{
+		//	aboutID = R.string.creator_about;
+		//}
+		else if (name.equals("Well Rounded"))
 		{
 			aboutID = R.string.wellrounded_about;
 		}
 		else if (name.equals("Productive"))
 		{
-			aboutID = R.string.wellrounded_about;
+			aboutID = R.string.perseverance_about;
 		}
-		else if (name.equals("Mother Nature Lover"))
+		else if (name.equals("Outdoorsman"))
 		{
-			aboutID = R.string.wellrounded_about;
+			aboutID = R.string.outdoorsman_about;
 		}
 		else
 		{
@@ -222,13 +301,8 @@ public class Badge
 	protected void setLevel(int level)
 	{
 		this.level = level;
-		setImageID();
 	}
 
-	protected int getImageID()
-	{
-		return imageID;
-	}
 
 	protected void setImageID(int imageID)
 	{
