@@ -171,7 +171,7 @@ public class GcmIntentService extends IntentService
 			// Post notification of received message.
 			if(GLOBAL.getCurrentUser() != null)
 			{
-				if(GLOBAL.isCurrentUser(RECEIVER))
+				if(GLOBAL.isCurrentUser(RECEIVER) && !SENDER_EMAIL.equals(RECEIVER) )
 				{
 					//SEND THE NOTIFICATION TO A DEVICE IF AND ONLY WHEN RECEIVER IS THE USER LOGGED IN ON THAT DEVICE
 					sendNotification(MESSAGE, intent);
@@ -342,7 +342,7 @@ public class GcmIntentService extends IntentService
 				//GLOBAL.getCurrentUser().fetchUserInfo();
 				
 				NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
-				.setContentTitle("New Group Invite!")
+				.setContentTitle("New Group Invite to: "+GROUP_NAME)
 				.setContentText("From: " + SENDER_FIRST + " " + SENDER_LAST + "!")
 				.setStyle(new NotificationCompat.BigTextStyle().bigText("From "+SENDER_FIRST + " " + SENDER_LAST))
 				.setSmallIcon(R.drawable.icon_grouple).setSound(soundUri).setContentText(msg);
@@ -373,7 +373,7 @@ public class GcmIntentService extends IntentService
 				NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
 				.setContentTitle("New Event Invite")
 				.setContentText(EVENT_NAME)
-				.setStyle(new NotificationCompat.BigTextStyle().bigText(SENDER_FIRST + " " + SENDER_LAST))
+				.setStyle(new NotificationCompat.BigTextStyle().bigText("FROM: "+ SENDER_FIRST + " " + SENDER_LAST))
 				.setSmallIcon(R.drawable.icon_grouple).setSound(soundUri).setContentText(msg);
 				notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 				PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent,	PendingIntent.FLAG_UPDATE_CURRENT);
@@ -402,9 +402,9 @@ public class GcmIntentService extends IntentService
 				//GLOBAL.getCurrentUser().fetchUserInfo();
 						
 				NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
-				.setContentTitle("Grouple event has been approved!")
+				.setContentTitle("Grouple")
 				.setContentText(EVENT_NAME)
-				.setStyle(new NotificationCompat.BigTextStyle().bigText(SENDER_FIRST + " " + SENDER_LAST))
+				.setStyle(new NotificationCompat.BigTextStyle().bigText(EVENT_NAME+" has been Confirmed."))
 				.setSmallIcon(R.drawable.icon_grouple).setSound(soundUri).setContentText(msg);
 				notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 				PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent,	PendingIntent.FLAG_UPDATE_CURRENT);

@@ -75,7 +75,14 @@ public class UserProfileActivity extends BaseActivity
 		profileButton6 = (Button) findViewById(R.id.profileEditButton);
 		pastEventsBadgesLayout = findViewById(R.id.profilePastEventsBadgesLayout);
 		iv = (ImageView) findViewById(R.id.profileImageUPA);
-		gcmUtil = new GcmUtility(GLOBAL);
+
+		try
+		{
+			gcmUtil = new GcmUtility(GLOBAL);
+		}
+		catch (Exception e)
+		{
+		}
 		Bundle extras = getIntent().getExtras();
 		EMAIL = extras.getString("email");
 		pastEventsBadgesLayout.setVisibility(View.VISIBLE);
@@ -85,11 +92,10 @@ public class UserProfileActivity extends BaseActivity
 		else
 		{
 			user = GLOBAL.getCurrentUser();
-			user.fetchExperience(this);
+			user.fetchNewBadges(this);
 		}
 
 	}
-	
 
 	public void experienceDialog(View view)
 	{
@@ -108,18 +114,18 @@ public class UserProfileActivity extends BaseActivity
 		TextView fitnessCreateTextView = (TextView) dialogView.findViewById(R.id.fitnessCreateTextView);
 		TextView natureCreateTextView = (TextView) dialogView.findViewById(R.id.natureCreateTextView);
 		TextView itemsBroughtTextView = (TextView) dialogView.findViewById(R.id.itemsBroughtTextView);
-		
-		socialTextView.setText(""+user.getNumSocialEvents());
-		professionalTextView.setText(""+user.getNumProfessionalEvents());
-		entertainmentTextView.setText(""+user.getNumEntertainmentEvents());
-		fitnessTextView.setText(""+user.getNumFitnessEvents());
-		natureTextView.setText(""+user.getNumNatureEvents());
-		socialCreateTextView.setText(""+user.getNumSocialEventsCreated());
-		professionalCreateTextView.setText(""+user.getNumProfessionalEventsCreated());
-		entertainmentCreateTextView.setText(""+user.getNumEntertainmentEventsCreated());
-		fitnessCreateTextView.setText(""+user.getNumFitnessEventsCreated());
-		natureCreateTextView.setText(""+user.getNumNatureEventsCreated());
-		itemsBroughtTextView.setText(""+user.getNumItemsBrought());
+
+		socialTextView.setText("" + user.getNumSocialEvents());
+		professionalTextView.setText("" + user.getNumProfessionalEvents());
+		entertainmentTextView.setText("" + user.getNumEntertainmentEvents());
+		fitnessTextView.setText("" + user.getNumFitnessEvents());
+		natureTextView.setText("" + user.getNumNatureEvents());
+		socialCreateTextView.setText("" + user.getNumSocialEventsCreated());
+		professionalCreateTextView.setText("" + user.getNumProfessionalEventsCreated());
+		entertainmentCreateTextView.setText("" + user.getNumEntertainmentEventsCreated());
+		fitnessCreateTextView.setText("" + user.getNumFitnessEventsCreated());
+		natureCreateTextView.setText("" + user.getNumNatureEventsCreated());
+		itemsBroughtTextView.setText("" + user.getNumItemsBrought());
 		dialogBuilder.setView(dialogView);
 		final AlertDialog experienceDialog = dialogBuilder.create();
 		experienceDialog.show();
@@ -129,7 +135,7 @@ public class UserProfileActivity extends BaseActivity
 	protected void onResume()
 	{
 		super.onResume();
-		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("user_data"));
+		LocalBroadcastManager.getInstance(this).registerReceiver(dataReceiver, new IntentFilter("user_data"));
 		fetchData();
 		updateUI(); // populates a group / user profile
 	}
@@ -137,13 +143,13 @@ public class UserProfileActivity extends BaseActivity
 	@Override
 	protected void onPause()
 	{
-		LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(dataReceiver);
 		super.onPause();
 	}
 
 	// This listens for pings from the data service to let it know that there
 	// are updates
-	private BroadcastReceiver mReceiver = new BroadcastReceiver()
+	private BroadcastReceiver dataReceiver = new BroadcastReceiver()
 	{
 		@Override
 		public void onReceive(Context context, Intent intent)
@@ -164,6 +170,8 @@ public class UserProfileActivity extends BaseActivity
 		user.fetchBadges(this);
 		user.fetchEventsUpcoming(this);
 		user.fetchEventsPast(this);
+		// user.fetchNewBadges(this);
+		user.fetchExperience(this);
 		user.fetchImage(this);
 	}
 
@@ -324,7 +332,14 @@ public class UserProfileActivity extends BaseActivity
 					Toast toast = GLOBAL.getToast(UserProfileActivity.this,
 							"Successfully invited " + user.getFirstName() + " to friends!");
 					toast.show();
-					gcmUtil.sendNotification(user.getEmail(), "FRIEND_REQUEST");
+					try
+					{
+						gcmUtil.sendNotification(user.getEmail(), "FRIEND_REQUEST");
+					}
+					catch (Exception e)
+					{
+
+					}
 					profileButton6.setVisibility(View.INVISIBLE);
 				}
 				else if (jsonObject.getString("success").toString().equals("3"))
@@ -364,7 +379,7 @@ public class UserProfileActivity extends BaseActivity
 			ImageButton badgeImageButton = (ImageButton) itemView.findViewById(R.id.badgeImageButton);
 			badgeTextView.setText(b.getName());
 
-			//TODO: switch this back from testing
+			// TODO: switch this back from testing
 			if (b.getLevel() > 0)
 			{
 				badgeImageButton.setImageDrawable(getBadgeImage(b));

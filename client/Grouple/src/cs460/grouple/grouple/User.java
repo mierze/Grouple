@@ -812,6 +812,11 @@ public class User extends Entity
 	{
 		dataService.fetchContent("BADGES", context, "");
 	}
+	
+	protected void fetchNewBadges(Context context)
+	{
+		dataService.fetchContent("BADGES_NEW", context, "");
+	}
 
 	protected void fetchExperience(Context context)
 	{

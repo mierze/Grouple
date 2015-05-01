@@ -54,6 +54,7 @@ public class GroupCreateActivity extends BaseActivity
 	private User user;
 	private Bitmap bmp;
 	private String g_id;
+	private String groupName;
 	private EditText nameEditText;
 	private EditText aboutEditText;
 	private ImageView iv;
@@ -190,6 +191,8 @@ public class GroupCreateActivity extends BaseActivity
 				
 				//grab group name and bio from textviews
 				String groupname = nameEditText.getText().toString();
+				//Set the class variable.
+				groupName = groupname;
 				String groupbio = aboutEditText.getText().toString();	
 								
 				//1 for public, 0 for private.
@@ -273,6 +276,7 @@ public class GroupCreateActivity extends BaseActivity
 							//loadDialog.show();
 							Intent intent = new Intent(GroupCreateActivity.this, InviteActivity.class);
 							intent.putExtra("email", user.getEmail());
+							intent.putExtra("group_name",groupName);
 							intent.putExtra("g_id", Integer.parseInt(g_id));
 							startActivity(intent);
 							finish();
@@ -286,7 +290,7 @@ public class GroupCreateActivity extends BaseActivity
 							//loadDialog.show();
 							Intent intent = new Intent(GroupCreateActivity.this, GroupProfileActivity.class);
 							intent.putExtra("email", user.getEmail());
-							intent.putExtra("g_id", g_id);
+							intent.putExtra("g_id", Integer.parseInt(g_id));
 							startActivity(intent);	
 							finish();
 						}

@@ -28,9 +28,9 @@ import android.widget.Toast;
 
 /**
  * 
- * @author Brett, Todd, Scott
- * EventListActivity displays vertical event lists of different types and performs relevant
- * functions based on the situation and type
+ * @author Brett, Todd, Scott EventListActivity displays vertical event lists of
+ *         different types and performs relevant functions based on the
+ *         situation and type
  */
 public class EventListActivity extends BaseActivity
 {
@@ -55,9 +55,11 @@ public class EventListActivity extends BaseActivity
 	private String ROLE = "U";// defaulting to lowest level
 	private Button addNew;
 	private String sadGuyText = "";
+	private GcmUtility gcmUtil;
 	// TESTING
 	private ArrayList<User> users;
 	private ArrayList<Event> events;
+	private int e_id;
 
 	private class EventListAdapter extends ArrayAdapter<Event>
 	{
@@ -151,7 +153,6 @@ public class EventListActivity extends BaseActivity
 	private void updateUI()
 	{
 
-
 		// looping thru and populating list of events
 		if (events != null && !events.isEmpty())
 		{
@@ -185,6 +186,14 @@ public class EventListActivity extends BaseActivity
 		addNew = (Button) findViewById(R.id.addNewButtonLiA);
 		String actionBarTitle = "";
 		addNew.setVisibility(View.GONE); // GONE FOR NOW
+		try
+		{
+			gcmUtil = new GcmUtility(GLOBAL);
+		}
+		catch (Exception e)
+		{
+
+		}
 
 		// GRABBING A USER
 		if (EMAIL != null)
@@ -220,17 +229,16 @@ public class EventListActivity extends BaseActivity
 			events = user.getEventsPast();
 			sadGuyText = "You do not have any past events.";
 			actionBarTitle = user.getFirstName() + "'s Past Events";
-		}			
+		}
 		else
 		{
 			events = user.getEventsDeclined();
 			sadGuyText = "You do not have any events declined.";
 			actionBarTitle = user.getFirstName() + "'s Declined Events";
 		}
-		
+
 		// calling next functions to execute
 		initActionBar(actionBarTitle, true);
-		
 
 	}
 
@@ -296,6 +304,8 @@ public class EventListActivity extends BaseActivity
 		super.onClick(view);
 		View parent = (View) view.getParent();
 		int e_id = parent.getId();
+		// Set class variable.
+		this.e_id = e_id;
 		switch (view.getId())
 		{
 		case R.id.declineButton:
@@ -321,56 +331,59 @@ public class EventListActivity extends BaseActivity
 	{
 		// Get the id.
 		final int e_id = e.getID();
-		
-		//check first to see if we're in 'declined' or 'past'
-		if(CONTENT.equals(CONTENT_TYPE.EVENTS_DECLINED.toString()))
+
+		// check first to see if we're in 'declined' or 'past'
+		if (CONTENT.equals(CONTENT_TYPE.EVENTS_DECLINED.toString()))
 		{
-			//simply hide event from list
-			new AlertDialog.Builder(this).setMessage("Are you sure?  This will remove the event from your 'Declined Events' history.").setCancelable(true)
-			.setPositiveButton("Yes", new DialogInterface.OnClickListener()
-			{
-				@Override
-				public void onClick(DialogInterface dialog, int id)
-				{
-					new performActionTask().execute("http://68.59.162.183/android_connect/update_event_member.php",
-							Integer.toString(e_id));
-				}
-			}).setNegativeButton("Cancel", null).show();
+			// simply hide event from list
+			new AlertDialog.Builder(this)
+					.setMessage("Are you sure?  This will remove the event from your 'Declined Events' history.")
+					.setCancelable(true).setPositiveButton("Yes", new DialogInterface.OnClickListener()
+					{
+						@Override
+						public void onClick(DialogInterface dialog, int id)
+						{
+							new performActionTask().execute(
+									"http://68.59.162.183/android_connect/update_event_member.php",
+									Integer.toString(e_id));
+						}
+					}).setNegativeButton("Cancel", null).show();
 		}
-		else if(CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
+		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
 		{
-			//simply hide event from list
-			new AlertDialog.Builder(this).setMessage("Are you sure?  This will remove the event from your 'Past Events' history.").setCancelable(true)
-			.setPositiveButton("Yes", new DialogInterface.OnClickListener()
-			{
-				@Override
-				public void onClick(DialogInterface dialog, int id)
-				{
-					new performActionTask().execute("http://68.59.162.183/android_connect/update_event_member.php",
-							Integer.toString(e_id));
-				}
-			}).setNegativeButton("Cancel", null).show();
+			// simply hide event from list
+			new AlertDialog.Builder(this)
+					.setMessage("Are you sure?  This will remove the event from your 'Past Events' history.")
+					.setCancelable(true).setPositiveButton("Yes", new DialogInterface.OnClickListener()
+					{
+						@Override
+						public void onClick(DialogInterface dialog, int id)
+						{
+							new performActionTask().execute(
+									"http://68.59.162.183/android_connect/update_event_member.php",
+									Integer.toString(e_id));
+						}
+					}).setNegativeButton("Cancel", null).show();
 		}
 		else
 		{
-			//actually leave the event
+			// actually leave the event
 			new AlertDialog.Builder(this).setMessage("Are you sure you want to leave this event?").setCancelable(true)
-			.setPositiveButton("Yes", new DialogInterface.OnClickListener()
-			{
-				@Override
-				public void onClick(DialogInterface dialog, int id)
-				{
-					new performActionTask().execute("http://68.59.162.183/android_connect/leave_event.php",
-							Integer.toString(e_id));
-				}
-			}).setNegativeButton("Cancel", null).show();
+					.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+					{
+						@Override
+						public void onClick(DialogInterface dialog, int id)
+						{
+							new performActionTask().execute("http://68.59.162.183/android_connect/leave_event.php",
+									Integer.toString(e_id));
+						}
+					}).setNegativeButton("Cancel", null).show();
 		}
 	}
-
-	// Starts a USER/GROUP/EVENT profile
+	
 	public void startProfileActivity(View view)
 	{
-		//loadDialog.show();
+		loadDialog.show();
 		int id = view.getId();
 		Intent intent = new Intent(this, EventProfileActivity.class);
 
@@ -391,21 +404,19 @@ public class EventListActivity extends BaseActivity
 			// events pending past, upcoming or invites, all need email and
 			// eid
 			nameValuePairs.add(new BasicNameValuePair("email", user.getEmail()));
-			//TODO: change to e_id
+			// TODO: change to e_id
 
-			if(urls[0].equals("http://68.59.162.183/android_connect/update_event_member.php"))
+			if (urls[0].equals("http://68.59.162.183/android_connect/update_event_member.php"))
 			{
 				nameValuePairs.add(new BasicNameValuePair("remove", "no"));
 				nameValuePairs.add(new BasicNameValuePair("hidden", "1"));
-				nameValuePairs.add(new BasicNameValuePair("e_id", urls[1]));	
+				nameValuePairs.add(new BasicNameValuePair("e_id", urls[1]));
 			}
 			else
 			{
 				System.out.println("we werent in update_event_member.php");
 				nameValuePairs.add(new BasicNameValuePair("eid", urls[1]));
 			}
-			
-					
 
 			// calling readJSONFeed in Global, continues below in onPostExecute
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
@@ -428,6 +439,26 @@ public class EventListActivity extends BaseActivity
 						// since leave_event and decline event call same php
 						if (!message.equals("Event invite accepted!"))
 							message = "Event invite declined!";
+
+						if (jsonObject.getString("confirmed").toString().equals("1"))
+						{
+							String eName = " ";
+
+							for (Event e : events)
+							{
+								if (e.getID() == e_id)
+								{
+									eName = e.getName();
+								}
+							}
+							try
+							{
+								gcmUtil.sendEventApproved(eName, Integer.toString(e_id));
+							}
+							catch (Exception e)
+							{
+							}
+						}
 					}
 					if (CONTENT.equals(CONTENT_TYPE.EVENTS_DECLINED.toString()))
 					{
@@ -442,7 +473,6 @@ public class EventListActivity extends BaseActivity
 					// reset values, looking to move these
 					fetchData();
 
-	
 				}
 				else
 				{

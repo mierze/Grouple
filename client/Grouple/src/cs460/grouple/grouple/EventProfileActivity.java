@@ -50,7 +50,6 @@ public class EventProfileActivity extends BaseActivity
 	private TextView aboutTextView;
 	private View itemListDialogView;
 	private AlertDialog itemListAlertDialog;
-	private GcmUtility gcmUtil;
 	private ArrayList<EventItem> items = new ArrayList<EventItem>();
 
 	@Override
@@ -116,7 +115,6 @@ public class EventProfileActivity extends BaseActivity
 		aboutTextView = (TextView) findViewById(R.id.profileAboutTextView);
 		itemListButton = (Button) findViewById(R.id.itemListButton);
 		iv = (ImageView) findViewById(R.id.profileImageUPA);
-		gcmUtil = new GcmUtility(GLOBAL);
 		EXTRAS = getIntent().getExtras();
 		user = GLOBAL.getCurrentUser();
 		event = GLOBAL.getEvent(EXTRAS.getInt("e_id"));

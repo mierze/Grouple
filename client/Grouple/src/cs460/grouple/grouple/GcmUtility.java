@@ -39,7 +39,7 @@ public class GcmUtility extends Application {
 	private ArrayList<String> groupInviteEmailList = new ArrayList<String>();
 	private ArrayList<String> reg_ids = new ArrayList<String>();
 	private ArrayList<Integer> g_id_list = new ArrayList<Integer>();
-	
+	private ArrayList<String> eventApprovedList = new ArrayList<String>();
 	enum CONTENT_TYPE 
 	{
 		FRIEND_REQUEST, USER_MESSAGE, GROUP_MESSAGE, EVENT_MESSAGE, GROUP_INVITE, EVENT_INVITE, EVENT_UPDATE,EVENT_APPROVED,FRIEND_REQUEST_ACCEPTED;   
@@ -323,7 +323,8 @@ public class GcmUtility extends Application {
                    data.putString("my_action", "cs460.grouple.grouple.ECHO_NOW");
                    data.putString("content", "EVENT_APPROVED");
                    data.putString("sender", user.getEmail());
-                   data.putString("recipient",recipientRegID);
+                   data.putString("recipient",reg_ids.get(reg_ids.size()-1));
+                   data.putString("receiver", eventApprovedList.get(eventApprovedList.size()-1));
                    data.putString("event_name", eventName);
                    data.putString("event_id", eventID);
                    //This is where we put our first and last name. That way the recipient knows who sent it.
@@ -348,6 +349,7 @@ public class GcmUtility extends Application {
             {
             	//Remove that regID from the need-to-send list.
             	reg_ids.remove(reg_ids.size()-1);
+            	eventApprovedList.remove(eventApprovedList.size()-1);
             	//Use  recurrsion to send it to the next user.
             	if(!reg_ids.isEmpty())
             	{
@@ -371,7 +373,7 @@ public class GcmUtility extends Application {
                    data.putString("my_action", "cs460.grouple.grouple.ECHO_NOW");
                    data.putString("content", "EVENT_UPDATED");
                    data.putString("sender", user.getEmail());
-                   data.putString("recipient",recipientRegID);
+                   data.putString("recipient",reg_ids.get(reg_ids.size()-1));
                    data.putString("event_name", eventName);
                    data.putString("event_id", eventID);
                    //This is where we put our first and last name. That way the recipient knows who sent it.
@@ -517,7 +519,7 @@ public class GcmUtility extends Application {
 		{
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			//The recipient's email is urls[1]
-			nameValuePairs.add(new BasicNameValuePair("email", urls[1]));
+			nameValuePairs.add(new BasicNameValuePair("e_id", urls[1]));
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
 
@@ -535,6 +537,7 @@ public class GcmUtility extends Application {
 					{
 						JSONObject o = (JSONObject) jsonArray.get(i);
 						reg_ids.add(o.getString("reg_id"));
+						eventApprovedList.add(o.getString("email"));
 					}
 					
 					if(notificationType.equals("EVENT_APPROVED"))

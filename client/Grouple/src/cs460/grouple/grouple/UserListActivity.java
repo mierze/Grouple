@@ -6,7 +6,6 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
-import cs460.grouple.grouple.EventListActivity.CONTENT_TYPE;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -24,7 +23,6 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -361,7 +359,9 @@ public class UserListActivity extends BaseActivity
 		user.fetchFriendRequests(this);
 		user.fetchExperience(this);
 		if (group != null)
+		{
 			group.fetchMembers(this);
+		}
 		if (event != null)
 			event.fetchParticipants(this);
 
@@ -486,7 +486,7 @@ public class UserListActivity extends BaseActivity
 	// Starts a USER/GROUP/EVENT profile
 	public void startProfileActivity(View view)
 	{
-		// loadDialog.show();
+		loadDialog.show();
 		int id = view.getId();
 		Intent intent = new Intent(this, UserProfileActivity.class);
 

@@ -94,7 +94,7 @@ public class HomeActivity extends BaseActivity
 	private void fetchData()
 	{
 		user.fetchInfo(this);
-		user.fetchExperience(this);
+		user.fetchNewBadges(this);
 	}
 
 	//This listens for pings from the data service to let it know that there are updates

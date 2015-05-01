@@ -3,7 +3,6 @@ package cs460.grouple.grouple;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
@@ -40,6 +39,8 @@ public class InviteActivity extends BaseActivity {
 	private Bundle EXTRAS; //type of content to display
 	private GcmUtility gcmUtil;
 	private String receiver = "";
+	private String groupName= "";
+	private int gid;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +55,9 @@ public class InviteActivity extends BaseActivity {
 		CONTENT = EXTRAS.getString("content");
 		//should always be current user
 		user = GLOBAL.getCurrentUser();
-		group = GLOBAL.getGroup(EXTRAS.getInt("g_id"));
+		groupName = EXTRAS.getString("group_name");
+		gid = EXTRAS.getInt("g_id");
+		group = GLOBAL.getGroup(gid);
 		userRole = user.getGroupRole(group.getID());
 		gcmUtil = new GcmUtility(GLOBAL);
 		populateInviteMembers();
@@ -258,7 +261,7 @@ public class InviteActivity extends BaseActivity {
 				
 		}
 		//Send Group Notifications. Send list of friends email address, group id, and notificatoin type.
-		gcmUtil.sendGroupNotification(friendsEmailList,group.getName(),Integer.toString(group.getID()),"GROUP_INVITE");
+		gcmUtil.sendGroupNotification(friendsEmailList,groupName,Integer.toString(gid),"GROUP_INVITE");
 		Context context = getApplicationContext();
 		Toast toast = GLOBAL.getToast(context, "Friends have been invited.");
 		toast.show();

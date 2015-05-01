@@ -64,7 +64,15 @@ public class BaseActivity extends ActionBarActivity implements OnClickListener
 	protected void onStop()
 	{
 		super.onStop();
-		loadDialog.hide();
+		loadDialog.dismiss();
+	}
+	
+	@Override
+	protected void onStart()
+	{
+		super.onStart();
+		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
+		loadDialog.setOwnerActivity(this);
 	}
 	
 	@Override
@@ -73,8 +81,7 @@ public class BaseActivity extends ActionBarActivity implements OnClickListener
 		super.onCreate(savedInstanceState);
 		//setContentView(R.layout.activity_base);
 		GLOBAL = ((Global) getApplicationContext());
-		loadDialog = GLOBAL.getLoadDialog(new Dialog(this));
-		loadDialog.setOwnerActivity(this);
+		
 		inflater = getLayoutInflater();
 		initKillswitchListener();
 	}

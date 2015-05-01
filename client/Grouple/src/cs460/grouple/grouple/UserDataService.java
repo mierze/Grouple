@@ -6,7 +6,6 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import cs460.grouple.grouple.GcmIntentService.CONTENT_TYPE;
 import android.support.v4.content.LocalBroadcastManager;
 import android.app.Service;
 import android.content.Context;
@@ -18,17 +17,12 @@ import android.view.View;
 import android.widget.ImageView.ScaleType;
 
 /**
- * 
- * @author Brett, Todd, Scott UserDataService helps generate User information
- *         updates
- * 
+ * @author Brett, Todd, Scott 
+ * UserDataService fetches user data from our server
  */
 public class UserDataService extends Service
 {
-
 	private User user;
-	// private Group group;
-	// private Event event;
 	private static Global GLOBAL;
 	private String fetch;
 	private String extra;
@@ -101,6 +95,8 @@ public class UserDataService extends Service
 			new getEventsInvitesTask().execute("http://68.59.162.183/android_connect/get_event_invites.php");
 		else if (fetch.equals(fetch_TYPE.BADGES.toString()))
 			new getBadgesTask().execute("http://68.59.162.183/android_connect/get_badges.php");
+		else if (fetch.equals(fetch_TYPE.BADGES.toString()))
+			new getNewBadgesTask().execute("http://68.59.162.183/android_connect/get_new_badges.php");
 		else if (fetch.equals(fetch_TYPE.EXPERIENCE.toString()))
 			new getExperienceTask().execute("http://68.59.162.183/android_connect/get_user_experience.php");
 		else if (fetch.equals(fetch_TYPE.CONTACTS.toString()))
@@ -263,13 +259,14 @@ public class UserDataService extends Service
 						// function adds friend to the friends map
 						user.addToFriendRequests(new User(o.getString("email")));
 					}
-					sendBroadcast();
+					
 				}
 				// user has no friend requests
 				if (jsonObject.getString("success").toString().equals("2"))
 				{
 					// no friend requests
 				}
+				sendBroadcast();
 			}
 			catch (Exception e)
 			{
@@ -644,14 +641,12 @@ public class UserDataService extends Service
 					int numProfessionalEvents = jsonObject.getInt("numProfessional");
 					int numFitnessEvents = jsonObject.getInt("numFitness");
 					int numNatureEvents = jsonObject.getInt("numNature");
-
 					int numTotalEventsCreated = jsonObject.getInt("numTotalCreate");
 					int numSocialEventsCreated = jsonObject.getInt("numSocialCreate");
 					int numEntertainmentEventsCreated = jsonObject.getInt("numEntertainmentCreate");
 					int numProfessionalEventsCreated = jsonObject.getInt("numProfessionalCreate");
 					int numFitnessEventsCreated = jsonObject.getInt("numFitnessCreate");
 					int numNatureEventsCreated = jsonObject.getInt("numNatureCreate");
-
 					int numItemsBrought = jsonObject.getInt("numItems");
 
 					// TODO: get count in each type
@@ -670,6 +665,37 @@ public class UserDataService extends Service
 					user.setNumItemsBrought(numItemsBrought);
 					user.setExperience();
 
+					sendBroadcast();
+				}
+
+			}
+			catch (Exception e)
+			{
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
+			}
+		}
+	}
+	
+
+	private class getNewBadgesTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected String doInBackground(String... urls)
+		{
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("email", user.getEmail()));
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+		}
+
+		@Override
+		protected void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
 					JSONArray jsonArray = jsonObject.getJSONArray("badges");
 					user.getNewBadges().clear();
 					for (int i = 0; i < jsonArray.length(); i++)

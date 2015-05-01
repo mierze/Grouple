@@ -82,7 +82,6 @@ public class ContactsActivity extends BaseActivity
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
-
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_recent_messages);
 		listViewLayout = (LinearLayout) findViewById(R.id.listViewLayout);

@@ -113,7 +113,11 @@ public class EntityMessagesActivity extends BaseActivity
 		listViewLayout = (LinearLayout) findViewById(R.id.listViewLayout);
 		listView = (ListView) findViewById(R.id.listView);
 
+		try
+		{
 		gcm = GoogleCloudMessaging.getInstance(this);
+		}
+		catch (Exception e){}
 		CONTENT = extras.getString("content");
 		if (CONTENT.equals("GROUP"))
 		{
@@ -299,6 +303,7 @@ public class EntityMessagesActivity extends BaseActivity
 	// Send an upstream message.
 	public void onClick(final View view)
 	{
+		super.onClick(view);
 		if (view == findViewById(R.id.sendButton))
 		{
 			// Get message from edit text

@@ -26,8 +26,8 @@ import android.widget.Toast;
 //TODO: add a button for inviting friends
 /**
  * 
- * @author Brett, Todd, Scott
- * GroupProfileActivity displays the current profile of a Group
+ * @author Brett, Todd, Scott GroupProfileActivity displays the current profile
+ *         of a Group
  */
 public class GroupProfileActivity extends BaseActivity
 {
@@ -44,7 +44,6 @@ public class GroupProfileActivity extends BaseActivity
 	private ProgressBar xpProgressBar;
 	private TextView xpTextView;
 	private TextView levelTextView;
-	private GcmUtility gcmUtil;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -52,7 +51,6 @@ public class GroupProfileActivity extends BaseActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_group_profile);
 
-		
 		xpBar = findViewById(R.id.xpBar);
 		xpProgressBar = (ProgressBar) findViewById(R.id.xpProgressBar);
 		levelTextView = (TextView) findViewById(R.id.levelTextView);
@@ -63,7 +61,6 @@ public class GroupProfileActivity extends BaseActivity
 		profileButton6 = (Button) findViewById(R.id.profileEditButton);
 		inviteFriendsButton = (Button) findViewById(R.id.inviteFriendsButton);
 		iv = (ImageView) findViewById(R.id.profileImageUPA);
-		gcmUtil = new GcmUtility(GLOBAL);
 		Bundle extras = getIntent().getExtras();
 		String title = "";
 		user = GLOBAL.getCurrentUser();
@@ -71,15 +68,13 @@ public class GroupProfileActivity extends BaseActivity
 		group = GLOBAL.getGroup(extras.getInt("g_id"));
 	}
 
-
-
 	@Override
 	protected void onResume()
 	{
 		super.onResume();
 		LocalBroadcastManager.getInstance(this).registerReceiver(dataReceiver, new IntentFilter("group_data"));
 
-		//getGroupExperience();
+		// getGroupExperience();
 		fetchData();
 		updateUI(); // populates a group / user profile
 		// initializing the action bar and killswitch listener
@@ -93,7 +88,8 @@ public class GroupProfileActivity extends BaseActivity
 
 	}
 
-	//This listens for pings from the data service to let it know that there are updates
+	// This listens for pings from the data service to let it know that there
+	// are updates
 	private BroadcastReceiver dataReceiver = new BroadcastReceiver()
 	{
 		@Override
@@ -102,7 +98,7 @@ public class GroupProfileActivity extends BaseActivity
 			updateUI();// for group / event
 		}
 	};
-	
+
 	private void fetchData()
 	{
 		group.fetchInfo(this);
@@ -110,7 +106,7 @@ public class GroupProfileActivity extends BaseActivity
 		group.fetchImage(this);
 		group.fetchExperience(this);
 	}
-	
+
 	private void setRole()
 	{
 		int pub;
@@ -145,8 +141,6 @@ public class GroupProfileActivity extends BaseActivity
 					Integer.toString(group.getID()));
 		}
 	}
-	
-
 
 	private void setExperience()
 	{
@@ -157,23 +151,21 @@ public class GroupProfileActivity extends BaseActivity
 		int pointsEnd;
 		while (groupExperience > (pointsStart + pointsToNext))
 		{
-			//means user is greater than this level threshold
-			//so increase level
+			// means user is greater than this level threshold
+			// so increase level
 			level++;
-			//make a new start
+			// make a new start
 			pointsStart += pointsToNext;
-			//recalc pointsToNext
+			// recalc pointsToNext
 			pointsToNext *= 2;
 		}
 		pointsEnd = pointsStart + pointsToNext;
-		//each level pointsToNext *= level
+		// each level pointsToNext *= level
 		levelTextView.setText("Level " + level);
 		xpProgressBar.setMax(pointsToNext);
 		xpProgressBar.setProgress(groupExperience - pointsStart);
 		xpTextView.setText(groupExperience + " / " + pointsEnd);
 	}
-
-
 
 	/* CLASS TO FETCH THE ROLE OF THE USER IN GROUP / EVENT */
 	private class getRoleTask extends AsyncTask<String, Void, String>
@@ -203,7 +195,7 @@ public class GroupProfileActivity extends BaseActivity
 					String role = jsonObject.getString("role").toString();
 
 					user.addToGroupRoles(group.getID(), role);
-					
+
 					setButtons(); // for group / event
 				}
 				else
@@ -263,7 +255,7 @@ public class GroupProfileActivity extends BaseActivity
 	}
 
 	private void setButtons()
-	{	
+	{
 		if (group.inUsers(user.getEmail()))
 		{
 			profileButton2.setVisibility(View.VISIBLE);
@@ -284,9 +276,8 @@ public class GroupProfileActivity extends BaseActivity
 		}
 		profileButton1.setText("Members\n(" + group.getNumUsers() + ")");
 
-		
 	}
-	
+
 	public void inviteFriendsButton(View view)
 	{
 		Intent intent = new Intent(this, InviteActivity.class);
@@ -297,7 +288,7 @@ public class GroupProfileActivity extends BaseActivity
 	public void onClick(View view)
 	{
 		super.onClick(view);
-		//loadDialog.show();
+		loadDialog.show();
 		boolean noIntent = view.getId() == R.id.backButton ? true : false;
 
 		Intent intent = new Intent(this, UserListActivity.class);
@@ -346,7 +337,6 @@ public class GroupProfileActivity extends BaseActivity
 			loadDialog.hide(); // did not launch intent, cancel load dialog
 	}
 
-
 	/*
 	 * Get profile executes get_profile.php. It uses the current users email
 	 * address to retrieve the users name, age, and bio.
@@ -372,7 +362,7 @@ public class GroupProfileActivity extends BaseActivity
 		setRole();
 		setExperience();
 		initXpBar();
-		
+
 	}
 
 	private void initXpBar()
@@ -399,6 +389,7 @@ public class GroupProfileActivity extends BaseActivity
 		xpProgressBar.setProgress(groupXp - pointsStart);
 		xpTextView.setText(groupXp + " / " + pointsEnd);
 	}
+
 	// aSynch task to add individual member to group.
 	private class JoinPublicTask extends AsyncTask<String, Void, String>
 	{

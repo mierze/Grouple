@@ -60,14 +60,7 @@ public class GroupListActivity extends BaseActivity
 								// inflate into)
 	private LinearLayout listViewLayout;
 	private String ROLE = "U";// defaulting to lowest level
-	private String PANDABUFFER = ""; // same
-	private int bufferID; // same as below: could alternatively have json return
-							// the values instead of saving here
 	private Button addNew;
-
-	// TESTING
-
-
 
 	private void fetchData()
 	{
@@ -147,7 +140,7 @@ public class GroupListActivity extends BaseActivity
 	@Override
 	protected void onPause()
 	{
-		LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(dataReceiver);
 		super.onPause();
 
 	}
@@ -156,13 +149,14 @@ public class GroupListActivity extends BaseActivity
 	protected void onResume()
 	{
 		super.onResume();
-		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("user_data"));
+		LocalBroadcastManager.getInstance(this).registerReceiver(dataReceiver, new IntentFilter("user_data"));
+		fetchData();
 		updateUI();
 	}
 
 	// This listens for pings from the data service to let it know that there
 	// are updates
-	private BroadcastReceiver mReceiver = new BroadcastReceiver()
+	private BroadcastReceiver dataReceiver = new BroadcastReceiver()
 	{
 		@Override
 		public void onReceive(Context context, Intent intent)
@@ -250,22 +244,21 @@ public class GroupListActivity extends BaseActivity
 	{
 		super.onClick(view);
 		View parent = (View) view.getParent();
+		String id = Integer.toString(parent.getId());
 		switch (view.getId())
 		{
 		case R.id.declineButton:
 			if (CONTENT.equals(CONTENT_TYPE.GROUP_INVITES.toString()))
 			{
-				bufferID = parent.getId();
 				new performActionTask().execute("http://68.59.162.183/android_connect/leave_group.php",
-						user.getEmail(), Integer.toString(parent.getId()));
+						user.getEmail(), id);
 			}
 			break;
 		case R.id.acceptButton:
 			if (CONTENT.equals(CONTENT_TYPE.GROUP_INVITES.toString()))
 			{
-				bufferID = parent.getId();
 				new performActionTask().execute("http://68.59.162.183/android_connect/accept_group_invite.php",
-						user.getEmail(), Integer.toString(bufferID));
+						user.getEmail(), id);
 			}
 			break;
 		}
@@ -277,7 +270,7 @@ public class GroupListActivity extends BaseActivity
 		if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
 		{
 			// Get the id.
-			bufferID = g.getID();
+			final String g_id = Integer.toString(g.getID());
 
 			new AlertDialog.Builder(this).setMessage("Are you sure you want to leave this group?").setCancelable(true)
 					.setPositiveButton("Yes", new DialogInterface.OnClickListener()
@@ -286,23 +279,19 @@ public class GroupListActivity extends BaseActivity
 						public void onClick(DialogInterface dialog, int id)
 						{
 							new performActionTask().execute("http://68.59.162.183/android_connect/leave_group.php",
-									user.getEmail(), Integer.toString(bufferID));
+									user.getEmail(), g_id);
 						}
 					}).setNegativeButton("Cancel", null).show();
 		}
 	}
 
-	// Starts a USER/GROUP/EVENT profile
 	public void startProfileActivity(View view)
 	{
-		//loadDialog.show();
+		loadDialog.show();
 		int id = view.getId();
-		Group g = new Group(id);
 		Intent intent = new Intent(this, GroupProfileActivity.class);
-
 		intent.putExtra("g_id", id);
 		intent.putExtra("email", user.getEmail());
-
 		startActivity(intent);
 	}
 
@@ -338,26 +327,15 @@ public class GroupListActivity extends BaseActivity
 					Context context = getApplicationContext();
 					if (CONTENT.equals(CONTENT_TYPE.GROUP_INVITES.toString()))
 					{
-						user.removeGroupInvite(bufferID);
 						// since leave_group and decline group invite call same
 						// php
 						if (!message.equals("Group invite accepted!"))
 							message = "Group invite declined!";
 					}
-					else if (CONTENT.equals(CONTENT_TYPE.GROUPS_CURRENT.toString()))
-					{
-						user.removeGroup(bufferID);
-					}
+					fetchData();
 
 					Toast toast = GLOBAL.getToast(context, message);
 					toast.show();
-					// reset values, looking to move these
-					PANDABUFFER = "";
-					bufferID = -1;
-					// CALLING CORRESPONDING METHOD TO REPOPULATE
-
-					updateUI();
-
 				}
 				else
 				{
