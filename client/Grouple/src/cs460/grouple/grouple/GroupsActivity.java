@@ -18,6 +18,8 @@ import android.widget.Button;
 public class GroupsActivity extends BaseActivity
 {
 	private User user;
+	private Button groupInvitesButton;
+	private Button groupsCurrentButton;
 	//TODO: grab all ui elements here
 
 	@Override
@@ -27,13 +29,15 @@ public class GroupsActivity extends BaseActivity
 		setContentView(R.layout.activity_groups);
 		user = GLOBAL.getCurrentUser();// loadUser(global.getCurrentUser().getEmail());
 		initActionBar("Groups", true);
+		groupInvitesButton = (Button) findViewById(R.id.groupInvitesButton);
+		groupsCurrentButton = (Button) findViewById(R.id.groupsCurrentButton);
 	}
 
 	@Override
 	protected void onResume()
 	{
 		super.onResume();
-		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("user_data"));
+		LocalBroadcastManager.getInstance(this).registerReceiver(dataReceiver, new IntentFilter("user_data"));
 		fetchData();
 		updateUI();
 	}
@@ -41,20 +45,17 @@ public class GroupsActivity extends BaseActivity
 	@Override
 	protected void onPause()
 	{
-		LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(dataReceiver);
 		super.onPause();
-
 	}
 
 	// This listens for pings from the data service to let it know that there
 	// are updates
-	private BroadcastReceiver mReceiver = new BroadcastReceiver()
+	private BroadcastReceiver dataReceiver = new BroadcastReceiver()
 	{
 		@Override
 		public void onReceive(Context context, Intent intent)
 		{
-			// Extract data included in the Intent
-			String type = intent.getStringExtra("message");
 			// repopulate views
 			updateUI();
 		}
@@ -76,16 +77,10 @@ public class GroupsActivity extends BaseActivity
 	private void updateUI()
 	{
 		// Groups activity
-		if (findViewById(R.id.pendingGroupsButton) != null)
-		{
-			System.out.println("Pending groups setting text to what it is");
-			((Button) findViewById(R.id.pendingGroupsButton)).setText("Group Invites (" + user.getNumGroupInvites()
+		groupInvitesButton.setText("Group Invites (" + user.getNumGroupInvites()
 					+ ")");
-		}
-		if (findViewById(R.id.yourGroupsButton) != null)
-		{
-			((Button) findViewById(R.id.yourGroupsButton)).setText("My Groups (" + user.getNumGroups() + ")");
-		}
+		groupsCurrentButton.setText("My Groups (" + user.getNumGroups() + ")");
+		
 	}
 
 	@Override

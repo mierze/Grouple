@@ -29,7 +29,7 @@
 	   	    android:textSize="20sp" />
 	   	
 	   	<Button
-	   	    android:id="@+id/yourGroupsButton"
+	   	    android:id="@+id/groupsCurrentButton"
 		    android:onClick="startGroupsCurrentActivity"
 	   	    android:layout_width="match_parent"
 	   	    android:layout_height="80sp"
@@ -42,7 +42,7 @@
 	   	    android:textSize="20sp" />
 	
 	   	<Button
-	   	    android:id="@+id/pendingGroupsButton"
+	   	    android:id="@+id/groupInvitesButton"
 		    android:onClick="startGroupInvitesActivity"
 	   	    android:layout_width="match_parent"
 	   	    android:layout_marginTop="5dp"

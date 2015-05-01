@@ -95,7 +95,7 @@ public class UserDataService extends Service
 			new getEventsInvitesTask().execute("http://68.59.162.183/android_connect/get_event_invites.php");
 		else if (fetch.equals(fetch_TYPE.BADGES.toString()))
 			new getBadgesTask().execute("http://68.59.162.183/android_connect/get_badges.php");
-		else if (fetch.equals(fetch_TYPE.BADGES.toString()))
+		else if (fetch.equals(fetch_TYPE.BADGES_NEW.toString()))
 			new getNewBadgesTask().execute("http://68.59.162.183/android_connect/get_new_badges.php");
 		else if (fetch.equals(fetch_TYPE.EXPERIENCE.toString()))
 			new getExperienceTask().execute("http://68.59.162.183/android_connect/get_user_experience.php");
@@ -334,11 +334,12 @@ public class UserDataService extends Service
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
+				user.getGroupInvites().clear();
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					// gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("invites");
-					user.getGroupInvites().clear();
+					
 					// looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
@@ -351,7 +352,7 @@ public class UserDataService extends Service
 						g.setInviter(o.getString("sender"));
 						user.addToGroupInvites(g);
 					}
-					sendBroadcast();
+					
 				}
 				// user has no group invites
 				if (jsonObject.getString("success").toString().equals("2"))
@@ -359,6 +360,7 @@ public class UserDataService extends Service
 					// setNumFriends(0); //PANDA need to set the user class not
 					// global
 				}
+				sendBroadcast();
 			}
 			catch (Exception e)
 			{

@@ -26,39 +26,35 @@ public class FriendsActivity extends BaseActivity
 
 		user = GLOBAL.getCurrentUser();
 		initActionBar("Friends", true);
-	}
-
-	private void load()
-	{
 		fetchData();
-		updateUI();
-
 	}
+
 
 	private void fetchData()
 	{
-		
+		//
+		updateUI();
 	}
 
 	@Override
 	protected void onResume()
 	{
 		super.onResume();
-		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("user_data"));
-		load();
+		LocalBroadcastManager.getInstance(this).registerReceiver(dataReceiver, new IntentFilter("user_data"));
+		fetchData();
 	}
 
 	@Override
 	protected void onPause()
 	{
-		LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(dataReceiver);
 		super.onPause();
 
 	}
 
 	// This listens for pings from the data service to let it know that there
 	// are updates
-	private BroadcastReceiver mReceiver = new BroadcastReceiver()
+	private BroadcastReceiver dataReceiver = new BroadcastReceiver()
 	{
 		@Override
 		public void onReceive(Context context, Intent intent)

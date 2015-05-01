@@ -56,12 +56,140 @@ public class EventListActivity extends BaseActivity
 	private String ROLE = "U";// defaulting to lowest level
 	private Button addNew;
 	private String sadGuyText = "";
+	private LinearLayout sadGuyLayout;
 	private GcmUtility gcmUtil;
 	// TESTING
 	private ArrayList<User> users;
 	private ArrayList<Event> events;
 	private int e_id;
 
+
+	// DEFAULT METHODS BELOW
+	@Override
+	protected void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_list);
+		listView = (ListView) findViewById(R.id.listView);
+		// INSTANTIATIONS
+		Bundle extras = getIntent().getExtras();
+		CONTENT = extras.getString("content");
+		EMAIL = extras.getString("email");
+		listViewLayout = (LinearLayout) findViewById(R.id.listViewLayout);
+		addNew = (Button) findViewById(R.id.addNewButtonLiA);
+		String actionBarTitle = "";
+		addNew.setVisibility(View.GONE); // GONE FOR NOW
+		sadGuyLayout = (LinearLayout) findViewById(R.id.sadGuyLayout);
+		try
+		{
+			gcmUtil = new GcmUtility(GLOBAL);
+		}
+		catch (Exception e)
+		{
+
+		}
+
+		// GRABBING A USER
+		if (EMAIL != null)
+			user = GLOBAL.getUser(EMAIL);
+		else
+			user = GLOBAL.getCurrentUser();
+
+		if (CONTENT != null)
+			if (CONTENT.equals(CONTENT_TYPE.GROUP_PAST.toString())
+					|| CONTENT.equals(CONTENT_TYPE.GROUP_PENDING.toString())
+					|| CONTENT.equals(CONTENT_TYPE.GROUP_UPCOMING.toString()))
+			{
+				group = GLOBAL.getGroup(extras.getInt("g_id"));
+			}
+		// setting the bottom button gone
+		if (addNew != null)
+			addNew.setVisibility(View.GONE);
+		// setting the actionbar text
+		if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
+		{
+			events = user.getEventsPending();
+			sadGuyText = "You do not have any pending events.";
+			actionBarTitle = user.getFirstName() + "'s Pending Events";
+		}
+		else if (CONTENT.equals(CONTENT_TYPE.EVENT_INVITES.toString()))
+		{
+			events = user.getEventInvites();
+			sadGuyText = "You do not have any event invites.";
+			actionBarTitle = user.getFirstName() + "'s Event Invites";
+		}
+		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
+		{
+			events = user.getEventsUpcoming();
+			sadGuyText = "You do not have any upcoming events.";
+			actionBarTitle = user.getFirstName() + "'s Upcoming Events";
+		}
+		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
+		{
+			events = user.getEventsPast();
+			sadGuyText = "You do not have any past events.";
+			actionBarTitle = user.getFirstName() + "'s Past Events";
+		}
+		else if (CONTENT.equals(CONTENT_TYPE.GROUP_PAST.toString()))
+		{
+			events = group.getEventsPast();
+			sadGuyText = "No past events.";
+			actionBarTitle = "Past Events";
+		}
+		else if (CONTENT.equals(CONTENT_TYPE.GROUP_UPCOMING.toString()))
+		{
+			events = group.getEventsUpcoming();
+			sadGuyText = "No upcoming groups.";
+			actionBarTitle = "Upcoming Events";
+		}
+		else if (CONTENT.equals(CONTENT_TYPE.GROUP_PENDING.toString()))
+		{
+			events = group.getEventsPending();
+			sadGuyText = "No pending events";
+			actionBarTitle = "Pending Events";
+		}
+		else
+		{
+			events = user.getEventsDeclined();
+			sadGuyText = "You do not have any events declined.";
+			actionBarTitle = user.getFirstName() + "'s Declined Events";
+		}
+
+		// calling next functions to execute
+		initActionBar(actionBarTitle, true);
+
+	}
+
+	@Override
+	protected void onPause()
+	{
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(dataReceiver);
+		super.onPause();
+
+	}
+
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
+		LocalBroadcastManager.getInstance(this).registerReceiver(dataReceiver, new IntentFilter("user_data"));
+		fetchData();
+		updateUI();
+	}
+
+	// This listens for pings from the data service to let it know that there
+	// are updates
+	private BroadcastReceiver dataReceiver = new BroadcastReceiver()
+	{
+		@Override
+		public void onReceive(Context context, Intent intent)
+		{
+			// repopulate views
+			updateUI();
+		}
+	};
+	
+	
 	private class EventListAdapter extends ArrayAdapter<Event>
 	{
 		String startDate = "";
@@ -146,158 +274,38 @@ public class EventListActivity extends BaseActivity
 				if (!GLOBAL.isCurrentUser(user.getEmail()))
 					listItemID = R.layout.list_row_nobutton;
 			}
-			else if (CONTENT.equals(CONTENT_TYPE.GROUP_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.GROUP_PAST.toString()) || CONTENT.equals(CONTENT_TYPE.GROUP_PENDING.toString()))
+			else if (CONTENT.equals(CONTENT_TYPE.GROUP_UPCOMING.toString())
+					|| CONTENT.equals(CONTENT_TYPE.GROUP_PAST.toString())
+					|| CONTENT.equals(CONTENT_TYPE.GROUP_PENDING.toString()))
 			{
 				listItemID = R.layout.list_row_nobutton;
 			}
-				return listItemID;
+			return listItemID;
 		}
 	}
 
 	// populates a list of events
 	private void updateUI()
 	{
-
 		// looping thru and populating list of events
 		if (events != null && !events.isEmpty())
 		{
+			listView.setVisibility(View.VISIBLE);
+			sadGuyLayout.setVisibility(View.GONE);
 			ArrayAdapter<Event> adapter = new EventListAdapter();
 			listView.setAdapter(adapter);
 		}
 		else
 		{
-			// no event invites were found, show sadguy image / text
-			View row = inflater.inflate(R.layout.list_item_sadguy, null);
-			TextView sadTextView = (TextView) row.findViewById(R.id.sadGuyTextView);
-			// Set the sad guy text.
-			sadTextView.setText(sadGuyText);
+			View sadGuyView = inflater.inflate(R.layout.list_item_sadguy, null);
+			TextView sadGuyTextView = (TextView) sadGuyView.findViewById(R.id.sadGuyTextView);
+			sadGuyTextView.setText(sadGuyText);
+			sadGuyLayout.setVisibility(View.VISIBLE);
 			listView.setVisibility(View.GONE);
-			listViewLayout.addView(row);
+			sadGuyLayout.addView(sadGuyView);
 		}
 	}
 
-	// DEFAULT METHODS BELOW
-	@Override
-	protected void onCreate(Bundle savedInstanceState)
-	{
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_list);
-		listView = (ListView) findViewById(R.id.listView);
-		// INSTANTIATIONS
-		Bundle extras = getIntent().getExtras();
-		CONTENT = extras.getString("content");
-		EMAIL = extras.getString("email");
-		listViewLayout = (LinearLayout) findViewById(R.id.listViewLayout);
-		addNew = (Button) findViewById(R.id.addNewButtonLiA);
-		String actionBarTitle = "";
-		addNew.setVisibility(View.GONE); // GONE FOR NOW
-		try
-		{
-			gcmUtil = new GcmUtility(GLOBAL);
-		}
-		catch (Exception e)
-		{
-
-		}
-
-		// GRABBING A USER
-		if (EMAIL != null)
-			user = GLOBAL.getUser(EMAIL);
-		else
-			user = GLOBAL.getCurrentUser();
-		
-		if (CONTENT.equals(CONTENT_TYPE.GROUP_PAST.toString()) || CONTENT.equals(CONTENT_TYPE.GROUP_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.GROUP_UPCOMING.toString()))
-		{
-			group = GLOBAL.getGroup(extras.getInt("g_id"));
-		}
-		// setting the bottom button gone
-		if (addNew != null)
-			addNew.setVisibility(View.GONE);
-		// setting the actionbar text
-		if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
-		{
-			events = user.getEventsPending();
-			sadGuyText = "You do not have any pending events.";
-			actionBarTitle = user.getFirstName() + "'s Pending Events";
-		}
-		else if (CONTENT.equals(CONTENT_TYPE.EVENT_INVITES.toString()))
-		{
-			events = user.getEventInvites();
-			sadGuyText = "You do not have any event invites.";
-			actionBarTitle = user.getFirstName() + "'s Event Invites";
-		}
-		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))
-		{
-			events = user.getEventsUpcoming();
-			sadGuyText = "You do not have any upcoming events.";
-			actionBarTitle = user.getFirstName() + "'s Upcoming Events";
-		}
-		else if (CONTENT.equals(CONTENT_TYPE.EVENTS_PAST.toString()))
-		{
-			events = user.getEventsPast();
-			sadGuyText = "You do not have any past events.";
-			actionBarTitle = user.getFirstName() + "'s Past Events";
-		}
-		else if (CONTENT.equals(CONTENT_TYPE.GROUP_PAST.toString()))
-		{
-			events = group.getEventsPast();
-			sadGuyText = "No past events.";
-			actionBarTitle = "Past Events";
-		}
-		else if (CONTENT.equals(CONTENT_TYPE.GROUP_UPCOMING.toString()))
-		{
-			events = group.getEventsUpcoming();
-			sadGuyText = "No upcoming groups.";
-			actionBarTitle = "Upcoming Events";
-		}
-		else if (CONTENT.equals(CONTENT_TYPE.GROUP_PENDING.toString()))
-		{
-			events = group.getEventsPending();
-			sadGuyText = "No pending events";
-			actionBarTitle = "Pending Events";
-		}
-		else
-		{
-			events = user.getEventsDeclined();
-			sadGuyText = "You do not have any events declined.";
-			actionBarTitle = user.getFirstName() + "'s Declined Events";
-		}
-
-		// calling next functions to execute
-		initActionBar(actionBarTitle, true);
-
-	}
-
-	@Override
-	protected void onPause()
-	{
-		LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
-		super.onPause();
-
-	}
-
-	@Override
-	protected void onResume()
-	{
-		super.onResume();
-		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("user_data"));
-		fetchData();
-		updateUI();
-	}
-
-	// This listens for pings from the data service to let it know that there
-	// are updates
-	private BroadcastReceiver mReceiver = new BroadcastReceiver()
-	{
-		@Override
-		public void onReceive(Context context, Intent intent)
-		{
-			// Extract data included in the Intent
-			String type = intent.getStringExtra("message");
-			// repopulate views
-			updateUI();
-		}
-	};
 
 	private void fetchData()
 	{
@@ -321,7 +329,12 @@ public class EventListActivity extends BaseActivity
 		{
 			user.fetchEventsDeclined(this);
 		}
-
+		else if (CONTENT.equals(CONTENT_TYPE.GROUP_UPCOMING.toString())
+				|| CONTENT.equals(CONTENT_TYPE.GROUP_PAST.toString())
+				|| CONTENT.equals(CONTENT_TYPE.GROUP_PENDING.toString()))
+		{
+			group.fetchEvents(this);
+		}
 	}
 
 	// ONCLICK METHODS BELOW
@@ -406,7 +419,7 @@ public class EventListActivity extends BaseActivity
 					}).setNegativeButton("Cancel", null).show();
 		}
 	}
-	
+
 	public void startProfileActivity(View view)
 	{
 		loadDialog.show();

@@ -57,6 +57,7 @@ public class UserListActivity extends BaseActivity
 							// from other activities
 	private ListView listView;
 	private LinearLayout listViewLayout;
+	private LinearLayout sadGuyLayout;
 	private String ROLE = "U";// defaulting to lowest level
 	private String PANDABUFFER = ""; // same
 	private int bufferID; // same as below: could alternatively have json return
@@ -65,39 +66,7 @@ public class UserListActivity extends BaseActivity
 	// TESTING
 	private ArrayList<User> users;
 
-	/* loading in everything needed to generate the list */
-	public void load()
-	{
-		String actionBarTitle = "";
-		addNew.setVisibility(View.GONE); // GONE FOR NOW
-		// CONTENT_TYPE -> POPULATEUSERS
-		if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
-		{
-			addNew.setText("Add New Friend");
-			addNew.setVisibility(View.VISIBLE);
-			actionBarTitle = user.getFirstName() + "'s Friends";
-		}
-		else if (CONTENT.equals(CONTENT_TYPE.GROUP_MEMBERS.toString()))
-		{
-			setRole();
-			actionBarTitle = "Group Members";
-		}
-		else if (CONTENT.equals(CONTENT_TYPE.FRIEND_REQUESTS.toString()))
-			actionBarTitle = user.getFirstName() + "'s Friend Requests";
-		else if (CONTENT.equals(CONTENT_TYPE.SELECT_FRIEND.toString()))
-			actionBarTitle = "Message Who?";
-		else
-		// EVENT_PARTICIPANTS
-		{
-			setRole();
-			actionBarTitle = "Attending " + event.getName();
-		}
-		updateUI();
 
-		// calling next functions to execute
-		initActionBar(actionBarTitle, true);
-
-	}
 
 	private class UserListAdapter extends ArrayAdapter<User>
 	{
@@ -189,6 +158,35 @@ public class UserListActivity extends BaseActivity
 	private void updateUI()
 	{
 		super.updateUI(user);
+		
+
+		String actionBarTitle = "";
+		addNew.setVisibility(View.GONE); // GONE FOR NOW
+		// CONTENT_TYPE -> POPULATEUSERS
+		if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
+		{
+			addNew.setText("Add New Friend");
+			addNew.setVisibility(View.VISIBLE);
+			actionBarTitle = user.getFirstName() + "'s Friends";
+		}
+		else if (CONTENT.equals(CONTENT_TYPE.GROUP_MEMBERS.toString()))
+		{
+			setRole();
+			actionBarTitle = "Group Members";
+		}
+		else if (CONTENT.equals(CONTENT_TYPE.FRIEND_REQUESTS.toString()))
+			actionBarTitle = user.getFirstName() + "'s Friend Requests";
+		else if (CONTENT.equals(CONTENT_TYPE.SELECT_FRIEND.toString()))
+			actionBarTitle = "Message Who?";
+		else
+		// EVENT_PARTICIPANTS
+		{
+			setRole();
+			actionBarTitle = "Attending " + event.getName();
+		}
+
+		// calling next functions to execute
+		initActionBar(actionBarTitle, true);
 		String sadGuyText = "";
 
 		if (CONTENT.equals(CONTENT_TYPE.GROUP_MEMBERS.toString()))
@@ -228,55 +226,21 @@ public class UserListActivity extends BaseActivity
 		// looping thru and populating list of users
 		if (users != null && !users.isEmpty())
 		{
+			listView.setVisibility(View.VISIBLE);
+			sadGuyLayout.setVisibility(View.GONE);
 			ArrayAdapter<User> adapter = new UserListAdapter();
-			listView.setAdapter(adapter);
-			/*listView.setOnTouchListener(new OnTouchListener()
-			{
-				float historicX = Float.NaN, historicY = Float.NaN;
-				final int DELTA = 50;
-
-				
-				@Override
-				public boolean onTouch(View v, MotionEvent event)
-				{
-					// TODO Auto-generated method stub
-					switch (event.getAction())
-					{
-					case MotionEvent.ACTION_DOWN:
-						historicX = event.getX();
-						historicY = event.getY();
-						break;
-
-					case MotionEvent.ACTION_UP:
-						if (event.getX() - historicX < -DELTA)
-						{
-							GLOBAL.getToast(UserListActivity.this, "HASJDFHLAHSFDJHAF").show();
-							// updateUI();
-							return true;
-						}
-						else if (event.getX() - historicX > DELTA)
-						{
-							GLOBAL.getToast(UserListActivity.this, "HASJDFHLAHSFDJHAF").show();
-							// users.remove(position);
-							// updateUI();
-							return true;
-						}
-						break;
-					default:
-						return false;
-					}
-					return false;
-				}
-			});*/
+			listView.setAdapter(adapter);	
 		}
 		else
 		{
 			// The user has no friend's so display the sad guy image / text
-			View row = inflater.inflate(R.layout.list_item_sadguy, null);
-			TextView sadGuy = ((TextView) row.findViewById(R.id.sadGuyTextView));
-			sadGuy.setText(sadGuyText);
+			View sadGuyView = inflater.inflate(R.layout.list_item_sadguy, null);
+			TextView sadGuyTextView = ((TextView) sadGuyView.findViewById(R.id.sadGuyTextView));
+			sadGuyTextView.setText(sadGuyText);
+			sadGuyLayout.setVisibility(View.VISIBLE);
 			listView.setVisibility(View.GONE);
-			listViewLayout.addView(row);
+			sadGuyLayout.removeAllViews();
+			sadGuyLayout.addView(sadGuyView);
 		}
 	}
 
@@ -320,6 +284,7 @@ public class UserListActivity extends BaseActivity
 		// grabbing xml elements
 		listView = (ListView) findViewById(R.id.listView);
 		listViewLayout = (LinearLayout) findViewById(R.id.listViewLayout);
+		sadGuyLayout = (LinearLayout) findViewById(R.id.sadGuyLayout);
 		// INSTANTIATIONS
 		Bundle extras = getIntent().getExtras();
 		EMAIL = extras.getString("email");
@@ -347,6 +312,9 @@ public class UserListActivity extends BaseActivity
 			user.fetchExperience(this);
 		}
 		addNew = (Button) findViewById(R.id.addNewButtonLiA);
+		
+		updateUI();
+
 	}
 
 	/*
@@ -370,7 +338,7 @@ public class UserListActivity extends BaseActivity
 	@Override
 	protected void onPause()
 	{
-		LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(dataReceiver);
 		super.onPause();
 	}
 
@@ -380,29 +348,26 @@ public class UserListActivity extends BaseActivity
 		super.onResume();
 		if (CONTENT.equals(CONTENT_TYPE.EVENT_PARTICIPANTS.toString()))
 		{
-			LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("event_data"));
+			LocalBroadcastManager.getInstance(this).registerReceiver(dataReceiver, new IntentFilter("event_data"));
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.GROUP_MEMBERS.toString()))
 		{
-			LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("group_data"));
+			LocalBroadcastManager.getInstance(this).registerReceiver(dataReceiver, new IntentFilter("group_data"));
 		}
 		else
 		{
-			LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("user_data"));
+			LocalBroadcastManager.getInstance(this).registerReceiver(dataReceiver, new IntentFilter("user_data"));
 		}
 		fetchData();
-		load();
 	}
 
 	// This listens for pings from the data service to let it know that there
 	// are updates
-	private BroadcastReceiver mReceiver = new BroadcastReceiver()
+	private BroadcastReceiver dataReceiver = new BroadcastReceiver()
 	{
 		@Override
 		public void onReceive(Context context, Intent intent)
 		{
-			// Extract data included in the Intent
-			String type = intent.getStringExtra("message");
 			// repopulate views
 			updateUI();
 		}

@@ -52,6 +52,7 @@ public class GroupListActivity extends BaseActivity
 	// CLASS-WIDE DECLARATIONS
 	private User user; // user whose current groups displayed
 	private Group group;
+	private LinearLayout sadGuyLayout;
 	private String EMAIL; // extras passed in from the activity that called
 							// ListActivity
 	private String CONTENT; // type of content to display in list, passed in
@@ -62,6 +63,56 @@ public class GroupListActivity extends BaseActivity
 	private String ROLE = "U";// defaulting to lowest level
 	private Button addNew;
 
+
+
+	// DEFAULT METHODS BELOW
+	@Override
+	protected void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_list);
+		//grabbing xml elements
+		listView = (ListView) findViewById(R.id.listView);
+		listViewLayout = (LinearLayout) findViewById(R.id.listViewLayout);
+		addNew = (Button) findViewById(R.id.addNewButtonLiA);
+		// INSTANTIATIONS
+		Bundle extras = getIntent().getExtras();
+		CONTENT = extras.getString("content");
+		EMAIL = extras.getString("email");
+		String actionBarTitle = "";
+		addNew.setVisibility(View.GONE); // GONE FOR NOW
+		sadGuyLayout = (LinearLayout) findViewById(R.id.sadGuyLayout);
+		// GRABBING A USER
+		if (EMAIL != null)
+		{
+			user = GLOBAL.getUser(EMAIL);
+		}
+		else
+		{
+			user = GLOBAL.getCurrentUser();
+		}
+	
+		// registerClickCallback();
+	}
+
+	@Override
+	protected void onPause()
+	{
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(dataReceiver);
+		super.onPause();
+
+	}
+
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
+		LocalBroadcastManager.getInstance(this).registerReceiver(dataReceiver, new IntentFilter("user_data"));
+		fetchData();
+		updateUI();
+	}
+
+	
 	private void fetchData()
 	{
 		if (user != null)
@@ -122,38 +173,7 @@ public class GroupListActivity extends BaseActivity
 		}
 	}
 
-	private void registerClickCallback()
-	{
-		listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-		{
-			@Override
-			public void onItemClick(AdapterView<?> parent, View viewClicked, int position, long id)
-			{
-				System.out.println("ADSFASFDA\b\n\n\n\n");
-				Group g = groups.get(position);
-				// startProfileActivity(g);
-			}
-		});
-	}
 	
-
-	@Override
-	protected void onPause()
-	{
-		LocalBroadcastManager.getInstance(this).unregisterReceiver(dataReceiver);
-		super.onPause();
-
-	}
-
-	@Override
-	protected void onResume()
-	{
-		super.onResume();
-		LocalBroadcastManager.getInstance(this).registerReceiver(dataReceiver, new IntentFilter("user_data"));
-		fetchData();
-		updateUI();
-	}
-
 	// This listens for pings from the data service to let it know that there
 	// are updates
 	private BroadcastReceiver dataReceiver = new BroadcastReceiver()
@@ -195,49 +215,24 @@ public class GroupListActivity extends BaseActivity
 		// looping thru and populating list of groups
 		if (groups != null && !groups.isEmpty())
 		{
+			listView.setVisibility(View.VISIBLE);
+			sadGuyLayout.setVisibility(View.GONE);
 			ArrayAdapter<Group> adapter = new GroupListAdapter();
 			listView.setAdapter(adapter);
 		}
 		else
 		{
-			// The user has no groups so display the sad guy
-			View row = inflater.inflate(R.layout.list_item_sadguy, null);
-			((TextView) row.findViewById(R.id.sadGuyTextView)).setText(sadGuyText);
+			View sadGuyView = inflater.inflate(R.layout.list_item_sadguy, null);
+			TextView sadGuyTextView = (TextView) sadGuyView.findViewById(R.id.sadGuyTextView);
+			sadGuyTextView.setText(sadGuyText);
+			sadGuyLayout.setVisibility(View.VISIBLE);
+			sadGuyLayout.removeAllViews();
 			listView.setVisibility(View.GONE);
-			listViewLayout.addView(row);
+			sadGuyLayout.addView(sadGuyView);
 		}
 
 	}
 
-	// DEFAULT METHODS BELOW
-	@Override
-	protected void onCreate(Bundle savedInstanceState)
-	{
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_list);
-		//grabbing xml elements
-		listView = (ListView) findViewById(R.id.listView);
-		listViewLayout = (LinearLayout) findViewById(R.id.listViewLayout);
-		addNew = (Button) findViewById(R.id.addNewButtonLiA);
-		// INSTANTIATIONS
-		Bundle extras = getIntent().getExtras();
-		CONTENT = extras.getString("content");
-		EMAIL = extras.getString("email");
-		String actionBarTitle = "";
-		addNew.setVisibility(View.GONE); // GONE FOR NOW
-
-		// GRABBING A USER
-		if (EMAIL != null)
-		{
-			user = GLOBAL.getUser(EMAIL);
-		}
-		else
-		{
-			user = GLOBAL.getCurrentUser();
-		}
-	
-		// registerClickCallback();
-	}
 
 	// ONCLICK METHODS BELOW
 	public void onClick(View view)

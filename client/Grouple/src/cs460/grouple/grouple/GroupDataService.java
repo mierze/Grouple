@@ -42,7 +42,6 @@ public class GroupDataService extends Service {
 	public GroupDataService(Global global, Group g) 
 	{		
 		GLOBAL = global;
-		//user to update info of
 		group = g;
 	}
 	
