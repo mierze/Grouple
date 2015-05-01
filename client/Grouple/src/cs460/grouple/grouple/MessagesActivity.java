@@ -60,7 +60,14 @@ public class MessagesActivity extends BaseActivity
 		listViewLayout = (LinearLayout) findViewById(R.id.listViewLayout);
 		listView = (ListView) findViewById(R.id.listView);
 		initActionBar(extras.getString("name"), true);
+		try
+		{
 		gcm = GoogleCloudMessaging.getInstance(this);
+		}
+		catch (Exception e)
+		{
+			
+		}
 		recipient = extras.getString("email");
 		messages = user.getMessages(recipient);
 		// Get the recipient
@@ -241,7 +248,7 @@ public class MessagesActivity extends BaseActivity
 							message = messageEditText.getText().toString();
 							Message m = new Message(message, new Date(), user.getEmail(), user.getName(), recipient,
 									null);
-							messages.add(m);
+							//messages.add(m);
 							data.putString("msg", m.getMessage());
 							data.putString("my_action", "cs460.grouple.grouple.ECHO_NOW");
 							data.putString("content", "USER_MESSAGE");
@@ -275,6 +282,7 @@ public class MessagesActivity extends BaseActivity
 						messageEditText.setText("");
 						sendMessageButton.setClickable(true);
 						messageEditText.requestFocus();
+						fetchData();
 					}
 				}.execute(null, null, null);
 			}

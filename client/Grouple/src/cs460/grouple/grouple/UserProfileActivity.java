@@ -40,15 +40,15 @@ public class UserProfileActivity extends BaseActivity
 	private ImageView iv;
 	private User user; // user who's profile this is
 	private String EMAIL;
-	private LinearLayout profileLayout;
-	private View xpBar;
 	private View pastEventsBadgesLayout;
-	private Button profileButton1;
-	private Button profileButton2;
-	private Button profileButton3;
-	private Button profileButton4;// for user profile, is past events
-	private Button profileButton5;
-	private Button profileButton6;
+	private Button friendsButton;
+	private Button groupsButton;
+	private Button eventsUpcomingButton;
+	private Button eventsPastButton;// for user profile, is past events
+	private Button badgesButton;
+	private Button messageButton;
+	private Button inviteButton;
+	private Button userEditButton;
 	private ProgressBar xpProgressBar;
 	private TextView xpTextView;
 	private TextView aboutTextView;
@@ -61,20 +61,22 @@ public class UserProfileActivity extends BaseActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_user_profile);
-		profileLayout = (LinearLayout) findViewById(R.id.profileLayout);
-		xpBar = findViewById(R.id.xpBar);
+		
+		//initializing views
 		xpProgressBar = (ProgressBar) findViewById(R.id.xpProgressBar);
 		levelTextView = (TextView) findViewById(R.id.levelTextView);
 		aboutTextView = (TextView) findViewById(R.id.profileAboutTextView);
 		xpTextView = (TextView) findViewById(R.id.xpTextView);
-		profileButton1 = (Button) findViewById(R.id.profileButton1);
-		profileButton2 = (Button) findViewById(R.id.profileButton2);
-		profileButton3 = (Button) findViewById(R.id.profileButton3);
-		profileButton4 = (Button) findViewById(R.id.profileButton4);
-		profileButton5 = (Button) findViewById(R.id.profileButton5);
-		profileButton6 = (Button) findViewById(R.id.profileEditButton);
+		friendsButton = (Button) findViewById(R.id.friendsButton);
+		inviteButton = (Button) findViewById(R.id.inviteButton);
+		groupsButton = (Button) findViewById(R.id.groupsButton);
+		eventsUpcomingButton = (Button) findViewById(R.id.eventsUpcomingButton);
+		eventsPastButton = (Button) findViewById(R.id.eventsPastButton);
+		messageButton = (Button) findViewById(R.id.messageButton);
+		badgesButton = (Button) findViewById(R.id.badgesButton);
+		userEditButton = (Button) findViewById(R.id.userEditButton);
 		pastEventsBadgesLayout = findViewById(R.id.profilePastEventsBadgesLayout);
-		iv = (ImageView) findViewById(R.id.profileImageUPA);
+		iv = (ImageView) findViewById(R.id.profileImage);
 
 		try
 		{
@@ -85,7 +87,6 @@ public class UserProfileActivity extends BaseActivity
 		}
 		Bundle extras = getIntent().getExtras();
 		EMAIL = extras.getString("email");
-		pastEventsBadgesLayout.setVisibility(View.VISIBLE);
 		// grabbing the user with the given email in the EXTRAS
 		if (!GLOBAL.isCurrentUser(EMAIL))
 			user = GLOBAL.getUser(EMAIL);
@@ -198,25 +199,53 @@ public class UserProfileActivity extends BaseActivity
 		xpProgressBar.setProgress(userPoints - pointsStart);
 		xpTextView.setText(userPoints + " / " + pointsEnd);
 	}
-
+	
+	
 	private void setButtons()
 	{
-		profileButton2.setVisibility(View.VISIBLE);
-		profileButton3.setVisibility(View.VISIBLE);
-		profileButton1.setText("Friends\n(" + user.getNumUsers() + ")");
-		profileButton2.setText("Groups\n(" + user.getNumGroups() + ")");
-		profileButton3.setText("Upcoming Events\n(" + user.getNumEventsUpcoming() + ")");
-		profileButton4.setText("Past Events\n(" + user.getNumEventsPast() + ")");
-		profileButton5.setText("Badges\n(" + user.getNumBadges() + ")");
+		//clear buttons
+		friendsButton.setVisibility(View.GONE);
+		groupsButton.setVisibility(View.GONE);
+		eventsUpcomingButton.setVisibility(View.GONE);
+		eventsPastButton.setVisibility(View.GONE);
+		//badgesButton.setVisibility(View.GONE);
+		userEditButton.setVisibility(View.GONE);
+		inviteButton.setVisibility(View.GONE);
+		messageButton.setVisibility(View.GONE);
+
 		if (!GLOBAL.isCurrentUser(user.getEmail()))
 		{
 			if (user.inUsers(GLOBAL.getCurrentUser().getEmail()))
-				profileButton6.setText("Message " + user.getFirstName());
+			{
+				friendsButton.setVisibility(View.VISIBLE);
+				groupsButton.setVisibility(View.VISIBLE);
+				eventsUpcomingButton.setVisibility(View.VISIBLE);
+				eventsPastButton.setVisibility(View.VISIBLE);
+				//badgesButton.setVisibility(View.GONE);
+				messageButton.setText("Message " + user.getFirstName());
+				messageButton.setVisibility(View.VISIBLE);
+			}
 			else
-				profileButton6.setText("Invite " + user.getFirstName() + " to Friends");
+			{
+				inviteButton.setText("Invite " + user.getFirstName() + " to Friends");
+				inviteButton.setVisibility(View.VISIBLE);
+			}
 		}
-		profileButton6.setVisibility(View.VISIBLE);
+		else
+		{
+			friendsButton.setVisibility(View.VISIBLE);
+			groupsButton.setVisibility(View.VISIBLE);
+			eventsUpcomingButton.setVisibility(View.VISIBLE);
+			eventsPastButton.setVisibility(View.VISIBLE);
+			//badgesButton.setVisibility(View.GONE);
+			userEditButton.setVisibility(View.VISIBLE);
+		}
 
+		friendsButton.setText("Friends\n(" + user.getNumUsers() + ")");
+		groupsButton.setText("Groups\n(" + user.getNumGroups() + ")");
+		eventsUpcomingButton.setText("Upcoming Events\n(" + user.getNumEventsUpcoming() + ")");
+		eventsPastButton.setText("Past Events\n(" + user.getNumEventsPast() + ")");
+		badgesButton.setText("Badges\n(" + user.getNumBadges() + ")");
 	}
 
 	@Override
@@ -231,83 +260,89 @@ public class UserProfileActivity extends BaseActivity
 		return super.onOptionsItemSelected(item);
 	}
 
-	public void onClick(View view)
+	public void groupsButton(View v)
 	{
-		super.onClick(view);
-		// loadDialog.show();
-		boolean noIntent = view.getId() == R.id.backButton ? true : false;
-
-		Intent intent = new Intent(this, EventListActivity.class);
-		switch (view.getId())
-		{
-		case R.id.profileButton1:
-			intent = new Intent(this, UserListActivity.class);
-			// friends
-			intent.putExtra("content", "FRIENDS_CURRENT");
-
-			break;
-		case R.id.profileButton2:
-			intent = new Intent(this, GroupListActivity.class);
-			intent.putExtra("content", "GROUPS_CURRENT");
-
-			break;
-		case R.id.profileButton3:
-
-			intent.putExtra("content", "EVENTS_UPCOMING");
-
-			break;
-		case R.id.profileButton4:
-
-			intent.putExtra("content", "EVENTS_PAST");
-			break;
-		case R.id.profileButton5:
-			noIntent = true;
-			badgesDialog();
-
-			break;
-		case R.id.profileEditButton:
-
-			if (!GLOBAL.isCurrentUser(user.getEmail()))
-			{
-				if (user.inUsers(GLOBAL.getCurrentUser().getEmail()))
-				{
-					System.out.println("\n\nSEND USER A MESSAGE");
-					intent = new Intent(this, MessagesActivity.class);
-					// View parent = (View)view.getParent();
-					// Button name = (Button)
-					// parent.findViewById(R.id.nameTextViewLI);
-					intent.putExtra("name", user.getName());
-				}
-				else
-				{
-					System.out.println("\n\nINVITE TO FRIENDS");
-					new addFriendTask().execute("http://68.59.162.183/android_connect/add_friend.php");
-					// call a json task here
-					// in onpost toast and change refresh the page with that
-					// button gone
-					// we need a check for pending requests
-					noIntent = true;
-				}
-			}
-			else
-			{
-				intent = new Intent(this, UserEditActivity.class);
-			}
-			System.out.println("Setting the intent");
-
-			break;
-		default:
-			break;
-		}
+		loadDialog.show();
+		Intent intent = new Intent(this, GroupListActivity.class);
+		intent.putExtra("content", "GROUPS_CURRENT");
+		startActivity(intent);
 		if (user != null)
 		{
 			intent.putExtra("email", user.getEmail());
 		}
-		if (!noIntent) // TODO, move buttons elsewhere that dont start list
-			startActivity(intent);
-		else
-			loadDialog.hide(); // did not launch intent, cancel load dialog
+		startActivity(intent);
 	}
+
+	public void friendsButton(View v)
+	{
+		loadDialog.show();
+		Intent intent = new Intent(this, UserListActivity.class);
+		// friends
+		intent.putExtra("content", "FRIENDS_CURRENT");
+		if (user != null)
+		{
+			intent.putExtra("email", user.getEmail());
+		}
+		startActivity(intent);
+	}
+
+	public void eventsUpcomingButton(View v)
+	{
+		loadDialog.show();
+		Intent intent = new Intent(this, EventListActivity.class);
+		intent.putExtra("content", "EVENTS_UPCOMING");
+		if (user != null)
+		{
+			intent.putExtra("email", user.getEmail());
+		}
+		startActivity(intent);
+	}
+	
+	public void eventsPastButton(View v)
+	{
+		loadDialog.show();
+		Intent intent = new Intent(this, EventListActivity.class);
+		intent.putExtra("content", "EVENTS_PAST");
+		if (user != null)
+		{
+			intent.putExtra("email", user.getEmail());
+		}
+		startActivity(intent);
+	}
+	
+	
+	public void messageButton(View v)
+	{
+		loadDialog.show();
+		Intent intent = new Intent(this, MessagesActivity.class);
+		intent.putExtra("name", user.getName());
+		if (user != null)
+		{
+			intent.putExtra("email", user.getEmail());
+		}
+		startActivity(intent);
+	}
+	public void badgeButton(View v)
+	{
+		badgesDialog();
+	}
+	
+	public void inviteButton(View v)
+	{
+		new addFriendTask().execute("http://68.59.162.183/android_connect/add_friend.php");
+	}
+	
+	public void userEditButton(View v)
+	{
+		loadDialog.show();
+		Intent intent = new Intent(this, UserEditActivity.class);
+		if (user != null)
+		{
+			intent.putExtra("email", user.getEmail());
+		}
+		startActivity(intent);
+	}
+
 
 	// This task sends a friend request to the given user.
 	private class addFriendTask extends AsyncTask<String, Void, String>
@@ -340,14 +375,14 @@ public class UserProfileActivity extends BaseActivity
 					{
 
 					}
-					profileButton6.setVisibility(View.INVISIBLE);
+					inviteButton.setVisibility(View.GONE);
 				}
 				else if (jsonObject.getString("success").toString().equals("3"))
 				{
 					Toast toast = GLOBAL.getToast(UserProfileActivity.this,
 							"A friend request with " + user.getFirstName() + " to is already active!");
 					toast.show();
-					profileButton6.setVisibility(View.INVISIBLE);
+					inviteButton.setVisibility(View.GONE);
 				}
 				else
 				{
@@ -403,14 +438,23 @@ public class UserProfileActivity extends BaseActivity
 
 	private Drawable getBadgeImage(Badge b)
 	{
+		
+		//TODO: gender checking
+		String gender = user.getGender();
 		Drawable d = null;
 		if (b.getName().equals("Outdoorsman"))
 		{
-			d = getResources().getDrawable(R.drawable.badge_outdoorsman);
+			if (gender.equals("F"))
+				d = getResources().getDrawable(R.drawable.badge_outdoorsman);
+			else
+				d = getResources().getDrawable(R.drawable.badge_outdoorsman);
 		}
 		else if (b.getName().equals("Agile"))
 		{
-			d = getResources().getDrawable(R.drawable.badge_agile);
+			if (gender.equals("F"))
+				d = getResources().getDrawable(R.drawable.badge_agile);
+			else
+				d = getResources().getDrawable(R.drawable.badge_outdoorsman);
 		}
 		else if (b.getName().equals("Gregarious"))
 		{

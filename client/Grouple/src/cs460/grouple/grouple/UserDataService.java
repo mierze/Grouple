@@ -852,7 +852,7 @@ public class UserDataService extends Service
 		{
 			String sender = urls[1];
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair("sender", urls[1]));
+			nameValuePairs.add(new BasicNameValuePair("sender", sender));
 			nameValuePairs.add(new BasicNameValuePair("receiver", user.getEmail()));
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}

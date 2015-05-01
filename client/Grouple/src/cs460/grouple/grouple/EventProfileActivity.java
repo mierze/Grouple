@@ -338,7 +338,7 @@ public class EventProfileActivity extends BaseActivity
 	public void onClick(View view)
 	{
 		super.onClick(view);
-		// TODO: this caused errors loadDialog.show();
+		loadDialog.show();
 		boolean noIntent = view.getId() == R.id.backButton ? true : false;
 
 		Intent intent = new Intent(this, UserListActivity.class);
@@ -352,7 +352,6 @@ public class EventProfileActivity extends BaseActivity
 			intent = new Intent(this, EntityMessagesActivity.class);
 			intent.putExtra("content", "EVENT");
 			intent.putExtra("name", event.getName());
-
 			break;
 		case R.id.profileButton3:
 			// joining public event, defaulting to a promoter status

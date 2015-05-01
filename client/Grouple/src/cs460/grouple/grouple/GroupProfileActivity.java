@@ -6,6 +6,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -60,11 +62,9 @@ public class GroupProfileActivity extends BaseActivity
 		profileButton3 = (Button) findViewById(R.id.profileButton3);
 		profileButton6 = (Button) findViewById(R.id.profileEditButton);
 		inviteFriendsButton = (Button) findViewById(R.id.inviteFriendsButton);
-		iv = (ImageView) findViewById(R.id.profileImageUPA);
+		iv = (ImageView) findViewById(R.id.profileImage);
 		Bundle extras = getIntent().getExtras();
-		String title = "";
 		user = GLOBAL.getCurrentUser();
-		xpBar.setVisibility(View.VISIBLE);
 		group = GLOBAL.getGroup(extras.getInt("g_id"));
 	}
 
@@ -107,6 +107,29 @@ public class GroupProfileActivity extends BaseActivity
 		group.fetchExperience(this);
 	}
 
+	public void experienceDialog(View view)
+	{
+		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+		dialogBuilder.setTitle("Group Statistics");
+		LayoutInflater inflater = this.getLayoutInflater();
+		View dialogView = inflater.inflate(R.layout.dialog_group_statistics, null);
+		TextView socialTextView = (TextView) dialogView.findViewById(R.id.socialTextView);
+		TextView entertainmentTextView = (TextView) dialogView.findViewById(R.id.entertainmentTextView);
+		TextView professionalTextView = (TextView) dialogView.findViewById(R.id.professionalTextView);
+		TextView fitnessTextView = (TextView) dialogView.findViewById(R.id.fitnessTextView);
+		TextView natureTextView = (TextView) dialogView.findViewById(R.id.natureTextView);
+
+		socialTextView.setText("" + group.getNumSocialEvents());
+		professionalTextView.setText("" + group.getNumProfessionalEvents());
+		entertainmentTextView.setText("" + group.getNumEntertainmentEvents());
+		fitnessTextView.setText("" + group.getNumFitnessEvents());
+		natureTextView.setText("" + group.getNumNatureEvents());
+		dialogBuilder.setView(dialogView);
+		final AlertDialog experienceDialog = dialogBuilder.create();
+		experienceDialog.show();
+	}
+
+	
 	private void setRole()
 	{
 		int pub;

@@ -273,7 +273,7 @@ public class GroupCreateActivity extends BaseActivity
 						public void onClick(DialogInterface dialog, int id)
 						{
 							//add code here to take user to groupaddmembersactivity page.  (pass g_id as extra so invites can be sent to correct group id)
-							//loadDialog.show();
+							loadDialog.show();
 							Intent intent = new Intent(GroupCreateActivity.this, InviteActivity.class);
 							intent.putExtra("email", user.getEmail());
 							intent.putExtra("group_name",groupName);

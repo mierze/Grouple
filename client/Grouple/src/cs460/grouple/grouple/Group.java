@@ -58,6 +58,7 @@ public class Group extends Entity
 		{
 			experience += nums.get(i) * (i+1);
 		}
+		experience += getUsers().size();
 		
 	}
 	/*

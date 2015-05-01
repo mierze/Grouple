@@ -24,26 +24,27 @@ import android.widget.Toast;
 
 /**
  * 
- * @author Brett, Todd, Scott
- * InviteActivity invites a list of users to a created group.
+ * @author Brett, Todd, Scott InviteActivity invites a list of users to a
+ *         created group.
  */
-public class InviteActivity extends BaseActivity {
+public class InviteActivity extends BaseActivity
+{
 
 	private User user;
 	private ArrayList<User> users;
 	private Group group;
 	private String userRole;
-	private SparseArray<String> role = new SparseArray<String>();   
-	//holds list of role of all friend rows to be added
-	private String CONTENT; //type of content to display
-	private Bundle EXTRAS; //type of content to display
+	private SparseArray<String> role = new SparseArray<String>();
+	// holds list of role of all friend rows to be added
+	private String CONTENT; // type of content to display
+	private Bundle EXTRAS; // type of content to display
 	private GcmUtility gcmUtil;
 	private String receiver = "";
-	private String groupName= "";
-	private int gid;
-	
+	private String groupName = "";
+
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState)
+	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_invite);
 		load();
@@ -53,20 +54,25 @@ public class InviteActivity extends BaseActivity {
 	{
 		EXTRAS = getIntent().getExtras();
 		CONTENT = EXTRAS.getString("content");
-		//should always be current user
+		// should always be current user
 		user = GLOBAL.getCurrentUser();
 		groupName = EXTRAS.getString("group_name");
-		gid = EXTRAS.getInt("g_id");
-		group = GLOBAL.getGroup(gid);
+		group = GLOBAL.getGroup(EXTRAS.getInt("g_id"));
 		userRole = user.getGroupRole(group.getID());
-		gcmUtil = new GcmUtility(GLOBAL);
-		populateInviteMembers();
+		try
+		{
+			gcmUtil = new GcmUtility(GLOBAL);
+		}
+		catch (Exception e)
+		{
+		}
+		updateUI();
 		initActionBar("Invite to " + group.getName(), true);
 	}
 
-	private void populateInviteMembers()
+	private void updateUI()
 	{
-		//could use content here
+		// could use content here
 		View view;
 		LinearLayout pickFriendsLayout = (LinearLayout) findViewById(R.id.pickFriendsLayout);
 		ArrayList<User> members;
@@ -82,7 +88,7 @@ public class InviteActivity extends BaseActivity {
 			{
 				if (member.getEmail().equals(friend.getEmail()))
 				{
-					inGroup = true;			
+					inGroup = true;
 				}
 			}
 			if (!inGroup)
@@ -90,11 +96,11 @@ public class InviteActivity extends BaseActivity {
 		}
 
 		if (users != null && users.size() != 0)
-		{		
+		{
 			// looping thru json and adding to an array
 			int index = 0;
-			//setup for each friend
-			for(User user : users)
+			// setup for each friend
+			for (User user : users)
 			{
 				view = li.inflate(R.layout.list_row_invitefriend, null);
 				final RelativeLayout row = (RelativeLayout) view.findViewById(R.id.friendManageLayout);
@@ -106,89 +112,83 @@ public class InviteActivity extends BaseActivity {
 				friendName.setId(index);
 				row.setId(index);
 
-				
-				//TODO: 
-				//if user is promoter, don't allow inviting people as anything above user level
-				//should save that mapping in the user
-				//onClickListeners
-				row.setOnClickListener(new OnClickListener() 
+				// TODO:
+				// if user is promoter, don't allow inviting people as anything
+				// above user level
+				// should save that mapping in the user
+				// onClickListeners
+				row.setOnClickListener(new OnClickListener()
 				{
 					@Override
-					public void onClick(View view) 
+					public void onClick(View view)
 					{
-						if (makeAdminButton.getText().toString().equals("-")) 
+						if (makeAdminButton.getText().toString().equals("-"))
 						{
 							makeAdminButton.setText("U");
 							role.put(view.getId(), "U");
 							cb.setChecked(true);
 
-							makeAdminButton.setTextColor(getResources().getColor(
-									R.color.yellow));
-						} 
-						else if (makeAdminButton.getText().toString().equals("U") && userRole.equals("A")) 
+							makeAdminButton.setTextColor(getResources().getColor(R.color.yellow));
+						}
+						else if (makeAdminButton.getText().toString().equals("U") && userRole.equals("A"))
 						{
 							makeAdminButton.setText("P");
 							role.put(view.getId(), "P");
 							cb.setChecked(true);
-							makeAdminButton.setTextColor(getResources().getColor(
-									R.color.purple));
-						} 
-						else if (makeAdminButton.getText().toString().equals("P")) 
+							makeAdminButton.setTextColor(getResources().getColor(R.color.purple));
+						}
+						else if (makeAdminButton.getText().toString().equals("P"))
 						{
 							makeAdminButton.setText("A");
 							role.put(view.getId(), "A");
 							cb.setChecked(true);
-							makeAdminButton.setTextColor(getResources().getColor(
-									R.color.green));
+							makeAdminButton.setTextColor(getResources().getColor(R.color.green));
 						}
-						else if (makeAdminButton.getText().toString().equals("A") || makeAdminButton.getText().toString().equals("U")) 
+						else if (makeAdminButton.getText().toString().equals("A")
+								|| makeAdminButton.getText().toString().equals("U"))
 						{
 							makeAdminButton.setText("-");
 							cb.setChecked(false);
 							role.remove(view.getId());
-							makeAdminButton.setTextColor(getResources().getColor(
-									R.color.black));
+							makeAdminButton.setTextColor(getResources().getColor(R.color.black));
 						}
 					}
 				});
-				makeAdminButton.setOnClickListener(new OnClickListener() 
+				makeAdminButton.setOnClickListener(new OnClickListener()
 				{
 					@Override
-					public void onClick(View view) 
+					public void onClick(View view)
 					{
-						if (makeAdminButton.getText().toString().equals("-")) 
+						if (makeAdminButton.getText().toString().equals("-"))
 						{
 							makeAdminButton.setText("U");
 							role.put(view.getId(), "U");
 							cb.setChecked(true);
 
-							makeAdminButton.setTextColor(getResources().getColor(
-									R.color.yellow));
-						} 
-						else if (makeAdminButton.getText().toString().equals("U") && userRole.equals("A")) 
+							makeAdminButton.setTextColor(getResources().getColor(R.color.yellow));
+						}
+						else if (makeAdminButton.getText().toString().equals("U") && userRole.equals("A"))
 						{
 							makeAdminButton.setText("P");
 							role.put(view.getId(), "P");
 							cb.setChecked(true);
-							makeAdminButton.setTextColor(getResources().getColor(
-									R.color.purple));
-						} 
-						else if (makeAdminButton.getText().toString().equals("P")) 
+							makeAdminButton.setTextColor(getResources().getColor(R.color.purple));
+						}
+						else if (makeAdminButton.getText().toString().equals("P"))
 						{
 							makeAdminButton.setText("A");
 							role.put(view.getId(), "A");
 							cb.setChecked(true);
 
-							makeAdminButton.setTextColor(getResources().getColor(
-									R.color.green));
+							makeAdminButton.setTextColor(getResources().getColor(R.color.green));
 						}
-						else if (makeAdminButton.getText().toString().equals("A") || makeAdminButton.getText().toString().equals("U")) 
+						else if (makeAdminButton.getText().toString().equals("A")
+								|| makeAdminButton.getText().toString().equals("U"))
 						{
 							makeAdminButton.setText("-");
 							cb.setChecked(false);
 							role.remove(view.getId());
-							makeAdminButton.setTextColor(getResources().getColor(
-									R.color.black));
+							makeAdminButton.setTextColor(getResources().getColor(R.color.black));
 						}
 					}
 				});
@@ -197,80 +197,93 @@ public class InviteActivity extends BaseActivity {
 					@Override
 					public void onCheckedChanged(CompoundButton view, boolean isChecked)
 					{
-					
-						if(cb.isChecked())
+
+						if (cb.isChecked())
 						{
 							role.put(view.getId(), "U");
 							makeAdminButton.setText("U");
-							makeAdminButton.setTextColor(getResources().getColor(
-									R.color.yellow));
+							makeAdminButton.setTextColor(getResources().getColor(R.color.yellow));
 						}
 						else
 						{
 							role.remove(view.getId());
 							makeAdminButton.setText("-");
-							makeAdminButton.setTextColor(getResources().getColor(
-									R.color.black));
+							makeAdminButton.setTextColor(getResources().getColor(R.color.black));
 						}
 					}
 				});
 				friendName.setText(user.getName());
-				pickFriendsLayout.addView(row);	
+				pickFriendsLayout.addView(row);
 				index++;
 			}
 		}
 		else
-		{		
-			//no friends that are not already in group
+		{
+			// no friends that are not already in group
 			view = li.inflate(R.layout.list_item_sadguy, null);
 			((TextView) view.findViewById(R.id.sadGuyTextView))
-				.setText("All of your friends are already in this group.");
+					.setText("All of your friends are already in this group.");
 			pickFriendsLayout.addView(view);
 		}
 	}
-	
+
 	public void confirmButton(View view)
 	{
-		//now loop through list of added to add all the additional users to the group
+		// now loop through list of added to add all the additional users to the
+		// group
 		int size = role.size();
-		System.out.println("Total count of users to process: "+size);
+		System.out.println("Total count of users to process: " + size);
 		ArrayList<String> friendsEmailList = new ArrayList<String>();
-		for(int i = 0; i < size; i++) 
+		for (int i = 0; i < size; i++)
 		{
-			//get the user's email by matching indexes from added list with indexes from allFriendslist.
+			// get the user's email by matching indexes from added list with
+			// indexes from allFriendslist.
 			int key = role.keyAt(i);
-			//grab the email of friend to add
+			// grab the email of friend to add
 			String friendsEmail = users.get(key).getEmail();
-			//grab the role of friend to add
+			// grab the role of friend to add
 			String friendsRole = role.get(key);
 			if (!(friendsRole.equals("-")))
 			{
-				try {
-					new AddGroupMembersTask().execute("http://68.59.162.183/"+ "android_connect/add_groupmember.php", friendsEmail, user.getEmail(), friendsRole, Integer.toString(group.getID())).get();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (ExecutionException e) {
+				try
+				{
+					new AddGroupMembersTask().execute("http://68.59.162.183/" + "android_connect/add_groupmember.php",
+							friendsEmail, user.getEmail(), friendsRole, Integer.toString(group.getID())).get();
+				}
+				catch (InterruptedException e)
+				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				//Send Push Notification TODO: move this to onpost somehow
-				//gcmUtil.sendGroupNotification(friendsEmail,group.getName(),Integer.toString(group.getID()),"GROUP_INVITE");
+				catch (ExecutionException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				// Send Push Notification TODO: move this to onpost somehow
+				// gcmUtil.sendGroupNotification(friendsEmail,group.getName(),Integer.toString(group.getID()),"GROUP_INVITE");
 				friendsEmailList.add(friendsEmail);
 			}
-				
+
 		}
-		//Send Group Notifications. Send list of friends email address, group id, and notificatoin type.
-		gcmUtil.sendGroupNotification(friendsEmailList,groupName,Integer.toString(gid),"GROUP_INVITE");
-		Context context = getApplicationContext();
-		Toast toast = GLOBAL.getToast(context, "Friends have been invited.");
-		toast.show();
-		//end activity, go back to previous activity
+		// Send Group Notifications. Send list of friends email address, group
+		// id, and notificatoin type.
+		try
+		{
+			gcmUtil.sendGroupNotification(friendsEmailList, groupName, Integer.toString(group.getID()), "GROUP_INVITE");
+			GLOBAL.getToast(this, "No friends have been invited.").show();
+		}
+		catch (Exception e)
+		{
+			GLOBAL.getToast(this, "Friends have been invited!").show();
+		}
+
+		// end activity, go back to previous activity
 		finish();
 	}
-	
-	//aSynch task to add individual member to group.
-	private class AddGroupMembersTask extends AsyncTask<String,Void,String>
+
+	// aSynch task to add individual member to group.
+	private class AddGroupMembersTask extends AsyncTask<String, Void, String>
 	{
 		@Override
 		protected String doInBackground(String... urls)
@@ -280,7 +293,8 @@ public class InviteActivity extends BaseActivity {
 			nameValuePairs.add(new BasicNameValuePair("sender", urls[2]));
 			nameValuePairs.add(new BasicNameValuePair("role", urls[3]));
 			nameValuePairs.add(new BasicNameValuePair("g_id", urls[4]));
-			//pass url and nameValuePairs off to GLOBAL to do the JSON call.  Code continues at onPostExecute when JSON returns.
+			// pass url and nameValuePairs off to GLOBAL to do the JSON call.
+			// Code continues at onPostExecute when JSON returns.
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
 
@@ -294,19 +308,19 @@ public class InviteActivity extends BaseActivity {
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					System.out.println("USER HAS SUCCESSFULLY BEEN ADDED");
-					//all working correctly, continue to next user or finish.
-				} 
-				else if (jsonObject.getString("success").toString().equals("0"))
-				{	
-					//a particular user was unable to be added to database for some reason...
-					//Don't tell the user!
+					// all working correctly, continue to next user or finish.
 				}
-			} 
+				else if (jsonObject.getString("success").toString().equals("0"))
+				{
+					// a particular user was unable to be added to database for
+					// some reason...
+					// Don't tell the user!
+				}
+			}
 			catch (Exception e)
 			{
 				Log.d("readJSONFeed", e.getLocalizedMessage());
 			}
-		}		
+		}
 	}
-		
 }

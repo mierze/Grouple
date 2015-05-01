@@ -244,8 +244,7 @@ public class BaseActivity extends ActionBarActivity implements OnClickListener
 		if (id == R.id.backButton)
 		{
 			onBackPressed();
-		}
-		
+		}	
 	}
 	
 	protected AlertDialog.Builder getImageBuilder(Context c)
