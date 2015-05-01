@@ -36,7 +36,7 @@ public class GroupDataService extends Service {
 
 	enum FETCH_TYPE
 	{
-		INFO, IMAGE, MEMBERS, EXPERIENCE;
+		INFO, IMAGE, MEMBERS, EXPERIENCE, EVENTS;
 	}
 	
 	public GroupDataService(Global global, Group g) 
@@ -70,14 +70,12 @@ public class GroupDataService extends Service {
 		else if (FETCH.equals(FETCH_TYPE.IMAGE.toString()))
 			new getImageTask().execute("http://68.59.162.183/android_connect/get_profile_image.php");
 		else if (FETCH.equals(FETCH_TYPE.MEMBERS.toString()))
-		{
-			new getMembersTask().execute("http://68.59.162.183/android_connect/get_group_members.php?gid=" + group.getID());
-		}
+			new getMembersTask().execute("http://68.59.162.183/android_connect/get_group_members.php?gid=" + group.getID());	
 		else if (FETCH.equals(FETCH_TYPE.EXPERIENCE.toString()))
-		{
-
 			new getExperienceTask().execute("http://68.59.162.183/android_connect/get_group_experience.php");
-		}
+		else if (FETCH.equals(FETCH_TYPE.EVENTS.toString()))
+			new getEventsTask().execute("http://68.59.162.183/android_connect/get_group_events.php");
+
 		
 	}
 	
@@ -279,6 +277,72 @@ public class GroupDataService extends Service {
 			// do next thing here
 		}
 	}
+	
+	private class getEventsTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected String doInBackground(String... urls)
+		{
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("g_id", Integer.toString(group.getID())));
+			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
+		}
+
+		@Override
+		protected void onPostExecute(String result)
+		{
+			try
+			{
+				JSONObject jsonObject = new JSONObject(result);
+
+				if (jsonObject.getString("success").toString().equals("1"))
+				{
+					JSONArray upcomingJsonArray = jsonObject.getJSONArray("upcoming");
+
+					for (int i = 0; i < upcomingJsonArray.length(); i++)
+					{
+						JSONObject o = (JSONObject) upcomingJsonArray.get(i);
+						Event e = new Event(o.getInt("e_id"));
+						e.setName(o.getString("name"));
+						e.setMinPart(o.getInt("minPart"));
+						e.setMaxPart(o.getInt("maxPart"));
+						group.addToEventsUpcoming(e);
+					}
+					
+					JSONArray pendingJsonArray = jsonObject.getJSONArray("pending");
+
+					for (int i = 0; i < pendingJsonArray.length(); i++)
+					{
+						JSONObject o = (JSONObject) pendingJsonArray.get(i);
+						Event e = new Event(o.getInt("e_id"));
+						e.setName(o.getString("name"));
+						e.setMinPart(o.getInt("minPart"));
+						e.setMaxPart(o.getInt("maxPart"));
+						group.addToEventsPending(e);
+					}
+					
+					JSONArray pastJsonArray = jsonObject.getJSONArray("past");
+
+					for (int i = 0; i < pastJsonArray.length(); i++)
+					{
+						JSONObject o = (JSONObject) pastJsonArray.get(i);
+						Event e = new Event(o.getInt("e_id"));
+						e.setName(o.getString("name"));
+						e.setMinPart(o.getInt("minPart"));
+						e.setMaxPart(o.getInt("maxPart"));
+						group.addToEventsPast(e);
+					}
+					sendBroadcast();
+				}
+
+			}
+			catch (Exception e)
+			{
+				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
+			}
+		}
+	}
+
 	@Override
 	public IBinder onBind(Intent arg0)
 	{

@@ -62,7 +62,6 @@ public class EventProfileActivity extends BaseActivity
 	{
 		LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
 		super.onPause();
-
 	}
 
 
@@ -74,11 +73,7 @@ public class EventProfileActivity extends BaseActivity
 		@Override
 		public void onReceive(Context context, Intent intent)
 		{
-			// Extract data included in the Intent
-			String type = intent.getStringExtra("message");
-			// repopulate views
-
-			updateUI();// for group / event
+			updateUI();// for event
 		}
 	};
 
@@ -89,6 +84,9 @@ public class EventProfileActivity extends BaseActivity
 		event.fetchImage(this);
 		event.fetchItems(this);		// and check for not past
 		new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_event.php",
+				Integer.toString(event.getID()));
+		new getUnreadEntityMessagesTask().execute(
+				"http://68.59.162.183/android_connect/get_unread_entitymessages.php",
 				Integer.toString(event.getID()));
 	}
 
@@ -211,22 +209,26 @@ public class EventProfileActivity extends BaseActivity
 		joinButton.setVisibility(View.GONE);
 		messagesButton.setVisibility(View.GONE);
 		
-
+		String eventState = event.getEventState();
 		
 		//in event
 		if (event.inUsers(user.getEmail()))
 		{
-			attendingButton.setText("Attending (" + event.getNumUsers() + ")");
+			
+			if (eventState.equals("Ended"))
+				attendingButton.setText("Participants (" + event.getNumUsers() + ")");
+			else if (eventState.equals("Declined") || eventState.equals("Pending"))
+				attendingButton.setText("Confirmed (" + event.getNumUsers() + ")");
+			else
+				attendingButton.setText("Attending (" + event.getNumUsers() + ")");
 			String role = user.getEventRole(event.getID());
 			messagesButton.setVisibility(View.VISIBLE);
 			attendingButton.setVisibility(View.VISIBLE);
-			new getUnreadEntityMessagesTask().execute(
-					"http://68.59.162.183/android_connect/get_unread_entitymessages.php",
-					Integer.toString(event.getID()));
+			
 			//admin and not ended
-			if (role.equals("A") && !event.getEventState().equals("Ended"))
+			if (role.equals("A") && !eventState.equals("Ended"))
 			{
-				if (event.getEventState().equals("Declined"))
+				if (eventState.equals("Declined"))
 					editButton.setText("Edit and Repropose Event");
 				else
 					editButton.setText("Edit Event");
@@ -234,7 +236,7 @@ public class EventProfileActivity extends BaseActivity
 			}
 			//admin or promoter
 			if ((role.equals("A") || role.equals("P"))
-					&& (!event.getEventState().equals("Ended") && !event.getEventState().equals("Declined")))
+					&& (!eventState.equals("Ended") && !eventState.equals("Declined")))
 			{
 				inviteButton.setVisibility(View.VISIBLE);
 			}
@@ -249,7 +251,7 @@ public class EventProfileActivity extends BaseActivity
 			}
 		}
 		//not in event, it is public and ready to join
-		else if (!event.getEventState().equals("Ended") && !event.getEventState().equals("Declined")
+		else if (!eventState.equals("Ended") && !eventState.equals("Declined")
 				&& event.getPub() == 1)
 		{
 			joinButton.setVisibility(View.VISIBLE);

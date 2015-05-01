@@ -39,12 +39,13 @@ public class EventListActivity extends BaseActivity
 	 */
 	enum CONTENT_TYPE
 	{
-		EVENTS_UPCOMING, EVENTS_PENDING, EVENTS_PAST, EVENT_INVITES, EVENTS_DECLINED;
+		EVENTS_UPCOMING, EVENTS_PENDING, EVENTS_PAST, EVENT_INVITES, EVENTS_DECLINED, GROUP_UPCOMING, GROUP_PAST, GROUP_PENDING;
 	}
 
 	// CLASS-WIDE DECLARATIONS
 	private User user; // user whose current groups displayed
 	private Event event;
+	private Group group;
 	private String EMAIL; // extras passed in from the activity that called
 							// ListActivity
 	private String CONTENT; // type of content to display in list, passed in
@@ -145,7 +146,11 @@ public class EventListActivity extends BaseActivity
 				if (!GLOBAL.isCurrentUser(user.getEmail()))
 					listItemID = R.layout.list_row_nobutton;
 			}
-			return listItemID;
+			else if (CONTENT.equals(CONTENT_TYPE.GROUP_UPCOMING.toString()) || CONTENT.equals(CONTENT_TYPE.GROUP_PAST.toString()) || CONTENT.equals(CONTENT_TYPE.GROUP_PENDING.toString()))
+			{
+				listItemID = R.layout.list_row_nobutton;
+			}
+				return listItemID;
 		}
 	}
 
@@ -200,8 +205,11 @@ public class EventListActivity extends BaseActivity
 			user = GLOBAL.getUser(EMAIL);
 		else
 			user = GLOBAL.getCurrentUser();
-		// CALL APPROPRIATE METHODS TO POPULATE LIST
-		// CONTENT_TYPE -> POPULATEGROUPS
+		
+		if (CONTENT.equals(CONTENT_TYPE.GROUP_PAST.toString()) || CONTENT.equals(CONTENT_TYPE.GROUP_PENDING.toString()) || CONTENT.equals(CONTENT_TYPE.GROUP_UPCOMING.toString()))
+		{
+			group = GLOBAL.getGroup(extras.getInt("g_id"));
+		}
 		// setting the bottom button gone
 		if (addNew != null)
 			addNew.setVisibility(View.GONE);
@@ -229,6 +237,24 @@ public class EventListActivity extends BaseActivity
 			events = user.getEventsPast();
 			sadGuyText = "You do not have any past events.";
 			actionBarTitle = user.getFirstName() + "'s Past Events";
+		}
+		else if (CONTENT.equals(CONTENT_TYPE.GROUP_PAST.toString()))
+		{
+			events = group.getEventsPast();
+			sadGuyText = "No past events.";
+			actionBarTitle = "Past Events";
+		}
+		else if (CONTENT.equals(CONTENT_TYPE.GROUP_UPCOMING.toString()))
+		{
+			events = group.getEventsUpcoming();
+			sadGuyText = "No upcoming groups.";
+			actionBarTitle = "Upcoming Events";
+		}
+		else if (CONTENT.equals(CONTENT_TYPE.GROUP_PENDING.toString()))
+		{
+			events = group.getEventsPending();
+			sadGuyText = "No pending events";
+			actionBarTitle = "Pending Events";
 		}
 		else
 		{

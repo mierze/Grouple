@@ -147,7 +147,7 @@ public class GroupEditActivity extends BaseActivity
 				if (confirmEditText.getText().toString().equals("Yes"))
 				{
 					System.out.println("DELETE THID BITCH");
-					new deleteGroupTask().execute("http://68.59.162.183/android_connect/update_group.php");
+					new deleteGroupTask().execute("http://68.59.162.183/android_connect/delete_group.php");
 				}
 				else if (confirmEditText.getText().toString().equals("No"))
 				{
@@ -264,6 +264,9 @@ public class GroupEditActivity extends BaseActivity
 				{
 					Toast toast = GLOBAL.getToast(GroupEditActivity.this, jsonObject.getString("message"));
 					toast.show();
+					loadDialog.show();
+					Intent intent = new Intent(GroupEditActivity.this, GroupsActivity.class);
+					startActivity(intent);
 					finish();
 				} else
 				{

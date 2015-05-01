@@ -129,6 +129,45 @@
                 android:textColor="@color/button_text_color"
                 android:textSize="18sp"
                 android:visibility="gone" />
+            
+                        <Button
+                android:id="@+id/upcomingButton"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/selector_button"
+                android:fontFamily="sans-serif-condensed"
+                android:onClick="upcomingButton"
+                android:text="Upcoming Group Events"
+                android:textColor="@color/button_text_color"
+                android:textSize="18sp"
+                android:visibility="gone" />
+                        
+                                    <Button
+                android:id="@+id/pendingButton"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/selector_button"
+                android:fontFamily="sans-serif-condensed"
+                android:onClick="pendingButton"
+                android:text="Pending Group Events"
+                android:textColor="@color/button_text_color"
+                android:textSize="18sp"
+                android:visibility="gone" />
+                                    
+                                                <Button
+                android:id="@+id/pastButton"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/selector_button"
+                android:fontFamily="sans-serif-condensed"
+                android:onClick="pastButton"
+                android:text="Past Group Events"
+                android:textColor="@color/button_text_color"
+                android:textSize="18sp"
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/messagesButton"

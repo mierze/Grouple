@@ -43,6 +43,9 @@ public class GroupProfileActivity extends BaseActivity
 	private Button editButton;
 	private Button inviteButton;
 	private ProgressBar xpProgressBar;
+	private Button upcomingButton;
+	private Button pendingButton;
+	private Button pastButton;
 	private TextView xpTextView;
 	private TextView levelTextView;
 	private TextView aboutTextView;
@@ -63,6 +66,9 @@ public class GroupProfileActivity extends BaseActivity
 		editButton = (Button) findViewById(R.id.editButton);
 		inviteButton = (Button) findViewById(R.id.inviteButton);
 		aboutTextView = (TextView) findViewById(R.id.aboutTextView);
+		upcomingButton = (Button) findViewById(R.id.upcomingButton);
+		pendingButton = (Button) findViewById(R.id.pendingButton);
+		pastButton = (Button) findViewById(R.id.pastButton);
 		iv = (ImageView) findViewById(R.id.groupImageView);
 		
 		//init variables
@@ -107,6 +113,7 @@ public class GroupProfileActivity extends BaseActivity
 		group.fetchMembers(this);
 		group.fetchImage(this);
 		group.fetchExperience(this);
+		group.fetchEvents(this);
 		new getUnreadEntityMessagesTask().execute(
 				"http://68.59.162.183/android_connect/get_unread_entitymessages.php",
 				Integer.toString(group.getID()));
@@ -257,10 +264,28 @@ public class GroupProfileActivity extends BaseActivity
 		joinButton.setVisibility(View.GONE);
 		editButton.setVisibility(View.GONE);
 		messagesButton.setVisibility(View.GONE);
+		pastButton.setVisibility(View.GONE);
+		upcomingButton.setVisibility(View.GONE);
+		pendingButton.setVisibility(View.GONE);
 		
 		//in group
 		if (group.inUsers(user.getEmail()))
 		{
+			if (group.getNumEventsPast() > 0)
+			{
+				pastButton.setText("Past Group Events\n(" + group.getNumEventsPast() + ")");
+				pastButton.setVisibility(View.VISIBLE);
+			}
+			if (group.getNumEventsPending() > 0)
+			{
+				pastButton.setText("Pending Group Events\n(" + group.getNumEventsPending() + ")");
+				pastButton.setVisibility(View.VISIBLE);
+			}
+			if (group.getNumEventsUpcoming() > 0)
+			{
+				pastButton.setText("Upcoming Group Events\n(" + group.getNumEventsUpcoming() + ")");
+				pastButton.setVisibility(View.VISIBLE);
+			}
 			membersButton.setText("Members\n(" + group.getNumUsers() + ")");
 			membersButton.setVisibility(View.VISIBLE);
 			messagesButton.setVisibility(View.VISIBLE);
@@ -319,6 +344,28 @@ public class GroupProfileActivity extends BaseActivity
 		Intent intent = new Intent(this, GroupEditActivity.class);
 		intent.putExtra("g_id", group.getID());
 		intent.putExtra("email", user.getEmail());
+		startActivity(intent);
+	}
+	public void pastButton(View view)
+	{
+		Intent intent = new Intent(this, EventListActivity.class);
+		intent.putExtra("g_id", group.getID());
+		intent.putExtra("content", "GROUP_PAST");
+		startActivity(intent);
+	}
+
+	public void upcomingButton(View view)
+	{
+		Intent intent = new Intent(this, EventListActivity.class);
+		intent.putExtra("g_id", group.getID());
+		intent.putExtra("content", "GROUP_UPCOMING");
+		startActivity(intent);
+	}
+	public void pendingButton(View view)
+	{
+		Intent intent = new Intent(this, EventListActivity.class);
+		intent.putExtra("g_id", group.getID());
+		intent.putExtra("content", "GROUP_PENDING");
 		startActivity(intent);
 	}
 	

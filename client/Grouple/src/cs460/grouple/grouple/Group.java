@@ -35,6 +35,9 @@ public class Group extends Entity
 	private int numProfessionalEvents = 0;
 	private int numFitnessEvents = 0;
 	private int numNatureEvents = 0;
+	private ArrayList<Event> eventsUpcoming = new ArrayList<Event>();
+	private ArrayList<Event> eventsPending = new ArrayList<Event>();
+	private ArrayList<Event> eventsPast = new ArrayList<Event>();
 	
 
 
@@ -150,11 +153,69 @@ public class Group extends Entity
 		return numNatureEvents;
 	}
 
+
 	protected void setNumNatureEvents(int numNatureEvents)
 	{
 		this.numNatureEvents = numNatureEvents;
 	}
+	
+	protected int getNumEventsUpcoming()
+	{
+		return eventsUpcoming.size();
+	}
+	
+	protected int getNumEventsPast()
+	{
+		return eventsUpcoming.size();
+	}
+	
+	protected int getNumEventsPending()
+	{
+		return eventsUpcoming.size();
+	}
+	protected ArrayList<Event> getEventsUpcoming()
+	{
+		return eventsUpcoming;
+	}
+	
+	protected ArrayList<Event> getEventsPast()
+	{
+		return eventsUpcoming;
+	}
+	
+	protected ArrayList<Event> getEventsPending()
+	{
+		return eventsUpcoming;
+	}
+	protected void addToEventsPending(Event e)
+	{
+		boolean inEventsPending = false;
+		for (Event t : eventsPending)
+			if (t.getID() == e.getID())
+				inEventsPending = true;
+		if (!inEventsPending)
+			eventsPending.add(e);
+	}
 
+	protected void addToEventsUpcoming(Event e)
+	{
+		boolean inEventsUpcoming = false;
+		for (Event t : eventsUpcoming)
+			if (t.getID() == e.getID())
+				inEventsUpcoming = true;
+		if (!inEventsUpcoming)
+			eventsUpcoming.add(e);
+	}
+
+	protected void addToEventsPast(Event e)
+	{
+		boolean inEventsPast = false;
+		for (Event t : eventsPast)
+			if (t.getID() == e.getID())
+				inEventsPast = true;
+		if (!inEventsPast)
+			eventsPast.add(e);
+	}
 
 	protected void fetchMembers(Context context)
 	{
@@ -175,6 +236,11 @@ public class Group extends Entity
 	protected void fetchExperience(Context context)
 	{
 		dataService.fetchContent("EXPERIENCE", context);
+	}
+	
+	protected void fetchEvents(Context context)
+	{
+		dataService.fetchContent("EVENTS", context);
 	}
 
 	

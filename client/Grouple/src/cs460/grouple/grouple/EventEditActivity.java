@@ -114,63 +114,57 @@ public class EventEditActivity extends BaseActivity
 		// Set the activity layout to activity_edit_profile.
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_event_edit);
-		load();
-	}
-
-	private void load()
-	{
 		// Find the edit texts.
-		nameEditText = (EditText) findViewById(R.id.nameEditText);
-		categoryEditText = (EditText) findViewById(R.id.categoryEditText);
-		aboutEditText = (EditText) findViewById(R.id.aboutEditText);
-		locationEditText = (EditText) findViewById(R.id.locationEditText);
-		minEditText = (EditText) findViewById(R.id.minPartButton);
-		maxEditText = (EditText) findViewById(R.id.maxPartButton);
-		startEditText = (EditText) findViewById(R.id.startTimeButton);
-		endEditText = (EditText) findViewById(R.id.endTimeButton);
-		toBringButton = (Button) findViewById(R.id.toBringButton);
-		manageEventButton = (Button) findViewById(R.id.manageEventButton);
-		recurringButton = (EditText) findViewById(R.id.recurringButton);
-		submitButton = (Button) findViewById(R.id.submitButton);
-		publicButton = (RadioButton) findViewById(R.id.publicButton);
-		privateButton = (RadioButton) findViewById(R.id.privateButton);
-		publicStatus = 1;
-		// init variables
-		currentCal = Calendar.getInstance();
-		year = currentCal.get(Calendar.YEAR);
-		month = currentCal.get(Calendar.MONTH);
-		day = currentCal.get(Calendar.DAY_OF_MONTH);
-		hour = currentCal.get(Calendar.HOUR_OF_DAY);
-		minute = currentCal.get(Calendar.MINUTE);
-		inflater = getLayoutInflater();
-		user = GLOBAL.getCurrentUser();
-		errorTextView = (TextView) findViewById(R.id.errorTextViewEPA);
-		EXTRAS = getIntent().getExtras();
-		iv = (ImageView) findViewById(R.id.eventEditImageView);
-		event = GLOBAL.getEvent(EXTRAS.getInt("e_id"));
-		items = event.getItems();
-		// changes to layout in special case of repropose
-		if (EXTRAS.containsKey("reproposed"))
-		{
-			System.out.println("case will be reproposeEvent");
-			initActionBar("Repropose " + event.getName(), true);
-			manageEventButton.setVisibility(View.GONE);
-			submitButton.setText("Repropose Event");
-			Toast toast = GLOBAL
-					.getToast(this, "Note: You'll need to pick new Start and End Dates before reproposing.");
-			toast.setDuration(Toast.LENGTH_LONG);
-			toast.show();
-		}
-		// normal editEventActivity
-		else
-		{
-			System.out.println("case will be normal editEvent");
-			initActionBar("Edit " + event.getName(), true);
-		}
-
-		// grabbing items to bring from server
+				nameEditText = (EditText) findViewById(R.id.nameEditText);
+				categoryEditText = (EditText) findViewById(R.id.categoryEditText);
+				aboutEditText = (EditText) findViewById(R.id.aboutEditText);
+				locationEditText = (EditText) findViewById(R.id.locationEditText);
+				minEditText = (EditText) findViewById(R.id.minPartButton);
+				maxEditText = (EditText) findViewById(R.id.maxPartButton);
+				startEditText = (EditText) findViewById(R.id.startTimeButton);
+				endEditText = (EditText) findViewById(R.id.endTimeButton);
+				toBringButton = (Button) findViewById(R.id.toBringButton);
+				manageEventButton = (Button) findViewById(R.id.manageEventButton);
+				recurringButton = (EditText) findViewById(R.id.recurringButton);
+				submitButton = (Button) findViewById(R.id.submitButton);
+				publicButton = (RadioButton) findViewById(R.id.publicButton);
+				privateButton = (RadioButton) findViewById(R.id.privateButton);
+				publicStatus = 1;
+				// init variables
+				currentCal = Calendar.getInstance();
+				year = currentCal.get(Calendar.YEAR);
+				month = currentCal.get(Calendar.MONTH);
+				day = currentCal.get(Calendar.DAY_OF_MONTH);
+				hour = currentCal.get(Calendar.HOUR_OF_DAY);
+				minute = currentCal.get(Calendar.MINUTE);
+				inflater = getLayoutInflater();
+				user = GLOBAL.getCurrentUser();
+				errorTextView = (TextView) findViewById(R.id.errorTextViewEPA);
+				EXTRAS = getIntent().getExtras();
+				iv = (ImageView) findViewById(R.id.eventEditImageView);
+				event = GLOBAL.getEvent(EXTRAS.getInt("e_id"));
+				items = event.getItems();
+				// changes to layout in special case of repropose
+				if (EXTRAS.containsKey("reproposed"))
+				{
+					System.out.println("case will be reproposeEvent");
+					initActionBar("Repropose " + event.getName(), true);
+					manageEventButton.setVisibility(View.GONE);
+					submitButton.setText("Repropose Event");
+					Toast toast = GLOBAL
+							.getToast(this, "Note: You'll need to pick new Start and End Dates before reproposing.");
+					toast.setDuration(Toast.LENGTH_LONG);
+					toast.show();
+				}
+				// normal editEventActivity
+				else
+				{
+					System.out.println("case will be normal editEvent");
+					initActionBar("Edit " + event.getName(), true);
+				}
 
 	}
+
 
 	/*
 	 * Get profile executes get_eventprofile.php. It uses the current groups eid
@@ -941,7 +935,6 @@ public class EventEditActivity extends BaseActivity
 		fetchData();
 	}
 
-	// TODO: make this submit no id so that php catches it and lets it auto-inc
 	private class updateItemChecklistTask extends AsyncTask<String, Void, String>
 	{
 		@Override
@@ -965,7 +958,6 @@ public class EventEditActivity extends BaseActivity
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					System.out.println("WE HAD SUCCESS IN UPDATING TO BRING!");
-
 				}
 				// user has no friends
 				if (jsonObject.getString("success").toString().equals("2"))
@@ -1025,9 +1017,11 @@ public class EventEditActivity extends BaseActivity
 		@Override
 		protected String doInBackground(String... urls)
 		{
+			String type = event.getEventState().equals("Ended") ? "update" : "delete";
 			String id = Integer.toString(event.getID());
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("e_id", id));
+			nameValuePairs.add(new BasicNameValuePair("type", type));
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
 
@@ -1042,6 +1036,9 @@ public class EventEditActivity extends BaseActivity
 				{
 					Toast toast = GLOBAL.getToast(EventEditActivity.this, jsonObject.getString("message"));
 					toast.show();
+					loadDialog.show();
+					Intent intent = new Intent(EventEditActivity.this, EventsActivity.class);
+					startActivity(intent);
 					finish();
 				}
 				else
