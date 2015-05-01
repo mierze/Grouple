@@ -45,21 +45,42 @@ public class Badge
 		else if (name.equals("Mingler"))
 		{
 			if (level > 0)
-				imageID = R.drawable.badge_mingler;
+				if (gender.equals("female"))
+				{
+					imageID = R.drawable.badge_mingler_female;
+				}
+				else
+				{
+					imageID = R.drawable.badge_mingler;
+				}
 			else
 				imageID = R.drawable.badge_unknown;
 		}
 		else if (name.equals("Agile"))
 		{
 			if (level > 0)
-				imageID = R.drawable.badge_agile;
+				if (gender.equals("female"))
+				{
+					imageID = R.drawable.badge_agile_female;
+				}
+				else
+				{
+					imageID = R.drawable.badge_agile;
+				}
 			else
 				imageID = R.drawable.badge_unknown;
 		}
 		else if (name.equals("Congregator"))
 		{
 			if (level > 0)
-				imageID = R.drawable.badge_congregator;
+				if (gender.equals("female"))
+				{
+					imageID = R.drawable.badge_congregator_female;
+				}
+				else
+				{
+					imageID = R.drawable.badge_congregator;
+				}
 			else
 				imageID = R.drawable.badge_unknown;
 		}
@@ -101,7 +122,14 @@ public class Badge
 		else if (name.equals("Active"))
 		{
 			if (level > 0)
-				imageID = R.drawable.badge_active;
+				if (gender.equals("female"))
+				{
+					imageID = R.drawable.badge_active_female;
+				}
+				else
+				{
+					imageID = R.drawable.badge_active;
+				}
 			else
 				imageID = R.drawable.badge_unknown;
 			
@@ -137,7 +165,14 @@ public class Badge
 		else if (name.equals("Outdoorsman"))
 		{
 			if (level > 0)
-				imageID = R.drawable.badge_outdoorsman;
+				if (gender.equals("female"))
+				{
+					imageID = R.drawable.badge_outdoorsman_female;
+				}
+				else
+				{
+					imageID = R.drawable.badge_outdoorsman;
+				}
 			else
 				imageID = R.drawable.badge_unknown;
 		}
