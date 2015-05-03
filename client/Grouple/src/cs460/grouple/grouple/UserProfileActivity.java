@@ -40,7 +40,6 @@ public class UserProfileActivity extends BaseActivity
 	private ImageView iv;
 	private User user; // user who's profile this is
 	private String EMAIL;
-	private View pastEventsBadgesLayout;
 	private Button friendsButton;
 	private Button groupsButton;
 	private Button eventsUpcomingButton;
@@ -61,8 +60,8 @@ public class UserProfileActivity extends BaseActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_user_profile);
-		
-		//initializing views
+
+		// initializing views
 		xpProgressBar = (ProgressBar) findViewById(R.id.xpProgressBar);
 		levelTextView = (TextView) findViewById(R.id.levelTextView);
 		aboutTextView = (TextView) findViewById(R.id.profileAboutTextView);
@@ -197,16 +196,15 @@ public class UserProfileActivity extends BaseActivity
 		xpProgressBar.setProgress(userPoints - pointsStart);
 		xpTextView.setText(userPoints + " / " + pointsEnd);
 	}
-	
-	
+
 	private void setButtons()
 	{
-		//clear buttons
+		// clear buttons
 		friendsButton.setVisibility(View.GONE);
 		groupsButton.setVisibility(View.GONE);
 		eventsUpcomingButton.setVisibility(View.GONE);
 		eventsPastButton.setVisibility(View.GONE);
-		//badgesButton.setVisibility(View.GONE);
+		// badgesButton.setVisibility(View.GONE);
 		userEditButton.setVisibility(View.GONE);
 		inviteButton.setVisibility(View.GONE);
 		messageButton.setVisibility(View.GONE);
@@ -219,7 +217,7 @@ public class UserProfileActivity extends BaseActivity
 				groupsButton.setVisibility(View.VISIBLE);
 				eventsUpcomingButton.setVisibility(View.VISIBLE);
 				eventsPastButton.setVisibility(View.VISIBLE);
-				//badgesButton.setVisibility(View.GONE);
+				// badgesButton.setVisibility(View.GONE);
 				messageButton.setText("Message " + user.getFirstName());
 				messageButton.setVisibility(View.VISIBLE);
 			}
@@ -235,7 +233,7 @@ public class UserProfileActivity extends BaseActivity
 			groupsButton.setVisibility(View.VISIBLE);
 			eventsUpcomingButton.setVisibility(View.VISIBLE);
 			eventsPastButton.setVisibility(View.VISIBLE);
-			//badgesButton.setVisibility(View.GONE);
+			// badgesButton.setVisibility(View.GONE);
 			userEditButton.setVisibility(View.VISIBLE);
 		}
 
@@ -295,7 +293,7 @@ public class UserProfileActivity extends BaseActivity
 		}
 		startActivity(intent);
 	}
-	
+
 	public void eventsPastButton(View v)
 	{
 		loadDialog.show();
@@ -307,8 +305,7 @@ public class UserProfileActivity extends BaseActivity
 		}
 		startActivity(intent);
 	}
-	
-	
+
 	public void messageButton(View v)
 	{
 		loadDialog.show();
@@ -320,12 +317,12 @@ public class UserProfileActivity extends BaseActivity
 		}
 		startActivity(intent);
 	}
-	
+
 	public void inviteButton(View v)
 	{
 		new addFriendTask().execute("http://68.59.162.183/android_connect/add_friend.php");
 	}
-	
+
 	public void userEditButton(View v)
 	{
 		loadDialog.show();
@@ -336,7 +333,6 @@ public class UserProfileActivity extends BaseActivity
 		}
 		startActivity(intent);
 	}
-
 
 	// This task sends a friend request to the given user.
 	private class addFriendTask extends AsyncTask<String, Void, String>
@@ -406,10 +402,17 @@ public class UserProfileActivity extends BaseActivity
 			Badge b = badges.get(position);
 			TextView badgeTextView = (TextView) itemView.findViewById(R.id.badgeNameTextView);
 			ImageButton badgeImageButton = (ImageButton) itemView.findViewById(R.id.badgeImageButton);
-			badgeTextView.setText(b.getName());
+			if (b.getName().equals("Environmentalist"))
+			{
+				badgeTextView.setText("Tree Hugger");
+			}
+			else
+			{
+				badgeTextView.setText(b.getName());
+			}
 			final String gender = user.getGender();
 			badgeImageButton.setImageDrawable(getResources().getDrawable(b.getImageID(gender)));
-			
+
 			// badgeImageButton.setId(position);
 			badgeImageButton.setOnClickListener(new OnClickListener()
 			{
@@ -425,7 +428,6 @@ public class UserProfileActivity extends BaseActivity
 
 	}
 
-
 	public void badgesButton(View view)
 	{
 		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
@@ -437,12 +439,9 @@ public class UserProfileActivity extends BaseActivity
 		gridView.setAdapter(adapter);
 		gridView.setOnItemClickListener(new AdapterView.OnItemClickListener()
 		{
-
 			public void onItemClick(AdapterView<?> parent, View itemClicked, int position, long id)
 			{
-
 				badgeDialog(badges.get(position), user.getGender());
-
 			}
 		});
 

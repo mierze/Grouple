@@ -47,12 +47,12 @@
 
                 <Button
                     android:id="@+id/eventEditImageButton"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignLeft="@+id/eventEditImageView"
-                    android:layout_alignRight="@+id/eventEditImageView"
-                    android:layout_below="@+id/eventEditImageView"
-                    android:layout_gravity="center|top"
+                    	android:layout_alignRight="@+id/eventEditImageView"
+               	 android:layout_alignLeft="@+id/editEventImageView"
+                     android:layout_below="@+id/eventEditImageView"
+                    android:layout_gravity="bottom"
                     android:background="@drawable/selector_button"
                     android:fontFamily="sans-serif-condensed"
                     android:onClick="onClick"

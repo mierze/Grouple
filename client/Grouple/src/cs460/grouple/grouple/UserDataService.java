@@ -583,11 +583,13 @@ public class UserDataService extends Service
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
+				user.getEventInvites().clear();
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					// gotta make a json array
+					
 					JSONArray jsonArray = jsonObject.getJSONArray("eventsInvites");
-					user.getEventInvites().clear();
+					
 					// looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
@@ -602,8 +604,8 @@ public class UserDataService extends Service
 						// e.fetchParticipants();
 						user.addToEventsInvites(e);
 					}
-					sendBroadcast();
 				}
+				sendBroadcast();
 				// user has no group invites
 				if (jsonObject.getString("success").toString().equals("2"))
 				{

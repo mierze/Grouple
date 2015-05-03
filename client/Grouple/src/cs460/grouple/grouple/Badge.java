@@ -250,8 +250,6 @@ public class Badge
 		this.name = name;
 		setDate(date);
 		setID();
-		setAbout();
-
 	}
 
 	protected int getID()
@@ -274,12 +272,8 @@ public class Badge
 		this.name = name;
 	}
 
-	protected int getAboutID()
-	{
-		return aboutID;
-	}
 
-	protected void setAbout()
+	protected int getAboutID(int level)
 	{
 		if (name.equals("Environmentalist"))
 		{
@@ -305,6 +299,10 @@ public class Badge
 		{
 			aboutID = R.string.extrovert_about;
 		}
+		else if (name.equals("Congregator"))
+		{
+			aboutID = R.string.congregator_about;
+		}
 		//else if (name.equals("Creator"))
 		//{
 		//	aboutID = R.string.creator_about;
@@ -321,10 +319,16 @@ public class Badge
 		{
 			aboutID = R.string.outdoorsman_about;
 		}
+		else if (name.equals("Merrymaker"))
+		{
+			aboutID = R.string.merrymaker_about;
+		}
 		else
 		{
-			aboutID = R.string.wellrounded_about;
+			aboutID = R.string.routinist_hint;
 		}
+		
+		return aboutID;
 
 	}
 

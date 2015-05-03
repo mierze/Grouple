@@ -122,7 +122,7 @@ public class BaseActivity extends ActionBarActivity implements OnClickListener
 			badgeTitleTextView.setText("Level " + level);
 		else
 			badgeTitleTextView.setText("You have not unlocked this badge, keep on working!");
-		badgeAboutTextView.setText(getResources().getString(b.getAboutID()));
+		badgeAboutTextView.setText(getResources().getString(b.getAboutID(level)));
 		badgeImageView.setImageDrawable(getResources().getDrawable(b.getImageID(gender)));
 		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
 		dialogBuilder.setTitle(b.getName());

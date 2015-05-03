@@ -46,6 +46,7 @@ public class EntityMessagesActivity extends BaseActivity
 	private EditText messageEditText;
 	private ArrayList<String> regIDList = new ArrayList<String>();
 	private String EMAIL;
+	private LinearLayout sadGuyLayout;
 	private String ID;
 	private String CONTENT;
 	private String SENDER_ID = "957639483805";
@@ -107,7 +108,7 @@ public class EntityMessagesActivity extends BaseActivity
 		setContentView(R.layout.activity_messages);
 		Bundle extras = getIntent().getExtras();
 		user = GLOBAL.getCurrentUser();
-
+		sadGuyLayout = (LinearLayout) findViewById(R.id.sadGuyLayout);
 		messageEditText = (EditText) findViewById(R.id.messageEditText);
 		sendMessageButton = (Button) findViewById(R.id.sendButton);
 		listViewLayout = (LinearLayout) findViewById(R.id.listViewLayout);
@@ -196,15 +197,17 @@ public class EntityMessagesActivity extends BaseActivity
 			messageEditText.requestFocus();
 			scrollListView(adapter.getCount() - 1, listView);
 			readMessages();
-			listView.setVisibility(View.VISIBLE);
+			sadGuyLayout.setVisibility(View.GONE);
+			listViewLayout.setVisibility(View.VISIBLE);		
 		}
 		else
 		{
-			View row = inflater.inflate(R.layout.list_item_sadguy, null);
-			TextView sadGuyTextView = (TextView) row.findViewById(R.id.sadGuyTextView);
+			View sadGuyView = inflater.inflate(R.layout.list_item_sadguy, null);
+			TextView sadGuyTextView = (TextView) sadGuyView.findViewById(R.id.sadGuyTextView);
 			sadGuyTextView.setText("No messages to display!");
-			listView.setVisibility(View.GONE);
-			listViewLayout.addView(row);
+			listViewLayout.setVisibility(View.GONE);
+			sadGuyLayout.setVisibility(View.VISIBLE);
+			sadGuyLayout.addView(sadGuyView);
 		}
 	}
 

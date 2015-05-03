@@ -44,7 +44,7 @@
                 android:fontFamily="sans-serif-condensed"
                 android:gravity="left"
                 android:padding="5dp"
-                android:text="About Group:"
+                android:text="About Event:"
                 android:textColor="@color/white" />
 
 
@@ -128,7 +128,7 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/selector_button"
                 android:fontFamily="sans-serif-condensed"
-                android:onClick="inviteGroupsButton"
+                android:onClick="inviteButton"
                 android:text="Invite Groups"
                 android:textColor="@color/button_text_color"
                 android:textSize="18sp"

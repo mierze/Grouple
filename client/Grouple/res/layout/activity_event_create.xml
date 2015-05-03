@@ -22,23 +22,8 @@
             android:background="@color/background_color"
             android:orientation="vertical" >
 
-            <EditText
-                android:id="@+id/eventNameEditText"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/border_layout"
-                android:gravity="center"
-                android:hint="Event Name"
-                android:inputType="textCapWords"
-                android:maxLength="40"
-                android:maxLines="1"
-                android:minLines="1"
-                android:padding="10dp"
-                android:textColor="@color/text_color"
-                android:textColorHint="@color/hint_text_color" />
-
             
-                       <RelativeLayout
+                 <RelativeLayout
             android:id="@+id/editImageLayout"
             android:layout_width="wrap_content"
             android:layout_gravity="center"
@@ -63,12 +48,12 @@
 
             <Button
                 android:id="@+id/eventEditImageButton"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center|top"
-                android:layout_below="@+id/editEventImageView"
-				android:layout_alignLeft="@+id/editEventImageView"
-				android:layout_alignRight="@+id/editEventImageView"
+                android:layout_alignRight="@+id/eventCreateImageView"
+               	 android:layout_alignLeft="@+id/eventCreateImageView"
+               	 android:layout_below="@+id/eventCreateImageView"
+                android:layout_gravity="bottom"
                 android:background="@drawable/selector_button"
                 android:fontFamily="sans-serif-condensed"
                 android:onClick="onClick"
@@ -76,6 +61,24 @@
                 android:textColor="@color/button_text_color"
                 android:textSize="14sp" />
             </RelativeLayout>
+            <EditText
+                android:id="@+id/eventNameEditText"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/border_layout"
+                android:gravity="center"
+                android:hint="Event Name"
+                android:inputType="textCapWords"
+                android:maxLength="40"
+                android:maxLines="1"
+                android:minLines="1"
+                android:padding="10dp"
+                android:textColor="@color/text_color"
+                android:textColorHint="@color/hint_text_color" />
+
+            
+                  
             <TextView
                 android:id="@+id/eventCategoryLabelTextView"
                 android:layout_width="wrap_content"
@@ -208,6 +211,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/black"
                 android:gravity="left"
+                android:layout_marginTop="5dp"
                 android:padding="5dp"
                 android:text="Location"
                 android:textColor="@color/white" />
@@ -280,6 +284,7 @@
              <TextView
                 android:id="@+id/publicLabelTextViewEPA"
                 android:layout_width="wrap_content"
+                android:layout_marginTop="5dp"
                 android:layout_height="wrap_content"
                 android:background="@color/black"
                 android:gravity="left"
@@ -291,7 +296,8 @@
                 android:id="@+id/publicButtonContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/layout_background_color"
+                android:padding="5dp"
+                android:background="@drawable/border"
                 android:orientation="horizontal" >
 
                 <RadioButton

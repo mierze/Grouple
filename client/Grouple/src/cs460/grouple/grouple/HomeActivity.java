@@ -98,17 +98,13 @@ public class HomeActivity extends BaseActivity
 	}
 
 	//This listens for pings from the data service to let it know that there are updates
-	private BroadcastReceiver mReceiver = new BroadcastReceiver()
+	private BroadcastReceiver dataReceiver = new BroadcastReceiver()
 	{
 		@Override
 		public void onReceive(Context context, Intent intent)
 		{
-			// Extract data included in the Intent
-			String type = intent.getStringExtra("message");
 			//repopulate views
 			updateUI();
-			//populateProfile();
-			//GLOBAL.getToast(UserProfileActivity.this, type).show();
 		}
 	};
 	
@@ -116,14 +112,14 @@ public class HomeActivity extends BaseActivity
 	protected void onResume()
 	{
 		super.onResume();
-		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("user_data"));
+		LocalBroadcastManager.getInstance(this).registerReceiver(dataReceiver, new IntentFilter("user_data"));
 		fetchData();
 	}
 
 	@Override
 	protected void onPause()
 	{
-		LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(dataReceiver);
 		super.onPause();
 	}
 
@@ -133,9 +129,6 @@ public class HomeActivity extends BaseActivity
 		super.updateUI(user);
 		// initializing action bar and killswitch listener
 		initActionBar("Welcome, " + user.getFirstName() + "!", false);
-		
-		//below not working TODO: test / make it a function
-
 	}
 
 

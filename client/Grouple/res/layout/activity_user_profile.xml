@@ -6,6 +6,7 @@
     android:background="@color/background_color"
     android:padding="5dp" >
 
+    
     <ScrollView
         android:id="@+id/profileScrollView"
         android:layout_width="fill_parent"

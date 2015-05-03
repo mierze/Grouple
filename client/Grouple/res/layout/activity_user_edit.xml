@@ -3,7 +3,7 @@
     android:id="@+id/editProfileContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_color"
+    android:background="@color/layout_background_color"
     android:orientation="vertical"
     android:padding="5dp" >
 
@@ -12,43 +12,52 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2"
-        android:background="@color/background_color"
         android:padding="0dp" >
 
         <LinearLayout
             android:id="@+id/linearLayoutTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/background_color"
             android:orientation="vertical" >
 
+                     
+                       <RelativeLayout
+            android:id="@+id/editImageLayout"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+           	android:layout_marginBottom="5dp"
+            android:layout_height="wrap_content"
+            android:background="@color/background_color"
+>
             <ImageView
                 android:id="@+id/editUserImageView"
-                android:layout_width="250dp"
-                android:layout_height="250dp"
+                android:layout_width="wrap_content"
+                android:layout_height="300dp"
+                android:minHeight="200dp"
+                android:maxHeight="200dp"
                 android:layout_gravity="center|top"
                 android:onClick="loadImage"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"
                 android:background="@color/image_background_color"
                 android:contentDescription="Profile photo."
-                android:minHeight="250dp"
-                android:minWidth="250dp"
                 android:padding="3dp"
                 android:src="@drawable/abc_ab_bottom_solid_dark_holo" />
 
             <Button
                 android:id="@+id/editUserImageButton"
-                android:layout_width="250dp"
+                 android:layout_below="@+id/editUserImageView"
+                android:layout_width="match_parent"
+                android:layout_alignRight="@+id/editUserImageView"
+                android:layout_alignLeft="@+id/editUserImageView"
                 android:layout_height="60dp"
-                android:layout_gravity="center|top"
+                android:layout_gravity="bottom"
                 android:background="@drawable/selector_button"
                 android:fontFamily="sans-serif-condensed"
                 android:onClick="onClick"
                 android:text="Edit Image"
-                android:textColor="@color/button_text_color"
-                android:textSize="14sp" />
-
+                android:textColor="@color/button_text_color" />
+	</RelativeLayout>
             <TextView
                 android:id="@+id/nameLabelTextViewEPA"
                 android:layout_width="wrap_content"

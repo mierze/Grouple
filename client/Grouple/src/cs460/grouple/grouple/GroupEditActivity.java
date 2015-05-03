@@ -163,9 +163,8 @@ public class GroupEditActivity extends BaseActivity
 				// call delete task
 			}
 		});
-		
-		deleteGroupDialog.show();
-
+		if (deleteGroupDialog != null)
+			deleteGroupDialog.show();
 	}
 
 	/*

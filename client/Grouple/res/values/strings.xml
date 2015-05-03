@@ -57,11 +57,11 @@
     <!-- BADGES -->
     <string name="gregarious_about">This is a real party animal. User\'s with this badge generally attend a lot of social outings where they can cherish great times with friends.</string>
      <string name="gregarious_hint">This is a real party animal. User\'s with this badge generally attend a lot of social outings where they can cherish great times with friends.</string>
-    <string name="congregator_about">Active user who pushes themselves to achieve more physically.</string>
+    <string name="congregator_about">You attract a crowd, keep doin what you are doing.</string>
      <string name="congregator_hint">Active user who pushes themselves to achieve more physically.</string>
     <string name="amused_about">Whether it be in school or the workplace, this badge is for the overachiever who goes to great lengths to succeed as a team.</string>
      <string name="amused_hint">To unlock this badge, get together with some friends and enjoy some good quality entertainment.</string>
-    <string name="merrymaker_about">This badge is for the user who loves getting out there and experiencing quality entertainment.</string>
+    <string name="merrymaker_about">When it comes when hosting events, you\'re the cream of the crop.</string>
      <string name="merrymaker_hint">To unlock this badge, get together with some friends and enjoy some good quality entertainment.</string>
     <string name="diligent_about">This badge is for someone who goes to great lengths to provide for the events they attend. Bringing items from the item checklist can earn you this badge.</string>
      <string name="diligent_hint">To unlock this badge, get together with some friends and enjoy some good quality entertainment.</string>
@@ -80,7 +80,7 @@
     <string name="regular_about">This badge is for someone who goes to great lengths to provide for the events they attend. Bringing items from the item checklist can earn you this badge.</string>
      <string name="regular_hint">To unlock this badge, get together with some friends and enjoy some good quality entertainment.</string>
     <string name="routinist_about">The finder of amusement, attend a lot of entertainment events to earn this prestigious badge.</string>
-     <string name="routinist_hint">To unlock this badge, get together with some friends and enjoy some good quality entertainment.</string>
+     <string name="routinist_hint">To unlock this badge, you are going to need to be in a pretty consistent routine.</string>
     <string name="active_about">For the explorer of nature. This badge is not for your typical city dweller, one must go out in the environment and take in the great outdoors to earn this badge.</string>
      <string name="active_hint">To unlock this badge, get together with some friends and enjoy some good quality entertainment.</string>
     <string name="wellrounded_about">For the explorer of nature. This badge is not for your typical city dweller, one must go out in the environment and take in the great outdoors to earn this badge.</string>

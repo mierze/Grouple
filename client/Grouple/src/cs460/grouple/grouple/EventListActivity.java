@@ -300,6 +300,7 @@ public class EventListActivity extends BaseActivity
 			View sadGuyView = inflater.inflate(R.layout.list_item_sadguy, null);
 			TextView sadGuyTextView = (TextView) sadGuyView.findViewById(R.id.sadGuyTextView);
 			sadGuyTextView.setText(sadGuyText);
+			sadGuyLayout.removeAllViews();
 			sadGuyLayout.setVisibility(View.VISIBLE);
 			listView.setVisibility(View.GONE);
 			sadGuyLayout.addView(sadGuyView);
@@ -511,7 +512,6 @@ public class EventListActivity extends BaseActivity
 					toast.show();
 					// reset values, looking to move these
 					fetchData();
-
 				}
 				else
 				{
