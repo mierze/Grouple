@@ -50,12 +50,7 @@ public class EventDataService extends Service
 	private void sendBroadcast()
 	{
 		Intent intent = new Intent("event_data");
-
-		// intent.setAction("USER_DATA");
 		intent.putExtra("message", "testing");
-		// intent.setAction(")
-		// could potentially add how many things were updated
-
 		LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 	}
 
@@ -191,13 +186,13 @@ public class EventDataService extends Service
 						u.setName(o.getString("first") + " " + o.getString("last"));
 						event.addToUsers(u);
 					}
-					sendBroadcast();
 				}
 				// event has none attending
 				if (jsonObject.getString("success").toString().equals("2"))
 				{
 					Log.d("Fetch Event Attending", "failed = 2 return");
 				}
+				sendBroadcast();
 			}
 			catch (Exception e)
 			{

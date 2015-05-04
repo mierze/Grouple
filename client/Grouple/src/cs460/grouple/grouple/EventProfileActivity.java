@@ -36,6 +36,8 @@ public class EventProfileActivity extends BaseActivity
 	private ImageView iv;
 	private Event event;
 	private User user;
+	private Group group;
+	private String gIdInvited;
 	private LinearLayout eventContainer;
 	private Button attendingButton;
 	private Button messagesButton;
@@ -47,48 +49,6 @@ public class EventProfileActivity extends BaseActivity
 	private View checklistDialogView;
 	private AlertDialog checklistAlertDialog;
 	private ArrayList<EventItem> items = new ArrayList<EventItem>();
-
-	@Override
-	protected void onResume()
-	{
-		super.onResume();
-		LocalBroadcastManager.getInstance(this).registerReceiver(dataReceiver, new IntentFilter("event_data"));
-		fetchData();
-		updateUI();
-	}
-
-	@Override
-	protected void onPause()
-	{
-		LocalBroadcastManager.getInstance(this).unregisterReceiver(dataReceiver);
-		super.onPause();
-	}
-
-
-
-	// This listens for pings from the data service to let it know that there
-	// are updates
-	private BroadcastReceiver dataReceiver = new BroadcastReceiver()
-	{
-		@Override
-		public void onReceive(Context context, Intent intent)
-		{
-			updateUI();// for event
-		}
-	};
-
-	private void fetchData()
-	{
-		event.fetchInfo(this);
-		event.fetchParticipants(this);
-		event.fetchImage(this);
-		event.fetchItems(this);		// and check for not past
-		new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_event.php",
-				Integer.toString(event.getID()));
-		new getUnreadEntityMessagesTask().execute(
-				"http://68.59.162.183/android_connect/get_unread_entitymessages.php",
-				Integer.toString(event.getID()));
-	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -108,14 +68,57 @@ public class EventProfileActivity extends BaseActivity
 		checklistButton = (Button) findViewById(R.id.checklistButton);
 		iv = (ImageView) findViewById(R.id.eventImageView);
 		
+		gIdInvited = extras.getString("g_id");
+		if (gIdInvited != null)
+			group = GLOBAL.getGroup(Integer.parseInt(gIdInvited));
 		//init variables
 		user = GLOBAL.getCurrentUser();
 		event = GLOBAL.getEvent(extras.getInt("e_id"));
 		items = event.getItems();
 	}
+	
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
+		LocalBroadcastManager.getInstance(this).registerReceiver(dataReceiver, new IntentFilter("event_data"));
+		fetchData();
+		updateUI();
+	}
+
+	@Override
+	protected void onPause()
+	{
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(dataReceiver);
+		super.onPause();
+	}
+
+	// This listens for pings from the data service to let it know that there
+	// are updates
+	private BroadcastReceiver dataReceiver = new BroadcastReceiver()
+	{
+		@Override
+		public void onReceive(Context context, Intent intent)
+		{
+			updateUI();// for event
+		}
+	};
+
+	private void fetchData()
+	{
+		event.fetchInfo(this);
+		event.fetchParticipants(this);
+		event.fetchImage(this);
+		event.fetchItems(this);		
+		new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_event.php",
+				Integer.toString(event.getID()));
+		new getUnreadEntityMessagesTask().execute(
+				"http://68.59.162.183/android_connect/get_unread_entitymessages.php",
+				Integer.toString(event.getID()));
+	}
 
 
-	/* CLASS TO FETCH THE ROLE OF THE USER IN GROUP / EVENT */
+	// task to fetch role in event
 	private class getRoleTask extends AsyncTask<String, Void, String>
 	{
 		@Override
@@ -247,7 +250,8 @@ public class EventProfileActivity extends BaseActivity
 				{
 					checklistButton.setText("Item Checklist (" + numUnclaimed + " unclaimed)");
 				}
-				checklistButton.setVisibility(View.VISIBLE);
+				if (!event.getEventState().equals("Ended") && !event.getEventState().equals("Declined"))
+					checklistButton.setVisibility(View.VISIBLE);
 			}
 		}
 		//not in event, it is public and ready to join
@@ -256,6 +260,11 @@ public class EventProfileActivity extends BaseActivity
 		{
 			joinButton.setVisibility(View.VISIBLE);
 		}
+		else if (group != null && group.inUsers(user.getEmail()))
+		{
+			joinButton.setVisibility(View.VISIBLE);
+		}
+
 	}
 
 	private void updateItemChecklist()
@@ -375,7 +384,6 @@ public class EventProfileActivity extends BaseActivity
 		// populate list with items
 		if (!items.isEmpty())
 		{
-
 			for (final EventItem item : items)
 			{
 				final int id = item.getID();

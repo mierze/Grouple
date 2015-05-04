@@ -183,7 +183,7 @@
                     android:fontFamily="sans-serif-condensed"
                     android:onClick="changeEmailButton"
                     android:text="Change Email Address"
-                    android:textColor="@color/button_text_color" />
+                    android:textColor="@color/text_color" />
 
                 <Button
                     android:id="@+id/ChangePasswordButton"
@@ -195,7 +195,7 @@
                     android:fontFamily="sans-serif-condensed"
                     android:onClick="changePasswordButton"
                     android:text="Change Password"
-                    android:textColor="@color/button_text_color" />
+                    android:textColor="@color/text_color" />
 
                 <Button
                     android:id="@+id/DeleteAccountButton"

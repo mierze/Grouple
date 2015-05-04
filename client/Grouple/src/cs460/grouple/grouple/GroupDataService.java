@@ -210,16 +210,14 @@ public class GroupDataService extends Service
 						group.addToUsers(u);
 						// GLOBAL.addToUsers(u);
 					}
-					sendBroadcast();
 				}
 
 				// user has no friends
 				if (jsonObject.getString("success").toString().equals("2"))
 				{
-					Log.d("fetchgrupmembers", "failed = 2 return");
-					// setNumFriends(0); //PANDA need to set the user class not
-					// global
+					Log.d("fetchgroupmembers", "failed = 2 return");
 				}
+				sendBroadcast();
 			}
 			catch (Exception e)
 			{
@@ -333,8 +331,8 @@ public class GroupDataService extends Service
 							//e.setStartDate(o.getString("startDate"));
 						group.addToEventsPast(e);
 					}
-					sendBroadcast();
 				}
+				sendBroadcast();
 
 			}
 			catch (Exception e)

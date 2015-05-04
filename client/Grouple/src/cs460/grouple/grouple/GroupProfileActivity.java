@@ -49,6 +49,10 @@ public class GroupProfileActivity extends BaseActivity
 	private TextView xpTextView;
 	private TextView levelTextView;
 	private TextView aboutTextView;
+	private LinearLayout creatorLayout;
+	private LinearLayout dateCreatedLayout;
+	private TextView creatorTextView;
+	private TextView dateCreatedTextView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -66,6 +70,10 @@ public class GroupProfileActivity extends BaseActivity
 		editButton = (Button) findViewById(R.id.editButton);
 		inviteButton = (Button) findViewById(R.id.inviteButton);
 		aboutTextView = (TextView) findViewById(R.id.aboutTextView);
+		creatorLayout = (LinearLayout) findViewById(R.id.creatorLayout);
+		dateCreatedLayout = (LinearLayout) findViewById(R.id.dateCreatedLayout);
+		dateCreatedTextView = (TextView) findViewById(R.id.dateCreatedTextView);
+		creatorTextView = (TextView) findViewById(R.id.creatorTextView);
 		upcomingButton = (Button) findViewById(R.id.upcomingButton);
 		pendingButton = (Button) findViewById(R.id.pendingButton);
 		pastButton = (Button) findViewById(R.id.pastButton);
@@ -85,7 +93,7 @@ public class GroupProfileActivity extends BaseActivity
 
 		// getGroupExperience();
 		fetchData();
-		updateUI(); // populates a group / user profile
+		updateUI();
 		// initializing the action bar and killswitch listener
 	}
 
@@ -119,6 +127,115 @@ public class GroupProfileActivity extends BaseActivity
 				Integer.toString(group.getID()));
 		new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_group.php",
 				Integer.toString(group.getID()));
+	}
+	
+
+	// updates views with updated data
+	public void updateUI()
+	{
+		creatorLayout.setVisibility(View.GONE);
+		dateCreatedLayout.setVisibility(View.GONE);
+		String title = group.getName();
+		initActionBar(title, true);
+		setButtons();
+		// iv.setImageBitmap(group.getImage());
+		if (group.getEmail() != null && !group.getEmail().equals(""))
+		{
+			creatorTextView.setText(group.getEmail());
+			creatorLayout.setVisibility(View.VISIBLE);
+		}
+		if (!group.getDateCreatedText().equals(""))
+		{
+			dateCreatedTextView.setText(group.getDateCreatedText());
+			dateCreatedLayout.setVisibility(View.VISIBLE);
+		}
+		aboutTextView.setText(group.getAbout());
+		if (group.getImage() != null)
+			iv.setImageBitmap(group.getImage());
+		else
+			iv.setImageResource(R.drawable.image_default);
+		iv.setScaleType(ScaleType.CENTER_CROP);
+		setExperience();
+		initXpBar();
+	}
+
+	private void initXpBar()
+	{
+		int groupXp = group.getExperience();
+		int level = 1;
+		int pointsToNext = 10;
+		int pointsStart = 0;
+		int pointsEnd;
+		while (groupXp > (pointsStart + pointsToNext))
+		{
+			// means user is greater than this level threshold
+			// so increase level
+			level++;
+			// make a new start
+			pointsStart += pointsToNext;
+			// recalc pointsToNext
+			pointsToNext *= 2;
+		}
+		pointsEnd = pointsStart + pointsToNext;
+		// each level pointsToNext *= level
+		levelTextView.setText("Level " + level);
+		xpProgressBar.setMax(pointsToNext);
+		xpProgressBar.setProgress(groupXp - pointsStart);
+		xpTextView.setText(groupXp + " / " + pointsEnd);
+	}
+
+	private void setButtons()
+	{
+		
+		membersButton.setVisibility(View.GONE);
+		inviteButton.setVisibility(View.GONE);
+		joinButton.setVisibility(View.GONE);
+		editButton.setVisibility(View.GONE);
+		messagesButton.setVisibility(View.GONE);
+		pastButton.setVisibility(View.GONE);
+		upcomingButton.setVisibility(View.GONE);
+		pendingButton.setVisibility(View.GONE);
+		
+		//in group
+		if (group.inUsers(user.getEmail()))
+		{
+			if (group.getNumEventsPast() > 0)
+			{
+				pastButton.setText("Past Group Events\n(" + group.getNumEventsPast() + ")");
+				pastButton.setVisibility(View.VISIBLE);
+			}
+			if (group.getNumEventsPending() > 0)
+			{
+				pendingButton.setText("Pending Group Events\n(" + group.getNumEventsPending() + ")");
+				pendingButton.setVisibility(View.VISIBLE);
+			}
+			if (group.getNumEventsUpcoming() > 0)
+			{
+				upcomingButton.setText("Upcoming Group Events\n(" + group.getNumEventsUpcoming() + ")");
+				upcomingButton.setVisibility(View.VISIBLE);
+			}
+			membersButton.setText("Members\n(" + group.getNumUsers() + ")");
+			membersButton.setVisibility(View.VISIBLE);
+			messagesButton.setVisibility(View.VISIBLE);
+			String role = user.getGroupRole(group.getID());
+			if (role.equals("A"))
+			{
+				editButton.setVisibility(View.VISIBLE);
+			}
+			if (role.equals("A") || role.equals("P"))
+			{
+				inviteButton.setVisibility(View.VISIBLE);
+			}
+		}
+		//not in group
+		else
+		{
+			//public and not in, allow join
+			if (group.getPub() == 1)
+			{
+				joinButton.setVisibility(View.VISIBLE);
+			}
+		}
 	}
 
 	public void experienceDialog(View view)
@@ -256,61 +373,6 @@ public class GroupProfileActivity extends BaseActivity
 		}
 	}
 
-	private void setButtons()
-	{
-		
-		membersButton.setVisibility(View.GONE);
-		inviteButton.setVisibility(View.GONE);
-		joinButton.setVisibility(View.GONE);
-		editButton.setVisibility(View.GONE);
-		messagesButton.setVisibility(View.GONE);
-		pastButton.setVisibility(View.GONE);
-		upcomingButton.setVisibility(View.GONE);
-		pendingButton.setVisibility(View.GONE);
-		
-		//in group
-		if (group.inUsers(user.getEmail()))
-		{
-			if (group.getNumEventsPast() > 0)
-			{
-				pastButton.setText("Past Group Events\n(" + group.getNumEventsPast() + ")");
-				pastButton.setVisibility(View.VISIBLE);
-			}
-			if (group.getNumEventsPending() > 0)
-			{
-				pendingButton.setText("Pending Group Events\n(" + group.getNumEventsPending() + ")");
-				pendingButton.setVisibility(View.VISIBLE);
-			}
-			if (group.getNumEventsUpcoming() > 0)
-			{
-				upcomingButton.setText("Upcoming Group Events\n(" + group.getNumEventsUpcoming() + ")");
-				upcomingButton.setVisibility(View.VISIBLE);
-			}
-			membersButton.setText("Members\n(" + group.getNumUsers() + ")");
-			membersButton.setVisibility(View.VISIBLE);
-			messagesButton.setVisibility(View.VISIBLE);
-			String role = user.getGroupRole(group.getID());
-			if (role.equals("A"))
-			{
-				editButton.setVisibility(View.VISIBLE);
-			}
-			if (role.equals("A") || role.equals("P"))
-			{
-				inviteButton.setVisibility(View.VISIBLE);
-			}
-		}
-		//not in group
-		else
-		{
-			//public and not in, allow join
-			if (group.getPub() == 1)
-			{
-				joinButton.setVisibility(View.VISIBLE);
-			}
-		}
-
-	}
-
 	public void membersButton(View view)
 	{
 		Intent intent = new Intent(this, UserListActivity.class);
@@ -370,53 +432,6 @@ public class GroupProfileActivity extends BaseActivity
 		startActivity(intent);
 	}
 	
-
-
-
-	/*
-	 * Get profile executes get_profile.php. It uses the current users email
-	 * address to retrieve the users name, age, and bio.
-	 */
-	public void updateUI()
-	{
-		String title = group.getName();
-		initActionBar(title, true);
-		setButtons();
-		// iv.setImageBitmap(group.getImage());
-		aboutTextView.setText("Creator: " + group.getEmail() + "\nGroup Since: " + group.getDateCreatedText() + "\n" +group.getAbout());
-		if (group.getImage() != null)
-			iv.setImageBitmap(group.getImage());
-		else
-			iv.setImageResource(R.drawable.image_default);
-		iv.setScaleType(ScaleType.CENTER_CROP);
-		setExperience();
-		initXpBar();
-	}
-
-	private void initXpBar()
-	{
-		int groupXp = group.getExperience();
-		int level = 1;
-		int pointsToNext = 10;
-		int pointsStart = 0;
-		int pointsEnd;
-		while (groupXp > (pointsStart + pointsToNext))
-		{
-			// means user is greater than this level threshold
-			// so increase level
-			level++;
-			// make a new start
-			pointsStart += pointsToNext;
-			// recalc pointsToNext
-			pointsToNext *= 2;
-		}
-		pointsEnd = pointsStart + pointsToNext;
-		// each level pointsToNext *= level
-		levelTextView.setText("Level " + level);
-		xpProgressBar.setMax(pointsToNext);
-		xpProgressBar.setProgress(groupXp - pointsStart);
-		xpTextView.setText(groupXp + " / " + pointsEnd);
-	}
 
 	// aSynch task to add individual member to group.
 	private class JoinPublicTask extends AsyncTask<String, Void, String>

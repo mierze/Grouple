@@ -78,7 +78,7 @@ public class UserListActivity extends BaseActivity
 
 		if (CONTENT.equals(CONTENT_TYPE.GROUP_MEMBERS.toString()))
 		{
-			bottomButton.setText("Invite Members");
+			bottomButton.setText("Invite Friends");
 			group = GLOBAL.getGroup(extras.getInt("g_id"));
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.EVENT_PARTICIPANTS.toString()))

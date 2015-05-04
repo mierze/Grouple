@@ -51,7 +51,7 @@
                     android:gravity="center"
                     android:padding="0dp"
                     android:text="Level 1"
-                    android:textColor="@color/light_green"
+                    android:textColor="@color/green"
                     android:textStyle="bold" />
 
                 <ProgressBar
@@ -85,20 +85,102 @@
                 android:text="About Group:"
                 android:textColor="@color/white" />
 
-            <TextView
-                android:id="@+id/aboutTextView"
+            <LinearLayout
+                android:id="@+id/aboutLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="0dp"
-                android:layout_marginTop="10dp"
                 android:background="@drawable/border_layout"
-                android:fontFamily="sans-serif-condensed"
-                android:gravity="left"
-                android:padding="10dp"
-                android:text="This is a group profile."
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/text_color"
-                android:textSize="14sp" />
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:id="@+id/creatorLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="5dp"
+                    android:visibility="gone" >
+
+                    <TextView
+                        android:id="@+id/creatorLabelTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:layout_margin="0dp"
+                        android:gravity="left"
+                        android:text="Creator"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/green"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/creatorTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:layout_marginLeft="10dp"
+                        android:fontFamily="sans-serif-condensed"
+                        android:gravity="left"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/text_color"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/dateCreatedLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="5dp"
+                    android:visibility="gone" >
+
+                    <TextView
+                        android:id="@+id/dateCreatedLabelTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:layout_margin="0dp"
+                        android:gravity="left"
+                        android:text="Date Created"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/green"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/dateCreatedTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:layout_marginLeft="10dp"
+                        android:fontFamily="sans-serif-condensed"
+                        android:gravity="left"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/text_color"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="5dp" >
+
+                    <TextView
+                        android:id="@+id/aboutTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_margin="0dp"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="sans-serif-condensed"
+                        android:gravity="left"
+                        android:text="This is a group profile."
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/text_color"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </LinearLayout>
 
             <Button
                 android:id="@+id/membersButton"

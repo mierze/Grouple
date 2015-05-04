@@ -168,7 +168,6 @@ public class UserDataService extends Service
 				System.out.println("SATACK TRACE:\n" + e.getStackTrace().toString() + "\n\n\ncause:\n" + e.getCause());
 				System.out.println(e.getMessage());
 				System.out.println(e.getLocalizedMessage());
-
 			}
 			// do next thing here
 		}
@@ -201,13 +200,13 @@ public class UserDataService extends Service
 						u.setName(o.getString("first") + " " + o.getString("last"));
 						user.addToUsers(u);
 					}
-					sendBroadcast();
 				}
 				// user has no friends
 				if (jsonObject.getString("success").toString().equals("2"))
 				{
 					Log.d("fetchFriends", "failed = 2 return");
 				}
+				sendBroadcast();
 			}
 			catch (Exception e)
 			{
@@ -291,13 +290,13 @@ public class UserDataService extends Service
 						g.setName(o.getString("gname"));
 						user.addToGroups(g);
 					}
-					sendBroadcast();
 				}
 				// user has no friends
 				if (jsonObject.getString("success").toString().equals("2"))
 				{
 					Log.d("getGroups", "ERROR WITH JSON");
 				}
+				sendBroadcast();
 			}
 			catch (Exception e)
 			{
@@ -386,13 +385,13 @@ public class UserDataService extends Service
 						e.setStartDate(o.getString("startDate"));
 						user.addToEventsUpcoming(e);
 					}
-					sendBroadcast();
 				}
 				// user has no group invites
 				if (jsonObject.getString("success").toString().equals("2"))
 				{
 
 				}
+				sendBroadcast();
 			}
 			catch (Exception e)
 			{
@@ -438,13 +437,13 @@ public class UserDataService extends Service
 						// e.fetchParticipants();
 						user.addToEventsPending(e);
 					}
-					sendBroadcast();
 				}
 				// user has no group invites
 				if (jsonObject.getString("success").toString().equals("2"))
 				{
 					// no group invites
 				}
+				sendBroadcast();
 			}
 			catch (Exception e)
 			{
@@ -488,13 +487,13 @@ public class UserDataService extends Service
 						// e.fetchParticipants();
 						user.addToEventsDeclined(e);
 					}
-					sendBroadcast();
 				}
 				// user has no group invites
 				if (jsonObject.getString("success").toString().equals("2"))
 				{
 					// no group invites
 				}
+				sendBroadcast();
 			}
 			catch (Exception e)
 			{
@@ -539,13 +538,13 @@ public class UserDataService extends Service
 						// e.fetchParticipants();
 						user.addToEventsPast(e);
 					}
-					sendBroadcast();
 				}
 				// user has no group invites
 				if (jsonObject.getString("success").toString().equals("2"))
 				{
 					// no group invites
 				}
+				sendBroadcast();
 			}
 			catch (Exception e)
 			{
@@ -592,12 +591,12 @@ public class UserDataService extends Service
 						user.addToEventsInvites(e);
 					}
 				}
-				sendBroadcast();
 				// user has no group invites
 				if (jsonObject.getString("success").toString().equals("2"))
 				{
 					// no group invites
 				}
+				sendBroadcast();
 			}
 			catch (Exception e)
 			{
