@@ -503,7 +503,7 @@ public class UserProfileActivity extends BaseActivity
 		if (user.getImage() != null)
 			iv.setImageBitmap(user.getImage());
 		else
-			iv.setImageResource(R.drawable.user_image_default);
+			iv.setImageResource(R.drawable.image_default);
 
 		iv.setScaleType(ScaleType.CENTER_CROP);
 		setExperience(user.getExperience());

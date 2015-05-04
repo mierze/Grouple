@@ -20,6 +20,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HTTP;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.app.Dialog;
 import android.content.Context;
@@ -35,23 +36,20 @@ import android.widget.Toast;
 
 /**
  * 
- * @author Brett, Todd, Scott
- * Global holds data that has been loaded into the application
+ * @author Brett, Todd, Scott 
+ * Global holds data that has been loaded into the application.
+ * Is accessible throughout app for some global functions as well.
  */
-public class Global extends Application
+@SuppressLint("SimpleDateFormat") public class Global extends Application
 {
-	private static ArrayList<User> users = new ArrayList<User>(); // all users
-																	// in system
-	private static ArrayList<Group> groups = new ArrayList<Group>(); // all
-																		// groups
-																		// loaded
-																		// in
-	private static ArrayList<Event> events = new ArrayList<Event>(); // all
-																		// events
-																		// loaded
-																		// in
-	private static User currentUser; // contains the current user, is updated on
-										// every pertinent activity call
+	// all users in system
+	private static ArrayList<User> users = new ArrayList<User>(); 
+	// all groups in system
+	private static ArrayList<Group> groups = new ArrayList<Group>();
+	// all events in system
+	private static ArrayList<Event> events = new ArrayList<Event>();
+	//contains a copy of the current user from the users array
+	private static User currentUser; 
 
 	protected void login(String email, Context context)
 	{
@@ -69,7 +67,7 @@ public class Global extends Application
 		u.fetchExperience(context);
 		u.fetchBadges(context);
 		setCurrentUser(u);
-		addToUsers(u);
+		users.add(u);
 	}
 
 	// SETTERS
@@ -77,11 +75,41 @@ public class Global extends Application
 	{
 		currentUser = u;
 	}
-
+	
 	// GETTERS
 	protected User getCurrentUser()
 	{
 		return currentUser;
+	}
+	
+	protected User getUser(String email)
+	{
+		for (User u : users)
+			if (u.getEmail().equals(email))
+				return u;
+		User u = new User(email);
+		users.add(u);
+		return u;
+	}
+
+	protected Group getGroup(int id)
+	{
+		for (Group g : groups)
+			if (g.getID() == id)
+				return g;
+		Group g = new Group(id);
+		groups.add(g);
+		return g;
+	}
+
+	protected Event getEvent(int id)
+	{
+		for (Event e : events)
+			if (e.getID() == id)
+				return e;
+		Event e = new Event(id);
+		events.add(e);
+		return e;
 	}
 
 	// METHODS
@@ -91,6 +119,30 @@ public class Global extends Application
 			return true;
 		else
 			return false;
+	}
+	
+	protected boolean containsEvent(int id)
+	{
+		for (Event e : events)
+			if (e.getID() == id)
+				return true;
+		return false;
+	}
+
+	protected boolean containsGroup(int id)
+	{
+		for (Group g : groups)
+			if (g.getID() == id)
+				return true;
+		return false;
+	}
+
+	protected boolean containsUser(String email)
+	{
+		for (User u : users)
+			if (u.getEmail().equals(email))
+				return true;
+		return false;
 	}
 
 	// destroy session is used when logging out to clear all data
@@ -144,15 +196,14 @@ public class Global extends Application
 
 	// takes in a message and returns it in the universal toast style for the
 	// app
-	protected Toast getToast(Context context, String message)
+	@SuppressLint("ShowToast") protected Toast getToast(Context context, String message)
 	{
 		Toast toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
 		toast.setGravity(Gravity.CENTER, 0, 0);
 		return toast;
 	}
 
-	// asynctasks around the app call this function to get the json return from
-	// the server
+	// asynctasks around the app call this function to get the json return from the server
 	protected String readJSONFeed(String URL, List<NameValuePair> nameValuePairs)
 	{
 		StringBuilder stringBuilder = new StringBuilder();
@@ -238,7 +289,7 @@ public class Global extends Application
 		return stringBuilder.toString();
 	}// end readJSONFeed
 
-	// date formatting methods
+	// DATE FORMATTING METHODS BELOW
 	protected String toRawFormatFromDayText(String date)
 	{
 		String rawDate = "";
@@ -255,10 +306,8 @@ public class Global extends Application
 		}
 		return rawDate;
 	}
-
 	protected String toNoTimeTextFormatFromRaw(String dateString)
 	{
-		System.out.println("\n\nDATE IS FIRST: " + dateString);
 		String date = "";
 		SimpleDateFormat raw = new SimpleDateFormat("yyyy-M-d h:mm:ss");
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -273,10 +322,8 @@ public class Global extends Application
 		}
 		return date;
 	}
-
 	protected String toDayTextFormatFromRaw(String dateString)
 	{
-		System.out.println("\n\nDATE IS FIRST: " + dateString);
 		String date = "";
 		SimpleDateFormat raw = new SimpleDateFormat("yyyy-M-d h:mm:ss");
 		SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM d, h:mma");
@@ -291,10 +338,8 @@ public class Global extends Application
 		}
 		return date;
 	}
-
 	protected String toDayTextFormatFromRawNoSeconds(String dateString)
 	{
-		System.out.println("\n\nDATE IS FIRST: " + dateString);
 		String date = "";
 		SimpleDateFormat raw = new SimpleDateFormat("yyyy-M-d h:mm");
 		SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM d, h:mma");
@@ -309,10 +354,8 @@ public class Global extends Application
 		}
 		return date;
 	}
-
 	protected String toYearTextFormatFromRaw(String dateString)
 	{
-		System.out.println("\n\nDATE IS FIRST: " + dateString);
 		String date = "";
 		SimpleDateFormat raw = new SimpleDateFormat("yyyy-M-d h:mm:ss");
 		SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM d, yyyy");
@@ -327,10 +370,8 @@ public class Global extends Application
 		}
 		return date;
 	}
-
 	protected String toYearTextFormatFromRawNoTime(String dateString)
 	{
-		System.out.println("\n\nDATE IS FIRST: " + dateString);
 		String date = "";
 		SimpleDateFormat raw = new SimpleDateFormat("yyyy-M-d");
 		SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM d, yyyy");
@@ -344,78 +385,5 @@ public class Global extends Application
 			System.out.println("Exception " + ex);
 		}
 		return date;
-	}
-
-	// these below are in beta, not quite implemented, perhaps won't be at all
-	protected int addToUsers(User u)
-	{
-		int size = users.size();
-		if (!containsUser(u.getEmail()))
-		{
-			users.add(u);
-			if (users.size() == size + 1)
-				return 1;
-			else
-				return -1;
-		}
-		else
-		{
-			// TODO: think over before saving
-		}
-		return 0;
-	}
-
-	protected User getUser(String email)
-	{
-		for (User u : users)
-			if (u.getEmail().equals(email))
-				return u;
-		User u = new User(email);
-		users.add(u);
-		return u;
-	}
-
-	protected boolean containsUser(String email)
-	{
-		for (User u : users)
-			if (u.getEmail().equals(email))
-				return true;
-		return false;
-	}
-
-	protected Group getGroup(int id)
-	{
-		for (Group g : groups)
-			if (g.getID() == id)
-				return g;
-		Group g = new Group(id);
-		groups.add(g);
-		return g;
-	}
-
-	protected boolean containsGroup(int id)
-	{
-		for (Group g : groups)
-			if (g.getID() == id)
-				return true;
-		return false;
-	}
-
-	protected Event getEvent(int id)
-	{
-		for (Event e : events)
-			if (e.getID() == id)
-				return e;
-		Event e = new Event(id);
-		events.add(e);
-		return e;
-	}
-
-	protected boolean containsEvent(int id)
-	{
-		for (Event e : events)
-			if (e.getID() == id)
-				return true;
-		return false;
 	}
 }// end Global class

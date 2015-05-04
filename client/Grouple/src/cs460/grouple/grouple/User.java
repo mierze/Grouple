@@ -28,7 +28,6 @@ import android.util.SparseArray;
  * @author Brett, Todd, Scott User holds information about an individual User.
  * 
  */
-@SuppressLint("SimpleDateFormat")
 public class User extends Entity
 {
 	private String location;
@@ -106,7 +105,8 @@ public class User extends Entity
 
 		for (int i = 0; i < nums.size(); i++)
 		{
-			experience += nums.get(i) * (i + 1);
+			int mult = i + 1;
+			experience += nums.get(i) * (mult);
 		}
 
 		xp += numItemsBrought;
@@ -194,7 +194,6 @@ public class User extends Entity
 	}
 
 	// GETTERS
-
 	protected int getNumSocialEvents()
 	{
 		return numSocialEvents;

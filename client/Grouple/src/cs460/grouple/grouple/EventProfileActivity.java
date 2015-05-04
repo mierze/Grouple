@@ -504,7 +504,7 @@ public class EventProfileActivity extends BaseActivity
 		if (event.getImage() != null)
 			iv.setImageBitmap(event.getImage());
 		else
-			iv.setImageResource(R.drawable.event_image_default);
+			iv.setImageResource(R.drawable.image_default);
 		iv.setScaleType(ScaleType.CENTER_CROP);
 		setButtons(); // for group / event
 	}

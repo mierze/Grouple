@@ -33,9 +33,9 @@ import android.widget.Toast;
 
 /**
  * 
- * @author Brett, Todd, Scott
- * GroupListActivity displays vertical user email lists of different types and performs relevant
- * functions based on the situation and type
+ * @author Brett, Todd, Scott GroupListActivity displays vertical user email
+ *         lists of different types and performs relevant functions based on the
+ *         situation and type
  */
 public class UserListActivity extends BaseActivity
 {
@@ -56,17 +56,46 @@ public class UserListActivity extends BaseActivity
 	private String CONTENT; // type of content to display in list, passed in
 							// from other activities
 	private ListView listView;
-	private LinearLayout listViewLayout;
 	private LinearLayout sadGuyLayout;
 	private String ROLE = "U";// defaulting to lowest level
-	private String PANDABUFFER = ""; // same
-	private int bufferID; // same as below: could alternatively have json return
-							// the values instead of saving here
-	private Button addNew;
-	// TESTING
+	private String EMAILBUFFER = ""; // same
+	private Button bottomButton;
 	private ArrayList<User> users;
 
+	@Override
+	protected void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_list);
+		// grabbing xml elements
+		listView = (ListView) findViewById(R.id.listView);
+		sadGuyLayout = (LinearLayout) findViewById(R.id.sadGuyLayout);
+		bottomButton = (Button) findViewById(R.id.bottomButton);
+		// INSTANTIATIONS
+		Bundle extras = getIntent().getExtras();
+		EMAIL = extras.getString("email");
+		CONTENT = extras.getString("content");
 
+		if (CONTENT.equals(CONTENT_TYPE.GROUP_MEMBERS.toString()))
+		{
+			bottomButton.setText("Invite Members");
+			group = GLOBAL.getGroup(extras.getInt("g_id"));
+		}
+		else if (CONTENT.equals(CONTENT_TYPE.EVENT_PARTICIPANTS.toString()))
+		{
+			bottomButton.setText("Invite Groups");// TODO: Mod checks
+			event = GLOBAL.getEvent(extras.getInt("e_id"));
+			users = event.getUsers();
+		}
+		if (EMAIL != null)
+			user = GLOBAL.getUser(EMAIL);
+		else
+		{
+			user = GLOBAL.getCurrentUser();
+			user.fetchExperience(this);
+		}
+		updateUI();
+	}
 
 	private class UserListAdapter extends ArrayAdapter<User>
 	{
@@ -82,14 +111,12 @@ public class UserListActivity extends BaseActivity
 			View itemView = convertView;
 			if (itemView == null)
 				itemView = inflater.inflate(getItemViewType(position), parent, false);
-			LinearLayout itemLayout = (LinearLayout) itemView.findViewById(R.id.listRowLayout);
 			// find group to work with
 			User u = users.get(position);
 			TextView nameView = (TextView) itemView.findViewById(R.id.nameTextView);
-			
-			
+
 			itemView.setId(position);
-			//TODO: accept decline button onclicks here?
+			// TODO: accept decline button onclicks here?
 			Button removeButton = (Button) itemView.findViewById(R.id.removeButton);
 			if (removeButton != null)
 			{
@@ -104,7 +131,7 @@ public class UserListActivity extends BaseActivity
 			}
 			if (CONTENT.equals(CONTENT_TYPE.FRIEND_REQUESTS.toString()))
 			{
-				nameView.setText(u.getEmail());//TODO: get name?
+				nameView.setText(u.getEmail());// TODO: get name?
 				Button acceptButton = (Button) itemView.findViewById(R.id.acceptButton);
 				Button declineButton = (Button) itemView.findViewById(R.id.declineButton);
 				acceptButton.setOnClickListener(new OnClickListener()
@@ -123,7 +150,7 @@ public class UserListActivity extends BaseActivity
 						declineButton(users.get(position).getEmail());
 					}
 				});
-			
+
 			}
 			else
 			{
@@ -158,20 +185,14 @@ public class UserListActivity extends BaseActivity
 	private void updateUI()
 	{
 		super.updateUI(user);
-		
-
 		String actionBarTitle = "";
-		addNew.setVisibility(View.GONE); // GONE FOR NOW
-		// CONTENT_TYPE -> POPULATEUSERS
 		if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
 		{
-			addNew.setText("Add New Friend");
-			addNew.setVisibility(View.VISIBLE);
 			actionBarTitle = user.getFirstName() + "'s Friends";
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.GROUP_MEMBERS.toString()))
 		{
-			setRole();
+			fetchRole();
 			actionBarTitle = "Group Members";
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.FRIEND_REQUESTS.toString()))
@@ -179,9 +200,8 @@ public class UserListActivity extends BaseActivity
 		else if (CONTENT.equals(CONTENT_TYPE.SELECT_FRIEND.toString()))
 			actionBarTitle = "Message Who?";
 		else
-		// EVENT_PARTICIPANTS
-		{
-			setRole();
+		{ // event participants
+			fetchRole();
 			actionBarTitle = "Attending " + event.getName();
 		}
 
@@ -194,17 +214,15 @@ public class UserListActivity extends BaseActivity
 			sadGuyText = "There are no members in this group.";
 			users = group.getUsers();
 		}
-		else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))// to
-																			// //
-																			// +
+		else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))																// +
 		{
 			sadGuyText = "You have no friends.";
 			users = user.getUsers();
-			Button addNew = (Button) findViewById(R.id.addNewButtonLiA);
 			if (GLOBAL.isCurrentUser(user.getEmail()))
-				addNew.setText("Add New Friend");
-			else
-				addNew.setVisibility(View.GONE);
+			{
+				bottomButton.setText("Add New Friend");
+				bottomButton.setVisibility(View.VISIBLE);
+			}
 		}
 		else if (CONTENT.equals(CONTENT_TYPE.FRIEND_REQUESTS.toString()))
 		{
@@ -229,7 +247,7 @@ public class UserListActivity extends BaseActivity
 			listView.setVisibility(View.VISIBLE);
 			sadGuyLayout.setVisibility(View.GONE);
 			ArrayAdapter<User> adapter = new UserListAdapter();
-			listView.setAdapter(adapter);	
+			listView.setAdapter(adapter);
 		}
 		else
 		{
@@ -245,94 +263,27 @@ public class UserListActivity extends BaseActivity
 	}
 
 	// based on content type, gets the corresponding role
-	private void setRole()
+	private void fetchRole()
 	{
-		ArrayList<User> users = new ArrayList<User>();
-		if (CONTENT.equals(CONTENT_TYPE.EVENT_PARTICIPANTS.toString()))
-		{
-			users = event.getUsers();
-			addNew.setText("Invite Groups");// TODO: Mod checks
-		}
-		else
-		{
-			users = group.getUsers();
-			addNew.setText("Invite Friends");
-		}
-
-		// checking if user is in group/event
-		boolean inEntity = false;
-		for (User u : users)
-			if (u.getEmail().equals(user.getEmail()))
-				inEntity = true;
-		if (inEntity) // user is in the group or event, grab their role
-		{
-			if (CONTENT.equals(CONTENT_TYPE.GROUP_MEMBERS.toString()))
-				new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_group.php",
-						Integer.toString(group.getID()));
-			else
-				new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_event.php",
-						Integer.toString(event.getID()));
-		}
+		if (CONTENT.equals(CONTENT_TYPE.GROUP_MEMBERS.toString()) && group.inUsers(user.getEmail()))
+			new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_group.php",
+					Integer.toString(group.getID()));
+		else if (event.inUsers(user.getEmail()))
+			new getRoleTask().execute("http://68.59.162.183/android_connect/check_role_event.php",
+					Integer.toString(event.getID()));
 	}
 
-	// DEFAULT METHODS BELOW
-	@Override
-	protected void onCreate(Bundle savedInstanceState)
-	{
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_list);
-		// grabbing xml elements
-		listView = (ListView) findViewById(R.id.listView);
-		listViewLayout = (LinearLayout) findViewById(R.id.listViewLayout);
-		sadGuyLayout = (LinearLayout) findViewById(R.id.sadGuyLayout);
-		// INSTANTIATIONS
-		Bundle extras = getIntent().getExtras();
-		EMAIL = extras.getString("email");
-		CONTENT = extras.getString("content");
-
-		if (CONTENT.equals(CONTENT_TYPE.GROUP_MEMBERS.toString()))
-		{
-			group = GLOBAL.getGroup(extras.getInt("g_id"));
-		}
-		else if (CONTENT.equals(CONTENT_TYPE.EVENT_PARTICIPANTS.toString()))
-		{
-			event = GLOBAL.getEvent(extras.getInt("e_id"));
-		}
-		if (EMAIL != null)
-			user = GLOBAL.getUser(EMAIL);
-		else
-		{		
-			user = GLOBAL.getCurrentUser();
-			user.fetchExperience(this);
-		}
-		if (user == null)
-		{
-			user = GLOBAL.getUser(EMAIL);
-			GLOBAL.setCurrentUser(user);
-			user.fetchExperience(this);
-		}
-		addNew = (Button) findViewById(R.id.addNewButtonLiA);
-		
-		updateUI();
-
-	}
-
-	/*
-	 * fetchData fetches all data needed to be displayed in the UI for user
-	 * profile activity
-	 */
+	// fetches all data needed to display
 	private void fetchData()
 	{
-		user.fetchFriends(this);
-		user.fetchFriendRequests(this);
-		user.fetchExperience(this);
-		if (group != null)
-		{
+		if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
+			user.fetchFriends(this);
+		else if (CONTENT.equals(CONTENT_TYPE.FRIEND_REQUESTS.toString()))
+			user.fetchFriendRequests(this);
+		else if (group != null)
 			group.fetchMembers(this);
-		}
-		if (event != null)
+		else if (event != null)
 			event.fetchParticipants(this);
-
 	}
 
 	@Override
@@ -377,21 +328,18 @@ public class UserListActivity extends BaseActivity
 	public void acceptButton(String email)
 	{
 
-				PANDABUFFER = email;
-				new performActionTask().execute("http://68.59.162.183/android_connect/accept_friend_request.php",
-						PANDABUFFER);
+		EMAILBUFFER = email;
+		new performActionTask().execute("http://68.59.162.183/android_connect/accept_friend_request.php", EMAILBUFFER);
 
 	}
 
 	public void declineButton(String email)
 	{
 
-				PANDABUFFER = email;
-				new performActionTask().execute("http://68.59.162.183/android_connect/decline_friend_request.php",
-								PANDABUFFER);
+		EMAILBUFFER = email;
+		new performActionTask().execute("http://68.59.162.183/android_connect/decline_friend_request.php", EMAILBUFFER);
 
 	}
-
 
 	// Handles removing a friend when the remove friend button is pushed.
 	public void removeButton(int index)
@@ -404,7 +352,7 @@ public class UserListActivity extends BaseActivity
 		{
 			final String friendEmail = users.get(index).getEmail(); // friend to
 																	// remove
-			PANDABUFFER = friendEmail;// PANDA TODO
+			EMAILBUFFER = friendEmail;// PANDA TODO
 
 			new AlertDialog.Builder(this).setMessage("Are you sure you want to remove that friend?")
 					.setCancelable(true).setPositiveButton("Yes", new DialogInterface.OnClickListener()
@@ -508,10 +456,10 @@ public class UserListActivity extends BaseActivity
 						if (CONTENT.equals(CONTENT_TYPE.EVENT_PARTICIPANTS.toString()))
 						{
 							if (!event.getEventState().equals("Ended"))
-								addNew.setVisibility(View.VISIBLE);
+								bottomButton.setVisibility(View.VISIBLE);
 						}
 						else
-							addNew.setVisibility(View.VISIBLE);
+							bottomButton.setVisibility(View.VISIBLE);
 				}
 				// unsuccessful
 				else
@@ -561,21 +509,18 @@ public class UserListActivity extends BaseActivity
 
 					if (CONTENT.equals(CONTENT_TYPE.FRIEND_REQUESTS.toString()))
 					{
-						user.removeFriendRequest(PANDABUFFER);
+						user.removeFriendRequest(EMAILBUFFER);
 
 					}
 					else if (CONTENT.equals(CONTENT_TYPE.FRIENDS_CURRENT.toString()))
 					{
-						user.removeUser(PANDABUFFER);
+						user.removeUser(EMAILBUFFER);
 
 					}
 					Toast toast = GLOBAL.getToast(context, message);
 					toast.show();
 					// reset values, looking to move these
-					PANDABUFFER = "";
-					bufferID = -1;
-
-					// CALLING CORRESPONDING METHOD TO REPOPULATE
+					EMAILBUFFER = ""; 
 					updateUI();
 				}
 				else

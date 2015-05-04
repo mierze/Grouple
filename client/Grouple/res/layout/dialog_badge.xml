@@ -35,7 +35,7 @@
         android:layout_marginTop="60dp"
         android:background="@drawable/border_layout"
         android:contentDescription="Badge"
-        android:src="@drawable/event_image_default" />
+        android:src="@drawable/image_default" />
 
     <TextView
         android:id="@+id/badgeAboutTextView"

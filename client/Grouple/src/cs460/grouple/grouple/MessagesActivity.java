@@ -29,8 +29,8 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 /**
  * 
- * @author Brett, Todd, Scott
- * MessagesActivity creates the vertical list of side-by-side messaging and provides messaging functions.
+ * @author Brett, Todd, Scott MessagesActivity creates the vertical list of
+ *         side-by-side messaging and provides messaging functions.
  * 
  */
 public class MessagesActivity extends BaseActivity
@@ -38,14 +38,15 @@ public class MessagesActivity extends BaseActivity
 	private Button sendMessageButton;
 	private EditText messageEditText;
 	private User user;
-	private String recipient; //user that this user is talking to
+	private String recipient; // user that this user is talking to
 	private String SENDER_ID = "957639483805";
-	private LinearLayout listViewLayout;
+	private LinearLayout sadGuyLayout;
 	private ListView listView;
 	private ArrayList<Message> messages = new ArrayList<Message>();
 	private GoogleCloudMessaging gcm;
 	private AtomicInteger msgId = new AtomicInteger();
 	private String recipientRegID = "";
+	private ArrayAdapter<Message> adapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -57,23 +58,23 @@ public class MessagesActivity extends BaseActivity
 		// initializing the variables for the send button / message edit text
 		sendMessageButton = (Button) findViewById(R.id.sendButton);
 		messageEditText = (EditText) findViewById(R.id.messageEditText);
-		listViewLayout = (LinearLayout) findViewById(R.id.listViewLayout);
+		sadGuyLayout = (LinearLayout) findViewById(R.id.sadGuyLayout);
 		listView = (ListView) findViewById(R.id.listView);
 		initActionBar(extras.getString("name"), true);
 		try
 		{
-		gcm = GoogleCloudMessaging.getInstance(this);
+			gcm = GoogleCloudMessaging.getInstance(this);
 		}
 		catch (Exception e)
 		{
-			
+
 		}
 		recipient = extras.getString("email");
 		messages = user.getMessages(recipient);
 		// Get the recipient
 		new getRegIDTask().execute("http://68.59.162.183/android_connect/get_chat_id.php", recipient);
 	}
-	
+
 	private void fetchData()
 	{
 		user.fetchMessages(this, recipient);
@@ -86,19 +87,17 @@ public class MessagesActivity extends BaseActivity
 		@Override
 		public void onReceive(Context context, Intent intent)
 		{
-			if (intent.getAction().equals("user_data")) 
+			if (intent.getAction().equals("user_data"))
 			{
-	            
 				updateUI();
 			}
-			else if (intent.getAction().equals("USER_MESSAGE")) 
+			else if (intent.getAction().equals("USER_MESSAGE"))
 			{
-			String receiver = intent.getStringExtra("receiver");
-			if (receiver.equals(user.getEmail()))
-			{
-				fetchData();
-				updateUI();
-			}
+				String receiver = intent.getStringExtra("receiver");
+				if (receiver.equals(user.getEmail()))
+				{
+					fetchData();
+				}
 			}
 		}
 	};
@@ -120,7 +119,7 @@ public class MessagesActivity extends BaseActivity
 		LocalBroadcastManager.getInstance(this).unregisterReceiver(dataReceiver);
 		super.onPause();
 	}
-	
+
 	private void readMessages()
 	{
 		new readMessagesTask().execute("http://68.59.162.183/android_connect/update_messageread_date.php");
@@ -160,7 +159,7 @@ public class MessagesActivity extends BaseActivity
 			}
 		}
 	}
-	
+
 	private class MessageListAdapter extends ArrayAdapter<Message>
 	{
 		public MessageListAdapter()
@@ -171,28 +170,32 @@ public class MessagesActivity extends BaseActivity
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent)
 		{
-			View itemView = convertView;
-			if (itemView == null)
-				itemView = inflater.inflate(getItemViewType(position), parent, false);
 			Message m = messages.get(position);
-			TextView messageBody = (TextView) itemView.findViewById(R.id.messageBody);
-			TextView messageDate = (TextView) itemView.findViewById(R.id.messageDate);
+			if (convertView == null)
+				convertView = inflater.inflate(m.getSender().equals(user.getEmail()) ? R.layout.message_row : R.layout.message_row_out, null); 
+			
+			TextView messageBody = (TextView) convertView.findViewById(R.id.messageBody);
+			TextView messageDate = (TextView) convertView.findViewById(R.id.messageDate);
 			messageBody.setText(m.getMessage());
 			messageDate.setText(m.getDateString());
-			itemView.setId(m.getID());
-			return itemView;
+			convertView.setId(m.getID());
+			return convertView;
 		}
 
 		@Override
 		public int getItemViewType(int position)
 		{
-			int listItemID = R.layout.list_row;
 			Message m = messages.get(position);
-			if (m.getSender().equals(user.getEmail()))
-				listItemID = R.layout.message_row; 
+			if (m.getSender().equals(user.getEmail()) || m.getSender() == null)
+				return 0;
 			else
-				listItemID = R.layout.message_row_out;
-			return listItemID;
+				return 1;
+		}
+		
+		@Override
+		public int getViewTypeCount()
+		{
+			return 2;
 		}
 	}
 
@@ -200,22 +203,33 @@ public class MessagesActivity extends BaseActivity
 	{
 		if (!messages.isEmpty())
 		{
-			ArrayAdapter<Message> adapter = new MessageListAdapter();
-			listView.setAdapter(adapter);
-			messageEditText.requestFocus();
-			scrollListView(adapter.getCount()-1, listView);
-			readMessages();
-			//listViewLayout.removeAllViews();
-			listView.setVisibility(View.VISIBLE);
+			if (adapter == null)
+			{
+				adapter = new MessageListAdapter();
+				listView.setAdapter(adapter);
+				messageEditText.requestFocus();
+				scrollListView(adapter.getCount() - 1, listView);
+				readMessages();
+			}
+			else 
+			{
+				messageEditText.requestFocus();
+				adapter.notifyDataSetChanged();
+				sadGuyLayout.setVisibility(View.GONE);
+				listView.setVisibility(View.VISIBLE);
+				scrollListView(adapter.getCount() - 1, listView);
+				readMessages();
+			}
 		}
 		else
 		{
-			TextView sadGuyTextView;
 			View sadGuyView = inflater.inflate(R.layout.list_item_sadguy, null);
-			sadGuyTextView = (TextView) sadGuyView.findViewById(R.id.sadGuyTextView);
+			TextView sadGuyTextView = (TextView) sadGuyView.findViewById(R.id.sadGuyTextView);
 			sadGuyTextView.setText("No messages to display!");
 			listView.setVisibility(View.GONE);
-			listViewLayout.addView(sadGuyView);
+			sadGuyLayout.removeAllViews();
+			sadGuyLayout.addView(sadGuyView);
+			sadGuyLayout.setVisibility(View.VISIBLE);
 		}
 	}
 
@@ -248,7 +262,7 @@ public class MessagesActivity extends BaseActivity
 							message = messageEditText.getText().toString();
 							Message m = new Message(message, new Date(), user.getEmail(), user.getName(), recipient,
 									null);
-							//messages.add(m);
+							// messages.add(m);
 							data.putString("msg", m.getMessage());
 							data.putString("my_action", "cs460.grouple.grouple.ECHO_NOW");
 							data.putString("content", "USER_MESSAGE");

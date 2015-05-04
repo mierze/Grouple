@@ -20,64 +20,62 @@ import android.widget.ImageView.ScaleType;
 
 /**
  * 
- * @author Brett, Todd, Scott
- * GroupDataService helps generate group information updates
+ * @author Brett, Todd, Scott GroupDataService helps generate group information
+ *         updates
  * 
  */
-public class GroupDataService extends Service {
-	
-	private User user;
+public class GroupDataService extends Service
+{
 	private Group group;
-	//private Group group;
-	//private Event event;
 	private static Global GLOBAL;
-	private String FETCH;
+	private String fetch;
 	private Context context;
 
 	enum FETCH_TYPE
 	{
 		INFO, IMAGE, MEMBERS, EXPERIENCE, EVENTS;
 	}
-	
-	public GroupDataService(Global global, Group g) 
-	{		
+
+	public GroupDataService(Global global, Group g)
+	{
 		GLOBAL = global;
 		group = g;
 	}
-	
-	//FUNCTIONS BELOW
+
+	// FUNCTIONS BELOW
 	private void sendBroadcast()
 	{
 		Intent intent = new Intent("group_data");
 
-			//intent.setAction("USER_DATA");
-			intent.putExtra("message", "testing");
-		//	intent.setAction(")
-			//could potentially add how many things were updated
+		// intent.setAction("USER_DATA");
+		intent.putExtra("message", "testing");
+		// intent.setAction(")
+		// could potentially add how many things were updated
 
-
-			LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+		LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 	}
-	public void fetchContent(final String FETCH, Context context)
+
+	public void fetchContent(String fetch, Context context)
 	{
-		//for access in onpost and beyond
-		this.FETCH = FETCH;
+		// for access in onpost and beyond
+		this.fetch = fetch;
 		this.context = context;
-		
-		if (FETCH.equals(FETCH_TYPE.INFO.toString()))
-			new getInfoTask().execute("http://68.59.162.183/android_connect/get_group_info.php", Integer.toString(group.getID()));
-		else if (FETCH.equals(FETCH_TYPE.IMAGE.toString()))
+
+		if (fetch.equals(FETCH_TYPE.INFO.toString()))
+			new getInfoTask().execute("http://68.59.162.183/android_connect/get_group_info.php",
+					Integer.toString(group.getID()));
+		else if (fetch.equals(FETCH_TYPE.IMAGE.toString()))
 			new getImageTask().execute("http://68.59.162.183/android_connect/get_profile_image.php");
-		else if (FETCH.equals(FETCH_TYPE.MEMBERS.toString()))
-			new getMembersTask().execute("http://68.59.162.183/android_connect/get_group_members.php?gid=" + group.getID());	
-		else if (FETCH.equals(FETCH_TYPE.EXPERIENCE.toString()))
+		else if (fetch.equals(FETCH_TYPE.MEMBERS.toString()))
+			new getMembersTask().execute("http://68.59.162.183/android_connect/get_group_members.php?gid="
+					+ group.getID());
+		else if (fetch.equals(FETCH_TYPE.EXPERIENCE.toString()))
 			new getExperienceTask().execute("http://68.59.162.183/android_connect/get_group_experience.php");
-		else if (FETCH.equals(FETCH_TYPE.EVENTS.toString()))
+		else if (fetch.equals(FETCH_TYPE.EVENTS.toString()))
 			new getEventsTask().execute("http://68.59.162.183/android_connect/get_group_events.php");
 
-		
 	}
-	
+
 	private class getInfoTask extends AsyncTask<String, Void, String>
 	{
 		@Override
@@ -97,45 +95,46 @@ public class GroupDataService extends Service {
 				System.out.println(result);
 				JSONObject jsonObject = new JSONObject(result);
 				System.out.println("After declare");
-				//successful run
+				// successful run
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					JSONArray jsonArray = jsonObject.getJSONArray("groupInfo");
-					//set group name
+					// set group name
 					System.out.println("In on post user success 1");
 					String name = (String) jsonArray.get(0);
-				
-					group.setName(name); 
-					//set group bio
-				
+
+					group.setName(name);
+					// set group bio
+
 					String about = (String) jsonArray.get(1);
 					group.setAbout(about);
-					
-					//get that image
-					
+
+					// get that image
+
 					String creator = (String) jsonArray.get(2);
 					group.setEmail(creator);
-					
+
 					int pub = (Integer) jsonArray.get(3);
-					group.setPub(pub); 
-					
+					group.setPub(pub);
+
 					String dateCreated = (String) jsonArray.get(4);
 					group.setDateCreated(dateCreated);
 				}
-				//unsuccessful
+				// unsuccessful
 				if (jsonObject.getString("success").toString().equals("2"))
 				{
-					//shouldnt
+					// shouldnt
 					System.out.println("success 2 in on post");
 				}
-			} catch (Exception e)
+			}
+			catch (Exception e)
 			{
 				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 			}
 		}
 	}
-	
-	// TASK FOR GRABBING IMAGE OF EVENT/USER/GROUP
+
+	// task for grabbing group image
 	private class getImageTask extends AsyncTask<String, Void, String>
 	{
 		@Override
@@ -162,9 +161,7 @@ public class GroupDataService extends Service {
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					String image = jsonObject.getString("image").toString();
-
 					group.setImage(image);
-					
 				}
 				else
 				{
@@ -179,7 +176,8 @@ public class GroupDataService extends Service {
 			// do next thing here
 		}
 	}
-	
+
+	// task for grabbing all group members
 	private class getMembersTask extends AsyncTask<String, Void, String>
 	{
 		@Override
@@ -187,46 +185,50 @@ public class GroupDataService extends Service {
 		{
 			return GLOBAL.readJSONFeed(urls[0], null);
 		}
+
 		@Override
 		protected void onPostExecute(String result)
 		{
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
+				group.getUsers().clear();
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					//gotta make a json array
+					// gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("gmembers");
-					if (group.getUsers() != null) group.getUsers().clear();
-					//looping thru array
+					// looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
 						System.out.println("fetching a group members");
-						//at each iteration set to hashmap friendEmail -> 'first last'
+						// at each iteration set to hashmap friendEmail ->
+						// 'first last'
 						JSONObject o = (JSONObject) jsonArray.get(i);
-						//function adds friend to the friends map
-						User u = new User(o.getString("email"));
+						// function adds friend to the friends map
+						User u = GLOBAL.getUser(o.getString("email"));
 						u.setName(o.getString("first") + " " + o.getString("last"));
 						group.addToUsers(u);
-						//GLOBAL.addToUsers(u);
+						// GLOBAL.addToUsers(u);
 					}
 					sendBroadcast();
 				}
-				
+
 				// user has no friends
 				if (jsonObject.getString("success").toString().equals("2"))
 				{
 					Log.d("fetchgrupmembers", "failed = 2 return");
-					//setNumFriends(0); //PANDA need to set the user class not global
+					// setNumFriends(0); //PANDA need to set the user class not
+					// global
 				}
-			} catch (Exception e)
+			}
+			catch (Exception e)
 			{
 				Log.d("ReadatherJSONFeedTask", e.getLocalizedMessage());
 			}
 		}
-	}	
-	
-	// TASK GOR GETTING gropu EXPERIENCE
+	}
+
+	// task for grabbing group experience and statistics
 	private class getExperienceTask extends AsyncTask<String, Void, String>
 	{
 		@Override
@@ -259,8 +261,6 @@ public class GroupDataService extends Service {
 					group.setNumProfessionalEvents(numProfessional);
 					group.setNumSocialEvents(numSocial);
 					group.setExperience();
-					//TODO: redo this section
-					//group.setPoints();
 					sendBroadcast();
 				}
 				else
@@ -273,10 +273,9 @@ public class GroupDataService extends Service {
 			{
 				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 			}
-			// do next thing here
 		}
 	}
-	
+
 	private class getEventsTask extends AsyncTask<String, Void, String>
 	{
 		@Override
@@ -301,13 +300,14 @@ public class GroupDataService extends Service {
 					for (int i = 0; i < upcomingJsonArray.length(); i++)
 					{
 						JSONObject o = (JSONObject) upcomingJsonArray.get(i);
-						Event e = new Event(o.getInt("e_id"));
+						Event e = GLOBAL.getEvent(o.getInt("e_id"));
 						e.setName(o.getString("name"));
 						e.setMinPart(o.getInt("minPart"));
 						e.setMaxPart(o.getInt("maxPart"));
+						//e.setStartDate(o.getString("startDate"));
 						group.addToEventsUpcoming(e);
 					}
-					
+
 					JSONArray pendingJsonArray = jsonObject.getJSONArray("pending");
 
 					for (int i = 0; i < pendingJsonArray.length(); i++)
@@ -317,9 +317,10 @@ public class GroupDataService extends Service {
 						e.setName(o.getString("name"));
 						e.setMinPart(o.getInt("minPart"));
 						e.setMaxPart(o.getInt("maxPart"));
+						//e.setStartDate(o.getString("startDate"));
 						group.addToEventsPending(e);
 					}
-					
+
 					JSONArray pastJsonArray = jsonObject.getJSONArray("past");
 
 					for (int i = 0; i < pastJsonArray.length(); i++)
@@ -329,6 +330,7 @@ public class GroupDataService extends Service {
 						e.setName(o.getString("name"));
 						e.setMinPart(o.getInt("minPart"));
 						e.setMaxPart(o.getInt("maxPart"));
+							//e.setStartDate(o.getString("startDate"));
 						group.addToEventsPast(e);
 					}
 					sendBroadcast();
@@ -348,6 +350,5 @@ public class GroupDataService extends Service {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 
 }

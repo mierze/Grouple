@@ -47,23 +47,20 @@
                 android:text="About Event:"
                 android:textColor="@color/white" />
 
-
-
-                <TextView
-                    android:id="@+id/aboutTextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="0dp"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/border"
-                    android:fontFamily="sans-serif-condensed"
-                    android:gravity="left"
-                    android:padding="10dp"
-                    android:text="This is a group profile."
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@color/text_color"
-                    android:textSize="14sp" />
-
+            <TextView
+                android:id="@+id/aboutTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="0dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/border_layout"
+                android:fontFamily="sans-serif-condensed"
+                android:gravity="left"
+                android:padding="10dp"
+                android:text="This is a group profile."
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/text_color"
+                android:textSize="14sp" />
 
             <Button
                 android:id="@+id/attendingButton"
@@ -140,7 +137,7 @@
                 android:layout_height="60dp"
                 android:layout_marginTop="10dp"
                 android:layout_weight="1"
-                android:background="@drawable/selector_offcolorbutton"
+                android:background="@drawable/selector_button_yellow"
                 android:fontFamily="sans-serif-condensed"
                 android:onClick="editButton"
                 android:text="Edit Event"

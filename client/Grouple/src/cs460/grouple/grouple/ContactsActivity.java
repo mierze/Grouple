@@ -166,7 +166,7 @@ public class ContactsActivity extends BaseActivity
 			if (c.getImage() != null)
 				 contactImage.setImageBitmap(c.getImage());
 			else
-				contactImage.setImageResource(R.drawable.user_image_default);
+				contactImage.setImageResource(R.drawable.image_default);
 		    
 			messageBody.setText(c.getMessage());
 			messageDate.setText(c.getDateString());
@@ -222,7 +222,7 @@ public class ContactsActivity extends BaseActivity
 		if (image != null)
 			 imageView.setImageBitmap(image);
 		else
-			imageView.setImageResource(R.drawable.user_image_default);
+			imageView.setImageResource(R.drawable.image_default);
 	    
 	   
 	   imageView.setScaleType(ScaleType.CENTER_CROP);

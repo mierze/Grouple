@@ -166,12 +166,12 @@ public class Group extends Entity
 	
 	protected int getNumEventsPast()
 	{
-		return eventsUpcoming.size();
+		return eventsPast.size();
 	}
 	
 	protected int getNumEventsPending()
 	{
-		return eventsUpcoming.size();
+		return eventsPending.size();
 	}
 	protected ArrayList<Event> getEventsUpcoming()
 	{
@@ -180,13 +180,14 @@ public class Group extends Entity
 	
 	protected ArrayList<Event> getEventsPast()
 	{
-		return eventsUpcoming;
+		return eventsPast;
 	}
 	
 	protected ArrayList<Event> getEventsPending()
 	{
-		return eventsUpcoming;
+		return eventsPending;
 	}
+	
 	protected void addToEventsPending(Event e)
 	{
 		boolean inEventsPending = false;

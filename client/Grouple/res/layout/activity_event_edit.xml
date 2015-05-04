@@ -49,9 +49,9 @@
                     android:id="@+id/eventEditImageButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    	android:layout_alignRight="@+id/eventEditImageView"
-               	 android:layout_alignLeft="@+id/editEventImageView"
-                     android:layout_below="@+id/eventEditImageView"
+                    android:layout_alignLeft="@+id/editEventImageView"
+                    android:layout_alignRight="@+id/eventEditImageView"
+                    android:layout_below="@+id/eventEditImageView"
                     android:layout_gravity="bottom"
                     android:background="@drawable/selector_button"
                     android:fontFamily="sans-serif-condensed"
@@ -272,8 +272,8 @@
                     android:textColor="@color/text_color"
                     android:textColorHint="@color/hint_text_color" />
             </LinearLayout>
-            
-             <TextView
+
+            <TextView
                 android:id="@+id/publicLabelTextViewEPA"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -354,8 +354,8 @@
                 android:id="@+id/deleteEventButton"
                 android:layout_width="fill_parent"
                 android:layout_height="60dp"
-                android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
                 android:layout_weight="1"
                 android:background="@drawable/background_red"
                 android:onClick="deleteEvent"

@@ -20,75 +20,69 @@ import android.widget.ImageView.ScaleType;
 
 /**
  * 
- * @author Brett, Todd, Scott
- * EventDataService helps generate event information updates
- *
+ * @author Brett, Todd, Scott EventDataService helps generate event information
+ *         updates
+ * 
  */
-public class EventDataService extends Service {
-	
-	private User user;
+public class EventDataService extends Service
+{
+
 	private Event event;
-	//private Group group;
-	//private Event event;
+	// private Group group;
+	// private Event event;
 	private static Global GLOBAL;
-	private String FETCH;
+	private String fetch;
 	private Context context;
 
 	enum FETCH_TYPE
 	{
 		INFO, IMAGE, PARTICIPANTS, ITEMS;
 	}
-	
-	public EventDataService(Global global, Event e) 
-	{		
+
+	public EventDataService(Global global, Event e)
+	{
 		GLOBAL = global;
-		//user to update info of
+		// user to update info of
 		event = e;
 	}
-	
-	//FUNCTIONS BELOW
+
+	// FUNCTIONS BELOW
 	private void sendBroadcast()
 	{
 		Intent intent = new Intent("event_data");
 
-			//intent.setAction("USER_DATA");
-			intent.putExtra("message", "testing");
-		//	intent.setAction(")
-			//could potentially add how many things were updated
+		// intent.setAction("USER_DATA");
+		intent.putExtra("message", "testing");
+		// intent.setAction(")
+		// could potentially add how many things were updated
 
-
-			LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+		LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 	}
-	public void fetchContent(final String FETCH, Context context)
+
+	public void fetchContent(final String fetch, Context context)
 	{
-		//for access in onpost and beyond
-		this.FETCH = FETCH;
+		// for access in onpost and beyond
+		this.fetch = fetch;
 		this.context = context;
-		
-		if (FETCH.equals(FETCH_TYPE.INFO.toString()))
+		if (fetch.equals(FETCH_TYPE.INFO.toString()))
 			new getInfoTask().execute("http://68.59.162.183/android_connect/get_event_info.php");
-		else if (FETCH.equals(FETCH_TYPE.IMAGE.toString()))
+		else if (fetch.equals(FETCH_TYPE.IMAGE.toString()))
 			new getImageTask().execute("http://68.59.162.183/android_connect/get_profile_image.php");
-		else if (FETCH.equals(FETCH_TYPE.PARTICIPANTS.toString()))
-		{
-			new getParticipantsTask().execute("http://68.59.162.183/android_connect/get_event_participants.php?eid=" + event.getID());
-		}
-		else if (FETCH.equals(FETCH_TYPE.ITEMS.toString()))
-		{
+		else if (fetch.equals(FETCH_TYPE.PARTICIPANTS.toString()))
+			new getParticipantsTask().execute("http://68.59.162.183/android_connect/get_event_participants.php?eid="
+					+ event.getID());
+		else if (fetch.equals(FETCH_TYPE.ITEMS.toString()))
 			new getItemsTask().execute("http://68.59.162.183/android_connect/get_items_tobring.php");
-		}
-		
 	}
-	
+
+	// task for grabbing group info
 	private class getInfoTask extends AsyncTask<String, Void, String>
 	{
 		@Override
 		protected String doInBackground(String... urls)
 		{
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
-			nameValuePairs.add(new BasicNameValuePair("eid", Integer
-					.toString(event.getID())));
-			// ADD ALL NAME VALUE REQuirEMENTS
+			nameValuePairs.add(new BasicNameValuePair("eid", Integer.toString(event.getID())));
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
 
@@ -99,17 +93,9 @@ public class EventDataService extends Service {
 			{
 				// getting json object from the result string
 				JSONObject jsonObject = new JSONObject(result);
-				// gotta make a json array
-				// JSONArray jsonArray = jsonObject.getJSONArray("userInfo");
-				// json fetch was successful
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					JSONArray jsonArray = jsonObject.getJSONArray("eventInfo");
-					Log.d("getEventInfoOnPost", "success1");
-					// $name, $state, $startdate, $enddate, $category, $about,
-					// $location, $minpart, $maxpart, $mustbringlist, $creator);
-					// at each iteration set to hashmap friendEmail -> 'first
-					// last'
 					event.setName((String) jsonArray.get(0));
 					event.setEventState((String) jsonArray.get(1));
 					event.setStartDate((String) jsonArray.get(2));
@@ -120,9 +106,7 @@ public class EventDataService extends Service {
 					event.setLocation((String) jsonArray.get(7));
 					event.setMinPart((Integer) jsonArray.get(8));
 					event.setMaxPart((Integer) jsonArray.get(9));
-					// 9 = mustbringlist
 					event.setEmail((String) jsonArray.get(10));
-					// setImage((String) jsonArray.get(11));
 					event.setPub((Integer) jsonArray.get(11));
 					sendBroadcast();
 				}
@@ -132,15 +116,16 @@ public class EventDataService extends Service {
 					// failed
 					Log.d("eventFetchInfoOnPost", "FAILED");
 				}
-			} catch (Exception e)
+			}
+			catch (Exception e)
 			{
 				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 			}
 			// do next thing here
 		}
 	}
-	
-	// TASK FOR GRABBING IMAGE OF EVENT/USER/GROUP
+
+	// task for grabbing image
 	private class getImageTask extends AsyncTask<String, Void, String>
 	{
 		@Override
@@ -162,8 +147,6 @@ public class EventDataService extends Service {
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					String image = jsonObject.getString("image").toString();
-
-					// event
 					event.setImage(image);
 					sendBroadcast();
 				}
@@ -180,7 +163,7 @@ public class EventDataService extends Service {
 			// do next thing here
 		}
 	}
-	
+
 	private class getParticipantsTask extends AsyncTask<String, Void, String>
 	{
 		@Override
@@ -195,20 +178,17 @@ public class EventDataService extends Service {
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
+				event.getUsers().clear();
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-						event.getUsers().clear();
-					// gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("eattending");
 					// looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
 						JSONObject o = (JSONObject) jsonArray.get(i);
-						User u = new User(o.getString("email"));
-						System.out.println("ADDIGN NEW PARTICIPANT - "
-								+ u.getEmail());
-						u.setName(o.getString("first") + " "
-								+ o.getString("last"));
+						User u = GLOBAL.getUser(o.getString("email"));
+						System.out.println("ADDIGN NEW PARTICIPANT - " + u.getEmail());
+						u.setName(o.getString("first") + " " + o.getString("last"));
 						event.addToUsers(u);
 					}
 					sendBroadcast();
@@ -217,16 +197,14 @@ public class EventDataService extends Service {
 				if (jsonObject.getString("success").toString().equals("2"))
 				{
 					Log.d("Fetch Event Attending", "failed = 2 return");
-					// setNumFriends(0); //PANDA need to set the user class not
-					// global
 				}
-			} catch (Exception e)
+			}
+			catch (Exception e)
 			{
 				Log.d("ReadJSONFeedTask", e.getLocalizedMessage());
 			}
 		}
 	}
-	
 
 	private class getItemsTask extends AsyncTask<String, Void, String>
 	{
@@ -244,32 +222,27 @@ public class EventDataService extends Service {
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
+				event.getItems().clear();
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
-					//clearing to avoid duplicates
-					event.getItems().clear();
-					// gotta make a json array
-					int numUnclaimed = 0;
 					JSONArray jsonArray = jsonObject.getJSONArray("itemsToBring");
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
 						JSONObject o = (JSONObject) jsonArray.get(i);
-						// function adds friend to the friends map
-						EventItem item = new EventItem(Integer.parseInt(o.getString("id")), o.getString("name"), o.getString("email"));
+						EventItem item = new EventItem(Integer.parseInt(o.getString("id")), o.getString("name"),
+								o.getString("email"));
 						event.addToItems(item);
-
 					}
-		
-						sendBroadcast();
+					sendBroadcast();
 				}
 				// success, but no items returned
 				else if (jsonObject.getString("success").toString().equals("2"))
 				{
-				
+
 				}
 				else
 				{
-					System.out.println("\""+jsonObject.getString("success").toString()+"\"");
+					System.out.println("\"" + jsonObject.getString("success").toString() + "\"");
 					Log.d("fetchItems", "failed to return success");
 				}
 			}
@@ -280,13 +253,12 @@ public class EventDataService extends Service {
 			}
 		}
 	}
-	
+
 	@Override
 	public IBinder onBind(Intent arg0)
 	{
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 
 }

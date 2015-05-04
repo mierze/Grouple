@@ -42,6 +42,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/black"
+                android:layout_marginBottom="0dp"
                 android:onClick="experienceDialog"
                 android:orientation="vertical" >
 
@@ -76,7 +77,20 @@
                     android:padding="0dp"
                     android:textColor="@color/yellow" />
             </LinearLayout>
-
+    
+            <Button
+                android:id="@+id/badgesButton"
+                android:layout_width="match_parent"
+                android:layout_marginTop="3dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:background="@drawable/selector_button_blue"
+                android:fontFamily="sans-serif-condensed"
+                android:onClick="badgesButton"
+                android:text="Badges\n(0)"
+                android:textColor="@color/button_text_color"
+                android:textSize="18sp" />
+            
             <TextView
                 android:id="@+id/aboutTitle"
                 android:layout_width="wrap_content"
@@ -103,32 +117,6 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@color/text_color"
                 android:textSize="14sp" />
-
-            <Button
-                android:id="@+id/badgesButton"
-                android:layout_marginTop="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_weight="1"
-                android:background="@drawable/selector_button_black"
-                android:fontFamily="sans-serif-condensed"
-                android:onClick="badgesButton"
-                android:text="Badges\n(0)"
-                android:textColor="@color/button_text_color"
-                android:textSize="18sp" />
-
-            <Button
-                android:id="@+id/eventsPastButton"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/selector_button"
-                android:fontFamily="sans-serif-condensed"
-                android:onClick="eventsPastButton"
-                android:text="Past Events"
-                android:textColor="@color/button_text_color"
-                android:textSize="18sp" />
 
             <Button
                 android:id="@+id/friendsButton"
@@ -169,11 +157,24 @@
                 android:visibility="gone" />
 
             <Button
+                android:id="@+id/eventsPastButton"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/selector_button"
+                android:fontFamily="sans-serif-condensed"
+                android:onClick="eventsPastButton"
+                android:text="Past Events"
+                android:textColor="@color/button_text_color"
+                android:textSize="18sp" />
+            
+            <Button
                 android:id="@+id/userEditButton"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="10dp"
-                android:background="@drawable/selector_offcolorbutton"
+                android:background="@drawable/selector_button_yellow"
                 android:fontFamily="sans-serif-condensed"
                 android:onClick="userEditButton"
                 android:text="Edit Profile"
@@ -186,7 +187,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="10dp"
-                android:background="@drawable/selector_offcolorbutton"
+                android:background="@drawable/selector_button_yellow"
                 android:fontFamily="sans-serif-condensed"
                 android:onClick="messageButton"
                 android:text="Message"
@@ -199,7 +200,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="10dp"
-                android:background="@drawable/selector_offcolorbutton"
+                android:background="@drawable/selector_button_yellow"
                 android:fontFamily="sans-serif-condensed"
                 android:onClick="inviteButton"
                 android:text="Invite to Friends"

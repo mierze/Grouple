@@ -22,45 +22,45 @@
             android:background="@color/background_color"
             android:orientation="vertical" >
 
-            
-                 <RelativeLayout
-            android:id="@+id/editImageLayout"
-            android:layout_width="wrap_content"
-            android:layout_gravity="center"
-           	android:layout_marginBottom="5dp"
-            android:layout_height="wrap_content"
-            android:background="@color/background_color"
->
-            <ImageView
-                android:id="@+id/eventCreateImageView"
+            <RelativeLayout
+                android:id="@+id/editImageLayout"
                 android:layout_width="wrap_content"
-                android:layout_height="300dp"
-                android:minHeight="200dp"
-                android:maxHeight="200dp"
-                android:layout_gravity="center|top"
-                android:onClick="loadImage"
-                android:scaleType="fitXY"
-                android:adjustViewBounds="true"
-                android:background="@drawable/border"
-                android:contentDescription="Event photo."
-                android:padding="3dp"
-                android:src="@drawable/abc_ab_bottom_solid_dark_holo" />
-
-            <Button
-                android:id="@+id/eventEditImageButton"
-                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignRight="@+id/eventCreateImageView"
-               	 android:layout_alignLeft="@+id/eventCreateImageView"
-               	 android:layout_below="@+id/eventCreateImageView"
-                android:layout_gravity="bottom"
-                android:background="@drawable/selector_button"
-                android:fontFamily="sans-serif-condensed"
-                android:onClick="onClick"
-                android:text="Edit Image"
-                android:textColor="@color/button_text_color"
-                android:textSize="14sp" />
+                android:layout_gravity="center"
+                android:layout_marginBottom="5dp"
+                android:background="@color/background_color" >
+
+                <ImageView
+                    android:id="@+id/eventCreateImageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="300dp"
+                    android:layout_gravity="center|top"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/border"
+                    android:contentDescription="Event photo."
+                    android:maxHeight="200dp"
+                    android:minHeight="200dp"
+                    android:onClick="loadImage"
+                    android:padding="3dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/abc_ab_bottom_solid_dark_holo" />
+
+                <Button
+                    android:id="@+id/eventEditImageButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@+id/eventCreateImageView"
+                    android:layout_alignRight="@+id/eventCreateImageView"
+                    android:layout_below="@+id/eventCreateImageView"
+                    android:layout_gravity="bottom"
+                    android:background="@drawable/selector_button"
+                    android:fontFamily="sans-serif-condensed"
+                    android:onClick="onClick"
+                    android:text="Edit Image"
+                    android:textColor="@color/button_text_color"
+                    android:textSize="14sp" />
             </RelativeLayout>
+
             <EditText
                 android:id="@+id/eventNameEditText"
                 android:layout_width="fill_parent"
@@ -77,8 +77,6 @@
                 android:textColor="@color/text_color"
                 android:textColorHint="@color/hint_text_color" />
 
-            
-                  
             <TextView
                 android:id="@+id/eventCategoryLabelTextView"
                 android:layout_width="wrap_content"
@@ -187,31 +185,31 @@
                     android:textColor="@color/text_color"
                     android:textColorHint="@color/hint_text_color" />
             </LinearLayout>
-            
+
             <EditText
-                    android:id="@+id/recurringButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:background="@drawable/border_layout"
-                    android:focusable="false"
-                    android:gravity="left"
-                    android:hint="Make this event recurring (Optional)"
-                    android:maxLength="255"
-                    android:maxLines="1"
-                    android:minLines="1"
-                    android:onClick="selectRecurring"
-                    android:padding="10dp"
-                    android:textColor="@color/text_color"
-                    android:textColorHint="@color/hint_text_color" />
+                android:id="@+id/recurringButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:background="@drawable/border_layout"
+                android:focusable="false"
+                android:gravity="left"
+                android:hint="Make this event recurring (Optional)"
+                android:maxLength="255"
+                android:maxLines="1"
+                android:minLines="1"
+                android:onClick="selectRecurring"
+                android:padding="10dp"
+                android:textColor="@color/text_color"
+                android:textColorHint="@color/hint_text_color" />
 
             <TextView
                 android:id="@+id/eventLocationLabelTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:background="@color/black"
                 android:gravity="left"
-                android:layout_marginTop="5dp"
                 android:padding="5dp"
                 android:text="Location"
                 android:textColor="@color/white" />
@@ -280,12 +278,12 @@
                     android:textColor="@color/text_color"
                     android:textColorHint="@color/hint_text_color" />
             </LinearLayout>
-            
-             <TextView
+
+            <TextView
                 android:id="@+id/publicLabelTextViewEPA"
                 android:layout_width="wrap_content"
-                android:layout_marginTop="5dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:background="@color/black"
                 android:gravity="left"
                 android:padding="5dp"
@@ -296,9 +294,9 @@
                 android:id="@+id/publicButtonContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
                 android:background="@drawable/border"
-                android:orientation="horizontal" >
+                android:orientation="horizontal"
+                android:padding="5dp" >
 
                 <RadioButton
                     android:id="@+id/publicButton"

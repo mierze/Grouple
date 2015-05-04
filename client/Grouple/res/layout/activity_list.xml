@@ -9,32 +9,31 @@
         android:id="@+id/listViewLayout"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/addNewButtonLiA"
+        android:layout_above="@+id/bottomButton"
         android:layout_alignParentTop="true"
         android:layout_marginBottom="0dp"
         android:orientation="vertical"
         android:padding="0dp" >
 
+        <LinearLayout
+            android:id="@+id/sadGuyLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:background="@color/black"
+            android:orientation="vertical"
+            android:padding="20dp"
+            android:visibility="gone" />
 
-            <LinearLayout
-        android:id="@+id/sadGuyLayout"
-        android:layout_width="fill_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="20dp"
-        android:background="@color/black"
-        android:visibility="gone" />
-            <ListView
-                android:id="@+id/listView"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_margin="0dp"
-                android:orientation="vertical" />
+        <ListView
+            android:id="@+id/listView"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_margin="0dp"
+            android:orientation="vertical" />
+    </LinearLayout>
 
-
-</LinearLayout>
     <Button
-        android:id="@+id/addNewButtonLiA"
+        android:id="@+id/bottomButton"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
@@ -44,6 +43,7 @@
         android:onClick="bottomButton"
         android:text="Invite Friends"
         android:textColor="@color/button_text_color"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        android:visibility="gone" />
 
 </RelativeLayout>

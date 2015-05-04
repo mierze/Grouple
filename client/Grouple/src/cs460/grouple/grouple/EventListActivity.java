@@ -28,7 +28,8 @@ import android.widget.Toast;
 
 /**
  * 
- * @author Brett, Todd, Scott EventListActivity displays vertical event lists of
+ * @author Brett, Todd, Scott 
+ * EventListActivity displays vertical event lists of
  *         different types and performs relevant functions based on the
  *         situation and type
  */
@@ -44,22 +45,15 @@ public class EventListActivity extends BaseActivity
 
 	// CLASS-WIDE DECLARATIONS
 	private User user; // user whose current groups displayed
-	private Event event;
 	private Group group;
-	private String EMAIL; // extras passed in from the activity that called
-							// ListActivity
-	private String CONTENT; // type of content to display in list, passed in
-							// from other activities
-	private LinearLayout listViewLayout; // layout for list activity (scrollable
-											// layout
-	private ListView listView; // to inflate into)
-	private String ROLE = "U";// defaulting to lowest level
-	private Button addNew;
+	private String EMAIL; 
+	// type of content to display in list, passed in from other activities
+	private String CONTENT;
+	private ListView listView; 
 	private String sadGuyText = "";
 	private LinearLayout sadGuyLayout;
 	private GcmUtility gcmUtil;
 	// TESTING
-	private ArrayList<User> users;
 	private ArrayList<Event> events;
 	private int e_id;
 
@@ -70,16 +64,16 @@ public class EventListActivity extends BaseActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list);
+		
+		// grab xml views
 		listView = (ListView) findViewById(R.id.listView);
-		// INSTANTIATIONS
+		sadGuyLayout = (LinearLayout) findViewById(R.id.sadGuyLayout);
+		
+		// init variables
 		Bundle extras = getIntent().getExtras();
 		CONTENT = extras.getString("content");
 		EMAIL = extras.getString("email");
-		listViewLayout = (LinearLayout) findViewById(R.id.listViewLayout);
-		addNew = (Button) findViewById(R.id.addNewButtonLiA);
 		String actionBarTitle = "";
-		addNew.setVisibility(View.GONE); // GONE FOR NOW
-		sadGuyLayout = (LinearLayout) findViewById(R.id.sadGuyLayout);
 		try
 		{
 			gcmUtil = new GcmUtility(GLOBAL);
@@ -89,12 +83,13 @@ public class EventListActivity extends BaseActivity
 
 		}
 
-		// GRABBING A USER
+		// get a user
 		if (EMAIL != null)
 			user = GLOBAL.getUser(EMAIL);
 		else
 			user = GLOBAL.getCurrentUser();
 
+		//check for group to grab
 		if (CONTENT != null)
 			if (CONTENT.equals(CONTENT_TYPE.GROUP_PAST.toString())
 					|| CONTENT.equals(CONTENT_TYPE.GROUP_PENDING.toString())
@@ -102,10 +97,8 @@ public class EventListActivity extends BaseActivity
 			{
 				group = GLOBAL.getGroup(extras.getInt("g_id"));
 			}
-		// setting the bottom button gone
-		if (addNew != null)
-			addNew.setVisibility(View.GONE);
-		// setting the actionbar text
+		
+		// setting the actionbar text, sadguy text and init events to display
 		if (CONTENT.equals(CONTENT_TYPE.EVENTS_PENDING.toString()))
 		{
 			events = user.getEventsPending();
@@ -154,10 +147,7 @@ public class EventListActivity extends BaseActivity
 			sadGuyText = "You do not have any events declined.";
 			actionBarTitle = user.getFirstName() + "'s Declined Events";
 		}
-
-		// calling next functions to execute
 		initActionBar(actionBarTitle, true);
-
 	}
 
 	@Override
@@ -165,7 +155,6 @@ public class EventListActivity extends BaseActivity
 	{
 		LocalBroadcastManager.getInstance(this).unregisterReceiver(dataReceiver);
 		super.onPause();
-
 	}
 
 	@Override
@@ -221,18 +210,14 @@ public class EventListActivity extends BaseActivity
 				else if ((CONTENT.equals(CONTENT_TYPE.EVENTS_DECLINED.toString()) || CONTENT
 						.equals(CONTENT_TYPE.EVENTS_PAST.toString())) && startDate.compareTo(newStartDate) > 0)
 				{
-
 					startDate = newStartDate;
 					dateTextView.setText(e.getStartTextListDisplay());
-
 				}
 				else if (!(CONTENT.equals(CONTENT_TYPE.EVENTS_DECLINED.toString()) || CONTENT
 						.equals(CONTENT_TYPE.EVENTS_PAST.toString())) && startDate.compareTo(newStartDate) < 0)
 				{
-
 					startDate = newStartDate;
 					dateTextView.setText(e.getStartTextListDisplay());
-
 				}
 				else
 				{
@@ -307,7 +292,7 @@ public class EventListActivity extends BaseActivity
 		}
 	}
 
-
+	//fetching appropriate data to display
 	private void fetchData()
 	{
 		if (CONTENT.equals(CONTENT_TYPE.EVENTS_UPCOMING.toString()))

@@ -278,13 +278,13 @@ public class GroupProfileActivity extends BaseActivity
 			}
 			if (group.getNumEventsPending() > 0)
 			{
-				pastButton.setText("Pending Group Events\n(" + group.getNumEventsPending() + ")");
-				pastButton.setVisibility(View.VISIBLE);
+				pendingButton.setText("Pending Group Events\n(" + group.getNumEventsPending() + ")");
+				pendingButton.setVisibility(View.VISIBLE);
 			}
 			if (group.getNumEventsUpcoming() > 0)
 			{
-				pastButton.setText("Upcoming Group Events\n(" + group.getNumEventsUpcoming() + ")");
-				pastButton.setVisibility(View.VISIBLE);
+				upcomingButton.setText("Upcoming Group Events\n(" + group.getNumEventsUpcoming() + ")");
+				upcomingButton.setVisibility(View.VISIBLE);
 			}
 			membersButton.setText("Members\n(" + group.getNumUsers() + ")");
 			membersButton.setVisibility(View.VISIBLE);
@@ -346,6 +346,7 @@ public class GroupProfileActivity extends BaseActivity
 		intent.putExtra("email", user.getEmail());
 		startActivity(intent);
 	}
+	
 	public void pastButton(View view)
 	{
 		Intent intent = new Intent(this, EventListActivity.class);
@@ -386,7 +387,7 @@ public class GroupProfileActivity extends BaseActivity
 		if (group.getImage() != null)
 			iv.setImageBitmap(group.getImage());
 		else
-			iv.setImageResource(R.drawable.group_image_default);
+			iv.setImageResource(R.drawable.image_default);
 		iv.setScaleType(ScaleType.CENTER_CROP);
 		setExperience();
 		initXpBar();

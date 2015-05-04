@@ -37,35 +37,27 @@ import android.widget.Toast;
  * functions based on the situation and type
  */
 public class GroupListActivity extends BaseActivity
-{
-	/*
-	 * All possible content types that list activity supports
-	 */
+{ 
+	// all possible content types that this list activity supports
 	enum CONTENT_TYPE
 	{
 		GROUPS_CURRENT, GROUP_INVITES;
 	}
-
-	// LIST-VIEW STUFF
+	
+	//groups to display
 	private ArrayList<Group> groups;
-
 	// CLASS-WIDE DECLARATIONS
 	private User user; // user whose current groups displayed
-	private Group group;
 	private LinearLayout sadGuyLayout;
-	private String EMAIL; // extras passed in from the activity that called
-							// ListActivity
-	private String CONTENT; // type of content to display in list, passed in
-							// from other activities
-	private ListView listView; // layout for list activity (scrollable layout to
-								// inflate into)
-	private LinearLayout listViewLayout;
-	private String ROLE = "U";// defaulting to lowest level
-	private Button addNew;
+	// extras passed in from the activity that called ListActivity
+	private String EMAIL; 
+	// type of content to display in list, passed in from other activities
+	private String CONTENT; 
+	// layout for list activity (scrollable layout to inflate into)
+	private ListView listView;
+	//optional button to have at the bottom of the list
+	private Button bottomButton;
 
-
-
-	// DEFAULT METHODS BELOW
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -73,26 +65,17 @@ public class GroupListActivity extends BaseActivity
 		setContentView(R.layout.activity_list);
 		//grabbing xml elements
 		listView = (ListView) findViewById(R.id.listView);
-		listViewLayout = (LinearLayout) findViewById(R.id.listViewLayout);
-		addNew = (Button) findViewById(R.id.addNewButtonLiA);
-		// INSTANTIATIONS
+		bottomButton = (Button) findViewById(R.id.bottomButton);
+		sadGuyLayout = (LinearLayout) findViewById(R.id.sadGuyLayout);
+		// init variables
 		Bundle extras = getIntent().getExtras();
 		CONTENT = extras.getString("content");
 		EMAIL = extras.getString("email");
-		String actionBarTitle = "";
-		addNew.setVisibility(View.GONE); // GONE FOR NOW
-		sadGuyLayout = (LinearLayout) findViewById(R.id.sadGuyLayout);
-		// GRABBING A USER
+		// grab a user
 		if (EMAIL != null)
-		{
 			user = GLOBAL.getUser(EMAIL);
-		}
 		else
-		{
 			user = GLOBAL.getCurrentUser();
-		}
-	
-		// registerClickCallback();
 	}
 
 	@Override
@@ -100,7 +83,6 @@ public class GroupListActivity extends BaseActivity
 	{
 		LocalBroadcastManager.getInstance(this).unregisterReceiver(dataReceiver);
 		super.onPause();
-
 	}
 
 	@Override
@@ -112,16 +94,27 @@ public class GroupListActivity extends BaseActivity
 		updateUI();
 	}
 
+	// This listens for pings from the data service to let it know that there
+	// are updates
+	private BroadcastReceiver dataReceiver = new BroadcastReceiver()
+	{
+		@Override
+		public void onReceive(Context context, Intent intent)
+		{
+			// repopulate views
+			updateUI();
+		}
+	};
 	
+	//fetching data to display
 	private void fetchData()
 	{
-		if (user != null)
-		{
+		if (CONTENT.equals(CONTENT_TYPE.GROUP_INVITES.toString()))
 			user.fetchGroupInvites(this);
-			user.fetchGroups(this);
-		}
-		
+		else
+			user.fetchGroups(this);		
 	}
+	
 	private class GroupListAdapter extends ArrayAdapter<Group>
 	{
 		public GroupListAdapter()
@@ -173,21 +166,6 @@ public class GroupListActivity extends BaseActivity
 		}
 	}
 
-	
-	// This listens for pings from the data service to let it know that there
-	// are updates
-	private BroadcastReceiver dataReceiver = new BroadcastReceiver()
-	{
-		@Override
-		public void onReceive(Context context, Intent intent)
-		{
-			// Extract data included in the Intent
-			String type = intent.getStringExtra("message");
-			// repopulate views
-			updateUI();
-		}
-	};
-
 
 	// populates a list of groups
 	// populateListView
@@ -230,7 +208,6 @@ public class GroupListActivity extends BaseActivity
 			listView.setVisibility(View.GONE);
 			sadGuyLayout.addView(sadGuyView);
 		}
-
 	}
 
 
@@ -328,7 +305,6 @@ public class GroupListActivity extends BaseActivity
 							message = "Group invite declined!";
 					}
 					fetchData();
-
 					Toast toast = GLOBAL.getToast(context, message);
 					toast.show();
 				}

@@ -17,8 +17,7 @@ import android.view.View;
 import android.widget.ImageView.ScaleType;
 
 /**
- * @author Brett, Todd, Scott 
- * UserDataService fetches user data from our server
+ * @author Brett, Todd, Scott UserDataService fetches user data from our server
  */
 public class UserDataService extends Service
 {
@@ -66,18 +65,11 @@ public class UserDataService extends Service
 		else if (fetch.equals(fetch_TYPE.IMAGE.toString()))
 			new getImageTask().execute("http://68.59.162.183/android_connect/get_profile_image.php");
 		else if (fetch.equals(fetch_TYPE.FRIENDS_CURRENT.toString()))
-		{
-			// TODO: switch this php to POST and make it nice nice
 			new getFriendsTask().execute("http://68.59.162.183/android_connect/get_friends.php?email="
 					+ user.getEmail());
-		}
 		else if (fetch.equals(fetch_TYPE.FRIEND_INVITES.toString()))
-		{
-			// TODO: changing this to friend_invites throughout php / app
-			// also make this a post too
 			new getFriendInvitesTask().execute("http://68.59.162.183/android_connect/get_friend_requests.php?receiver="
 					+ user.getEmail());
-		}
 		else if (fetch.equals(fetch_TYPE.GROUPS_CURRENT.toString()))
 			new getGroupsTask().execute("http://68.59.162.183/android_connect/get_groups.php?email=" + user.getEmail());
 		else if (fetch.equals(fetch_TYPE.GROUP_INVITES.toString()))
@@ -100,20 +92,12 @@ public class UserDataService extends Service
 		else if (fetch.equals(fetch_TYPE.EXPERIENCE.toString()))
 			new getExperienceTask().execute("http://68.59.162.183/android_connect/get_user_experience.php");
 		else if (fetch.equals(fetch_TYPE.CONTACTS.toString()))
-		{
 			new getContactsTask().execute("http://68.59.162.183/android_connect/get_recent_contacts.php");
-		}
 		else if (fetch.equals(fetch_TYPE.MESSAGES.toString()))
-		{
-
 			new getMessagesTask().execute("http://68.59.162.183/android_connect/get_messages.php", extra);
-
-		}
-
 	}
 
-	// fetchES BELOW
-	// USER fetchES BELOW
+	// FETCHES ARE BELOW
 	private class getInfoTask extends AsyncTask<String, Void, String>
 	{
 		@Override
@@ -204,6 +188,7 @@ public class UserDataService extends Service
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
+				user.getUsers().clear();
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					// gotta make a json array
@@ -212,7 +197,7 @@ public class UserDataService extends Service
 					{
 						JSONObject o = (JSONObject) jsonArray.get(i);
 						// function adds friend to the friends map
-						User u = new User(o.getString("email"));
+						User u = GLOBAL.getUser(o.getString("email"));
 						u.setName(o.getString("first") + " " + o.getString("last"));
 						user.addToUsers(u);
 					}
@@ -246,6 +231,7 @@ public class UserDataService extends Service
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
+				user.getFriendRequests().clear();
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					// gotta make a json array
@@ -257,9 +243,10 @@ public class UserDataService extends Service
 						// 'first last'
 						JSONObject o = (JSONObject) jsonArray.get(i);
 						// function adds friend to the friends map
-						user.addToFriendRequests(new User(o.getString("email")));
+						User u = GLOBAL.getUser(o.getString("email"));
+						user.addToFriendRequests(u);
 					}
-					
+
 				}
 				// user has no friend requests
 				if (jsonObject.getString("success").toString().equals("2"))
@@ -290,18 +277,17 @@ public class UserDataService extends Service
 			{
 				// need to get gid, gname for each and put them in hashmap
 				JSONObject jsonObject = new JSONObject(result);
+				user.getGroups().clear();
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					// gotta make a json array
-
 					JSONArray jsonArray = jsonObject.getJSONArray("groups");
-					user.getGroups().clear();
 					// looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
 						JSONObject o = (JSONObject) jsonArray.get(i);
 						// function adds friend to the friends map
-						Group g = new Group(Integer.parseInt(o.getString("gid")));
+						Group g = GLOBAL.getGroup(Integer.parseInt(o.getString("gid")));
 						g.setName(o.getString("gname"));
 						user.addToGroups(g);
 					}
@@ -339,7 +325,7 @@ public class UserDataService extends Service
 				{
 					// gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("invites");
-					
+
 					// looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
@@ -347,12 +333,12 @@ public class UserDataService extends Service
 						// 'first last'
 						JSONObject o = (JSONObject) jsonArray.get(i);
 						// function adds friend to the friends map
-						Group g = new Group(Integer.parseInt(o.getString("gid")));
+						Group g = GLOBAL.getGroup(Integer.parseInt(o.getString("gid")));
 						g.setName(o.getString("gname"));
 						g.setInviter(o.getString("sender"));
 						user.addToGroupInvites(g);
 					}
-					
+
 				}
 				// user has no group invites
 				if (jsonObject.getString("success").toString().equals("2"))
@@ -385,16 +371,17 @@ public class UserDataService extends Service
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
+				user.getEventsUpcoming().clear();
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					// gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("eventsUpcoming");
-					user.getEventsUpcoming().clear();
+
 					// looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
 						JSONObject o = (JSONObject) jsonArray.get(i);
-						Event e = new Event(Integer.parseInt(o.getString("eid")));
+						Event e = GLOBAL.getEvent(Integer.parseInt(o.getString("eid")));
 						e.setName(o.getString("name"));
 						e.setStartDate(o.getString("startDate"));
 						user.addToEventsUpcoming(e);
@@ -430,17 +417,17 @@ public class UserDataService extends Service
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
+				user.getEventsPending().clear();
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					// gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("eventsPending");
-					user.getEventsPending().clear();
 					// looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
 						JSONObject o = (JSONObject) jsonArray.get(i);
 						// function adds friend to the friends map
-						Event e = new Event(o.getInt("e_id"));
+						Event e = GLOBAL.getEvent(o.getInt("e_id"));
 						e.setName(o.getString("name"));
 						e.setInviter(o.getString("sender"));
 						e.setMinPart(o.getInt("minPart"));
@@ -482,17 +469,17 @@ public class UserDataService extends Service
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
+				user.getEventsDeclined().clear();
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					// gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("eventsDeclined");
-					user.getEventsDeclined().clear();
 					// looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
 						JSONObject o = (JSONObject) jsonArray.get(i);
 						// function adds friend to the friends map
-						Event e = new Event(o.getInt("e_id"));
+						Event e = GLOBAL.getEvent(o.getInt("e_id"));
 						e.setName(o.getString("name"));
 						e.setMinPart(o.getInt("minPart"));
 						e.setMaxPart(o.getInt("maxPart"));
@@ -532,17 +519,17 @@ public class UserDataService extends Service
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
+				user.getEventsPast().clear();
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					// gotta make a json array
 					JSONArray jsonArray = jsonObject.getJSONArray("eventsPast");
-					user.getEventsPast().clear();
 					// looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
 						JSONObject o = (JSONObject) jsonArray.get(i);
 						// function adds friend to the friends map
-						Event e = new Event(o.getInt("e_id"));
+						Event e = GLOBAL.getEvent(o.getInt("e_id"));
 						e.setName(o.getString("name"));
 						e.setInviter(o.getString("sender"));
 						e.setMinPart(o.getInt("minPart"));
@@ -587,14 +574,14 @@ public class UserDataService extends Service
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					// gotta make a json array
-					
+
 					JSONArray jsonArray = jsonObject.getJSONArray("eventsInvites");
-					
+
 					// looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
 						JSONObject o = (JSONObject) jsonArray.get(i);
-						Event e = new Event(o.getInt("e_id"));
+						Event e = GLOBAL.getEvent(o.getInt("e_id"));
 						e.setName(o.getString("name"));
 						e.setInviter(o.getString("sender"));
 						e.setMinPart(o.getInt("minPart"));
@@ -679,7 +666,6 @@ public class UserDataService extends Service
 			}
 		}
 	}
-	
 
 	private class getNewBadgesTask extends AsyncTask<String, Void, String>
 	{
@@ -855,9 +841,10 @@ public class UserDataService extends Service
 		protected String doInBackground(String... urls)
 		{
 			String sender = urls[1];
+			String receiver = user.getEmail();
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("sender", sender));
-			nameValuePairs.add(new BasicNameValuePair("receiver", user.getEmail()));
+			nameValuePairs.add(new BasicNameValuePair("receiver", receiver));
 			return GLOBAL.readJSONFeed(urls[0], nameValuePairs);
 		}
 
@@ -867,19 +854,19 @@ public class UserDataService extends Service
 			try
 			{
 				JSONObject jsonObject = new JSONObject(result);
+				if (user.getMessages(extra) != null) user.getMessages(extra).clear();
 				if (jsonObject.getString("success").toString().equals("1"))
 				{
 					JSONArray jsonArray = jsonObject.getJSONArray("messages");
-					user.getMessages(extra).clear();
 					// looping thru array
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
 						JSONObject o = (JSONObject) jsonArray.get(i);
 						Message m = new Message(o.getString("message"), o.getString("send_date"),
 								o.getString("sender"), "name", o.getString("receiver"), null);
-						user.addToMessages(extra, m); // adding message to message array
+						user.addToMessages(extra, m); // adding message to
+														// message array
 					}
-			
 				}
 				// user has no friends
 				if (jsonObject.getString("success").toString().equals("2"))
