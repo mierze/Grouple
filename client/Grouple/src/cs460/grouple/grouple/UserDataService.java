@@ -2,19 +2,19 @@ package cs460.grouple.grouple;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import android.support.v4.content.LocalBroadcastManager;
+
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.view.View;
-import android.widget.ImageView.ScaleType;
 
 /**
  * @author Brett, Todd, Scott UserDataService fetches user data from our server

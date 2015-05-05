@@ -1,8 +1,9 @@
 package cs460.grouple.grouple;
+
 /**
  * 
- * @author Brett, Todd, Scott
- * Badge holds information about an individual user reward
+ * @author Brett, Todd, Scott Badge holds information about an individual user
+ *         reward
  */
 public class Badge
 {
@@ -132,7 +133,7 @@ public class Badge
 				}
 			else
 				imageID = R.drawable.badge_unknown;
-			
+
 		}
 		else if (name.equals("Productive"))
 		{
@@ -239,7 +240,7 @@ public class Badge
 			else
 				imageID = R.drawable.badge_unknown;
 		}
-		
+
 		return imageID;
 	}
 
@@ -272,62 +273,132 @@ public class Badge
 		this.name = name;
 	}
 
-
 	protected int getAboutID(int level)
 	{
 		if (name.equals("Environmentalist"))
 		{
-			aboutID = R.string.environmentalist_about;
+			if (level > 0)
+				aboutID = R.string.environmentalist_about;
+			else
+				aboutID = R.string.environmentalist_hint;
+		}
+		if (name.equals("Reaching Out"))
+		{
+			if (level > 0)
+				aboutID = R.string.reachingout_about;
+			else
+				aboutID = R.string.reachingout_hint;
 		}
 		else if (name.equals("Gregarious"))
 		{
-			aboutID = R.string.gregarious_about;
+			if (level > 0)
+				aboutID = R.string.gregarious_about;
+			else
+				aboutID = R.string.gregarious_hint;
 		}
 		else if (name.equals("Health Nut"))
 		{
-			aboutID = R.string.healthnut_about;
+			if (level > 0)
+				aboutID = R.string.healthnut_about;
+			else
+				aboutID = R.string.healthnut_hint;
 		}
 		else if (name.equals("Active"))
 		{
-			aboutID = R.string.active_about;
+			if (level > 0)
+				aboutID = R.string.active_about;
+			else
+				aboutID = R.string.active_hint;
 		}
 		else if (name.equals("Amused"))
 		{
-			aboutID = R.string.amused_about;
+			if (level > 0)
+				aboutID = R.string.amused_about;
+			else
+				aboutID = R.string.amused_hint;
 		}
 		else if (name.equals("Extrovert"))
 		{
-			aboutID = R.string.extrovert_about;
+			if (level > 0)
+				aboutID = R.string.extrovert_about;
+			else
+				aboutID = R.string.extrovert_hint;
 		}
 		else if (name.equals("Congregator"))
 		{
-			aboutID = R.string.congregator_about;
+			if (level > 0)
+				aboutID = R.string.congregator_about;
+			else
+				aboutID = R.string.congregator_hint;
 		}
-		//else if (name.equals("Creator"))
-		//{
-		//	aboutID = R.string.creator_about;
-		//}
+		// else if (name.equals("Creator"))
+		// {
+		// aboutID = R.string.creator_about;
+		// }
 		else if (name.equals("Well Rounded"))
 		{
-			aboutID = R.string.wellrounded_about;
+			if (level > 0)
+				aboutID = R.string.wellrounded_about;
+			else
+				aboutID = R.string.wellrounded_hint;
 		}
-		else if (name.equals("Productive"))
+		else if (name.equals("Perseverance"))
 		{
-			aboutID = R.string.perseverance_about;
+			if (level > 0)
+				aboutID = R.string.perseverance_about;
+			else
+				aboutID = R.string.perseverance_hint;
 		}
 		else if (name.equals("Outdoorsman"))
 		{
-			aboutID = R.string.outdoorsman_about;
+			if (level > 0)
+				aboutID = R.string.outdoorsman_about;
+			else
+				aboutID = R.string.outdoorsman_hint;
 		}
 		else if (name.equals("Merrymaker"))
 		{
-			aboutID = R.string.merrymaker_about;
+			if (level > 0)
+				aboutID = R.string.merrymaker_about;
+			else
+				aboutID = R.string.merrymaker_hint;
+		}
+		else if (name.equals("Regular"))
+		{
+			if (level > 0)
+				aboutID = R.string.regular_about;
+			else
+				aboutID = R.string.regular_hint;
+		}
+		else if (name.equals("Productive"))
+		{
+			if (level > 0)
+				aboutID = R.string.productive_about;
+			else
+				aboutID = R.string.productive_hint;
+		}
+		else if (name.equals("Mingler"))
+		{
+			if (level > 0)
+				aboutID = R.string.mingler_about;
+			else
+				aboutID = R.string.mingler_hint;
+		}
+		else if (name.equals("Helping Hand"))
+		{
+			if (level > 0)
+				aboutID = R.string.helpinghand_about;
+			else
+				aboutID = R.string.helpinghand_hint;
 		}
 		else
 		{
-			aboutID = R.string.routinist_hint;
+			if (level > 0)
+				aboutID = R.string.routinist_about;
+			else
+				aboutID = R.string.routinist_hint;
 		}
-		
+
 		return aboutID;
 
 	}
@@ -341,7 +412,6 @@ public class Badge
 	{
 		this.level = level;
 	}
-
 
 	protected void setImageID(int imageID)
 	{

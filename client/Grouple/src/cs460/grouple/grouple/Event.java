@@ -1,19 +1,8 @@
 package cs460.grouple.grouple;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import android.content.Context;
-import android.os.AsyncTask;
-import android.util.Log;
 
 /**
  * 

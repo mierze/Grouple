@@ -2,21 +2,19 @@ package cs460.grouple.grouple;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import cs460.grouple.grouple.GcmIntentService.CONTENT_TYPE;
-import android.support.v4.content.LocalBroadcastManager;
 
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.ImageView.ScaleType;
 
 /**
  * 

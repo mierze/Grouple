@@ -2,25 +2,14 @@ package cs460.grouple.grouple;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import cs460.grouple.grouple.UserDataService;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import android.annotation.SuppressLint;
+
 import android.content.Context;
-import android.os.AsyncTask;
-import android.util.Log;
 import android.util.SparseArray;
 
 /**
