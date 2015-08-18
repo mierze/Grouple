@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:layout_margin="0dp"
+    android:background="@color/actionbar_background_color"
+    android:orientation="horizontal" >
+
+    
+
+       <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="0dp"
+        android:onClick="backButton"
+        android:background="@color/actionbar_background_color"
+        android:padding="5dp"
+        android:src="@drawable/icon_back" />
+        
+	   <TextView
+	    android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/button_text_color"
+        android:fontFamily="sans-serif"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold"
+		android:layout_centerVertical="true"
+		android:gravity="center"
+		android:layout_gravity="center"
+		android:layout_toRightOf="@+id/backButton"
+        android:id="@+id/actionbarTitleTextView" />
+
+      
+
+</RelativeLayout><!-- From: file:/Users/brett/Documents/Mierzelancing/Workspaces/grouple-workspace/Grouple/app/src/main/res/layout/actionbar.xml -->

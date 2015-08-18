@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/deleteEventLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_margin="20dp"
+    android:background="@color/background_color"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="0dp" >
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:padding="0dp" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border"
+            android:orientation="vertical" >
+
+            <TextView
+                    android:id="@+id/eventsParticipatedlabelTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="2"
+                    android:fontFamily="sans-serif-condensed"
+                    android:gravity="left"
+                    android:text="Events Participated In"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                                        android:background="@color/black"
+                     android:padding="10dp"
+                    android:textColor="@color/button_text_color" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/border"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/socialLabelTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_weight="2"
+                    android:fontFamily="sans-serif-condensed"
+                    android:gravity="left"
+                    android:padding="5dp"
+                    android:text="Social"
+                    android:textColor="@color/text_color" />
+
+                <TextView
+                    android:id="@+id/socialTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_weight="1"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-condensed"
+                    android:gravity="right"
+                    android:padding="5dp"
+                    android:text="Social Events"
+                    android:textColor="@color/text_color" />
+            </LinearLayout>
+                        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/border"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/entertainmentLabelTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_weight="2"
+                    android:fontFamily="sans-serif-condensed"
+                    android:gravity="left"
+                    android:padding="5dp"
+                    android:text="Entertainment"
+                    android:textColor="@color/text_color" />
+
+                <TextView
+                    android:id="@+id/entertainmentTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_weight="1"
+                    android:fontFamily="sans-serif-condensed"
+                    android:gravity="right"
+                    android:padding="5dp"
+                    android:text="Social Events"
+                    android:textColor="@color/text_color" />
+            </LinearLayout>
+                        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/border"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/professionalLabelTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_weight="2"
+                    android:fontFamily="sans-serif-condensed"
+                    android:gravity="left"
+                    android:padding="5dp"
+                    android:text="Professional"
+                    android:textColor="@color/text_color" />
+
+                <TextView
+                    android:id="@+id/professionalTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="0dp"
+                    android:layout_weight="1"
+                    android:fontFamily="sans-serif-condensed"
+                    android:gravity="right"
+                    android:padding="5dp"
+                    android:text="Social Events"
+                    android:textColor="@color/text_color" />
+            </LinearLayout>
+                        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/border"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/fitnessLabelTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_weight="2"
+                    android:fontFamily="sans-serif-condensed"
+                    android:gravity="left"
+                    android:padding="5dp"
+                    android:text="Fitness"
+                    android:textColor="@color/text_color" />
+
+                <TextView
+                    android:id="@+id/fitnessTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="0dp"
+                    android:textStyle="bold"
+                    android:layout_weight="1"
+                    android:fontFamily="sans-serif-condensed"
+                    android:gravity="right"
+                    android:padding="5dp"
+                    android:text="Fitness"
+                    android:textColor="@color/text_color" />
+            </LinearLayout>
+                        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/border"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/natureLabelTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_weight="2"
+                    android:fontFamily="sans-serif-condensed"
+                    android:gravity="left"
+                    android:padding="5dp"
+                    android:text="Nature"
+                    android:textColor="@color/text_color" />
+
+                <TextView
+                    android:id="@+id/natureTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="0dp"
+                    android:textStyle="bold"
+                    android:layout_weight="1"
+                    android:fontFamily="sans-serif-condensed"
+                    android:gravity="right"
+                    android:padding="5dp"
+                    android:text="Social Events"
+                    android:textColor="@color/text_color" />
+            </LinearLayout>
+              <TextView
+                    android:id="@+id/eventsCreatedlabelTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:layout_weight="2"
+                    android:fontFamily="sans-serif-condensed"
+                    android:gravity="left"
+                    android:background="@color/black"
+                    android:padding="10dp"
+                    android:text="Events Created"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:textColor="@color/button_text_color" />
+                       <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/border"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/socialCreateLabelTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_weight="2"
+                    android:fontFamily="sans-serif-condensed"
+                    android:gravity="left"
+                    android:padding="5dp"
+                    android:text="Social"
+                    android:textColor="@color/text_color" />
+
+                <TextView
+                    android:id="@+id/socialCreateTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="0dp"
+                    android:textStyle="bold"
+                    android:layout_weight="1"
+                    android:fontFamily="sans-serif-condensed"
+                    android:gravity="right"
+                    android:padding="5dp"
+                    android:text="Social Events"
+                    android:textColor="@color/text_color" />
+            </LinearLayout>
+                        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/border"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/entertainmentCreateLabelTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_weight="2"
+                    android:fontFamily="sans-serif-condensed"
+                    android:gravity="left"
+                    android:padding="5dp"
+                    android:text="Entertainment"
+                    android:textColor="@color/text_color" />
+
+                <TextView
+                    android:id="@+id/entertainmentCreateTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="0dp"
+                    android:layout_weight="1"
+                    android:fontFamily="sans-serif-condensed"
+                    android:gravity="right"
+                    android:padding="5dp"
+                    android:text="Social Events"
+                    android:textColor="@color/text_color" />
+            </LinearLayout>
+                        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/border"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/professionalCreateLabelTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_weight="2"
+                    android:fontFamily="sans-serif-condensed"
+                    android:gravity="left"
+                    android:padding="5dp"
+                    android:text="Professional"
+                    android:textColor="@color/text_color" />
+
+                <TextView
+                    android:id="@+id/professionalCreateTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="0dp"
+                    android:textStyle="bold"
+                    android:layout_weight="1"
+                    android:fontFamily="sans-serif-condensed"
+                    android:gravity="right"
+                    android:padding="5dp"
+                    android:text="Social Events"
+                    android:textColor="@color/text_color" />
+            </LinearLayout>
+                        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/border"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/fitnessCreateLabelTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_weight="2"
+                    android:fontFamily="sans-serif-condensed"
+                    android:gravity="left"
+                    android:padding="5dp"
+                    android:text="Fitness"
+                    android:textColor="@color/text_color" />
+
+                <TextView
+                    android:id="@+id/fitnessCreateTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="0dp"
+                    android:textStyle="bold"
+                    android:layout_weight="1"
+                    android:fontFamily="sans-serif-condensed"
+                    android:gravity="right"
+                    android:padding="5dp"
+                    android:text="Social Events"
+                    android:textColor="@color/text_color" />
+            </LinearLayout>
+                        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/border"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/natureCreateLabelTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_weight="2"
+                    android:fontFamily="sans-serif-condensed"
+                    android:gravity="left"
+                    android:padding="5dp"
+                    android:text="Nature"
+                    android:textColor="@color/text_color" />
+
+                <TextView
+                    android:id="@+id/natureCreateTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_weight="1"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-condensed"
+                    android:gravity="right"
+                    android:padding="5dp"
+                    android:text="Social Events"
+                    android:textColor="@color/text_color" />
+            </LinearLayout>
+              <TextView
+                    android:id="@+id/miscLabelTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                  
+                    android:layout_marginTop="3dp"
+                    android:layout_weight="2"
+                    android:fontFamily="sans-serif-condensed"
+                    android:gravity="left"
+                    android:padding="10dp"
+                    android:text="Miscellaneous"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:background="@color/black"
+                    android:textColor="@color/button_text_color" />
+                                      <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/border"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/itemsBroughtLabelTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_weight="2"
+                    android:fontFamily="sans-serif-condensed"
+                    android:gravity="left"
+                    android:padding="5dp"
+                    android:text="Items Brought"
+                    android:textColor="@color/text_color" />
+
+                <TextView
+                    android:id="@+id/itemsBroughtTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_weight="1"
+                    android:fontFamily="sans-serif-condensed"
+                    android:gravity="right"
+                    android:padding="5dp"
+                    android:textStyle="bold"
+                    android:text="Social Events"
+                    android:textColor="@color/text_color" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout><!-- From: file:/Users/brett/Documents/Mierzelancing/Workspaces/grouple-workspace/Grouple/app/src/main/res/layout/dialog_user_statistics.xml -->
