@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<div id="friends">
+    <!-- PANDA modal pop up for adding friend? Maybe search by name -->
+    <a class='btn' onclick="showAddFriend()">Add Friend</a>
+    <a class='btn' ui-sref="friend-list">Current Friends</a>
+    <a class='btn' href="user-list.html?content=friend_invites">Friend Invites</a>
+    <div class='modal' id='addfriend-modal'>
+        <div ng-controller="AddFriendController">
+            <a onclick='closeAddFriend()' class="close">X</a>
+            <h5>Add a friend!</h5>
+            <input type="email" name='email' id='email' ng-model="invite.receiver"/>
+            <button ng-click="sendInvite()">Send Invite</button>
+        </div>
+    </div>
+</div>

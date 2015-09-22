@@ -1,0 +1,29 @@
+<div class='modal' id='editprofile-modal' ng-cloak>
+    <div>
+        <a onclick='closeEditProfile()' class="close">X</a>
+        <h5 ng-cloak>{{info.name}}</h5>
+        <form novalidate ng-submit="eventEdit.save(info)" ng-cloak>
+            <input type="text" name='name' id="name" placeholder="Name" required ng-model="info.name" ng-cloak/>
+            <input type="text" name='about' id='about' placeholder="About Event" ng-model="info.about" ng-cloak />
+            <input type="text" name='location' id='location' placeholder="Location" ng-model="info.location" ng-cloak />
+            
+            <select name="category" id='category' placeholder="Select category..." required ng-model="info.category" ng-cloak>
+                <option>Entertainment</option>
+                <option>Social</option>
+                <option>Sports and Games</option>
+                <option>Fitness</option>
+                <option>Nature</option>
+            <input type="date" name="start-date" id="start-date" placeholder="Start Date" required ng-model="info.startDate" ng-cloak/>
+            <input type="date" name="end-date" id='end-date' placeholder="End Date" ng-model="info.endDate" ng-cloak />
+            <input type="text" name="min-part" id='location' placeholder="Min Participants" ng-model="info.minPart" ng-cloak />
+            <input type="text" name="max-part" id="name" placeholder="Max Participants" ng-model="info.maxPart" ng-cloak/>
+            <select name="rec-type" id='rec-type' placeholder="Recurring event?" ng-model="info.recType" ng-cloak />
+            <label>
+                Public / Private
+                <input type="radio" name="public" id="true" />
+                <input type="radio" name="public" id="false" />
+            </label>
+            <input class='btn' type='submit' value='Save' />
+        </form>
+    </div>
+</div>

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<div id="user-profile" ng-init="init('user')">
+    <h1 ng-cloak>{{info.first}} {{info.last}}</h1>
+    <img ng-src="{{info.image}}" alt="Profile Image" ng-cloak/>
+    <section>
+        <em ng-cloak>{{info.age}} yrs young</em>
+        <strong ng-cloak>{{info.location}}</strong>
+        <p ng-cloak>{{info.about}}</p>
+    </section>
+    <a class='btn' href="home.html">Back</a>
+    <!--PANDA make all modals there own directive -->
+    <button onclick="showEditProfile()" ng-show="editable">Edit Profile</button>
+    <user-edit></user-edit>
+</div>

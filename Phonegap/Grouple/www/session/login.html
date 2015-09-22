@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<div id="login">
+    <h1>Grouple</h1>
+    <div class='dev-box'>
+        <h4>CROSS-PLATFORM DEVELOPMENT UNDERWAY</h4>
+        <strong><em>Estimated release date: 10/1/15</br>Stay tuned!</em></strong>
+        <div class='dev-patch'>
+            <h5>Version (0.0.7) Patch Notes</h5>
+            <p>1. Basic login / registration functionality.</p>
+            <p>2. All user/group/event lists being populated.</p>
+            <p>3. Primitive add friend functionality.</p>
+            <p>4. User/group/event profile primitives.</p>
+            <p>5. User messages being populated.</p>
+            <p style="text-align:center">Android version still operational, but looking to replace that version with this upon completion.</p>
+            <em style="text-align:center">Using HTML5/Javascript/CSS/PHP/Angular.JS</em>
+        </div>
+    </div>
+    <form novalidate ng-submit="login()">
+        <fieldset>
+            <input type="email" name="email" placeholder="Email" required ng-model="user.email" />
+            <input type="password" placeholder="Password" required ng-model="user.password" />
+            <label><!-- PANDA TODO check best practice for labels -->
+                Stay logged in?
+                <input type="checkbox" ng-model="user.stayLogged" ng-cloak />
+            </label>
+            <input class='btn' type="submit" value="Login" />
+            <pre>output is: {{user | json}}</pre>
+        </fieldset>
+    </form>
+    <p>Don't have an account!?</p>
+    <a class='btn' ui-sref="register">Register</a>
+</div>
