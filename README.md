@@ -1,13 +1,13 @@
 # Grouple (c) 2015
-# Social app for organizing events among friend groups
-# Get out and Grouple!
+- Social app for organizing events among friend groups
+- Get out and Grouple!
 
-ANDROID
+#ANDROID
 @authors
 	Brett Stetson
 	Scott Krumwiede
 	Todd Feipel
 
-PHONEGAP
+#PHONEGAP
 @authors
 	Brett Stetson
