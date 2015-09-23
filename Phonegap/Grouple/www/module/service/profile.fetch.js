@@ -14,7 +14,6 @@
             else
                 this.post.id = id; 
             this.post.user = storage.getItem("email");
-            alert("URL:" + this.url + "\npost:" + JSON.stringify(this.post));
             $http(
             { //http request to fetch list from server PANDA refactor out this
                 method  : 'POST',

@@ -10,7 +10,6 @@
     //PANDA: need to check rank in group / event so that can show or hide editable
     $scope.init = function(type)
     { //start init function
-      alert("INIT PROFILE START -" + type + " :" +$stateParams.id);
       //could use stateParams. PANDA
       
       ProfileFetcher.fetch(type, $stateParams.id, function(data)

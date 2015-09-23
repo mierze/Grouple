@@ -2,12 +2,12 @@
   //create module directives
   var storage = window.localStorage; //grab local storage
  
-  angular.module('directive')
+  angular.module('message')
   //message row directive
   .directive("messageRow", function() {
     return {
       restrict: 'E',
-      templateUrl: "message/partial/message-row.html",
+      templateUrl: "module/message/layout/partial/message-row.html",
       controller: function()
       {
         //PANDA change to id
@@ -24,7 +24,7 @@
   .directive("contactRow", function($state) {
     return {
       restrict: 'E',
-      templateUrl: "message/partial/contact-row.html",
+      templateUrl: "module/message/layout/partial/contact-row.html",
       controller: function()
       {
         this.startMessages = function(contact)

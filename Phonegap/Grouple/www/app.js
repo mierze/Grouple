@@ -7,8 +7,8 @@
   angular.module('list', []);
   angular.module('profile', []);
   angular.module('message', []);
+  angular.module('adder', []);
   angular.module('service', []);
-  angular.module('directive', []);
-  angular.module('grouple', ['session', 'list', 'profile', 'message', 'service', 'directive', 'ui.router']); 
+  angular.module('grouple', ['session', 'list', 'profile', 'message', 'adder', 'service', 'ui.router']); 
   //CHANGING SCREENS -> ui-sref="home" or in controller $state.go('home')
 })(); //end wrap

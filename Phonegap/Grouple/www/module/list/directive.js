@@ -2,12 +2,12 @@
   //create module directives
   var storage = window.localStorage; //grab local storage
  
-  angular.module('directive')
+  angular.module('list')
   //edit user profile directive
   .directive("userRow", function($http, $state) {
     return {
       restrict: 'E',
-      templateUrl: "list/partial/user-row.html",
+      templateUrl: "module/list/layout/partial/user-row.html",
       controller: function()
       {
         this.profile = function(id)
@@ -59,7 +59,7 @@
   .directive("groupRow", function($http, $state) {
   return {
     restrict: 'E',
-    templateUrl: "list/partial/group-row.html",
+    templateUrl: "module/list/layout/partial/group-row.html",
     controller: function()
     {
       this.profile = function(id)
@@ -113,7 +113,7 @@
   .directive("eventRow", function($http, $state) {
   return {
     restrict: 'E',
-    templateUrl: "list/partial/event-row.html",
+    templateUrl: "module/list/layout/partial/event-row.html",
     controller: function()
     {
       this.profile = function(id)

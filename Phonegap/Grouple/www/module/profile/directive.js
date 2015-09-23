@@ -2,12 +2,12 @@
   //create module directives
   var storage = window.localStorage; //grab local storage
  
-  angular.module('directive')
+  angular.module('profile')
   //edit user profile directive
   .directive("userEdit", function($http, $filter) {
   return {
     restrict: 'E',
-    templateUrl: "profile/partial/user-edit.html",
+    templateUrl: "module/profile/layout/partial/user-edit.html",
     controller: function()
     {
       this.save = function(info)
@@ -57,7 +57,7 @@
   .directive("groupEdit", function($http) {
   return {
     restrict: 'E',
-    templateUrl: "profile/partial/group-edit.html",
+    templateUrl: "module/profile/layout/partial/group-edit.html",
     controller: function()
     {
       this.save = function(info)
@@ -103,7 +103,7 @@
   .directive("eventEdit", function($http, $filter) {
   return {
     restrict: 'E',
-    templateUrl: "profile/partial/event-edit.html",
+    templateUrl: "module/profile/layout/partial/event-edit.html",
     controller: function()
     {
       this.save = function(info)

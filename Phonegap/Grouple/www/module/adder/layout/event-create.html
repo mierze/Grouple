@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<h1>Event Create</h1>
+<form novalidate ng-submit="create()" ng-cloak>
+    <input type="text" name="name" id="name" placeholder="Name" required ng-model="post.name" ng-cloak/>
+    <input type="text" name="about" id="about" placeholder="About Event" ng-model="post.about" ng-cloak />
+    <input type="text" name="location" id="location" placeholder="Location" ng-model="post.location" ng-cloak />
+    <select name="category" id="category" placeholder="Select category..." required ng-model="post.category" ng-cloak>
+        <option>Entertainment</option>
+        <option>Social</option>
+        <option>Sports and Games</option>
+        <option>Fitness</option>
+        <option>Nature</option>
+    <input type="date" name="start-date" id="start-date" placeholder="Start Date" required ng-model="post.startDate" ng-cloak/>
+    <input type="date" name="end-date" id="end-date" placeholder="End Date" ng-model="post.endDate" ng-cloak />
+    <input type="text" name="min-part" id="location" placeholder="Min Participants" ng-model="post.minPart" ng-cloak />
+    <input type="text" name="max-part" id="name" placeholder="Max Participants" ng-model="post.maxPart" ng-cloak/>
+    <select name="recurring" id="recurring" placeholder="Recurring event?" ng-model="post.recurring" ng-cloak >
+        <option value="0">Never</option>
+        <option value="7">Weekly</option>
+        <option value="14">Biweekly</option>
+        <option value="21">Once</option>
+    </select>
+    <label>
+        Public / Private
+        <input type="radio" name="public" id="true" value="1" />
+        <input type="radio" name="public" id="false" value="0" />
+    </label>
+    <input class="btn" type="submit" value="Save" />
+</form>
+<a class='btn' ui-sref="home">Home</a>

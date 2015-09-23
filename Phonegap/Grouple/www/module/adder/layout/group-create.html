@@ -2,9 +2,9 @@
 <div id="group-create">
     <h1>Group Create</h1>
     <form novalidate ng-submit="create()" ng-cloak>
-        <input type="text" name="name" id="name" placeholder="Name" required ng-model="info.name" ng-cloak/>
-        <input type="text" name="about" id="about" placeholder="About Event" ng-model="info.about" ng-cloak />
-        <input type="text" name="location" id="location" placeholder="Location" ng-model="info.location" ng-cloak />
+        <input type="text" name="name" id="name" placeholder="Name" required ng-model="post.name" ng-cloak/>
+        <input type="text" name="about" id="about" placeholder="About Event" ng-model="post.about" ng-cloak />
+        <input type="text" name="location" id="location" placeholder="Location" ng-model="post.location" ng-cloak />
         <label>
             Public / Private
             <input type="radio" name="public" id="true" value="1" />
@@ -12,5 +12,5 @@
         </label>
         <input class="btn" type="submit" value="Save" />
     </form>
-    <a class='btn' href="home.html">Home</a>
+    <a class="btn" ui-sref="home">Home</a>
 </div>

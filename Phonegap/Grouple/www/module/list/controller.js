@@ -22,7 +22,7 @@
           alert(data["message"]);
         else
           alert(data["message"] + "Error: " + data["success"]);
-        });
+      });
     }
     else //error loading page
       alert("Error loading list, please try again!");  

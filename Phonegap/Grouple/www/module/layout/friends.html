@@ -4,12 +4,14 @@
     <a class='btn' onclick="showAddFriend()">Add Friend</a>
     <a class='btn' ui-sref="user-list({content: 'friends', id: null})">Current Friends</a>
     <a class='btn' ui-sref="user-list({content: 'friend_invites', id: null})">Friend Invites</a>
-    <div class='modal' id='addfriend-modal'>
-        <div ng-controller="AddFriendController">
-            <a onclick='closeAddFriend()' class="close">X</a>
+    <div class="modal" id="addfriend-modal">
+        <div>
+            <a onclick="closeAddFriend()" class="close">X</a>
             <h5>Add a friend!</h5>
-            <input type="email" name='email' id='email' ng-model="invite.receiver"/>
-            <button ng-click="sendInvite()">Send Invite</button>
+            <form novalidate ng-submit="send()" ng-cloak>
+                <input type="email" name="email" id="email" required ng-model="post.to" />
+                <input class="btn" type="submit" value="Send" />
+            </form>
         </div>
     </div>
 </div>
