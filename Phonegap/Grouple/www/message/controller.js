@@ -37,26 +37,27 @@
   }) //end contact controller
   
   //message controller
-  .controller('MessageController', function($scope, $http)
+  .controller('MessageController', function($scope, $http, $stateParams)
   {
     $scope.post = {}; //post params for http request
     $scope.init = function(content)
     { //start init function
       //set url
       if (content === "user")
-        $scope.url = "http://mierze.gear.host/grouple/api/get_messages.php";
-      else
-        $scope.url = "http://mierze.gear.host/grouple/api/get_" + content + "_messages.php";
-      //set post params
-      if (getVal("id") != null)
-        $scope.post.id = getVal("id");
-      else if (getVal("email") != null)
       {
-        $scope.post.sender = getVal("email");
-        $scope.post.receiver = storage.getItem("email");
+        $scope.url = "http://mierze.gear.host/grouple/api/get_messages.php";
+        $scope.post.from = $stateParams.id;
+        $scope.post.to = storage.getItem("email");
       }
       else
-         $scope.post.email = storage.getItem("email");
+      { //group / event message
+        $scope.url = "http://mierze.gear.host/grouple/api/get_" + content + "_messages.php";
+        //set post params
+        if ($stateParams.id != null && $stateParams.id.length > 2)
+          $scope.post.id = $stateParams.id;
+        else
+          alert("ERROR");
+      }
       $http(
       { //http request to fetch list from server PANDA refactor out this
         method  : 'POST',

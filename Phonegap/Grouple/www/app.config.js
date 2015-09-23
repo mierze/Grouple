@@ -38,33 +38,32 @@
             templateUrl: 'landing/events.html'
         })
         .state('user-profile', {
-            url:'/user-profile',
+            url:'/user-profile:id',
             templateUrl: 'profile/user-profile.html',
             controller: 'ProfileController'
         })
         .state('group-profile', {
-            url:'/group-profile',
+            url:'/group-profile:id',
             templateUrl: 'profile/group-profile.html',
             controller: 'ProfileController'
         })
         .state('event-profile', {
-            url:'/event-profile',
+            url:'/event-profile:id',
             templateUrl: 'profile/event-profile.html',
             controller: 'ProfileController'
         })
-        .state('friend-list', {
-            url:'/friend-list',
+        .state('user-list', {
+            url:'/user-list:content?id',
             templateUrl: 'list/user-list.html',
-            controller: 'ListController',
-            params: { content: 'friends'}
+            controller: 'ListController'
         })
         .state('group-list', {
-            url:'/group-list',
+            url:'/group-list:content?id',
             templateUrl: 'list/group-list.html',
             controller: 'ListController'
         })
         .state('event-list', {
-            url:'/event-list',
+            url:'/event-list:content?id',
             templateUrl: 'list/event-list.html',
             controller: 'ListController'
         })
@@ -83,8 +82,8 @@
             templateUrl: 'message/contacts.html',
             controller: 'ContactController'
         })
-        .state('user-messages', {
-            url:'/user-messages',
+        .state('messages', {
+            url:'/messages:id',
             templateUrl: 'message/messages.html',
             controller: 'MessageController'
         });

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <div id="events">
     <!-- PANDA modal pop up for adding friend? Maybe search by name -->
-    <a class="btn" href="event-create.html">Create Event</a>
-    <a class="btn" href="event-list.html?content=events_upcoming">Upcoming Events</a>
-    <a class="btn" href="event-list.html?content=events_pending">Pending Events</a>
-    <a class="btn" href="event-list.html?content=event_invites">Event Invites</a>
-    <a class="btn" href="event-list.html?content=events_past">Past Events</a>
+    <a class="btn" ui-sref="event-create">Create Event</a>
+    <a class="btn" ui-sref="event-list({content: 'events_upcoming', id: null})">Upcoming Events</a>
+    <a class="btn" ui-sref="event-list({content: 'events_pending', id: null})">Pending Events</a>
+    <a class="btn" ui-sref="event-list({content: 'event_invites', id: null})">Event Invites</a>
+    <a class="btn" ui-sref="event-list({content: 'events_past', id: null})">Past Events</a>
 </div>

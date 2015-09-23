@@ -53,7 +53,7 @@
   this.logout = function()
   {
     storage.clear(); //clear storage
-    document.location.href="login.html";
+    document.location.href="#login";
     alert("Later playa!");
   };
   

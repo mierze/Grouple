@@ -3,14 +3,9 @@
   var storage = window.localStorage;
   //create module controllers
   angular.module('list')
-    
-  /*********************************************
-  ************* CONTROLLERS BELOW **************
-  *********************************************/
   //list controller, serves as the controller for all list pages
-  .controller('ListController', function($scope, ListFetcher, $stateParams)
+  .controller('ListController', function($scope, $stateParams, ListFetcher)
   {
-    alert("LIST CONTROLLER");
     if ($stateParams.content != null)
     { //ensure content is set
       if ($stateParams.content === "friend_invites")
@@ -18,9 +13,8 @@
         $scope.editable = true;
       }
       //fetch data and wait for callback
-      ListFetcher.fetch($stateParams.content, function(data)
+      ListFetcher.fetch($stateParams.content, $stateParams.id, function(data)
       {
-        alert(data["success"]);
         if (data["success"])
           $scope.items = data["items"];
         else if (data["success"] === 0)
@@ -31,7 +25,6 @@
         });
     }
     else //error loading page
-      alert("Error loading list, please try again!");
-    
+      alert("Error loading list, please try again!");  
   }); //end list controller
 })();

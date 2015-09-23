@@ -1,29 +1,14 @@
 <!DOCTYPE html>
-<html ng-app="grouple">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="format-detection" content="telephone=no" />
-        <meta name="msapplication-tap-highlight" content="no" />
-        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
-        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
-        <link rel="stylesheet" type="text/css" href="css/index.css" />
-        <title>Grouple // Event Profile</title>
-    </head>
-    <body class="app" id="event-profile" ng-controller="ProfileController" ng-init="init('event')">
-        <h1 ng-cloak>{{info.name}}</h1>
-        <img ng-src="{{info.image}}" alt="Profile Image" ng-cloak/>
-        <section>
-            <em ng-cloak>{{info.startDate}}</em>
-            <strong ng-cloak>{{info.location}}</strong>
-            <p ng-cloak>{{info.about}}</p>
-        </section>
-        <a class="btn" href="user-list.html?content=event_participants">Participants</a>
-        <button onclick="showEditProfile()" ng-hide="editable">Edit Event</button>
-        <a class="btn" href="home.html">Back</a>
-        <event-edit></event-edit>
-        <script type="text/javascript" src="cordova.js"></script>
-        <script type="text/javascript" src="res/framework/angular.min.js"></script>
-        <script type="text/javascript" src="js/app.js"></script>
-        <script type="text/javascript" src="js/user.js"></script>
-    </body> 
-</html>
+<div id="event-profile" ng-init="init('event')">
+    <h1 ng-cloak>{{info.name}}</h1>
+    <img ng-src="{{image}}" alt="Profile Image" ng-cloak/>
+    <section>
+        <em ng-cloak>{{info.startDate}}</em>
+        <strong ng-cloak>{{info.location}}</strong>
+        <p ng-cloak>{{info.about}}</p>
+    </section>
+    <a class="btn" ui-sref="user-list({content: 'event_participants', id: info.id" ng-cloak>Participants</a>
+    <button onclick="showEditProfile()" ng-hide="editable">Edit Event</button>
+    <a class="btn" ui-sref="home">Back</a>
+    <event-edit></event-edit>
+</div>

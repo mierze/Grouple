@@ -4,15 +4,15 @@
  
   angular.module('directive')
   //edit user profile directive
-  .directive("userRow", function($http) {
+  .directive("userRow", function($http, $state) {
     return {
       restrict: 'E',
       templateUrl: "list/partial/user-row.html",
       controller: function()
       {
-        this.profile = function(email)
+        this.profile = function(id)
         {
-          document.location.href="user-profile.html?email="+email;
+          $state.go('user-profile', {id: id});
         };
         this.decision = function(item, type)
         { //start decision
@@ -56,7 +56,7 @@
   }) //end user row directive
   
   //group row directive
-  .directive("groupRow", function() {
+  .directive("groupRow", function($http, $state) {
   return {
     restrict: 'E',
     templateUrl: "list/partial/group-row.html",
@@ -64,53 +64,53 @@
     {
       this.profile = function(id)
       {
-        document.location.href="group-profile.html?id="+id;
+        $state.go('group-profile', {id: id});
       };
-        this.decision = function(item, type)
-        { //start decision
-          if (type === "decline")
-            this.url = "http://mierze.gear.host/grouple/api/leave_group.php";
+      this.decision = function(item, type)
+      { //start decision
+        if (type === "decline")
+          this.url = "http://mierze.gear.host/grouple/api/leave_group.php";
+        else
+          this.url = "http://mierze.gear.host/grouple/api/accept_group.php";
+        item.sender = item.email;
+        //PANDA item.id
+        item.receiver = storage.getItem("email");
+        $http(
+        {
+          method : 'POST',
+          url : this.url,
+          data : item
+        }).success(function(data)
+        {
+          if (data["success"] === 1)
+          {
+            alert(data["message"]);
+            alert("Accepted or declined group invite!");
+          }
+          else if (data["success"] === 0)
+          {
+            //PANDA, populate sad guy.
+            alert(data["message"]);
+          }
           else
-            this.url = "http://mierze.gear.host/grouple/api/accept_group.php";
-          item.sender = item.email;
-          //PANDA item.id
-          item.receiver = storage.getItem("email");
-          $http(
           {
-            method : 'POST',
-            url : this.url,
-            data : item
-          }).success(function(data)
-          {
-            if (data["success"] === 1)
-            {
-              alert(data["message"]);
-              alert("Accepted or declined group invite!");
-            }
-            else if (data["success"] === 0)
-            {
-              //PANDA, populate sad guy.
-              alert(data["message"]);
-            }
-            else
-            {
-              //generic catch
-              alert(data["message"]);
-              alert("Error accepting or declining group invite.");
-            }
-          })
-          .error(function(data)
-          {
-            alert("Error contacting server.");
-          });   
-        }; //end decision
+            //generic catch
+            alert(data["message"]);
+            alert("Error accepting or declining group invite.");
+          }
+        })
+        .error(function(data)
+        {
+          alert("Error contacting server.");
+        });   
+      }; //end decision
     },
     controllerAs: "group"
     };
   }) //end group row directive
   
   //event row directive
-  .directive("eventRow", function() {
+  .directive("eventRow", function($http, $state) {
   return {
     restrict: 'E',
     templateUrl: "list/partial/event-row.html",
@@ -118,7 +118,7 @@
     {
       this.profile = function(id)
       {
-        document.location.href="event-profile.html?id="+id;
+        $state.go('event-profile', {id: id});
       };
       this.decision = function(item, type)
       { //start decision
@@ -136,22 +136,13 @@
           data : item
         }).success(function(data)
         {
-          if (data["success"] === 1)
-          {
+          if (data["success"])
             alert(data["message"]);
-            alert("Accepted or declined event invite!");
-          }
           else if (data["success"] === 0)
-          {
-            //PANDA, populate sad guy.
+          //PANDA, populate sad guy.
             alert(data["message"]);
-          }
-          else
-          {
-            //generic catch
+          else //generic catch
             alert(data["message"]);
-            alert("Error accepting or declining event invite.");
-          }
         })
         .error(function(data)
         {

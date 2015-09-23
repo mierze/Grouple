@@ -7,7 +7,7 @@
   .directive("userEdit", function($http, $filter) {
   return {
     restrict: 'E',
-    templateUrl: "partial/user-edit.html",
+    templateUrl: "profile/partial/user-edit.html",
     controller: function()
     {
       this.save = function(info)
@@ -57,7 +57,7 @@
   .directive("groupEdit", function($http) {
   return {
     restrict: 'E',
-    templateUrl: "partial/group-edit.html",
+    templateUrl: "profile/partial/group-edit.html",
     controller: function()
     {
       this.save = function(info)
@@ -103,7 +103,7 @@
   .directive("eventEdit", function($http, $filter) {
   return {
     restrict: 'E',
-    templateUrl: "partial/event-edit.html",
+    templateUrl: "profile/partial/event-edit.html",
     controller: function()
     {
       this.save = function(info)

@@ -7,12 +7,13 @@
   .directive("messageRow", function() {
     return {
       restrict: 'E',
-      templateUrl: "template/message-row.html",
+      templateUrl: "message/partial/message-row.html",
       controller: function()
       {
+        //PANDA change to id
         this.profile = function(email)
         {
-          document.location.href="user-profile.html?email="+email;
+          $state.go('user-profile', {id: email});
         };
       },
       controllerAs: "msgCtrl"
@@ -20,16 +21,17 @@
   }) //end message row directive
   
   //contact row directive
-  .directive("contactRow", function() {
+  .directive("contactRow", function($state) {
     return {
       restrict: 'E',
-      templateUrl: "template/contact-row.html",
+      templateUrl: "message/partial/contact-row.html",
       controller: function()
       {
         this.startMessages = function(contact)
         {
-          var email = (contact.sender === storage.getItem("email")) ? contact.receiver : contact.sender;
-          document.location.href = "messages.html?email=" + email;
+          alert("this is " +JSON.stringify(contact));
+          var id = (contact.sender === storage.getItem("email")) ? contact.receiver : contact.sender;
+          $state.go('messages', {id: id});
         };
         this.imgEnc = function(image)
         {

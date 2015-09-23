@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-<div id='list'>
+<div id="event-list">
     <h1><!-- PANDA get this from session and put it in actionbar-->My Events</h1>
-    <!--PANDA make this a directive-->
-    <div class='list-wrap' ng-repeat="item in items">
+    <div class="list-wrap" ng-repeat="item in items">
         <event-row></event-row>
     </div>
-    <a class='btn' href='home.html'>Back</a>
+    <a class="btn" ui-sref="home">Back</a>
 </div>
