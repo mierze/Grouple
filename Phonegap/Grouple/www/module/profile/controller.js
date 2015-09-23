@@ -2,21 +2,23 @@
 { //wrap
   //session storage
   var storage = window.localStorage;
-  //create module controllers
   angular.module('profile')
-  //profile controller
-  .controller('ProfileController', function($scope, $stateParams, ProfileFetcher, ImageFetcher)
-  {
+  .controller('ProfileController', function($scope, $stateParams, $state, ProfileFetcher, ImageFetcher)
+  { //start profile controller
     //PANDA: need to check rank in group / event so that can show or hide editable
     $scope.init = function(type)
     { //start init function
-      //could use stateParams. PANDA
-      
-      ProfileFetcher.fetch(type, $stateParams.id, function(data)
-      {
+      $scope.post = {};
+      if ($stateParams.id.length < 2 && type === 'user')
+        //case that id is for logged user's email
+        $scope.post.id = storage.getItem("email");
+      else
+        $scope.post.id = $stateParams.id;
+      $scope.post.user = storage.getItem("email");
+      ProfileFetcher.fetch($scope.post, type, function(data)
+      { //start fetch profile
         if (data["success"])
         {
-          alert("SUCCESS FETCHING PROFILE");
           //PANDA set for now. next get from api
           $scope.editable = true;
           //PANDA fix date
@@ -29,11 +31,11 @@
           }
         }
         else //generic catch
-          alert("Error fetching profile info.\n" + data["message"]);
-      });
-      
-      ImageFetcher.fetch(type, $stateParams.id, function(data)
-      {
+          alert(data["message"]);
+      }); //end fetch profile
+      $scope.post.content = type;
+      ImageFetcher.fetch($scope.post, type, function(data)
+      { //start fetch image
         if (data["success"])
         {
           var imgUrl = "data:image/png;base64," + data["image"];
@@ -42,10 +44,11 @@
         else
           //generic catch
           alert(data["message"]);
-        
-      });
-      
+      }); //end fetch image      
     }; //end init function
-    //$scope.
+    $scope.start = function(type)
+    {
+      $state.go("user-list", {content: type, id: $scope.post.id});
+    };
   }); //end profile controller
 })();

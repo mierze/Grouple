@@ -1,7 +1,6 @@
 (function() //wrap
 {
   //PANDA: look at liquids and think of a good way to store sessions
-    //[ ] refactor into services and more directives and seperate files for directives and services
   var storage = window.localStorage;
   //CHANGING SCREENS -> ui-sref="home" or in controller $state.go('home')
   
@@ -56,6 +55,4 @@
     document.location.href="#login";
     alert("Later playa!");
   };
-  
-  alert("loaded in");
 })(); //end wrap

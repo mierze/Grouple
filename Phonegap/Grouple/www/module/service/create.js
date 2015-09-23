@@ -1,11 +1,9 @@
-(function() //wrap
-{
-  //session storage
-  var storage = window.localStorage;
+(function()
+{ //wrap
   var Creater = function($http)
-  { //Creater takes a group/event type, info and creates it in the db
+  { //creater takes a group/event type, info and creates it in the db
     var create = function(post, type, callback)
-    {
+    { //start create
       this.url = 'http://mierze.gear.host/grouple/api/create_' + type + '.php';
       $http(
       { //http request to fetch list from server PANDA refactor out this
@@ -16,10 +14,10 @@
       function(result) {
         return callback(result.data);
       });
-    };
+    }; //end create
     return {
       create: create
     };
-  }; //end Creater
+  }; //end creater
   angular.module('service').factory('Creater', Creater);
 })(); //end wrap

@@ -1,10 +1,9 @@
 (function() {
   //create module directives
   var storage = window.localStorage; //grab local storage
- 
   angular.module('message')
   //message row directive
-  .directive("messageRow", function() {
+  .directive("messageRow", function($state) {
     return {
       restrict: 'E',
       templateUrl: "module/message/layout/partial/message-row.html",

@@ -7,7 +7,7 @@
         <strong ng-cloak>{{info.location}}</strong>
         <p ng-cloak>{{info.about}}</p>
     </section>
-    <a class="btn" ui-sref="user-list({content: 'event_participants', id: info.id" ng-cloak>Participants</a>
+    <a class="btn" ng-click="showMembers('event_participants')" ng-cloak>Participants</a>
     <button onclick="showEditProfile()" ng-hide="editable">Edit Event</button>
     <a class="btn" ui-sref="home">Back</a>
     <event-edit></event-edit>

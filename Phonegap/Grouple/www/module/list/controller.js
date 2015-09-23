@@ -1,7 +1,6 @@
 (function()
 { //wrap
   var storage = window.localStorage;
-  //create module controllers
   angular.module('list')
   //list controller, serves as the controller for all list pages
   .controller('ListController', function($scope, $stateParams, ListFetcher)
@@ -12,17 +11,23 @@
       { //editable check
         $scope.editable = true;
       }
+      //prepare post parameters
+      $scope.post = {};
+      //PANDA switch content to type
+      if ($stateParams.id == null || ($stateParams.id.length < 2 && $stateParams.content === 'user'))
+        $scope.post.id = storage.getItem("email");
+      else
+        $scope.post.id = $stateParams.id;
+      $scope.post.user = storage.getItem("email");
       //fetch data and wait for callback
-      ListFetcher.fetch($stateParams.content, $stateParams.id, function(data)
-      {
+      ListFetcher.fetch($scope.post, $stateParams.content, function(data)
+      { //start fetch list
         if (data["success"])
           $scope.items = data["items"];
-        else if (data["success"] === 0)
+        else
           //PANDA, populate sad guy.
           alert(data["message"]);
-        else
-          alert(data["message"] + "Error: " + data["success"]);
-      });
+      }); //end fetch list
     }
     else //error loading page
       alert("Error loading list, please try again!");  

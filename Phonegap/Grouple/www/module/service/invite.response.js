@@ -1,14 +1,15 @@
 (function() 
 { //wrap
-  var FriendInviter = function($http)
-  { //friend inviter takes in a to and from and sends the invite
-    var send = function(post, callback)
+  var InviteResponder = function($http)
+  { //start invite responder
+    var respond = function(post, type, callback)
     { //start send
+      this.url = "http://mierze.gear.host/grouple/api/" + type + ".php";
       alert(JSON.stringify(post));
       $http(
       { //http request to fetch list from server PANDA refactor out this
         method  : 'POST',
-        url     : 'http://mierze.gear.host/grouple/api/invite_friend.php',
+        url     : this.url,
         data    : post
        }).then(
       function(result) {
@@ -16,8 +17,8 @@
       });
     }; //end send
     return {
-      send: send
+      respond: respond
     };
-  }; //end friend inviter
-  angular.module('service').factory('FriendInviter', FriendInviter);
+  }; //end invite responder
+  angular.module('service').factory('InviteResponder', InviteResponder);
 })(); //end wrap

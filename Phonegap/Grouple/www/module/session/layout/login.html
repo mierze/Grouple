@@ -17,11 +17,11 @@
     </div>
     <form novalidate ng-submit="login()">
         <fieldset>
-            <input type="email" name="email" placeholder="Email" required ng-model="user.email" />
-            <input type="password" placeholder="Password" required ng-model="user.password" />
+            <input type="email" name="email" placeholder="Email" required ng-model="post.email" />
+            <input type="password" placeholder="Password" required ng-model="post.password" />
             <label><!-- PANDA TODO check best practice for labels -->
                 Stay logged in?
-                <input type="checkbox" ng-model="user.stayLogged" ng-cloak />
+                <input type="checkbox" ng-model="post.stayLogged" ng-cloak />
             </label>
             <input class='btn' type="submit" value="Login" />
             <pre>output is: {{user | json}}</pre>

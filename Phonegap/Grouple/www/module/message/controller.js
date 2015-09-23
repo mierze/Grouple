@@ -6,6 +6,7 @@
   { //start contact controller
     $scope.post = {}; //post params for http request
     $scope.post.email = storage.getItem("email");
+    $scope.post.user = storage.getItem("email");
     MessageFetcher.fetch($scope.post, 'contacts', function(data)
     {
       if (data["success"])
@@ -34,6 +35,7 @@
         else
           alert("ERROR");
       }
+      $scope.post.user = storage.getItem("email");
       MessageFetcher.fetch($scope.post, type, function(data)
       {
         if (data["success"])

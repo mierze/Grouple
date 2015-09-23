@@ -1,9 +1,7 @@
 (function() 
 { //wrap
-    //session storage
-    var storage = window.localStorage;
     var MessageFetcher = function($http)
-    { //MessageFetcher takes in a type and returns the messages for that entity
+    { //message fetcher takes in a type and returns the messages for that entity
         var fetch = function(post, type, callback)
         { //start fetch
             if (type === 'user') 
@@ -12,7 +10,6 @@
                 this.url = "http://mierze.gear.host/grouple/api/get_contacts.php";
             else
                 this.url = "http://mierze.gear.host/grouple/api/get_" + type + "_messages.php";
-            post.user = storage.getItem("email");
             $http(
             { //http request to fetch list from server PANDA refactor out this
                 method  : 'POST',
@@ -26,7 +23,6 @@
         return {
             fetch: fetch
         };
-    }; //end MessageFetcher
-    angular.module('service', [])
-        .factory('MessageFetcher', MessageFetcher);  
+    }; //end message fetcher
+    angular.module('service').factory('MessageFetcher', MessageFetcher);  
 })(); //end wrap

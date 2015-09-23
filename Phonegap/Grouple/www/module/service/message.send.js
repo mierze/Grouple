@@ -1,12 +1,9 @@
-(function() //wrap
-{
-  //session storage
-  var storage = window.localStorage;
+(function()
+{ //wrap
   var MessageSender = function($http)
-  { //MessageSender sends user, group and event messages
+  { //message sender sends user, group and event messages
     var send = function(post, type, callback)
     { //start send
-      alert("type is " + type);
       if (type === 'user')
         this.url = 'http://mierze.gear.host/grouple/api/send_message.php';
       else
@@ -24,6 +21,6 @@
     return {
       send: send
     };
-  }; //end MessageSender
+  }; //end message sender
   angular.module('service').factory('MessageSender', MessageSender);
 })(); //end wrap

@@ -4,7 +4,7 @@
  
   angular.module('profile')
   //edit user profile directive
-  .directive("userEdit", function($http, $filter) {
+  .directive("userEdit", function($filter, ProfileEditer) {
   return {
     restrict: 'E',
     templateUrl: "module/profile/layout/partial/user-edit.html",
@@ -16,37 +16,12 @@
         alert(JSON.stringify(info));
         info.birthday = $filter('date')(info.birthday, "yyyy-MM-dd");
         alert(info.birthday);
-        this.url = "http://mierze.gear.host/grouple/api/update_user.php";
+
         //http request to fetch list from server PANDA refactor out this
-        $http(
-        {
-          method : 'POST',
-          url : this.url,
-          data : info
-        }).success(function(data)
-        {
-          if (data["success"] === 1)
-          {
-            alert("Successfully updated user profile!");
-          }
-          else if (data["success"] === 0)
-          {
-            //PANDA, populate sad guy.
-            alert(data["message"]);
-            alert(JSON.stringify(data["statement"]));
-          }
-          else
-          {
-            //generic catch
-            alert(data["message"]);
-            alert(data["statement"]);
-            alert("Error updating user profile.");
-          }
-        })
-        .error(function(data)
-        {
-          alert("Error contacting server.");
-        });
+        ProfileEditer.edit(info, 'user', function(data)
+        {            
+          alert(data["message"]);
+        });    
       };
     },
     controllerAs: "userEdit"
