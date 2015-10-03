@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <div id="user-profile" ng-init="init('user')">
     <h1 ng-cloak>{{info.first}} {{info.last}}</h1>
-    <img ng-src="{{image}}" alt="Profile Image" ng-cloak/>
+    <img class="profile-img" ng-src="{{image}}" alt="Profile Image" ng-show="image.length > 2" ng-cloak />
     <section>
         <em ng-cloak>{{info.age}} yrs young</em>
         <strong ng-cloak>{{info.location}}</strong>

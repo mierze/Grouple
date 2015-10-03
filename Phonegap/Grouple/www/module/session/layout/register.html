@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <div id="login">
     <h1>Register</h1>
-    <form novalidate ng-submit="register()">
+    <form name="registerForm" novalidate ng-submit="registerForm.$valid && register()">
         <fieldset>
             <!-- PANDA later add auto cap -->
-            <input ng-model="user.first" type="text" name="email" placeholder="First Name" />
-            <input ng-model="user.last" type="text" placeholder="Last Name" required/>
-            <input ng-model="user.email" type="email" name="email" placeholder="Email" />
-            <input ng-model="user.password" type="password" placeholder="Password" required />
-            <input class='btn' type="submit" value="Register" />
+            <input ng-model="post.first" type="text" name="email" placeholder="First Name" required ng-maxlength="20" />
+            <input ng-model="post.last" type="text" placeholder="Last Name" required ng-maxlength="20" />
+            <input ng-model="post.email" type="email" name="email" placeholder="Email" />
+            <input ng-model="post.password" type="password" placeholder="Password" required ng-minlength="6" ng-maxlength="20" />
+            <input class="btn" type="submit" value="Register" />
             <pre>output is: {{user | json}}</pre>
         </fieldset>
     </form>
     <p>Already registered!?</p>
-    <a class='btn' href="login.html">Login</a>
+    <a class="btn" ui-sref="login">Login</a>
 </div>

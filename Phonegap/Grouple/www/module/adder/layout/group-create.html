@@ -1,16 +1,19 @@
 <!DOCTYPE html>
-<div id="group-create">
-    <h1>Group Create</h1>
-    <form novalidate ng-submit="create()" ng-cloak>
-        <input type="text" name="name" id="name" placeholder="Name" required ng-model="post.name" ng-cloak/>
-        <input type="text" name="about" id="about" placeholder="About Event" ng-model="post.about" ng-cloak />
-        <input type="text" name="location" id="location" placeholder="Location" ng-model="post.location" ng-cloak />
-        <label>
-            Public / Private
-            <input type="radio" name="public" id="true" value="1" />
-            <input type="radio" name="public" id="false" value="0" />
-        </label>
-        <input class="btn" type="submit" value="Save" />
-    </form>
-    <a class="btn" ui-sref="home">Home</a>
-</div>
+<h1>Group Create</h1>
+<form name="groupCreateForm" novalidate ng-submit="groupCreateForm.$valid && create()">
+    <input type="text" name="name" id="name" placeholder="Name" required ng-model="post.name" />
+    <input type="file" name="image" id="image" placeholder="Profile Image" ng-model="post.image" />
+    <input type="text" name="about" id="about" placeholder="About Event" ng-model="post.about" />
+    <input type="text" name="location" id="location" placeholder="Location" ng-model="post.location" />
+    <label>
+        Public
+        <input type="radio" name="public" value="1" ng-model="post.public" />
+    </label>
+    <label>
+        Private
+        <input type="radio" name="public" value="0" checked ng-model="post.public" />
+    </label>
+    <input class="btn" type="submit" value="Create Group" />
+</form>
+<a class="btn" ui-sref="home">Home</a>
+<friend-invite-list ng-show="created"></friend-invite-list>

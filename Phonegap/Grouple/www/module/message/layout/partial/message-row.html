@@ -1,5 +1,4 @@
-<div class="list-row" >
-    <h5 ng-click="msgCtrl.profile(message.sender)" ng-cloak>{{message.from}} -> {{message.to}}</h5>
-    <p ng-cloak>{{message.message}} {{message.sendDate}}</p>
-    <em style="text-align:right" ng-cloak>{{message.sendDate}}</em>
+<div class="list-row message" ng-click="msgCtrl.profile(message.contact)" >
+    <p ng-cloak>{{message.message}}</p>
+    <em style="width: 100%; text-align:right; font-size: .5em" ng-cloak>{{message.sendDate}}</em>
 </div>

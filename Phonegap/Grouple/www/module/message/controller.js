@@ -22,11 +22,8 @@
     $scope.post = {}; //post params for http request
     $scope.init = function(type)
     { //start init function
-      if (type === "user")
-      {
-        $scope.post.from = $stateParams.id;
-        $scope.post.to = storage.getItem("email");
-      }
+      if (type === "user") //PANDA could be post.id if we want to unify all
+        $scope.post.contact = $stateParams.id;
       else
       { //group / event message
         //set post params

@@ -3,7 +3,7 @@
   angular.module('grouple')
   .config(function($stateProvider, $urlRouterProvider)
   {
-    $urlRouterProvider.otherwise('/');
+    $urlRouterProvider.otherwise('/login');
     //all possible states
     $stateProvider
         .state('home', {

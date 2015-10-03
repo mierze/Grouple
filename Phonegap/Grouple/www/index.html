@@ -6,14 +6,45 @@
         <meta name="msapplication-tap-highlight" content="no" />
         <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
-        <link rel="stylesheet" type="text/css" href="style/index.css" /> 
+        <link rel="stylesheet" type="text/css" href="style/index.css" />
+        <link rel="stylesheet" type="text/css" href="style/snap.css" />
         <script type="text/javascript" src="resource/framework/cordova.js"></script>
         <script type="text/javascript" src="resource/framework/angular.min.js"></script>
         <script type="text/javascript" src="resource/framework/angular-ui-router.min.js"></script>
+        <script type="text/javascript" src="resource/framework/snap.js"></script>
         <title>Grouple // Home</title>
     </head>
     <body class="app">
-        <div id="content" ui-view></div>
+        <!--start nav slide out-->
+        <div class="snap-drawer snap-drawer-right">
+            <div>
+                <h4>Navigate</h4>
+                <a ui-sref="friends">Friends</a>
+                <a ui-sref="groups">Groups</a>
+                <a ui-sref="events">Events</a>
+                <a ui-sref="contacts">Messages</a>
+                <a ui-sref="user-profile({id:null})">Profile</a>
+                <a ui-sref="settings">Settings</a>
+                <a onclick="logout()">Logout</a>
+            </div>
+        </div>
+        <div id="nav-snap" class="snap-content">
+            <div id="toolbar">
+                <a href="#" id="open-right"></a>
+            </div>
+        </div>
+
+        <nav id="nav" ng-controller="navigation">
+            <a ui-sref="home" id="nav-back"></a>
+            <h1 id="nav-title">Grouple</h1>
+            <button id="nav-menu"></button>
+        </nav>
+        <div class="content" ui-view></div>
+        <script type="text/javascript">
+            var snapper = new Snap({
+                element: document.getElementById('nav-snap')
+            });
+        </script>
         <script type="text/javascript" src="app.js"></script>
         <script type="text/javascript" src="app.config.js"></script>
         <script type="text/javascript" src="app.control.js"></script>

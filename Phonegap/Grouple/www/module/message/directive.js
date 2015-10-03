@@ -1,6 +1,5 @@
-(function() {
-  //create module directives
-  var storage = window.localStorage; //grab local storage
+(function()
+{ //create module directives
   angular.module('message')
   //message row directive
   .directive("messageRow", function($state) {
@@ -10,6 +9,7 @@
       controller: function()
       {
         //PANDA change to id
+        var float = "100%";
         this.profile = function(email)
         {
           $state.go('user-profile', {id: email});
@@ -28,9 +28,7 @@
       {
         this.startMessages = function(contact)
         {
-          alert("this is " +JSON.stringify(contact));
-          var id = (contact.sender === storage.getItem("email")) ? contact.receiver : contact.sender;
-          $state.go('messages', {id: id});
+          $state.go('messages', {id: contact.contact});
         };
         this.imgEnc = function(image)
         {

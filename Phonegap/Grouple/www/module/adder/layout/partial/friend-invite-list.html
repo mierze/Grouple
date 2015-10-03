@@ -1,0 +1,12 @@
+<div>
+    <a onclick="" class="close">X</a>
+    <h5 ng-cloak>Select Friends to Invite</h5>
+    <div ng-repeat="user in users">
+        <span class="friend-invite-row">
+            <h3 ng-cloak>{{user.first}} {{user.last}}</h3>
+            <h3 id="role" ng-click="toggleRole()" ng-model="user.role" ng-cloak></h3>
+            <input type="checkbox" name="add" id="add" />
+        </span>
+        <button ng-click="friendInvite.invite()">Invite Friends</button>
+    </div>
+</div>

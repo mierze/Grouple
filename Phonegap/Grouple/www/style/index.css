@@ -1,120 +1,42 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
-/*****************************************
- *             COLORS                     *
- *    -Purple  :  rgba(81,68,95,1);       *
- *    -Lime    :  rgba(10,240,80,.7);     *
- *    -White   :  rgba();                 *
- *    -Navy    :  rgba(60,51,68,.8);      *
- *    -Orange  :  rgba(255,170,0,.8);     *
- ****************************************/
-.dev-box
+/* GROUPLE MAIN STYLESHEET */
+/* ELEMENT STYLING */
+a
 {
-    padding: 10px 10%;
-    text-align: center;
-    width: 100%;
-    background-color: rgba(20,12,40,.7);
-    color: white;
-}.dev-box>h4{padding: 5px;margin: 0;color:white;}
-
-* {
-    -webkit-tap-highlight-color: rgba(0,0,0,0); /* make transparent link selection, adjust last value opacity 0 to 1.0 */
+    text-decoration: none;
+    color:rgba(65,41,28,1); 
 }
-.dev-patch
+a:active
 {
-    border: 4px dotted black;
-    width: 50%;
-    min-width: 200px;
-    margin: 5px auto;
-    padding: 1%;
-    
+    color: rgba(238,228,105,1); 
 }
-.dev-patch>h5
+form .btn, form button, .btn, button
 {
-    padding: 3px;
-    margin: 0;
-}
-.dev-patch>p
-{
-    text-align: left;
-    margin: 0;
-    padding: 3px;
-}
-
-body {
-    -webkit-touch-callout:none;                /* prevent callout to copy image, etc when tap to hold */
-    -webkit-text-size-adjust:none;             /* prevent webkit from resizing text to fit */
-    -webkit-user-select:none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
-    background-color:rgba(60,51,68,.3);  
-    background-attachment:fixed;
-    font-family:'HelveticaNeue-Light', 'HelveticaNeue', Helvetica, Arial, sans-serif;
-    height:100%;
-    margin:0px;
-    padding:0px;
     width:100%;
-}
-
-/* Portrait layout (default) */
-.app {
-    height:100%;                 /* text area height */
-    width:100%;                   /* text area width */
-    text-align:center;
-    padding-top: 10%;
-}
-
-/* Landscape layout (with min-width) */
-@media screen and (min-aspect-ratio: 1/1) and (min-width:400px) {
-    .app {
-                    /* offset horizontal: half of image width and text area width */
-    }
-}
-
-.btn, button
-{
-    width:90%;
     margin:10px auto;
     text-decoration: none;
     vertical-align:middle;
-    text-transform: uppercase;
-    font-size:2em;
+    font-size:1.6em;
     height:80px;
     display:block;
-    background-color:rgba(255,170,0,.8); 
-    color:white;
-    border:2px solid purple;
+    background-color:rgba(99,72,129,.8);      
+    color:rgba(245,241,226,1);
     border-radius: 4px;
     padding: 10px;
     text-align: center;
 }
-input:not([type="checkbox"])
+.btn:active, button:active
 {
-    display:block;
-    width:90%;
-    margin:0 auto;
-    padding:10px;
-    text-align:center;
-    font-size:1.2em;
+    font-weight: bolder;
+    color:rgba(99,72,129,1);  
+    background-color:rgba(238,228,105,1);  
+}
+h1,h2,h3,h4,h5
+{
+    color:rgba(65,41,28,1); 
 }
 h1
 {
-    font-size: 4em;
+    font-size:4em;
     font-weight:normal;
     margin:0px;
     overflow:visible;
@@ -137,13 +59,125 @@ h5 /* PANDA */
 {
     font-size: 1.4em;
 }
+li
+{
+    text-decoration: none;
+    list-style: none;
+}
 .list-row
 {
-    border: 2px solid purple;
-    margin: 0;
+    background-color: rgba(65,41,28,.5);
+    margin: 2px;
+    border-radius: 8px;
+    color: rgba(245,241,226,1); 
+    width: 100%;
+    padding: 5px;
 }
+.list-row h5
+{
+    padding: 0;
+}
+.list-row p
+{
+    color:rgba(245,241,226,1); 
+}
+.message
+{ /* PANDA switch sides for each message / custom colors */
+    border-radius: 10px;
+    width: auto;
+    max-width: 80%;
+    background-color: rgba(148,203,108,.9);
+    color: rgba(245,241,226,1);
+    margin: 5px;
+}
+.logo
+{
+    width: 90%;
+    max-width: 800px;
+    height: auto;
+    margin: 5% auto;
+}
+#home
+{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin-top: 80px;
 
-.event {
+}
+.profile-img
+{
+    width: 100%;
+    margin: 5% auto;
+    height: auto;
+}
+/* END ELEMENT STYLING */
+/************************************************
+ *                COLORS                        *
+ *    brown         :   rgba(65,41,28,1);       *
+ *    white         :   rgba(245,241,226,1);    *
+ *    blue          :   rgba(137,211,223,1);    *
+ *    blue-light    :   rgba(207,235,240,1);    *
+ *    yellow        :   rgba(238,228,105,1);    *
+ *    yellow-light  :   rgba(248,244,195,1);    *
+ *    green         :   rgba(148,203,108,1);    *
+ *    green-light   :   rgba(216,236,202,1);    *
+ *    red           :   rgba(246,148,111,1);    *
+ *    red-light     :   rgba(251,216,203,1);    *
+ *    purple        :   rgba(99,72,129,1);      *
+ *    puple-light   :   rgba(209,202,217,1);    *
+ ***********************************************/
+/* MAIN STYLING */
+html, body
+{
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    width: 100%;
+    height: 100%;
+}
+body
+{
+    -webkit-touch-callout:none;                /* prevent callout to copy image, etc when tap to hold */
+    -webkit-text-size-adjust:none;             /* prevent webkit from resizing text to fit */
+    -webkit-user-select:none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
+    background-color: rgba(245,241,226,.6);
+    font-family:'HelveticaNeue-Light', 'HelveticaNeue', Helvetica, Arial, sans-serif;
+}
+.content
+{
+    margin-top: 80px;
+    overflow-y: scroll;
+}
+/* Portrait layout (default) */
+.app {
+    height:100%;                 /* text area height */
+    width:100%;                   /* text area width */
+    text-align:center;
+    padding-top: 10%;
+}
+/* Landscape layout (with min-width) */
+@media screen and (min-aspect-ratio: 1/1) and (min-width:400px)
+{
+    .app
+    {
+                    /* offset horizontal: half of image width and text area width */
+    }
+}
+{
+    -webkit-tap-highlight-color: rgba(0,0,0,0); /* make transparent link selection, adjust last value opacity 0 to 1.0 */
+    -webkit-appearance: none;
+}
+.event
+{
     border-radius:4px;
     -webkit-border-radius:4px;
     color:#FFFFFF;
@@ -151,39 +185,178 @@ h5 /* PANDA */
     margin:0px 30px;
     padding:2px 0px;
 }
-
-.event.listening {
+.event.listening
+{
     background-color:#333333;
     display:block;
 }
-
-.event.received {
+.event.received
+{
     background-color:#4B946A;
     display:none;
 }
-
-@keyframes fade {
+@keyframes fade
+{
     from { opacity:1.0; }
     50% { opacity:0.4; }
     to { opacity:1.0; }
 }
- 
-@-webkit-keyframes fade {
+@-webkit-keyframes fade
+{
     from { opacity:1.0; }
     50% { opacity:0.4; }
     to { opacity:1.0; }
 }
- 
-.blink {
+.blink
+{
     animation:fade 3000ms infinite;
     -webkit-animation:fade 3000ms infinite;
 }
-
-.list-row
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak
 {
-    width: 100%;
-    padding: 5px;
+  display: none !important;
 }
+/* END MAIN STYLING */
+
+/* NAV STYLING */
+#nav
+{
+    padding-top:10px;
+    height: 50px;
+    overflow: hidden;
+    background-color:rgba(137,211,223,.9);
+    color:black;
+    z-index: 1000;
+    position: fixed;
+    width: 100%;
+    top: 0px;
+}
+#nav-title
+{
+    font-size: 1.5em;
+    height: 100%;
+    max-width: 85%;
+    font-weight: bolder;
+    min-width: 100px;
+    vertical-align: middle;
+    margin-left: -50px;
+    margin: 0px auto;
+    color: rgba(245,241,226,1); 
+    padding: 2px;
+    padding-top:10px;
+    display:inline-block;
+    text-align:center;
+}
+#nav-menu:active
+{
+    background-image: url('../resource/icon/generic/menu_active.png');
+}
+#nav-menu
+{
+    background-image: url("../resource/icon/generic/menu.png");
+    background-size: 100% auto;
+    float: right;
+    color: transparent;
+}
+#nav-back
+{
+    background-image:url("../resource/icon/generic/back.png");
+    background-size: 100% auto;
+    float: left;
+    color: transparent;
+}
+#nav-menu, #nav-back
+{
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+    display:inline-block;
+    vertical-align:middle;
+    background-color: transparent;
+    background-size: 40px 40px;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 50px;
+    height: inherit;
+}
+
+/* FORMS */
+.ng-invalid.ng-dirty
+{
+    border-color: rgba(246,148,111,1); 
+}
+.ng-valid.ng-dirty
+{
+    border-color:rgba(148,203,108,1); 
+}
+.ng-valid.ng-pristine
+{ 
+}
+input:not([type="checkbox"])
+{
+    display:block;
+    width:90%;
+    margin:3px auto;
+    padding:10px;
+    text-align:center;
+    font-size:1.2em;
+}
+input[type="file"]
+{
+    /*PANDA style up image input*/
+}
+/*END FORMS*/
+
+
+
+/* MAIN LANDING STYLING */
+.home-btn
+{
+    width: 31%;
+    max-height: 90px;
+    color: rgba(65,41,28,1);
+    font-weight: bold;
+    float: left;
+    background-repeat: no-repeat;
+    background-position: top;
+    background-size: 90px 90px;
+    padding-bottom: 0;
+    background-color:rgba(148,203,108,.8);  
+    height: 90px;
+    margin: 3px;
+    border-radius: 16px;
+}
+.home-btn:active
+{
+    background-color:rgba(238,228,105,.8);
+}
+#friends-btn
+{
+    background-image: url('../resource/icon/generic/friends.png');
+}
+#groups-btn
+{
+    background-image: url('../resource/icon/generic/groups.png');
+}
+#events-btn
+{
+    background-image: url('../resource/icon/generic/events.png');
+}
+#settings-btn
+{
+    background-image: url('../resource/icon/generic/settings.png');
+}
+#contacts-btn
+{
+    background-image: url('../resource/icon/generic/messages.png'); 
+}
+#profile-btn
+{
+    background-image: url('../resource/icon/generic/user.png');
+}
+/* END MAIN LANDING STYLING */
+
+/* ATTRIBUTES */
 .fill-x
 {
     width: 100%;
@@ -192,20 +365,37 @@ h5 /* PANDA */
 {
     height: 100%;
 }
+.pull-down
+{
+    position: fixed;
+    bottom: 0; 
+}
+.pull-up
+{
+    position: fixed;
+    top: 0; 
+}
+.pull-right
+{
+    position: fixed;
+    right: 0;    
+}
+.pull-left
+{
+    position: fixed;
+    left: 0;   
+}
 .center
 {
     
 }
+/* END ATTRIBUTES */
 
-[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
-  display: none !important;
-}
-
-/* ATTRIBUTES */
+/* MODAL STYLING */
 .modal
 {
 	position: fixed;
-	top: 5%;
+	top: 10%;
 	right: 0;
     bottom: 0;
 	height: inherit;
@@ -249,3 +439,4 @@ h5 /* PANDA */
 	box-shadow: 1px 1px 3px #000;
 }
 .close:hover { background: #00d9ff; }
+/* END MODAL STYLING */

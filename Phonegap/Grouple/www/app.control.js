@@ -1,26 +1,20 @@
-(function() //wrap
-{
+(function()
+{ //wrap
   //PANDA: look at liquids and think of a good way to store sessions
   var storage = window.localStorage;
-  //CHANGING SCREENS -> ui-sref="home" or in controller $state.go('home')
   
+  angular.module('grouple')
+  .controller('navigation', function($scope, $state)
+  {
+    $scope.navigate = function(location)
+    {
+      //alert("attempt to go");
+      $state.go(location);
+    }
+  });
   /*********************************************
   *************** MAIN MODULE FUNCTIONS BELOW ***************
   *********************************************/
-  //function to get parameters from url, takes in key and returns value if exists, or null
-  this.getVal = function(key)
-  {
-    var result = null;
-    window.location.search.substr(1).split("&").forEach(function (item)
-    {
-      var keySet = item.split("=");
-      if (keySet[0] === key)
-      {
-        result = keySet[1];
-      }
-    });
-    return result;
-  }
   
   //modal visibility toggle functions below
   this.showAddFriend = function()
@@ -52,6 +46,7 @@
   this.logout = function()
   {
     storage.clear(); //clear storage
+    alert(storage.getItem("email"));
     document.location.href="#login";
     alert("Later playa!");
   };
