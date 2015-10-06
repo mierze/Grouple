@@ -1,4 +1,4 @@
-(function()
+module.exports = function()
 { //wrap
   var storage = window.localStorage;
   angular.module('message')
@@ -50,4 +50,4 @@
       });
     }; //end send function
   }); //end message controller
-})();
+};

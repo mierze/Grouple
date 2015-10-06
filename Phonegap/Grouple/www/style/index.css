@@ -1,4 +1,22 @@
 /* GROUPLE MAIN STYLESHEET */
+/* PANDA refactor into 2 files / organize */
+
+/************************************************
+ *                COLORS                        *
+ *    brown         :   rgba(65,41,28,1);       *
+ *    white         :   rgba(245,241,226,1);    *
+ *    blue          :   rgba(137,211,223,1);    *
+ *    blue-light    :   rgba(207,235,240,1);    *
+ *    yellow        :   rgba(238,228,105,1);    *
+ *    yellow-light  :   rgba(248,244,195,1);    *
+ *    green         :   rgba(148,203,108,1);    *
+ *    green-light   :   rgba(216,236,202,1);    *
+ *    red           :   rgba(246,148,111,1);    *
+ *    red-light     :   rgba(251,216,203,1);    *
+ *    purple        :   rgba(99,72,129,1);      *
+ *    puple-light   :   rgba(209,202,217,1);    *
+ ***********************************************/
+
 /* ELEMENT STYLING */
 a
 {
@@ -94,6 +112,7 @@ li
 {
     width: 90%;
     max-width: 800px;
+    max-height: 50%;
     height: auto;
     margin: 5% auto;
 }
@@ -114,21 +133,6 @@ li
     height: auto;
 }
 /* END ELEMENT STYLING */
-/************************************************
- *                COLORS                        *
- *    brown         :   rgba(65,41,28,1);       *
- *    white         :   rgba(245,241,226,1);    *
- *    blue          :   rgba(137,211,223,1);    *
- *    blue-light    :   rgba(207,235,240,1);    *
- *    yellow        :   rgba(238,228,105,1);    *
- *    yellow-light  :   rgba(248,244,195,1);    *
- *    green         :   rgba(148,203,108,1);    *
- *    green-light   :   rgba(216,236,202,1);    *
- *    red           :   rgba(246,148,111,1);    *
- *    red-light     :   rgba(251,216,203,1);    *
- *    purple        :   rgba(99,72,129,1);      *
- *    puple-light   :   rgba(209,202,217,1);    *
- ***********************************************/
 /* MAIN STYLING */
 html, body
 {
@@ -154,7 +158,9 @@ body
 }
 .content
 {
+    width: 100%;
     margin-top: 80px;
+    z-index: 2;
     overflow-y: scroll;
 }
 /* Portrait layout (default) */
@@ -307,6 +313,11 @@ input[type="file"]
 }
 /*END FORMS*/
 
+main
+{
+    width: 100%;
+    z-index: 4;
+}
 
 
 /* MAIN LANDING STYLING */
@@ -314,6 +325,7 @@ input[type="file"]
 {
     width: 31%;
     max-height: 90px;
+    display: inline-block;
     color: rgba(65,41,28,1);
     font-weight: bold;
     float: left;
@@ -357,6 +369,10 @@ input[type="file"]
 /* END MAIN LANDING STYLING */
 
 /* ATTRIBUTES */
+#home
+{
+    width: 100%;
+}
 .fill-x
 {
     width: 100%;

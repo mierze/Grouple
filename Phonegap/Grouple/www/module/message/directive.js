@@ -1,4 +1,4 @@
-(function()
+module.exports = function()
 { //create module directives
   angular.module('message')
   //message row directive
@@ -38,4 +38,4 @@
       controllerAs: "contactCtrl"
     };
   }); //end contact row directive
-})();
+};

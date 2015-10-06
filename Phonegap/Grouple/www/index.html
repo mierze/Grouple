@@ -9,65 +9,39 @@
         <link rel="stylesheet" type="text/css" href="style/index.css" />
         <link rel="stylesheet" type="text/css" href="style/snap.css" />
         <script type="text/javascript" src="resource/framework/cordova.js"></script>
-        <script type="text/javascript" src="resource/framework/angular.min.js"></script>
-        <script type="text/javascript" src="resource/framework/angular-ui-router.min.js"></script>
+        <!-- PANDA move these into all angular files with browserify -->
         <script type="text/javascript" src="resource/framework/snap.js"></script>
         <title>Grouple // Home</title>
     </head>
     <body class="app">
         <!--start nav slide out-->
-        <div class="snap-drawer snap-drawer-right">
+        <div class="snap-drawer snap-drawer-right" ng-controller="NavigationController">
             <div>
-                <h4>Navigate</h4>
                 <a ui-sref="friends">Friends</a>
                 <a ui-sref="groups">Groups</a>
                 <a ui-sref="events">Events</a>
                 <a ui-sref="contacts">Messages</a>
                 <a ui-sref="user-profile({id:null})">Profile</a>
-                <a ui-sref="settings">Settings</a>
-                <a onclick="logout()">Logout</a>
+                <a href="#">Settings</a>
+                <a ng-click="logout()">Logout</a>
             </div>
         </div>
         <div id="nav-snap" class="snap-content">
-            <div id="toolbar">
-                <a href="#" id="open-right"></a>
-            </div>
+            
         </div>
 
-        <nav id="nav" ng-controller="navigation">
+        <nav id="nav">
             <a ui-sref="home" id="nav-back"></a>
             <h1 id="nav-title">Grouple</h1>
-            <button id="nav-menu"></button>
+            <button snap-toggle="right" id="nav-menu"></button>
         </nav>
-        <div class="content" ui-view></div>
+        <main class="content" ui-view></main>
         <script type="text/javascript">
-            var snapper = new Snap({
+         var snapper = new Snap({
                 element: document.getElementById('nav-snap')
             });
         </script>
-        <script type="text/javascript" src="app.js"></script>
-        <script type="text/javascript" src="app.config.js"></script>
-        <script type="text/javascript" src="app.control.js"></script>
-        <script type="text/javascript" src="module/service/login.js"></script>
-        <script type="text/javascript" src="module/service/register.js"></script>
-        <script type="text/javascript" src="module/service/friend.invite.js"></script>
-        <script type="text/javascript" src="module/service/invite.response.js"></script>
-        <script type="text/javascript" src="module/service/create.js"></script>
-        <script type="text/javascript" src="module/service/profile.fetch.js"></script>
-        <script type="text/javascript" src="module/service/profile.edit.js"></script>
-        <script type="text/javascript" src="module/service/list.fetch.js"></script>
-        <script type="text/javascript" src="module/service/image.fetch.js"></script>
-        <script type="text/javascript" src="module/service/message.fetch.js"></script>
-        <script type="text/javascript" src="module/service/message.send.js"></script>
-        <script type="text/javascript" src="module/service/settings.fetch.js"></script>
-        <script type="text/javascript" src="module/adder/controller.js"></script>
-        <script type="text/javascript" src="module/list/controller.js"></script>
-        <script type="text/javascript" src="module/list/directive.js"></script>
-        <script type="text/javascript" src="module/message/controller.js"></script>
-        <script type="text/javascript" src="module/message/directive.js"></script>
-        <script type="text/javascript" src="module/session/controller.js"></script>
-        <script type="text/javascript" src="module/profile/controller.js"></script>
-        <script type="text/javascript" src="module/profile/directive.js"></script>
+        <script type="text/javascript" src="bundle.js"></script>
     </body> 
 </html>
 <!--

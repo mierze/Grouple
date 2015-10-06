@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<div id="event-profile" ng-init="init('event')">
+    <h1 ng-cloak>{{info.name}}</h1>
+    <img ng-src="{{image}}" alt="Profile Image" ng-cloak/>
+    <section>
+        <em ng-cloak>{{info.startDate}}</em>
+        <strong ng-cloak>{{info.location}}</strong>
+        <p ng-cloak>{{info.about}}</p>
+    </section>
+    <a class="btn" ui-sref="user-list({content: 'event_participants',id: info.id})" ng-cloak>Participants</a>
+    <button ng-click="showEditProfile()" ng-hide="editable">Edit Event</button>
+    <a class="btn" ui-sref="home">Back</a>
+    <event-edit></event-edit>
+</div>
