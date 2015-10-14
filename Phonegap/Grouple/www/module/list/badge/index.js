@@ -1,3 +1,3 @@
 'use strict';
-module.exports = require('angular').module('eventList', [])
-    .directive(require('./directive.js'));
+module.exports = angular.module('list.badge', [])
+.directive('badgeItem', require('./directive.js'));

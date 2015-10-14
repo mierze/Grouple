@@ -66,6 +66,11 @@ module.exports = function($stateProvider, $urlRouterProvider)
           templateUrl: 'module/list/event/layout.html',
           controller: 'ListController'
       })
+      .state('badge-list', {
+          url:'/badge-list:content?id',
+          templateUrl: 'module/list/badge/layout.html',
+          controller: 'ListController'
+      })
       .state('group-create', {
           url:'/group-create',
           templateUrl: 'module/adder/group-create/layout.html',

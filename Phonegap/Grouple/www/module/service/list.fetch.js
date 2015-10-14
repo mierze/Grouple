@@ -4,6 +4,8 @@ module.exports = function($http)
   var fetch = function(post, type, callback)
   { //start fetch
     this.url = "http://mierze.gear.host/grouple/api/get_" + type + ".php";
+    
+    alert(this.url + "\n" + JSON.stringify(post));
     $http(
     { //http request to fetch list from server PANDA refactor out this
       method  : 'POST',

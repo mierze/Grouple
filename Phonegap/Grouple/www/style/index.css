@@ -99,6 +99,27 @@ li
 {
     color:rgba(245,241,226,1); 
 }
+.list-item
+{
+    width: 45%;
+    min-width: 100px;
+    margin: 5px;
+    display: inline;
+    float: left;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-color: transparent;
+}
+.list-item img
+{
+    display: inline-block;
+}
+
+.list-item h5, .list-item em
+{
+    color: rgba(245,241,226,1);
+    display: block;
+}
 .message
 { /* PANDA switch sides for each message / custom colors */
     border-radius: 10px;
