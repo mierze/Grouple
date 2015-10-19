@@ -9,6 +9,6 @@
     </section>
     <a class="btn" ui-sref="user-list({content: 'group_members',id: info.id})" ng-cloak>Members</a>
     <button ng-click="showEditProfile()" ng-hide="editable">Edit Profile</button>
-    <a class="btn" ui-sref="home">Back</a>
+    <a class="btn" ui-sref="group-invite" ng-hide="editable">Invite Friends</a>
     <group-edit></group-edit>
 </div>

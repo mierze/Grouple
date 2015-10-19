@@ -1,15 +1,12 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /* PANDA list                   * date
- * [ ] Badge lists              * 10/15
- *      -make ui-sref pass badges / email
  * [ ] Side navigation bugs     * 10/20
  * [ ] Message styling          * 10/21
  * [ ] Security in php(token)   *
  *******************************/
 'use strict';
 var angular = require('./node_modules/angular');
-require('./node_modules/ui-router/angular-ui-router.js');
-console.log(JSON.stringify(angular));
+require('./node_modules/ui-router/angular-ui-router.js'); //provides 'ui-router'
 //define main app module
 angular.module('grouple', [
     require('./module/service').name,
@@ -106,6 +103,16 @@ module.exports = function($stateProvider, $urlRouterProvider)
           url:'/event-create',
           templateUrl: 'module/adder/event-create/layout.html',
           controller: 'EventCreateController'
+      }) //PANDA -> group / event invite need to signal for different group / user rows
+      .state('group-invite', {
+          url:'/group-invite:id',
+          templateUrl: 'module/list/user/layout.html',
+          controller: 'ListController'
+      })
+      .state('event-invite', {
+          url:'/event-invite:id',
+          templateUrl: 'module/list/group/layout.html',
+          controller: 'ListController'
       })
       .state('contacts', {
           url:'/contacts',
@@ -320,18 +327,21 @@ module.exports = function($state)
     controller: function()
     {
       this.image = "unknown";
-      this.init = function(name)
+      this.init = function(item)
       { //init function
-        this.lower = name.toLowerCase();
-        this.image = this.lower.replace(" ", "-");
-       
-        //LOGIC:
-        //Health Nut L2 becomes
-          //resource/image/badge/health-nut_ + level + '_' + (male||female) + .png
+        if (item.level > 0)
+        { //setting image source
+          this.lower = item.name.toLowerCase();
+          this.image = this.lower.replace(" ", "-");
+        }
       }; //end init function
       this.zoom = function()
       { //zoom function
         alert("HERE IN ZOOM FUNCTION!");
+        //would be ideal to have generic modal overlay
+        //in this function inject the item info into the modal
+        
+        //alternatively:
         //$state.go('badge', {id: id});
       }; //end zoom function
     },

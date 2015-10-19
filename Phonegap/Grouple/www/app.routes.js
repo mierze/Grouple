@@ -80,6 +80,16 @@ module.exports = function($stateProvider, $urlRouterProvider)
           url:'/event-create',
           templateUrl: 'module/adder/event-create/layout.html',
           controller: 'EventCreateController'
+      }) //PANDA -> group / event invite need to signal for different group / user rows
+      .state('group-invite', {
+          url:'/group-invite:id',
+          templateUrl: 'module/list/user/layout.html',
+          controller: 'ListController'
+      })
+      .state('event-invite', {
+          url:'/event-invite:id',
+          templateUrl: 'module/list/group/layout.html',
+          controller: 'ListController'
       })
       .state('contacts', {
           url:'/contacts',

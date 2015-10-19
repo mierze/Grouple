@@ -9,6 +9,8 @@
     </section>
     <a class="btn" ui-sref="badge-list({content: 'badges', id: info.id})">Badges</a>
     <a class="btn" ui-sref="user-list({content: 'friends', id: info.id})">Friends</a>
+    <a class="btn" ui-sref="group-list({content: 'groups', id: info.id})">Groups</a>
+    <a class="btn" ui-sref="event-list({content: 'events_upcoming', id: info.id})">Upcoming Events</a>
     <button ng-click="showEditProfile()" ng-show="editable">Edit Profile</button>
     <user-edit></user-edit>
 </div>

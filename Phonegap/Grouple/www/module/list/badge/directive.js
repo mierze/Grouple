@@ -10,17 +10,18 @@ module.exports = function($state)
       this.init = function(item)
       { //init function
         if (item.level > 0)
-        {
+        { //setting image source
           this.lower = item.name.toLowerCase();
           this.image = this.lower.replace(" ", "-");
-        }       
-        //LOGIC:
-        //Health Nut L2 becomes
-          //resource/image/badge/health-nut_ + level + '_' + (male||female) + .png
+        }
       }; //end init function
       this.zoom = function()
       { //zoom function
         alert("HERE IN ZOOM FUNCTION!");
+        //would be ideal to have generic modal overlay
+        //in this function inject the item info into the modal
+        
+        //alternatively:
         //$state.go('badge', {id: id});
       }; //end zoom function
     },
