@@ -1,5 +1,6 @@
 'use strict';
 module.exports = angular.module('message', [
     require('./contact').name,
-    require('./message').name
+    require('./user').name,
+    require('./entity').name
 ]);

@@ -20,7 +20,7 @@ angular.module('grouple', [
 .config(require('./app.routes.js'))
 .controller('NavigationController', require('./module/controller.js'));
 
-},{"./app.routes.js":2,"./module/adder":11,"./module/controller.js":12,"./module/list":20,"./module/message":26,"./module/profile":35,"./module/service":41,"./module/session":51,"./node_modules/angular":57,"./node_modules/ui-router/angular-ui-router.js":58,"ui-router":58}],2:[function(require,module,exports){
+},{"./app.routes.js":2,"./module/adder":11,"./module/controller.js":12,"./module/list":20,"./module/message":29,"./module/profile":38,"./module/service":44,"./module/session":54,"./node_modules/angular":60,"./node_modules/ui-router/angular-ui-router.js":61,"ui-router":61}],2:[function(require,module,exports){
 'use strict'
 module.exports = function($stateProvider, $urlRouterProvider)
 { //routes
@@ -119,10 +119,15 @@ module.exports = function($stateProvider, $urlRouterProvider)
           templateUrl: 'module/message/contact/layout.html',
           controller: 'ContactController'
       })
-      .state('messages', {
-          url:'/messages:id',
-          templateUrl: 'module/message/message/layout.html',
-          controller: 'MessageController'
+      .state('user-messages', {
+          url:'/user-messages:id',
+          templateUrl: 'module/message/user/layout.html',
+          controller: 'UserMessageController'
+      })
+      .state('entity-messages', {
+          url:'/entity-messages:content?id',
+          templateUrl: 'module/message/entity/layout.html',
+          controller: 'EntityMessageController'
       });
 }; //end routes
 
@@ -515,7 +520,7 @@ return {
     {
       this.startMessages = function(contact)
       {
-        $state.go('messages', {id: contact.contact});
+        $state.go('user-messages', {id: contact.contact});
       };
       this.imgEnc = function(image)
       {
@@ -531,30 +536,19 @@ module.exports = angular.module('message.contact', [])
 .controller('ContactController', require('./controller.js'))
 .directive('contactRow', require('./directive.js'));
 },{"./controller.js":23,"./directive.js":24}],26:[function(require,module,exports){
-'use strict';
-module.exports = angular.module('message', [
-    require('./contact').name,
-    require('./message').name
-]);
-},{"./contact":25,"./message":29}],27:[function(require,module,exports){
 'use strict'
 module.exports = function($scope, $stateParams, MessageFetcher, MessageSender)
-{ //message controller
+{ //entity message controller
   var storage = window.localStorage;
+  var type = $stateParams.content;
   $scope.post = {}; //post params for http request
-  $scope.init = function(type)
+  $scope.init = function()
   { //init function
-    if (type === "user") //PANDA could be post.id if we want to unify all
-      $scope.post.contact = $stateParams.id;
-    else
-    { //group / event message
-      //set post params
-      if ($stateParams.id != null && $stateParams.id.length > 2)
-        $scope.post.id = $stateParams.id;
-      else
-        alert("ERROR");
-    }
+    //PANDA do error checking
+    alert('type is' + type);
+    $scope.post.id = $stateParams.id;
     $scope.post.user = storage.getItem("email");
+    $scope.post.sender = storage.getItem("email");
     MessageFetcher.fetch($scope.post, type, function(data)
     {
       if (data["success"])
@@ -564,22 +558,81 @@ module.exports = function($scope, $stateParams, MessageFetcher, MessageSender)
         alert(data["message"]);
     });
   }; //end init function
-  $scope.send = function(type)
+  $scope.send = function()
   { //start send
     MessageSender.send($scope.post, type, function(data)
     {
       alert(data["message"]);
     });
   }; //end send function
-}; //end message controller
+}; //end entity message controller
+
+},{}],27:[function(require,module,exports){
+'use strict'
+module.exports = function($state)
+{ //entity message row directive
+  return {
+    restrict: 'E',
+    templateUrl: "module/message/entity/message-row.html",
+    controller: function()
+    {
+      //PANDA change to id
+      this.profile = function(email)
+      {
+        $state.go('user-profile', {id: email});
+      };
+    },
+    controllerAs: "entityMessageCtrl"
+  };
+}; //end entity message row directive
 
 },{}],28:[function(require,module,exports){
+'use strict';
+module.exports = angular.module('message.entity', [])
+.controller('EntityMessageController', require('./controller.js'))
+.directive('entityMessageRow', require('./directive.js'));
+},{"./controller.js":26,"./directive.js":27}],29:[function(require,module,exports){
+'use strict';
+module.exports = angular.module('message', [
+    require('./contact').name,
+    require('./user').name,
+    require('./entity').name
+]);
+},{"./contact":25,"./entity":28,"./user":32}],30:[function(require,module,exports){
+'use strict'
+module.exports = function($scope, $stateParams, MessageFetcher, MessageSender)
+{ //user message controller
+  var storage = window.localStorage;
+  $scope.post = {}; //post params for http request
+  $scope.init = function()
+  { //init function
+    $scope.post.contact = $stateParams.id;
+    $scope.post.user = storage.getItem("email");
+    MessageFetcher.fetch($scope.post, 'user', function(data)
+    {
+      if (data["success"])
+        $scope.messages = data["messages"];
+      else
+        //PANDA, populate sad guy.
+        alert(data["message"]);
+    });
+  }; //end init function
+  $scope.send = function()
+  { //start send
+    MessageSender.send($scope.post, 'user', function(data)
+    {
+      alert(data["message"]);
+    });
+  }; //end send function
+}; //end user message controller
+
+},{}],31:[function(require,module,exports){
 'use strict'
 module.exports = function($state)
 {
   return {
     restrict: 'E',
-    templateUrl: "module/message/message/partial/message-row.html",
+    templateUrl: "module/message/user/message-row.html",
     controller: function()
     {
       //PANDA change to id
@@ -589,16 +642,16 @@ module.exports = function($state)
         $state.go('user-profile', {id: email});
       };
     },
-    controllerAs: "msgCtrl"
+    controllerAs: "userMessageCtrl"
   };
 }; //end message row directive
 
-},{}],29:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 'use strict';
-module.exports = angular.module('message.message', [])
-.controller('MessageController', require('./controller.js'))
-.directive('messageRow', require('./directive.js'));
-},{"./controller.js":27,"./directive.js":28}],30:[function(require,module,exports){
+module.exports = angular.module('message.user', [])
+.controller('UserMessageController', require('./controller.js'))
+.directive('userMessageRow', require('./directive.js'));
+},{"./controller.js":30,"./directive.js":31}],33:[function(require,module,exports){
 'use strict'
 module.exports = function($scope, $stateParams, $state, ProfileFetcher, ImageFetcher)
 { //profile controller
@@ -658,7 +711,7 @@ module.exports = function($scope, $stateParams, $state, ProfileFetcher, ImageFet
     document.getElementById('editprofile-modal').style.display = 'none';
   };
 }; //end profile controller
-},{}],31:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 'use strict'
 module.exports = function($http, $filter)
 { //event edit directive
@@ -708,11 +761,11 @@ module.exports = function($http, $filter)
   };
 }; //end event edit directive
 
-},{}],32:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('profile.event', [])
 .directive('eventEdit', require('./directive.js'));
-},{"./directive.js":31}],33:[function(require,module,exports){
+},{"./directive.js":34}],36:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 {
@@ -760,11 +813,11 @@ module.exports = function($http)
     controllerAs: "groupEdit"
   };
 }; //end edit group profile directive
-},{}],34:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('profile.group', [])
 .directive('groupEdit', require('./directive.js'));
-},{"./directive.js":33}],35:[function(require,module,exports){
+},{"./directive.js":36}],38:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('profile', [
     require('./user').name,
@@ -772,7 +825,7 @@ module.exports = angular.module('profile', [
     require('./event').name
 ])
 .controller('ProfileController', require('./controller.js'));
-},{"./controller.js":30,"./event":32,"./group":34,"./user":37}],36:[function(require,module,exports){
+},{"./controller.js":33,"./event":35,"./group":37,"./user":40}],39:[function(require,module,exports){
 'use strict'
 module.exports = function($filter, ProfileEditer)
 { //event edit directive
@@ -800,11 +853,11 @@ module.exports = function($filter, ProfileEditer)
   };
 }; //end edit user profile directive
 
-},{}],37:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('profile.user', [])
 .directive('userEdit', require('./directive.js'));
-},{"./directive.js":36}],38:[function(require,module,exports){
+},{"./directive.js":39}],41:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //creater takes a group/event type, info and creates it in the db
@@ -826,7 +879,7 @@ module.exports = function($http)
   };
 }; //end creater
 
-},{}],39:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //friend inviter takes in a to and from and sends the invite
@@ -848,7 +901,7 @@ module.exports = function($http)
   };
 }; //end friend inviter
 
-},{}],40:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //image fetcher
@@ -870,7 +923,7 @@ module.exports = function($http)
   };
 }; //end image fetcher
 
-},{}],41:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('service', [])
 .factory('Creater', require('./create.js'))
@@ -886,7 +939,7 @@ module.exports = angular.module('service', [])
 .factory('Register', require('./register.js'))
 .factory('SettingsFetcher', require('./settings.fetch.js'));
 
-},{"./create.js":38,"./friend.invite.js":39,"./image.fetch.js":40,"./invite.response.js":42,"./list.fetch.js":43,"./login.js":44,"./message.fetch.js":45,"./message.send.js":46,"./profile.edit.js":47,"./profile.fetch.js":48,"./register.js":49,"./settings.fetch.js":50}],42:[function(require,module,exports){
+},{"./create.js":41,"./friend.invite.js":42,"./image.fetch.js":43,"./invite.response.js":45,"./list.fetch.js":46,"./login.js":47,"./message.fetch.js":48,"./message.send.js":49,"./profile.edit.js":50,"./profile.fetch.js":51,"./register.js":52,"./settings.fetch.js":53}],45:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //invite responder
@@ -909,7 +962,7 @@ module.exports = function($http)
   };
 }; //end invite responder
 
-},{}],43:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //list fetcher is a service for fetching any type of list in grouple
@@ -933,7 +986,7 @@ module.exports = function($http)
   };
 }; //end list fetcher
 
-},{}],44:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //login is a service that queries the server and returns the response for the attempted login
@@ -954,7 +1007,7 @@ module.exports = function($http)
   };
 }; //end login
 
-},{}],45:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //message fetcher takes in a type and returns the messages for that entity
@@ -981,7 +1034,7 @@ module.exports = function($http)
     };
 }; //end message fetcher
 
-},{}],46:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //message sender sends user, group and event messages
@@ -1006,7 +1059,7 @@ module.exports = function($http)
   };
 }; //end message sender
 
-},{}],47:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //profile editer takes in updated info and a type and makes the proper updates
@@ -1028,7 +1081,7 @@ module.exports = function($http)
   };
 }; //end profile editer
 
-},{}],48:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //profile fetcher takes in an id and type and returns the corresponding user/group/event profile
@@ -1049,7 +1102,7 @@ module.exports = function($http)
         fetch: fetch
     };
 }; //end profile fetcher
-},{}],49:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //register is a service responsible for registering an account on the db
@@ -1070,21 +1123,21 @@ module.exports = function($http)
   };
 }; //end register
 
-},{}],50:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //settings fetcher service grabs a user's settings from the server
 
 }; //end settings fetcher
 
-},{}],51:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('session', [
     require('./register').name,
     require('./login').name//,
    // require('./settings')
 ]);
-},{"./login":53,"./register":55}],52:[function(require,module,exports){
+},{"./login":56,"./register":58}],55:[function(require,module,exports){
 'use strict'
 module.exports = function($scope, $state, Login)
 { //login controller
@@ -1116,11 +1169,11 @@ module.exports = function($scope, $state, Login)
     });
   }; //end login function
 }; //end login controller
-},{}],53:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('session.login', [])
 .controller('LoginController', require('./controller.js'));
-},{"./controller.js":52}],54:[function(require,module,exports){
+},{"./controller.js":55}],57:[function(require,module,exports){
 'use strict'
 module.exports = function($scope, Register)
 { //register controller
@@ -1134,11 +1187,11 @@ module.exports = function($scope, Register)
   }; //end register function
 }; //end register controller
 
-},{}],55:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('session.register', [])
 .controller('RegisterController', require('./controller.js'));
-},{"./controller.js":54}],56:[function(require,module,exports){
+},{"./controller.js":57}],59:[function(require,module,exports){
 /**
  * @license AngularJS v1.4.7
  * (c) 2010-2015 Google, Inc. http://angularjs.org
@@ -30043,11 +30096,11 @@ $provide.value("$locale", {
 })(window, document);
 
 !window.angular.$$csp().noInlineStyle && window.angular.element(document.head).prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>');
-},{}],57:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 require('./angular');
 module.exports = angular;
 
-},{"./angular":56}],58:[function(require,module,exports){
+},{"./angular":59}],61:[function(require,module,exports){
 /**
  * State-based routing for AngularJS
  * @version v0.2.8

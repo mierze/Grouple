@@ -8,7 +8,7 @@ return {
     {
       this.startMessages = function(contact)
       {
-        $state.go('messages', {id: contact.contact});
+        $state.go('user-messages', {id: contact.contact});
       };
       this.imgEnc = function(image)
       {

@@ -1,18 +1,17 @@
 'use strict'
 module.exports = function($state)
-{
+{ //entity message row directive
   return {
     restrict: 'E',
-    templateUrl: "module/message/message/partial/message-row.html",
+    templateUrl: "module/message/entity/message-row.html",
     controller: function()
     {
       //PANDA change to id
-      var float = "100%";
       this.profile = function(email)
       {
         $state.go('user-profile', {id: email});
       };
     },
-    controllerAs: "msgCtrl"
+    controllerAs: "entityMessageCtrl"
   };
-}; //end message row directive
+}; //end entity message row directive

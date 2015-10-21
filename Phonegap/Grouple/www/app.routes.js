@@ -96,9 +96,14 @@ module.exports = function($stateProvider, $urlRouterProvider)
           templateUrl: 'module/message/contact/layout.html',
           controller: 'ContactController'
       })
-      .state('messages', {
-          url:'/messages:id',
-          templateUrl: 'module/message/message/layout.html',
-          controller: 'MessageController'
+      .state('user-messages', {
+          url:'/user-messages:id',
+          templateUrl: 'module/message/user/layout.html',
+          controller: 'UserMessageController'
+      })
+      .state('entity-messages', {
+          url:'/entity-messages:content?id',
+          templateUrl: 'module/message/entity/layout.html',
+          controller: 'EntityMessageController'
       });
 }; //end routes

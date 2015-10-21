@@ -1,21 +1,16 @@
 'use strict'
 module.exports = function($scope, $stateParams, MessageFetcher, MessageSender)
-{ //message controller
+{ //entity message controller
   var storage = window.localStorage;
+  var type = $stateParams.content;
   $scope.post = {}; //post params for http request
-  $scope.init = function(type)
+  $scope.init = function()
   { //init function
-    if (type === "user") //PANDA could be post.id if we want to unify all
-      $scope.post.contact = $stateParams.id;
-    else
-    { //group / event message
-      //set post params
-      if ($stateParams.id != null && $stateParams.id.length > 2)
-        $scope.post.id = $stateParams.id;
-      else
-        alert("ERROR");
-    }
+    //PANDA do error checking
+    alert('type is' + type);
+    $scope.post.id = $stateParams.id;
     $scope.post.user = storage.getItem("email");
+    $scope.post.sender = storage.getItem("email");
     MessageFetcher.fetch($scope.post, type, function(data)
     {
       if (data["success"])
@@ -25,11 +20,11 @@ module.exports = function($scope, $stateParams, MessageFetcher, MessageSender)
         alert(data["message"]);
     });
   }; //end init function
-  $scope.send = function(type)
+  $scope.send = function()
   { //start send
     MessageSender.send($scope.post, type, function(data)
     {
       alert(data["message"]);
     });
   }; //end send function
-}; //end message controller
+}; //end entity message controller
