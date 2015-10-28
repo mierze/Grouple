@@ -14,6 +14,7 @@ module.exports = function($scope, $state, Login)
     {
         if (data["success"])
         { //successful login
+          $state.go("event-invite", {id: "mierze@gmail.com"});
           alert(data["message"]);
           //set storage items
           if ($scope.post.stayLogged)
@@ -22,7 +23,7 @@ module.exports = function($scope, $state, Login)
             storage.setItem("stayLogged", 0);
           storage.setItem("email", $scope.post.email);
           //PANDA: set name here too
-          $state.go('home');
+          //$state.go('home');
         }
         else //generic catch
           alert(data["message"]);

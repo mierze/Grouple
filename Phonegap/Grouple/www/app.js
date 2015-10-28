@@ -10,8 +10,8 @@ require('./node_modules/ui-router/angular-ui-router.js'); //provides 'ui-router'
 angular.module('grouple', [
     require('./module/service').name,
     require('./module/session').name,
-    require('./module/adder').name,
     require('./module/list').name,
+    require('./module/adder').name,
     require('./module/profile').name,
     require('./module/message').name,
     require('ui-router')

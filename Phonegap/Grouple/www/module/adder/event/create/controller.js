@@ -23,20 +23,11 @@ module.exports = function($scope, $filter, $state, Creater)
     Creater.create($scope.post, 'event', function(data)
     { //creater create
       alert(data["message"]);
-      //PANDA
-      //launch overlay -> inflate with groups from the  list.fetch service function(post, type=>groups, callback)
       $scope.created = true;
-      $state.go("event-profile", {id: data["id"]});
-      alert("TRUE NOW");
+      //PANDA give user option to go to profile or invite groups
+     // $state.go("event-profile", {id: data["id"]});
+      //PANDA launch event-invite page
+      $state.go("event-invite", {id: data["id"]});
     }); //end creater create
-  };
-  //modal functionality below
-  $scope.showEventCreate = function()
-  {
-    document.getElementById('event-create').style.display = 'block';
-  };
-  $scope.closeEventCreate = function()
-  {
-    document.getElementById('event-create').style.display = 'none';
   };
 }; //end event create controller

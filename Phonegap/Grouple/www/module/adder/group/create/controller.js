@@ -1,9 +1,10 @@
 'use strict'
 module.exports = function($scope, $state, Creater)
-{ //wrap
+{ //group create controller
   var storage = window.localStorage;
   //create module controllers
   $scope.post = {};
+  $scope.post.public = "1";
   $scope.created = "false"; //boolean for whether group has been created
   $scope.create = function()
   { //create function
@@ -12,16 +13,14 @@ module.exports = function($scope, $state, Creater)
     alert("POST is now:\n"+JSON.stringify($scope.post));
     Creater.create($scope.post, 'group', function(data)
     { //creater create
-      alert(data["message"]);
       if (data["success"])
       { //created group successfully
         alert("1");
         $scope.created = true;
-        alert("2");
-        $state.go("event-profile", {id: data["id"]});
-        alert("3 " + data["id"]);
         //PANDA find out if creator is added to group
+        //PANDA launch group-invite page
+        $state.go("group-invite", {id: data["id"]});
       }
     });
   };
-}; //end wrap
+}; //end group create controller

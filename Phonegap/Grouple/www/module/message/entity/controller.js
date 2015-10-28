@@ -10,7 +10,7 @@ module.exports = function($scope, $stateParams, MessageFetcher, MessageSender)
     alert('type is' + type);
     $scope.post.id = $stateParams.id;
     $scope.post.user = storage.getItem("email");
-    $scope.post.sender = storage.getItem("email");
+    $scope.post.from = storage.getItem("email");
     MessageFetcher.fetch($scope.post, type, function(data)
     {
       if (data["success"])

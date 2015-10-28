@@ -83,13 +83,13 @@ module.exports = function($stateProvider, $urlRouterProvider)
       }) //PANDA -> group / event invite need to signal for different group / user rows
       .state('group-invite', {
           url:'/group-invite:id',
-          templateUrl: 'module/list/user/layout.html',
-          controller: 'ListController'
+          templateUrl: 'module/adder/group/invite/layout.html',
+          controller: 'GroupInviteController'
       })
       .state('event-invite', {
           url:'/event-invite:id',
-          templateUrl: 'module/list/group/layout.html',
-          controller: 'ListController'
+          templateUrl: 'module/adder/event/invite/layout.html',
+          controller: 'EventInviteController'
       })
       .state('contacts', {
           url:'/contacts',
