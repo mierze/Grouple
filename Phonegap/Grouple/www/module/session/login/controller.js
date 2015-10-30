@@ -14,19 +14,18 @@ module.exports = function($scope, $state, Login)
     {
         if (data["success"])
         { //successful login
-          $state.go("event-invite", {id: "mierze@gmail.com"});
-          alert(data["message"]);
+          alert(data["message"] + "\n" + JSON.stringify($scope.post));
           //set storage items
-          if ($scope.post.stayLogged)
-            storage.setItem("stayLogged", 1);
-          else
-            storage.setItem("stayLogged", 0);
+          storage.setItem("stayLogged", $scope.post.stayLogged);
+  
           storage.setItem("email", $scope.post.email);
+          storage.setItem("name", "friend");
           //PANDA: set name here too
           //$state.go('home');
         }
         else //generic catch
-          alert(data["message"]);
+          alert(data['message']);
+        $state.go('home');
     });
   }; //end login function
 }; //end login controller

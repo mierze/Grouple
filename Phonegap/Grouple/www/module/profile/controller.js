@@ -6,25 +6,38 @@ module.exports = function($scope, $stateParams, $state, ProfileFetcher, ImageFet
   $scope.init = function(type)
   { //start init function
     $scope.post = {};
-    if ($stateParams.id.length < 2 && type === 'user')
-      //case that id is for logged user's email
+    //case that id is for logged user's email
+    if ($stateParams.id === 'user')
+    {
       $scope.post.id = storage.getItem("email");
-    else
+    }
+    else if($stateParams.id !== null)
+    {
       $scope.post.id = $stateParams.id;
+    }
+    else
+     alert("problem with id passed");
     $scope.post.user = storage.getItem("email");
     ProfileFetcher.fetch($scope.post, type, function(data)
     { //start fetch profile
+      alert(data["message"]);
       if (data["success"])
       {
         //PANDA set for now. next get from api
         $scope.editable = true;
-        //PANDA fix date
         $scope.info = data["info"];
         if (type === 'user')
         {
-          $scope.info.age = 23;
           if ($scope.info.birthday !== null)
-            $scope.info.birthday = new Date(2013, 9, 22);
+          {
+            //calculate age
+            //turn visible
+          }
+          else
+          {
+            //make 
+          }
+          //same for all fields
         }
       }
       else //generic catch

@@ -6,7 +6,7 @@
             <input type="password" placeholder="Password" required ng-model="post.password" ng-minlength="4" ng-maxlength="20" />
             <label><!-- PANDA TODO check best practice for labels -->
                 Stay logged in?
-                <input type="checkbox" ng-model="post.stayLogged" ng-cloak />
+                <input type="checkbox" name="stay-logged" ng-true-value="1" ng-false-value="0" ng-model="post.stayLogged" ng-cloak />
             </label>
             <input class="btn" type="submit" value="Login" />
             <pre>{{user | json}}</pre>

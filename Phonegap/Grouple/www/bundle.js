@@ -103,7 +103,7 @@ module.exports = function($stateProvider, $urlRouterProvider)
           url:'/event-create',
           templateUrl: 'module/adder/event-create/layout.html',
           controller: 'EventCreateController'
-      }) //PANDA -> group / event invite need to signal for different group / user rows
+      }) 
       .state('group-invite', {
           url:'/group-invite:id',
           templateUrl: 'module/adder/group/invite/layout.html',
@@ -358,7 +358,6 @@ module.exports = angular.module('adder', [
     require('./group').name,
     require('./event').name,
     require('./friend').name
-    //require('./user').name
 ]);
 },{"./event":5,"./friend":10,"./group":13}],18:[function(require,module,exports){
 'use strict'
@@ -369,9 +368,8 @@ module.exports = function($scope, $state)
     $scope.logout = function()
     {
       storage.clear(); //clear storage
-      alert(storage.getItem("email"));
       document.location.href="#login";
-      alert("Later playa!");
+      alert("Later " + storage.getItem("name") + "!");
     };
 }; //end navigation controller
 },{}],19:[function(require,module,exports){
@@ -712,25 +710,38 @@ module.exports = function($scope, $stateParams, $state, ProfileFetcher, ImageFet
   $scope.init = function(type)
   { //start init function
     $scope.post = {};
-    if ($stateParams.id.length < 2 && type === 'user')
-      //case that id is for logged user's email
+    //case that id is for logged user's email
+    if ($stateParams.id === 'user')
+    {
       $scope.post.id = storage.getItem("email");
-    else
+    }
+    else if($stateParams.id !== null)
+    {
       $scope.post.id = $stateParams.id;
+    }
+    else
+     alert("problem with id passed");
     $scope.post.user = storage.getItem("email");
     ProfileFetcher.fetch($scope.post, type, function(data)
     { //start fetch profile
+      alert(data["message"]);
       if (data["success"])
       {
         //PANDA set for now. next get from api
         $scope.editable = true;
-        //PANDA fix date
         $scope.info = data["info"];
         if (type === 'user')
         {
-          $scope.info.age = 23;
           if ($scope.info.birthday !== null)
-            $scope.info.birthday = new Date(2013, 9, 22);
+          {
+            //calculate age
+            //turn visible
+          }
+          else
+          {
+            //make 
+          }
+          //same for all fields
         }
       }
       else //generic catch
@@ -819,7 +830,7 @@ module.exports = angular.module('profile.event', [])
 .directive('eventEdit', require('./directive.js'));
 },{"./directive.js":40}],42:[function(require,module,exports){
 'use strict'
-module.exports = function($http)
+module.exports = function($http, ProfileEditer)
 {
   var storage = window.localStorage; //grab local storage
   return {
@@ -827,40 +838,7 @@ module.exports = function($http)
     templateUrl: "module/profile/group/group-edit.html",
     controller: function()
     {
-      this.save = function(info)
-      {
-        this.url = "http://mierze.gear.host/grouple/api/update_group.php";
-        alert(JSON.stringify(info));
-        //http request to fetch list from server PANDA refactor out this
-        $http(
-        {
-          method : 'POST',
-          url : this.url,
-          data : info
-        }).success(function(data)
-        {
-          if (data["success"] === 1)
-          {
-            alert("Successfully updated group profile!");
-          }
-          else if (data["success"] === 0)
-          {
-            //PANDA, populate sad guy.
-            alert("000");
-            alert(data["message"]);
-          }
-          else
-          {
-            //generic catch
-            alert(data["message"]);
-            alert("Error updating group profile.");
-          }
-        })
-        .error(function(data)
-        {
-          alert("Error contacting server.");
-        });
-      };
+      alert("include editer here");
     },
     controllerAs: "groupEdit"
   };
@@ -889,10 +867,10 @@ module.exports = function($filter, ProfileEditer)
     {
       this.save = function(info)
       {
+        info.gender = 'm';
+        
         //this.info.email = info.email;
         alert(JSON.stringify(info));
-        info.birthday = $filter('date')(info.birthday, "yyyy-MM-dd");
-        alert(info.birthday);
 
         //http request to fetch list from server PANDA refactor out this
         ProfileEditer.edit(info, 'user', function(data)
@@ -1022,7 +1000,7 @@ module.exports = function($http)
   { //start fetch
     this.url = "http://mierze.gear.host/grouple/api/get_" + type + ".php";
     $http(
-    { //http request to fetch list from server PANDA refactor out this
+    {
       method  : 'POST',
       url     : this.url,
       data    : post
@@ -1112,31 +1090,32 @@ module.exports = function($http)
 },{}],56:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
-{ //profile editer takes in updated info and a type and makes the proper updates
+{ //profile editer takes in updated user / group / event profile info and updates them
   var edit = function(post, type, callback)
   { //edit function
     this.url = "http://mierze.gear.host/grouple/api/edit_" + type + ".php";
+    //http request to fetch list from server PANDA refactor out this
     $http(
-    { //http request to fetch list from server PANDA refactor out this
-      method  : 'POST',
-      url     : this.url,
-      data    : post
-     }).then(
+    {
+      method : 'POST',
+      url : this.url,
+      data : post
+    }).then(
     function(result) {
       return callback(result.data);
-    });
-  }; //end edit function
+    });      
+  }; //end edit
   return {
-    edit: edit
+      edit: edit
   };
 }; //end profile editer
-
 },{}],57:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //profile fetcher takes in an id and type and returns the corresponding user/group/event profile
     var fetch = function(post, type, callback)
     { //start fetch function
+        alert("here " + JSON.stringify(post));
         this.url = "http://mierze.gear.host/grouple/api/get_" + type + "_info.php";
         $http(
         { //http request to fetch list from server PANDA refactor out this
@@ -1204,19 +1183,18 @@ module.exports = function($scope, $state, Login)
     {
         if (data["success"])
         { //successful login
-          $state.go("event-invite", {id: "mierze@gmail.com"});
-          alert(data["message"]);
+          alert(data["message"] + "\n" + JSON.stringify($scope.post));
           //set storage items
-          if ($scope.post.stayLogged)
-            storage.setItem("stayLogged", 1);
-          else
-            storage.setItem("stayLogged", 0);
+          storage.setItem("stayLogged", $scope.post.stayLogged);
+  
           storage.setItem("email", $scope.post.email);
+          storage.setItem("name", "friend");
           //PANDA: set name here too
           //$state.go('home');
         }
         else //generic catch
-          alert(data["message"]);
+          alert(data['message']);
+        $state.go('home');
     });
   }; //end login function
 }; //end login controller
@@ -1226,14 +1204,20 @@ module.exports = angular.module('session.login', [])
 .controller('LoginController', require('./controller.js'));
 },{"./controller.js":61}],63:[function(require,module,exports){
 'use strict'
-module.exports = function($scope, Register)
+module.exports = function($scope, Register, $state)
 { //register controller
+  var storage = window.localStorage;
+  alert("In register ctrl");
   $scope.post = {};
   $scope.register = function()
   { //register function
     Register.register($scope.post, function(data)
     { //start register
         alert(data["message"]);
+        storage.setItem("email", $scope.post.email);
+        storage.setItem("name", $scope.post.first + ' ' + $scope.post.last);
+        //launch home
+        $state.go("home");
     }); //end register
   }; //end register function
 }; //end register controller

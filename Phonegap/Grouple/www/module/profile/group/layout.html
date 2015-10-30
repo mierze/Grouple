@@ -10,7 +10,9 @@
     <a class="btn" ui-sref="user-list({content: 'group_members', id: info.id})" ng-cloak>Members</a>
     <a class="btn" ui-sref="entity-messages({content: 'group', id: info.id})">Messages</a>
        <!-- GROUP EVENTS HERE
-       <a class="btn" ui-sref="group-upcoming-events">Upcoming Group Events</a> -->
+       <a class="btn" ui-sref="group-upcoming-events">Upcoming Group Events</a>
+       
+       also need a better name than editable, maybe privs, mod, admin ?-->
     <button ng-click="showEditProfile()" ng-hide="editable">Edit Profile</button>
     <a class="btn" ui-sref="group-invite" ng-hide="editable">Invite Friends</a>
     <group-edit></group-edit>

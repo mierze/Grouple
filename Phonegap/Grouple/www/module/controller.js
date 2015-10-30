@@ -6,8 +6,7 @@ module.exports = function($scope, $state)
     $scope.logout = function()
     {
       storage.clear(); //clear storage
-      alert(storage.getItem("email"));
       document.location.href="#login";
-      alert("Later playa!");
+      alert("Later " + storage.getItem("name") + "!");
     };
 }; //end navigation controller
