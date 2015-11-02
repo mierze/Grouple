@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<div id="user-profile" ng-init="init('user')">
-    <h1 ng-cloak>{{info.first}} {{info.last}}</h1>
-    <img class="profile-img" ng-src="{{image}}" alt="Profile Image" ng-show="image.length > 2" ng-cloak />
+<div id="user-profile" ng-init="init()">
+    <h2 ng-cloak>{{info.first}} {{info.last}}</h2>
+    <img class="profile-img" ng-src="{{image}}" alt="Profile Image" ng-hide="imageNull" ng-cloak />
     <section>
-        <em ng-cloak>{{info.age}} yrs young</em>
-        <strong ng-cloak>{{info.location}}</strong>
-        <p ng-cloak>{{info.about}}</p>
+        <em ng-hide="birthdayNull" ng-cloak>{{info.age}} yrs young</em>
+        <strong ng-hide="locationNull" ng-cloak>{{info.location}}</strong>
+        <p ng-hide="aboutNull" ng-cloak>{{info.about}}</p>
     </section>
     <a class="btn" ui-sref="badge-list({content: 'badges', id: info.id})">Badges</a>
     <a class="btn" ui-sref="user-list({content: 'friends', id: info.id})">Friends</a>

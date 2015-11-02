@@ -1,8 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /* PANDA list                   * date
- * [ ] Side navigation bugs     * 10/20
- * [ ] Message styling          * 10/21
- * [ ] Security in php(token)   *
+ * [ ] Security token in api    *
  *******************************/
 'use strict';
 var angular = require('./node_modules/angular');
@@ -18,9 +16,10 @@ angular.module('grouple', [
     require('ui-router')
   ])
 .config(require('./app.routes.js'))
-.controller('NavigationController', require('./module/controller.js'));
+.controller('NavigationController', require('./module/controller.js'))
+.directive('navBack', require('./module/nav-back.directive.js'));
 
-},{"./app.routes.js":2,"./module/adder":17,"./module/controller.js":18,"./module/list":26,"./module/message":35,"./module/profile":44,"./module/service":50,"./module/session":60,"./node_modules/angular":66,"./node_modules/ui-router/angular-ui-router.js":67,"ui-router":67}],2:[function(require,module,exports){
+},{"./app.routes.js":2,"./module/adder":17,"./module/controller.js":18,"./module/list":26,"./module/message":35,"./module/nav-back.directive.js":39,"./module/profile":46,"./module/service":53,"./module/session":63,"./node_modules/angular":69,"./node_modules/ui-router/angular-ui-router.js":70,"ui-router":70}],2:[function(require,module,exports){
 'use strict'
 module.exports = function($stateProvider, $urlRouterProvider)
 { //routes
@@ -62,17 +61,17 @@ module.exports = function($stateProvider, $urlRouterProvider)
       .state('user-profile', {
           url:'/user-profile:id',
           templateUrl: 'module/profile/user/layout.html',
-          controller: 'ProfileController'
+          controller: 'UserProfileController'
       })
       .state('group-profile', {
           url:'/group-profile:id',
           templateUrl: 'module/profile/group/layout.html',
-          controller: 'ProfileController'
+          controller: 'GroupProfileController'
       })
       .state('event-profile', {
           url:'/event-profile:id',
           templateUrl: 'module/profile/event/layout.html',
-          controller: 'ProfileController'
+          controller: 'EventProfileController'
       })
       .state('user-list', {
           url:'/user-list:content?id',
@@ -96,12 +95,12 @@ module.exports = function($stateProvider, $urlRouterProvider)
       })
       .state('group-create', {
           url:'/group-create',
-          templateUrl: 'module/adder/group-create/layout.html',
+          templateUrl: 'module/adder/group/create/layout.html',
           controller: 'GroupCreateController'
       })
       .state('event-create', {
           url:'/event-create',
-          templateUrl: 'module/adder/event-create/layout.html',
+          templateUrl: 'module/adder/event/create/layout.html',
           controller: 'EventCreateController'
       }) 
       .state('group-invite', {
@@ -371,6 +370,11 @@ module.exports = function($scope, $state)
       document.location.href="#login";
       alert("Later " + storage.getItem("name") + "!");
     };
+    
+    $scope.$on('setTitle', function(args)
+    {
+        alert("emit made it to $on");
+    });
 }; //end navigation controller
 },{}],19:[function(require,module,exports){
 'use strict'
@@ -433,7 +437,7 @@ module.exports = function($scope, $stateParams, ListFetcher)
     { //start fetch list
       if (data["success"])
       {
-        alert(JSON.stringify(data["items"]));
+       // alert(JSON.stringify(data["items"]));
         $scope.items = data["items"];
       }
       else
@@ -703,46 +707,52 @@ module.exports = angular.module('message.user', [])
 .directive('userMessageRow', require('./directive.js'));
 },{"./controller.js":36,"./directive.js":37}],39:[function(require,module,exports){
 'use strict'
+module.exports = function($state)
+{
+    //PANDA:
+    //Make bool for displaying back / menu
+    //Make this directive for entire nav bar
+    //Disable backing up into crucial areas and to login / register screen
+    //On register / logout dont display menu and back button
+    return {
+        restrict: 'E',
+        template: '<a id="nav-back"></a>',
+        link: function(scope, element, attrs) {
+            $(element).on('click', function() {
+                    
+                //alert(element);
+                history.back();
+                $apply();
+            });
+        }
+    };
+};
+
+
+},{}],40:[function(require,module,exports){
+'use strict'
 module.exports = function($scope, $stateParams, $state, ProfileFetcher, ImageFetcher)
 { //profile controller
   var storage = window.localStorage;
   //PANDA: need to check rank in group / event so that can show or hide editable
-  $scope.init = function(type)
+  $scope.init = function()
   { //start init function
+    var type = 'event'; //type of profile
     $scope.post = {};
     //case that id is for logged user's email
-    if ($stateParams.id === 'user')
-    {
-      $scope.post.id = storage.getItem("email");
-    }
-    else if($stateParams.id !== null)
-    {
+  
+    if($stateParams.id !== null)
       $scope.post.id = $stateParams.id;
-    }
     else
      alert("problem with id passed");
     $scope.post.user = storage.getItem("email");
     ProfileFetcher.fetch($scope.post, type, function(data)
     { //start fetch profile
-      alert(data["message"]);
       if (data["success"])
       {
         //PANDA set for now. next get from api
         $scope.editable = true;
         $scope.info = data["info"];
-        if (type === 'user')
-        {
-          if ($scope.info.birthday !== null)
-          {
-            //calculate age
-            //turn visible
-          }
-          else
-          {
-            //make 
-          }
-          //same for all fields
-        }
       }
       else //generic catch
         alert(data["message"]);
@@ -764,7 +774,7 @@ module.exports = function($scope, $stateParams, $state, ProfileFetcher, ImageFet
   {
     $state.go("user-list", {content: type, id: $scope.post.id});
   };
-  //modal functionality below
+  //modal functionality below, possibly refactor out since shared
   $scope.showEditProfile = function()
   {
     document.getElementById('editprofile-modal').style.display = 'block';
@@ -774,7 +784,7 @@ module.exports = function($scope, $stateParams, $state, ProfileFetcher, ImageFet
     document.getElementById('editprofile-modal').style.display = 'none';
   };
 }; //end profile controller
-},{}],40:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 'use strict'
 module.exports = function($http, $filter)
 { //event edit directive
@@ -824,11 +834,67 @@ module.exports = function($http, $filter)
   };
 }; //end event edit directive
 
-},{}],41:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('profile.event', [])
-.directive('eventEdit', require('./directive.js'));
-},{"./directive.js":40}],42:[function(require,module,exports){
+.directive('eventEdit', require('./directive.js'))
+.controller('EventProfileController', require('./controller'));
+},{"./controller":40,"./directive.js":41}],43:[function(require,module,exports){
+'use strict'
+module.exports = function($scope, $stateParams, $state, ProfileFetcher, ImageFetcher)
+{ //profile controller
+  var storage = window.localStorage;
+  //PANDA: need to check rank in group / event so that can show or hide editable
+  $scope.init = function()
+  { //start init function
+    var type = 'group';
+    $scope.post = {};
+    //case that id is for logged user's email
+    if($stateParams.id !== null)
+      $scope.post.id = $stateParams.id;
+    else
+     alert("problem with id passed");
+    $scope.post.user = storage.getItem("email");
+    ProfileFetcher.fetch($scope.post, type, function(data)
+    { //start fetch profile
+      alert(data["message"]);
+      if (data["success"])
+      {
+        //PANDA set for now. next get from api
+        $scope.editable = true;
+        $scope.info = data["info"];
+      }
+      else //generic catch
+        alert(data["message"]);
+    }); //end fetch profile
+    $scope.post.content = type;
+    ImageFetcher.fetch($scope.post, type, function(data)
+    { //start fetch image
+      if (data["success"])
+      {
+        var imgUrl = "data:image/png;base64," + data["image"];
+        $scope.image = imgUrl;
+      }
+      else
+        //generic catch
+        alert(data["message"]);
+    }); //end fetch image      
+  }; //end init function
+  $scope.start = function(type)
+  {
+    $state.go("user-list", {content: type, id: $scope.post.id});
+  };
+  //modal functionality below
+  $scope.showEditProfile = function()
+  {
+    document.getElementById('editprofile-modal').style.display = 'block';
+  };
+  $scope.closeEditProfile = function()
+  {
+    document.getElementById('editprofile-modal').style.display = 'none';
+  };
+}; //end profile controller
+},{}],44:[function(require,module,exports){
 'use strict'
 module.exports = function($http, ProfileEditer)
 {
@@ -843,19 +909,98 @@ module.exports = function($http, ProfileEditer)
     controllerAs: "groupEdit"
   };
 }; //end edit group profile directive
-},{}],43:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('profile.group', [])
-.directive('groupEdit', require('./directive.js'));
-},{"./directive.js":42}],44:[function(require,module,exports){
+.directive('groupEdit', require('./directive.js'))
+.controller('GroupProfileController', require('./controller'));
+},{"./controller":43,"./directive.js":44}],46:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('profile', [
     require('./user').name,
     require('./group').name,
     require('./event').name
-])
-.controller('ProfileController', require('./controller.js'));
-},{"./controller.js":39,"./event":41,"./group":43,"./user":46}],45:[function(require,module,exports){
+]);
+},{"./event":42,"./group":45,"./user":49}],47:[function(require,module,exports){
+'use strict'
+module.exports = function($scope, $stateParams, $state, ProfileFetcher, ImageFetcher)
+{ //profile controller
+  var storage = window.localStorage;
+  //PANDA: need to check rank in group / event so that can show or hide editable
+  $scope.init = function()
+  { //start init function
+    var type = 'user';
+    $scope.post = {};
+    //case that id is for logged user's email
+    if ($stateParams.id === 'user')   
+      $scope.post.id = storage.getItem("email");  
+    else if($stateParams.id !== null)   
+      $scope.post.id = $stateParams.id;
+    else
+     alert("Error: invalid id specified!");
+    $scope.post.user = storage.getItem("email");
+    ProfileFetcher.fetch($scope.post, type, function(data)
+    { //start fetch profile
+      if (data["success"])
+      { //fetched successfully
+        $scope.editable = true; //mod privs for editing
+        $scope.info = data["info"];
+        /*//set title to user's name
+        var args = [$scope.info.first, $scope.info.last];
+        $scope.$emit('setTitle', args);*/
+        //check for unset data
+        if ($scope.info.birthday == null)
+          $scope.birthdayNull = true;
+        else
+        { //parse age from birthday
+          var birthday = new Date($scope.info.birthday);
+          var difference = new Date - birthday;
+          $scope.info.age = Math.floor( (difference / 1000 / (60 * 60 * 24) ) / 365.25 );
+        }
+        if ($scope.info.about == null)
+          $scope.aboutNull = true;
+        if ($scope.info.location == null)
+          $scope.locationNull = true;
+        //end check for unset data
+      }
+      else //generic catch
+        alert(data["message"]);
+    }); //end fetch profile
+    $scope.post.content = type;
+    ImageFetcher.fetch($scope.post, type, function(data)
+    { //start fetch image
+      if (data["success"])
+      {
+        if (data['image'].length < 10  || data['image'] == null)
+          $scope.imageNull = true;
+        else
+        {
+          var imgUrl = "data:image/png;base64," + data["image"];
+          $scope.image = imgUrl;
+        }
+      }
+      else
+      { //generic catch
+        $scope.imageNull = true;
+        alert(data["message"]);
+      }
+    }); //end fetch image      
+  }; //end init function
+  $scope.start = function(type)
+  {
+    $state.go("user-list", {content: type, id: $scope.post.id});
+  };
+  //modal functionality below
+  $scope.showEditProfile = function()
+  {
+    document.getElementById('editprofile-modal').style.display = 'block';
+  };
+  $scope.closeEditProfile = function()
+  {
+    document.getElementById('editprofile-modal').style.display = 'none';
+  };
+}; //end profile controller
+},{}],48:[function(require,module,exports){
 'use strict'
 module.exports = function($filter, ProfileEditer)
 { //event edit directive
@@ -867,11 +1012,7 @@ module.exports = function($filter, ProfileEditer)
     {
       this.save = function(info)
       {
-        info.gender = 'm';
-        
-        //this.info.email = info.email;
-        alert(JSON.stringify(info));
-
+        //info.gender = 'm';
         //http request to fetch list from server PANDA refactor out this
         ProfileEditer.edit(info, 'user', function(data)
         {            
@@ -883,11 +1024,12 @@ module.exports = function($filter, ProfileEditer)
   };
 }; //end edit user profile directive
 
-},{}],46:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('profile.user', [])
-.directive('userEdit', require('./directive.js'));
-},{"./directive.js":45}],47:[function(require,module,exports){
+.directive('userEdit', require('./directive.js'))
+.controller('UserProfileController', require('./controller'));
+},{"./controller":47,"./directive.js":48}],50:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //creater takes a group/event type, info and creates it in the db
@@ -909,7 +1051,7 @@ module.exports = function($http)
   };
 }; //end creater
 
-},{}],48:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //friend inviter takes in a to and from and sends the invite
@@ -931,7 +1073,7 @@ module.exports = function($http)
   };
 }; //end friend inviter
 
-},{}],49:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //image fetcher
@@ -953,7 +1095,7 @@ module.exports = function($http)
   };
 }; //end image fetcher
 
-},{}],50:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('service', [])
 .factory('Creater', require('./create.js'))
@@ -969,7 +1111,7 @@ module.exports = angular.module('service', [])
 .factory('Register', require('./register.js'))
 .factory('SettingsFetcher', require('./settings.fetch.js'));
 
-},{"./create.js":47,"./friend.invite.js":48,"./image.fetch.js":49,"./invite.response.js":51,"./list.fetch.js":52,"./login.js":53,"./message.fetch.js":54,"./message.send.js":55,"./profile.edit.js":56,"./profile.fetch.js":57,"./register.js":58,"./settings.fetch.js":59}],51:[function(require,module,exports){
+},{"./create.js":50,"./friend.invite.js":51,"./image.fetch.js":52,"./invite.response.js":54,"./list.fetch.js":55,"./login.js":56,"./message.fetch.js":57,"./message.send.js":58,"./profile.edit.js":59,"./profile.fetch.js":60,"./register.js":61,"./settings.fetch.js":62}],54:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //invite responder
@@ -992,7 +1134,7 @@ module.exports = function($http)
   };
 }; //end invite responder
 
-},{}],52:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //list fetcher is a service for fetching any type of list in grouple
@@ -1014,7 +1156,7 @@ module.exports = function($http)
   };
 }; //end list fetcher
 
-},{}],53:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //login is a service that queries the server and returns the response for the attempted login
@@ -1035,7 +1177,7 @@ module.exports = function($http)
   };
 }; //end login
 
-},{}],54:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //message fetcher takes in a type and returns the messages for that entity
@@ -1062,7 +1204,7 @@ module.exports = function($http)
     };
 }; //end message fetcher
 
-},{}],55:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //message sender sends user, group and event messages
@@ -1087,7 +1229,7 @@ module.exports = function($http)
   };
 }; //end message sender
 
-},{}],56:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //profile editer takes in updated user / group / event profile info and updates them
@@ -1109,13 +1251,12 @@ module.exports = function($http)
       edit: edit
   };
 }; //end profile editer
-},{}],57:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //profile fetcher takes in an id and type and returns the corresponding user/group/event profile
     var fetch = function(post, type, callback)
     { //start fetch function
-        alert("here " + JSON.stringify(post));
         this.url = "http://mierze.gear.host/grouple/api/get_" + type + "_info.php";
         $http(
         { //http request to fetch list from server PANDA refactor out this
@@ -1131,7 +1272,7 @@ module.exports = function($http)
         fetch: fetch
     };
 }; //end profile fetcher
-},{}],58:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //register is a service responsible for registering an account on the db
@@ -1152,29 +1293,28 @@ module.exports = function($http)
   };
 }; //end register
 
-},{}],59:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //settings fetcher service grabs a user's settings from the server
 
 }; //end settings fetcher
 
-},{}],60:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('session', [
     require('./register').name,
     require('./login').name//,
    // require('./settings')
 ]);
-},{"./login":62,"./register":64}],61:[function(require,module,exports){
+},{"./login":65,"./register":67}],64:[function(require,module,exports){
 'use strict'
 module.exports = function($scope, $state, Login)
 { //login controller
   var storage = window.localStorage;
   $scope.post = {};
-  //check for stay_logged
-  alert(JSON.stringify(storage));
-  if (storage.getItem("email") !== null && storage.getItem("stayLogged") === 1)
+  //check for stay logged
+  if (storage.getItem("email") !== null && storage.getItem("stayLogged") != 0)
     $state.go('home');
   $scope.login = function()
   { //login function
@@ -1183,10 +1323,9 @@ module.exports = function($scope, $state, Login)
     {
         if (data["success"])
         { //successful login
-          alert(data["message"] + "\n" + JSON.stringify($scope.post));
+          alert(data["message"]);
           //set storage items
           storage.setItem("stayLogged", $scope.post.stayLogged);
-  
           storage.setItem("email", $scope.post.email);
           storage.setItem("name", "friend");
           //PANDA: set name here too
@@ -1198,35 +1337,37 @@ module.exports = function($scope, $state, Login)
     });
   }; //end login function
 }; //end login controller
-},{}],62:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('session.login', [])
 .controller('LoginController', require('./controller.js'));
-},{"./controller.js":61}],63:[function(require,module,exports){
+},{"./controller.js":64}],66:[function(require,module,exports){
 'use strict'
 module.exports = function($scope, Register, $state)
 { //register controller
   var storage = window.localStorage;
-  alert("In register ctrl");
   $scope.post = {};
   $scope.register = function()
   { //register function
     Register.register($scope.post, function(data)
     { //start register
         alert(data["message"]);
-        storage.setItem("email", $scope.post.email);
-        storage.setItem("name", $scope.post.first + ' ' + $scope.post.last);
-        //launch home
-        $state.go("home");
+        if (data["success"])
+        {
+          storage.setItem("email", $scope.post.email);
+          storage.setItem("name", $scope.post.first + ' ' + $scope.post.last);
+          //launch home
+          $state.go("home");
+        }
     }); //end register
   }; //end register function
 }; //end register controller
 
-},{}],64:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('session.register', [])
 .controller('RegisterController', require('./controller.js'));
-},{"./controller.js":63}],65:[function(require,module,exports){
+},{"./controller.js":66}],68:[function(require,module,exports){
 /**
  * @license AngularJS v1.4.7
  * (c) 2010-2015 Google, Inc. http://angularjs.org
@@ -30131,11 +30272,11 @@ $provide.value("$locale", {
 })(window, document);
 
 !window.angular.$$csp().noInlineStyle && window.angular.element(document.head).prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>');
-},{}],66:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 require('./angular');
 module.exports = angular;
 
-},{"./angular":65}],67:[function(require,module,exports){
+},{"./angular":68}],70:[function(require,module,exports){
 /**
  * State-based routing for AngularJS
  * @version v0.2.8

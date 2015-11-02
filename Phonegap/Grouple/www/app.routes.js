@@ -39,17 +39,17 @@ module.exports = function($stateProvider, $urlRouterProvider)
       .state('user-profile', {
           url:'/user-profile:id',
           templateUrl: 'module/profile/user/layout.html',
-          controller: 'ProfileController'
+          controller: 'UserProfileController'
       })
       .state('group-profile', {
           url:'/group-profile:id',
           templateUrl: 'module/profile/group/layout.html',
-          controller: 'ProfileController'
+          controller: 'GroupProfileController'
       })
       .state('event-profile', {
           url:'/event-profile:id',
           templateUrl: 'module/profile/event/layout.html',
-          controller: 'ProfileController'
+          controller: 'EventProfileController'
       })
       .state('user-list', {
           url:'/user-list:content?id',
@@ -73,12 +73,12 @@ module.exports = function($stateProvider, $urlRouterProvider)
       })
       .state('group-create', {
           url:'/group-create',
-          templateUrl: 'module/adder/group-create/layout.html',
+          templateUrl: 'module/adder/group/create/layout.html',
           controller: 'GroupCreateController'
       })
       .state('event-create', {
           url:'/event-create',
-          templateUrl: 'module/adder/event-create/layout.html',
+          templateUrl: 'module/adder/event/create/layout.html',
           controller: 'EventCreateController'
       }) 
       .state('group-invite', {

@@ -12,28 +12,28 @@ $(document).ready(function()
            // $(".top-bar #expand").text("-");
         }
     });
-    //PANDA code extra clicks to disable it
-    var home = ["#home", "#nav-home"];
-    var friends =  ["#friends", "#nav-friends"];
-    var groups = ["#groups", "#nav-groups"];
-    var profile = ["#user-profile", "#nav-profile"];
-    var messages = ["#contacts", "#nav-messages"];
-
-    if ($("#home").is(':visible'))
+    var ids =
+    ["#nav-home", "#nav-friends", "#nav-groups",
+        "#nav-profile", "#nav-events",
+        "#nav-messages", "#nav-logout"];
+    //looping to apply on clicks
+    var i = 0;
+    while (i < ids.length)
     {
-        $("#nav-home").click(function()
+        $(ids[i]).click(function()
         {
-            alert("WORKED");
             if ($("div#nav-menu ul").hasClass("expanded")) {
                 $("div#nav-menu ul.expanded").removeClass("expanded").slideUp(250);
                 $(this).removeClass("open");
                 //$(".top-bar #expand").text("+");
-            } else {
+            }
+            else
+            {
                 $("div#nav-menu ul").addClass("expanded").slideDown(250);
                 $(this).addClass("open");
                // $(".top-bar #expand").text("-");
             }
-    });
-        }
-    
         });
+        i++;
+    }
+});

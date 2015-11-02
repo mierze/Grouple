@@ -7,11 +7,9 @@
             <input ng-model="post.first" type="text" name="email" placeholder="First Name" required ng-maxlength="20" />
             <input ng-model="post.last" type="text" placeholder="Last Name" required ng-maxlength="20" />
             <input ng-model="post.email" type="email" name="email" placeholder="Email" />
-            <input ng-model="post.password" type="password" placeholder="Password" required ng-minlength="6" ng-maxlength="20" />
+            <input ng-model="post.password" type="password" placeholder="Password" required ng-minlength="8" ng-maxlength="20" />
             <input class="btn" type="submit" value="Register" />
-            <pre>output is: {{user | json}}</pre>
         </fieldset>
-        <input type="submit" value="Register" />
     </form>
     <p>Already registered!?</p>
     <a class="btn" ui-sref="login">Login</a>

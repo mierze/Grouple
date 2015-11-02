@@ -9,9 +9,10 @@
         <link rel="stylesheet" type="text/css" href="style/index.css" />
         <script type="text/javascript" src="node_modules/cordova/cordova.js"></script>
         <script type="text/javascript" src="resource/plugin/jquery.min.js"></script>
-        <title>Grouple // Home</title>
+        <title>Grouple</title>
     </head>
     <body class="app">
+        <!--todo, make this div a nav and make nav below a directive entirely -->
         <div id="nav-menu" ng-controller="NavigationController">
             <ul>
                 <li><a id="nav-home" ui-sref="home">Home</a></li>
@@ -24,10 +25,8 @@
                 <li><a id="nav-logout" ng-click="logout()">Logout</a></li>
             </ul>
         </div>
-        
-
         <nav id="nav">
-            <a ui-sref="home" id="nav-back"></a>
+            <nav-back></nav-back>
             <h1 id="nav-title">Grouple</h1>
             <button id="nav-open"></button>
         </nav>

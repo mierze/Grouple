@@ -9,4 +9,9 @@ module.exports = function($scope, $state)
       document.location.href="#login";
       alert("Later " + storage.getItem("name") + "!");
     };
+    
+    $scope.$on('setTitle', function(args)
+    {
+        alert("emit made it to $on");
+    });
 }; //end navigation controller

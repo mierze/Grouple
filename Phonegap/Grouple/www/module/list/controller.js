@@ -22,7 +22,7 @@ module.exports = function($scope, $stateParams, ListFetcher)
     { //start fetch list
       if (data["success"])
       {
-        alert(JSON.stringify(data["items"]));
+       // alert(JSON.stringify(data["items"]));
         $scope.items = data["items"];
       }
       else

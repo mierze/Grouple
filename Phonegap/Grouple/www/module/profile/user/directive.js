@@ -9,11 +9,7 @@ module.exports = function($filter, ProfileEditer)
     {
       this.save = function(info)
       {
-        info.gender = 'm';
-        
-        //this.info.email = info.email;
-        alert(JSON.stringify(info));
-
+        //info.gender = 'm';
         //http request to fetch list from server PANDA refactor out this
         ProfileEditer.edit(info, 'user', function(data)
         {            

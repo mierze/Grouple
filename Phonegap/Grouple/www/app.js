@@ -1,7 +1,5 @@
 /* PANDA list                   * date
- * [ ] Side navigation bugs     * 10/20
- * [ ] Message styling          * 10/21
- * [ ] Security in php(token)   *
+ * [ ] Security token in api    *
  *******************************/
 'use strict';
 var angular = require('./node_modules/angular');
@@ -17,4 +15,5 @@ angular.module('grouple', [
     require('ui-router')
   ])
 .config(require('./app.routes.js'))
-.controller('NavigationController', require('./module/controller.js'));
+.controller('NavigationController', require('./module/controller.js'))
+.directive('navBack', require('./module/nav-back.directive.js'));

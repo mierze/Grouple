@@ -3,5 +3,4 @@ module.exports = angular.module('profile', [
     require('./user').name,
     require('./group').name,
     require('./event').name
-])
-.controller('ProfileController', require('./controller.js'));
+]);
