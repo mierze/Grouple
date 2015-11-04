@@ -22,9 +22,12 @@
         <option value="21">Once</option>
     </select>
     <label>
-        Public / Private
-        <input type="radio" name="public" id="true" value="1" />
-        <input type="radio" name="public" id="false" value="0" />
+        Public
+        <input type="radio" name="public" value="1" ng-model="post.pub" />
+    </label>
+    <label>
+        Private
+        <input type="radio" name="public" value="0" checked ng-model="post.pub" />
     </label>
     <input class="btn" type="submit" value="Create Event" />
 </form>

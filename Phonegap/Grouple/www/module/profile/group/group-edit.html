@@ -7,11 +7,14 @@
             <input type="text" name="name" id="name" placeholder="Name" required ng-model="info.name" ng-cloak/>
             <input type="text" name="about" id="about" placeholder="About Event" ng-model="info.about" ng-cloak />
             <label>
-                Public / Private
-                <input type="radio" name="public" id="true" />
-                <input type="radio" name="public" id="false" />
+                Public
+                <input type="radio" name="public" value="1" ng-model="post.pub" />
             </label>
-            <input class="btn" type="submit" value="Save" />
+            <label>
+                Private
+                <input type="radio" name="public" value="0" checked ng-model="post.pub" />
+            </label>
+            <button type="submit">Save</button>
         </form>
     </div>
 </div>

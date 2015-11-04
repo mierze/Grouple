@@ -4,12 +4,12 @@ module.exports = function($scope, FriendInviter)
   var storage = window.localStorage;
   //create module controll 
   $scope.post = {};
-  $scope.post.from = storage.getItem("email");
+  $scope.post.from = storage.getItem('email');
   $scope.send = function()
   {
     FriendInviter.send($scope.post, function(data)
     {
-      alert(data["message"]);
+      alert(data['message']);
     });
   };
   //modal functionality below

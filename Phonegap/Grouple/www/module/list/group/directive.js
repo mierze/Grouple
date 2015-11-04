@@ -3,7 +3,7 @@ module.exports = function($state, InviteResponder)
 {
   return {
     restrict: 'E',
-    templateUrl: "module/list/group/group-row.html",
+    templateUrl: 'module/list/group/group-row.html',
     controller: function()
     {
       this.profile = function(id)
@@ -12,13 +12,13 @@ module.exports = function($state, InviteResponder)
       };
       this.decision = function(post, decision)
       { //start decision
-        this.type = decision + "_group";
+        this.type = decision + '_group';
         InviteResponder.respond(post, this.type, function(data)
         {                      
-          alert(data["message"]);
+          alert(data['message']);
         });
       }; //end decision
     },
-    controllerAs: "group"
+    controllerAs: 'group'
   };
 }; //end group row directive

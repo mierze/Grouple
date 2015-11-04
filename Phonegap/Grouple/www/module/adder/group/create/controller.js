@@ -1,26 +1,36 @@
 'use strict'
-module.exports = function($scope, $state, Creater)
+module.exports = function($scope, $state, Creator)
 { //group create controller
   var storage = window.localStorage;
-  //create module controllers
+  //init post parameters
   $scope.post = {};
-  $scope.post.public = "1";
-  $scope.created = "false"; //boolean for whether group has been created
+  $scope.post.name = '';
+  $scope.post.about = '';
+  $scope.post.pub = '0';
+  $scope.post.location = '';
   $scope.create = function()
   { //create function
-    //form validation  
-    $scope.post.creator = storage.getItem("email");
-    alert("POST is now:\n"+JSON.stringify($scope.post));
-    Creater.create($scope.post, 'group', function(data)
+    //set creator to the current user
+    $scope.post.creator = storage.getItem('email');
+    //public validation
+    if (!($scope.post.pub === '0' || $scope.post.pub === '1'))
+    {
+      //public is not set, have some fancy red text pop up
+      alert('Please ensure public or private is selected!');
+    }
+    alert('Before creator call:\n' + JSON.stringify($scope.post));
+    Creator.create($scope.post, 'group', function(data)
     { //creater create
-      if (data["success"])
+      alert('Group create returns -> ' + JSON.stringify(data));
+      if (data['success'] > 0)
       { //created group successfully
-        alert("1");
-        $scope.created = true;
-        //PANDA find out if creator is added to group
-        //PANDA launch group-invite page
-        $state.go("group-invite", {id: data["id"]});
+        //TODO: find out if creator is added
+        $state.go('group-invite', {id: data['id']});
       }
     });
+  };
+  $scope.showErrors = function()
+  {
+    alert('You done darn did it!\nPlease fill out this form correctly.')
   };
 }; //end group create controller

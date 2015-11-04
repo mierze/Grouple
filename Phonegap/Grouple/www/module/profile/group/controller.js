@@ -11,36 +11,36 @@ module.exports = function($scope, $stateParams, $state, ProfileFetcher, ImageFet
     if($stateParams.id !== null)
       $scope.post.id = $stateParams.id;
     else
-     alert("problem with id passed");
-    $scope.post.user = storage.getItem("email");
+     alert('problem with id passed');
+    $scope.post.user = storage.getItem('email');
     ProfileFetcher.fetch($scope.post, type, function(data)
     { //start fetch profile
-      alert(data["message"]);
-      if (data["success"])
+      alert(data['message']);
+      if (data['success'])
       {
         //PANDA set for now. next get from api
         $scope.editable = true;
-        $scope.info = data["info"];
+        $scope.info = data['info'];
       }
       else //generic catch
-        alert(data["message"]);
+        alert(data['message']);
     }); //end fetch profile
     $scope.post.content = type;
     ImageFetcher.fetch($scope.post, type, function(data)
     { //start fetch image
-      if (data["success"])
+      if (data['success'])
       {
-        var imgUrl = "data:image/png;base64," + data["image"];
+        var imgUrl = 'data:image/png;base64,' + data['image'];
         $scope.image = imgUrl;
       }
       else
         //generic catch
-        alert(data["message"]);
+        alert(data['message']);
     }); //end fetch image      
   }; //end init function
   $scope.start = function(type)
   {
-    $state.go("user-list", {content: type, id: $scope.post.id});
+    $state.go('user-list', {content: type, id: $scope.post.id});
   };
   //modal functionality below
   $scope.showEditProfile = function()

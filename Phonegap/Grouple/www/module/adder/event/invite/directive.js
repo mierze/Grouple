@@ -3,7 +3,7 @@ module.exports = function($state)
 { //event invite row directive
   return {
     restrict: 'E',
-    templateUrl: "module/adder/event/invite/event-invite-row.html",
+    templateUrl: 'module/adder/event/invite/event-invite-row.html',
     controller: function()
     {
       //PANDA change to id
@@ -11,6 +11,6 @@ module.exports = function($state)
       {
       };
     },
-    controllerAs: "eventInviteRowCtrl"
+    controllerAs: 'eventInviteRowCtrl'
   };
 }; //end event invite row directive

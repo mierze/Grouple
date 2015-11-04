@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-/* PANDA list                   * date
+/* TODO list                   * date
  * [ ] Security token in api    *
  *******************************/
 'use strict';
@@ -17,9 +17,10 @@ angular.module('grouple', [
   ])
 .config(require('./app.routes.js'))
 .controller('NavigationController', require('./module/controller.js'))
+//TODO: make this a complete bar directive
 .directive('navBack', require('./module/nav-back.directive.js'));
 
-},{"./app.routes.js":2,"./module/adder":17,"./module/controller.js":18,"./module/list":26,"./module/message":35,"./module/nav-back.directive.js":39,"./module/profile":46,"./module/service":53,"./module/session":63,"./node_modules/angular":69,"./node_modules/ui-router/angular-ui-router.js":70,"ui-router":70}],2:[function(require,module,exports){
+},{"./app.routes.js":2,"./module/adder":17,"./module/controller.js":18,"./module/list":26,"./module/message":35,"./module/nav-back.directive.js":39,"./module/profile":46,"./module/service":55,"./module/session":65,"./node_modules/angular":71,"./node_modules/ui-router/angular-ui-router.js":72,"ui-router":72}],2:[function(require,module,exports){
 'use strict'
 module.exports = function($stateProvider, $urlRouterProvider)
 { //routes
@@ -132,7 +133,7 @@ module.exports = function($stateProvider, $urlRouterProvider)
 
 },{}],3:[function(require,module,exports){
 'use strict'
-module.exports = function($scope, $filter, $state, Creater)
+module.exports = function($scope, $filter, $state, Creator)
 { //event create controller
   var storage = window.localStorage;
   $scope.post = {};
@@ -140,9 +141,9 @@ module.exports = function($scope, $filter, $state, Creater)
   $scope.create = function()
   { //create function
     //form validation
-    alert("POST is now:\n"+JSON.stringify($scope.post));
+    alert('Before creator service:\n'+JSON.stringify($scope.post));
     $scope.post.recurring = 0;
-    $scope.post.creator = storage.getItem("email");
+    $scope.post.creator = storage.getItem('email');
     if ($scope.info.minPart == null)
       $scope.info.minPart = 1;
     if ($scope.info.maxPart == null)
@@ -150,17 +151,15 @@ module.exports = function($scope, $filter, $state, Creater)
     if ($scope.info.recType) {
       //code
     }
-    //PANDA: figure out these dates
-    $scope.info.startDate = $filter('date')($scope.info.startDate, "yyyy-MM-dd hh:mm:ss");
-    $scope.info.endDate = $filter('date')($scope.info.endDate, "yyyy-MM-dd hh:mm:ss"); 
-    Creater.create($scope.post, 'event', function(data)
+    //TODO: figure out these dates
+    $scope.info.startDate = $filter('date')($scope.info.startDate, 'yyyy-MM-dd hh:mm:ss');
+    $scope.info.endDate = $filter('date')($scope.info.endDate, 'yyyy-MM-dd hh:mm:ss'); 
+    Creator.create($scope.post, 'event', function(data)
     { //creater create
-      alert(data["message"]);
-      $scope.created = true;
-      //PANDA give user option to go to profile or invite groups
-     // $state.go("event-profile", {id: data["id"]});
-      //PANDA launch event-invite page
-      $state.go("event-invite", {id: data["id"]});
+      alert(data['message']);
+      if (data['success'] === '1') 
+      //TODO: give user option to go to profile or invite groups
+        $state.go('event-invite', {id: data['id']});e
     }); //end creater create
   };
 }; //end event create controller
@@ -180,19 +179,19 @@ module.exports = function($scope,/* GroupInviter*/ ListFetcher)
 { //event invite controller
   var storage = window.localStorage;
   $scope.post = {};
-  $scope.post.id = storage.getItem("email");
-  $scope.post.user = storage.getItem("email");
+  $scope.post.id = storage.getItem('email');
+  $scope.post.user = storage.getItem('email');
   $scope.init = function()
   {
     ListFetcher.fetch($scope.post, /*type of content to grab*/'groups', function(data)
     { //start fetch list of groups to invite
-      if (data["success"])
+      if (data['success'])
       {
-        alert(JSON.stringify(data["items"]));
-        $scope.items = data["items"];
+        alert(JSON.stringify(data['items']));
+        $scope.items = data['items'];
       }
       else
-        alert(data["message"]);
+        alert(data['message']);
     }); //end fetch list
   }
   $scope.send = function()
@@ -206,7 +205,7 @@ module.exports = function($state)
 { //event invite row directive
   return {
     restrict: 'E',
-    templateUrl: "module/adder/event/invite/event-invite-row.html",
+    templateUrl: 'module/adder/event/invite/event-invite-row.html',
     controller: function()
     {
       //PANDA change to id
@@ -214,7 +213,7 @@ module.exports = function($state)
       {
       };
     },
-    controllerAs: "eventInviteRowCtrl"
+    controllerAs: 'eventInviteRowCtrl'
   };
 }; //end event invite row directive
 
@@ -230,12 +229,12 @@ module.exports = function($scope, FriendInviter)
   var storage = window.localStorage;
   //create module controll 
   $scope.post = {};
-  $scope.post.from = storage.getItem("email");
+  $scope.post.from = storage.getItem('email');
   $scope.send = function()
   {
     FriendInviter.send($scope.post, function(data)
     {
-      alert(data["message"]);
+      alert(data['message']);
     });
   };
   //modal functionality below
@@ -254,29 +253,39 @@ module.exports = angular.module('adder.friend', [])
 .controller('FriendInviteController', require('./controller.js'));
 },{"./controller.js":9}],11:[function(require,module,exports){
 'use strict'
-module.exports = function($scope, $state, Creater)
+module.exports = function($scope, $state, Creator)
 { //group create controller
   var storage = window.localStorage;
-  //create module controllers
+  //init post parameters
   $scope.post = {};
-  $scope.post.public = "1";
-  $scope.created = "false"; //boolean for whether group has been created
+  $scope.post.name = '';
+  $scope.post.about = '';
+  $scope.post.pub = '0';
+  $scope.post.location = '';
   $scope.create = function()
   { //create function
-    //form validation  
-    $scope.post.creator = storage.getItem("email");
-    alert("POST is now:\n"+JSON.stringify($scope.post));
-    Creater.create($scope.post, 'group', function(data)
+    //set creator to the current user
+    $scope.post.creator = storage.getItem('email');
+    //public validation
+    if (!($scope.post.pub === '0' || $scope.post.pub === '1'))
+    {
+      //public is not set, have some fancy red text pop up
+      alert('Please ensure public or private is selected!');
+    }
+    alert('Before creator call:\n' + JSON.stringify($scope.post));
+    Creator.create($scope.post, 'group', function(data)
     { //creater create
-      if (data["success"])
+      alert('Group create returns -> ' + JSON.stringify(data));
+      if (data['success'] > 0)
       { //created group successfully
-        alert("1");
-        $scope.created = true;
-        //PANDA find out if creator is added to group
-        //PANDA launch group-invite page
-        $state.go("group-invite", {id: data["id"]});
+        //TODO: find out if creator is added
+        $state.go('group-invite', {id: data['id']});
       }
     });
+  };
+  $scope.showErrors = function()
+  {
+    alert('You done darn did it!\nPlease fill out this form correctly.')
   };
 }; //end group create controller
 },{}],12:[function(require,module,exports){
@@ -297,13 +306,9 @@ module.exports = function($scope,/*$stateParams, ?FriendInviter, GROUPINVITER*/ 
   $scope.post = {};
   $scope.post.id = storage.getItem("email");
   $scope.post.user = storage.getItem("email");
-  //PANDA find out if different api for group invites, need to remove friends that are already in group
-  //in this case of just creating group
-  //no friends will be in it
-  //otherwise should have group members loaded in already, could pass it in state params
   $scope.init = function()
   {
-    alert("IN INIT!");
+    //TODO: should also grab group members and remove those from the friends list and then display that
     ListFetcher.fetch($scope.post, /*type of content to grab*/'friends', function(data)
     { //start fetch list of groups to invite
       if (data["success"])
@@ -367,13 +372,14 @@ module.exports = function($scope, $state)
     $scope.logout = function()
     {
       storage.clear(); //clear storage
-      document.location.href="#login";
-      alert("Later " + storage.getItem("name") + "!");
+      document.location.href='#login';
+      
+      alert('Later ' + storage.getItem('name') + '!');
     };
-    
+    //TODO: work on setting title from outside controllers
     $scope.$on('setTitle', function(args)
     {
-        alert("emit made it to $on");
+        alert('emit made it to $on');
     });
 }; //end navigation controller
 },{}],19:[function(require,module,exports){
@@ -382,21 +388,21 @@ module.exports = function($state)
 { //badge item directive
   return {
     restrict: 'E',
-    templateUrl: "module/list/badge/badge-item.html",
+    templateUrl: 'module/list/badge/badge-item.html',
     controller: function()
     {
-      this.image = "unknown";
+      this.image = 'unknown';
       this.init = function(item)
       { //init function
         if (item.level > 0)
         { //setting image source
           this.lower = item.name.toLowerCase();
-          this.image = this.lower.replace(" ", "-");
+          this.image = this.lower.replace(' ', '-');
         }
       }; //end init function
       this.zoom = function()
       { //zoom function
-        alert("HERE IN ZOOM FUNCTION!");
+        alert('HERE IN ZOOM FUNCTION!');
         //would be ideal to have generic modal overlay
         //in this function inject the item info into the modal
         
@@ -404,7 +410,7 @@ module.exports = function($state)
         //$state.go('badge', {id: id});
       }; //end zoom function
     },
-    controllerAs: "badge"
+    controllerAs: 'badge'
   };
 }; //end badge item directive
 
@@ -419,34 +425,32 @@ module.exports = function($scope, $stateParams, ListFetcher)
   var storage = window.localStorage;
   if ($stateParams.content != null)
   { //ensure content is set
-    if ($stateParams.content === "friend_invites")
+    if ($stateParams.content === 'friend_invites')
     { //editable check
       $scope.editable = true;
     }
     //prepare post parameters
     $scope.post = {};
-    //PANDA switch content to type
+    //TODO switch content to type
     if ($stateParams.id == null || ($stateParams.id.length < 2 && ($stateParams.content === 'user' || $stateParams.content === 'badges')))
-      $scope.post.id = storage.getItem("email");
+      $scope.post.id = storage.getItem('email');
     else
       $scope.post.id = $stateParams.id;
-    $scope.post.user = storage.getItem("email");
-    //PANDA: prepare for badge row items
-    //fetch data and wait for callback
+    $scope.post.user = storage.getItem('email');
     ListFetcher.fetch($scope.post, $stateParams.content, function(data)
     { //start fetch list
-      if (data["success"])
+      if (data['success'])
       {
-       // alert(JSON.stringify(data["items"]));
-        $scope.items = data["items"];
+       // alert(JSON.stringify(data['items']));
+        $scope.items = data['items'];
       }
       else
         //PANDA, populate sad guy.
-        alert(data["message"]);
+        alert(data['message']);
     }); //end fetch list
   }
   else //error loading page
-    alert("Error loading list, please try again!");  
+    alert('Error loading list, please try again!');  
 }; //end list controller
 
 },{}],22:[function(require,module,exports){
@@ -455,7 +459,7 @@ module.exports = function($state, InviteResponder)
 { //event row directive
   return {
     restrict: 'E',
-    templateUrl: "module/list/event/event-row.html",
+    templateUrl: 'module/list/event/event-row.html',
     controller: function()
     {
       this.profile = function(id)
@@ -464,14 +468,14 @@ module.exports = function($state, InviteResponder)
       };
       this.decision = function(post, decision)
       { //start decision
-        this.type = decision + "_event";
+        this.type = decision + '_event';
         InviteResponder.respond(post, this.type, function(data)
         {                      
-          alert(data["message"]);
+          alert(data['message']);
         });
       }; //end decision
     },
-    controllerAs: "event"
+    controllerAs: 'event'
   };
 }; //end event row directive
 
@@ -485,7 +489,7 @@ module.exports = function($state, InviteResponder)
 {
   return {
     restrict: 'E',
-    templateUrl: "module/list/group/group-row.html",
+    templateUrl: 'module/list/group/group-row.html',
     controller: function()
     {
       this.profile = function(id)
@@ -494,14 +498,14 @@ module.exports = function($state, InviteResponder)
       };
       this.decision = function(post, decision)
       { //start decision
-        this.type = decision + "_group";
+        this.type = decision + '_group';
         InviteResponder.respond(post, this.type, function(data)
         {                      
-          alert(data["message"]);
+          alert(data['message']);
         });
       }; //end decision
     },
-    controllerAs: "group"
+    controllerAs: 'group'
   };
 }; //end group row directive
 },{}],25:[function(require,module,exports){
@@ -523,7 +527,7 @@ module.exports = function($state, InviteResponder)
 {
   return {
     restrict: 'E',
-    templateUrl: "module/list/user/partial/user-row.html",
+    templateUrl: 'module/list/user/partial/user-row.html',
     controller: function()
     {
       this.profile = function(id)
@@ -532,14 +536,14 @@ module.exports = function($state, InviteResponder)
       };
       this.decision = function(post, decision)
       { //start decision
-        this.type = decision + "_friend";
+        this.type = decision + '_friend';
         InviteResponder.respond(post, this.type, function(data)
         {                      
-          alert(data["message"]);
+          alert(data['message']);
         });
       }; //end decision
     },
-    controllerAs: "user"
+    controllerAs: 'user'
   };
 }; //end user row directive
 },{}],28:[function(require,module,exports){
@@ -552,15 +556,15 @@ module.exports = function($scope, MessageFetcher)
 { //contact controller
   var storage = window.localStorage;
   $scope.post = {}; //post params for http request
-  $scope.post.email = storage.getItem("email");
-  $scope.post.user = storage.getItem("email");
+  $scope.post.email = storage.getItem('email');
+  $scope.post.user = storage.getItem('email');
   MessageFetcher.fetch($scope.post, 'contacts', function(data)
   {
-    if (data["success"])
-      $scope.contacts = data["contacts"];
+    if (data['success'])
+      $scope.contacts = data['contacts'];
     else
       //PANDA, populate sad guy.
-      alert(data["message"]);
+      alert(data['message']);
   });
 }; //end contact controller
 },{}],30:[function(require,module,exports){
@@ -569,7 +573,7 @@ module.exports = function($state)
 { //contact row directive
 return {
     restrict: 'E',
-    templateUrl: "module/message/contact/contact-row.html",
+    templateUrl: 'module/message/contact/contact-row.html',
     controller: function()
     {
       this.startMessages = function(contact)
@@ -578,10 +582,10 @@ return {
       };
       this.imgEnc = function(image)
       {
-        return "data:image/png;base64," + image;
+        return 'data:image/png;base64,' + image;
       }
     },
-    controllerAs: "contactCtrl"
+    controllerAs: 'contactCtrl'
   };
 }; //end contact row directive
 },{}],31:[function(require,module,exports){
@@ -601,22 +605,22 @@ module.exports = function($scope, $stateParams, MessageFetcher, MessageSender)
     //PANDA do error checking
     alert('type is' + type);
     $scope.post.id = $stateParams.id;
-    $scope.post.user = storage.getItem("email");
-    $scope.post.from = storage.getItem("email");
+    $scope.post.user = storage.getItem('email');
+    $scope.post.from = storage.getItem('email');
     MessageFetcher.fetch($scope.post, type, function(data)
     {
-      if (data["success"])
-        $scope.messages = data["messages"];
+      if (data['success'])
+        $scope.messages = data['messages'];
       else
         //PANDA, populate sad guy.
-        alert(data["message"]);
+        alert(data['message']);
     });
   }; //end init function
   $scope.send = function()
   { //start send
     MessageSender.send($scope.post, type, function(data)
     {
-      alert(data["message"]);
+      alert(data['message']);
     });
   }; //end send function
 }; //end entity message controller
@@ -627,7 +631,7 @@ module.exports = function($state)
 { //entity message row directive
   return {
     restrict: 'E',
-    templateUrl: "module/message/entity/message-row.html",
+    templateUrl: 'module/message/entity/message-row.html',
     controller: function()
     {
       //PANDA change to id
@@ -636,7 +640,7 @@ module.exports = function($state)
         $state.go('user-profile', {id: email});
       };
     },
-    controllerAs: "entityMessageCtrl"
+    controllerAs: 'entityMessageCtrl'
   };
 }; //end entity message row directive
 
@@ -709,7 +713,7 @@ module.exports = angular.module('message.user', [])
 'use strict'
 module.exports = function($state)
 {
-    //PANDA:
+    //TODO:
     //Make bool for displaying back / menu
     //Make this directive for entire nav bar
     //Disable backing up into crucial areas and to login / register screen
@@ -718,9 +722,8 @@ module.exports = function($state)
         restrict: 'E',
         template: '<a id="nav-back"></a>',
         link: function(scope, element, attrs) {
-            $(element).on('click', function() {
-                    
-                //alert(element);
+            $(element).on('click', function()
+            {
                 history.back();
                 $apply();
             });
@@ -744,35 +747,35 @@ module.exports = function($scope, $stateParams, $state, ProfileFetcher, ImageFet
     if($stateParams.id !== null)
       $scope.post.id = $stateParams.id;
     else
-     alert("problem with id passed");
-    $scope.post.user = storage.getItem("email");
+     alert('problem with id passed');
+    $scope.post.user = storage.getItem('email');
     ProfileFetcher.fetch($scope.post, type, function(data)
     { //start fetch profile
-      if (data["success"])
+      if (data['success'])
       {
         //PANDA set for now. next get from api
         $scope.editable = true;
-        $scope.info = data["info"];
+        $scope.info = data['info'];
       }
       else //generic catch
-        alert(data["message"]);
+        alert(data['message']);
     }); //end fetch profile
     $scope.post.content = type;
     ImageFetcher.fetch($scope.post, type, function(data)
     { //start fetch image
-      if (data["success"])
+      if (data['success'])
       {
-        var imgUrl = "data:image/png;base64," + data["image"];
+        var imgUrl = 'data:image/png;base64,' + data['image'];
         $scope.image = imgUrl;
       }
       else
         //generic catch
-        alert(data["message"]);
+        alert(data['message']);
     }); //end fetch image      
   }; //end init function
   $scope.start = function(type)
   {
-    $state.go("user-list", {content: type, id: $scope.post.id});
+    $state.go('user-list', {content: type, id: $scope.post.id});
   };
   //modal functionality below, possibly refactor out since shared
   $scope.showEditProfile = function()
@@ -791,14 +794,14 @@ module.exports = function($http, $filter)
   var storage = window.localStorage; //grab local storage
   return {
     restrict: 'E',
-    templateUrl: "module/profile/event/event-edit.html",
+    templateUrl: 'module/profile/event/event-edit.html',
     controller: function()
     {
     this.save = function(info)
     {
-      info.startDate = $filter('date')(info.startDate, "yyyy-MM-dd hh:mm:ss");
-      info.endDate = $filter('date')(info.endDate, "yyyy-MM-dd hh:mm:ss");
-      this.url = "http://mierze.gear.host/grouple/api/update_event.php";
+      info.startDate = $filter('date')(info.startDate, 'yyyy-MM-dd hh:mm:ss');
+      info.endDate = $filter('date')(info.endDate, 'yyyy-MM-dd hh:mm:ss');
+      this.url = 'http://mierze.gear.host/grouple/api/update_event.php';
       alert(JSON.stringify(info));
       //http request to fetch list from server PANDA refactor out this
       $http(
@@ -808,29 +811,29 @@ module.exports = function($http, $filter)
         data : info
       }).success(function(data)
       {
-        if (data["success"] === 1)
+        if (data['success'] === 1)
         {
-          alert("Successfully updated event profile!");
+          alert('Successfully updated event profile!');
         }
-        else if (data["success"] === 0)
+        else if (data['success'] === 0)
         {
           //PANDA, populate sad guy.
-          alert(data["message"]);
+          alert(data['message']);
         }
         else
         {
           //generic catch
-          alert(data["message"]);
-          alert("Error updating event profile.");
+          alert(data['message']);
+          alert('Error updating event profile.');
         }
       })
       .error(function(data)
       {
-        alert("Error contacting server.");
+        alert('Error contacting server.');
       });
     };
   },
-  controllerAs: "eventEdit"
+  controllerAs: 'eventEdit'
   };
 }; //end event edit directive
 
@@ -853,36 +856,36 @@ module.exports = function($scope, $stateParams, $state, ProfileFetcher, ImageFet
     if($stateParams.id !== null)
       $scope.post.id = $stateParams.id;
     else
-     alert("problem with id passed");
-    $scope.post.user = storage.getItem("email");
+     alert('problem with id passed');
+    $scope.post.user = storage.getItem('email');
     ProfileFetcher.fetch($scope.post, type, function(data)
     { //start fetch profile
-      alert(data["message"]);
-      if (data["success"])
+      alert(data['message']);
+      if (data['success'])
       {
         //PANDA set for now. next get from api
         $scope.editable = true;
-        $scope.info = data["info"];
+        $scope.info = data['info'];
       }
       else //generic catch
-        alert(data["message"]);
+        alert(data['message']);
     }); //end fetch profile
     $scope.post.content = type;
     ImageFetcher.fetch($scope.post, type, function(data)
     { //start fetch image
-      if (data["success"])
+      if (data['success'])
       {
-        var imgUrl = "data:image/png;base64," + data["image"];
+        var imgUrl = 'data:image/png;base64,' + data['image'];
         $scope.image = imgUrl;
       }
       else
         //generic catch
-        alert(data["message"]);
+        alert(data['message']);
     }); //end fetch image      
   }; //end init function
   $scope.start = function(type)
   {
-    $state.go("user-list", {content: type, id: $scope.post.id});
+    $state.go('user-list', {content: type, id: $scope.post.id});
   };
   //modal functionality below
   $scope.showEditProfile = function()
@@ -901,12 +904,12 @@ module.exports = function($http, ProfileEditer)
   var storage = window.localStorage; //grab local storage
   return {
     restrict: 'E',
-    templateUrl: "module/profile/group/group-edit.html",
+    templateUrl: 'module/profile/group/group-edit.html',
     controller: function()
     {
-      alert("include editer here");
+      alert('include editer here');
     },
-    controllerAs: "groupEdit"
+    controllerAs: 'groupEdit'
   };
 }; //end edit group profile directive
 },{}],45:[function(require,module,exports){
@@ -933,18 +936,18 @@ module.exports = function($scope, $stateParams, $state, ProfileFetcher, ImageFet
     $scope.post = {};
     //case that id is for logged user's email
     if ($stateParams.id === 'user')   
-      $scope.post.id = storage.getItem("email");  
+      $scope.post.id = storage.getItem('email');  
     else if($stateParams.id !== null)   
       $scope.post.id = $stateParams.id;
     else
-     alert("Error: invalid id specified!");
-    $scope.post.user = storage.getItem("email");
+      alert('Error: invalid id specified!');
+    $scope.post.user = storage.getItem('email');
     ProfileFetcher.fetch($scope.post, type, function(data)
     { //start fetch profile
-      if (data["success"])
+      if (data['success'] === '1')
       { //fetched successfully
         $scope.editable = true; //mod privs for editing
-        $scope.info = data["info"];
+        $scope.info = data['info'];
         /*//set title to user's name
         var args = [$scope.info.first, $scope.info.last];
         $scope.$emit('setTitle', args);*/
@@ -954,8 +957,9 @@ module.exports = function($scope, $stateParams, $state, ProfileFetcher, ImageFet
         else
         { //parse age from birthday
           var birthday = new Date($scope.info.birthday);
+          $scope.info.birthday = birthday;
           var difference = new Date - birthday;
-          $scope.info.age = Math.floor( (difference / 1000 / (60 * 60 * 24) ) / 365.25 );
+          $scope.info.age = Math.floor( (difference / 1000/*ms*/ / (60/*s*/ * 60/*m*/ * 24/*hr*/) ) / 365.25/*day*/ );
         }
         if ($scope.info.about == null)
           $scope.aboutNull = true;
@@ -964,31 +968,31 @@ module.exports = function($scope, $stateParams, $state, ProfileFetcher, ImageFet
         //end check for unset data
       }
       else //generic catch
-        alert(data["message"]);
+        alert(data['message']);
     }); //end fetch profile
     $scope.post.content = type;
     ImageFetcher.fetch($scope.post, type, function(data)
     { //start fetch image
-      if (data["success"])
+      if (data['success'])
       {
         if (data['image'].length < 10  || data['image'] == null)
           $scope.imageNull = true;
         else
         {
-          var imgUrl = "data:image/png;base64," + data["image"];
+          var imgUrl = 'data:image/png;base64,' + data['image'];
           $scope.image = imgUrl;
         }
       }
       else
       { //generic catch
         $scope.imageNull = true;
-        alert(data["message"]);
+        alert(data['message']);
       }
     }); //end fetch image      
   }; //end init function
   $scope.start = function(type)
   {
-    $state.go("user-list", {content: type, id: $scope.post.id});
+    $state.go('user-list', {content: type, id: $scope.post.id});
   };
   //modal functionality below
   $scope.showEditProfile = function()
@@ -1007,20 +1011,30 @@ module.exports = function($filter, ProfileEditer)
   var storage = window.localStorage; //grab local storage
   return {
     restrict: 'E',
-    templateUrl: "module/profile/user/user-edit.html",
+    templateUrl: 'module/profile/user/user-edit.html',
     controller: function()
     {
       this.save = function(info)
       {
+        info.birthday = info.birthday.getUTCFullYear() + '-' + info.birthday.getUTCMonth() + '-' + info.birthday.getUTCDate();
+        //TODO: figure gender out!!!
+       // info.gender === 'Male' ? info.gender = 'm' : info.gender = 'f';
+        //ensure all info set
+        alert('Before editer service.\n' + JSON.stringify(info));
         //info.gender = 'm';
         //http request to fetch list from server PANDA refactor out this
         ProfileEditer.edit(info, 'user', function(data)
         {            
-          alert(data["message"]);
+          alert(data['message']);
+          //if successful update ui and close out
         });    
       };
+      this.showErrors = function()
+      {
+        alert('Error in edit for, please try again!');
+      };
     },
-    controllerAs: "userEdit"
+    controllerAs: 'userEdit'
   };
 }; //end edit user profile directive
 
@@ -1054,6 +1068,30 @@ module.exports = function($http)
 },{}],51:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
+{ //event inviter takes in a to and from and sends the invite
+  var send = function(post, callback)
+  { //send function
+    //TODO: should take in a list of gids
+      //will need to tweak the php to take in a list
+    alert("Post is\n" + JSON.stringify(post));
+    $http(
+    { //http request to fetch list from server PANDA refactor out this
+      method  : 'POST',
+      url     : 'http://mierze.gear.host/grouple/api/invite_groups.php',
+      data    : post
+     }).then(
+    function(result) {
+      return callback(result.data);
+    });
+  }; //end send function
+  return {
+    send: send
+  };
+}; //end event inviter
+
+},{}],52:[function(require,module,exports){
+'use strict'
+module.exports = function($http)
 { //friend inviter takes in a to and from and sends the invite
   var send = function(post, callback)
   { //send function
@@ -1073,7 +1111,30 @@ module.exports = function($http)
   };
 }; //end friend inviter
 
-},{}],52:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
+'use strict'
+module.exports = function($http)
+{ //group inviter takes in a to and from and sends the invite
+  var send = function(post, callback)
+  { //send function
+    //TODO: need to take in key-vals email->role
+    alert(JSON.stringify(post));
+    $http(
+    { //http request to fetch list from server PANDA refactor out this
+      method  : 'POST',
+      url     : 'http://mierze.gear.host/grouple/api/invite_friend.php',
+      data    : post
+     }).then(
+    function(result) {
+      return callback(result.data);
+    });
+  }; //end send function
+  return {
+    send: send
+  };
+}; //end group inviter
+
+},{}],54:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //image fetcher
@@ -1095,13 +1156,15 @@ module.exports = function($http)
   };
 }; //end image fetcher
 
-},{}],53:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('service', [])
-.factory('Creater', require('./create.js'))
+.factory('Creator', require('./create.js'))
 .factory('FriendInviter', require('./friend.invite.js'))
+.factory('GroupInviter', require('./group.invite.js'))
+.factory('EventInviter', require('./event.invite.js'))
 .factory('ImageFetcher', require('./image.fetch.js'))
-.factory('InviteResponder', require('./invite.response.js'))
+.factory('InviteResponder', require('./invite.respond.js'))
 .factory('ListFetcher', require('./list.fetch.js'))
 .factory('Login', require('./login.js'))
 .factory('MessageFetcher', require('./message.fetch.js'))
@@ -1111,7 +1174,7 @@ module.exports = angular.module('service', [])
 .factory('Register', require('./register.js'))
 .factory('SettingsFetcher', require('./settings.fetch.js'));
 
-},{"./create.js":50,"./friend.invite.js":51,"./image.fetch.js":52,"./invite.response.js":54,"./list.fetch.js":55,"./login.js":56,"./message.fetch.js":57,"./message.send.js":58,"./profile.edit.js":59,"./profile.fetch.js":60,"./register.js":61,"./settings.fetch.js":62}],54:[function(require,module,exports){
+},{"./create.js":50,"./event.invite.js":51,"./friend.invite.js":52,"./group.invite.js":53,"./image.fetch.js":54,"./invite.respond.js":56,"./list.fetch.js":57,"./login.js":58,"./message.fetch.js":59,"./message.send.js":60,"./profile.edit.js":61,"./profile.fetch.js":62,"./register.js":63,"./settings.fetch.js":64}],56:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //invite responder
@@ -1134,7 +1197,7 @@ module.exports = function($http)
   };
 }; //end invite responder
 
-},{}],55:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //list fetcher is a service for fetching any type of list in grouple
@@ -1156,7 +1219,7 @@ module.exports = function($http)
   };
 }; //end list fetcher
 
-},{}],56:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //login is a service that queries the server and returns the response for the attempted login
@@ -1177,7 +1240,7 @@ module.exports = function($http)
   };
 }; //end login
 
-},{}],57:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //message fetcher takes in a type and returns the messages for that entity
@@ -1204,7 +1267,7 @@ module.exports = function($http)
     };
 }; //end message fetcher
 
-},{}],58:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //message sender sends user, group and event messages
@@ -1229,7 +1292,7 @@ module.exports = function($http)
   };
 }; //end message sender
 
-},{}],59:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //profile editer takes in updated user / group / event profile info and updates them
@@ -1251,7 +1314,7 @@ module.exports = function($http)
       edit: edit
   };
 }; //end profile editer
-},{}],60:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //profile fetcher takes in an id and type and returns the corresponding user/group/event profile
@@ -1272,7 +1335,7 @@ module.exports = function($http)
         fetch: fetch
     };
 }; //end profile fetcher
-},{}],61:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //register is a service responsible for registering an account on the db
@@ -1293,41 +1356,45 @@ module.exports = function($http)
   };
 }; //end register
 
-},{}],62:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //settings fetcher service grabs a user's settings from the server
 
 }; //end settings fetcher
 
-},{}],63:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('session', [
     require('./register').name,
     require('./login').name//,
    // require('./settings')
 ]);
-},{"./login":65,"./register":67}],64:[function(require,module,exports){
+},{"./login":67,"./register":69}],66:[function(require,module,exports){
 'use strict'
 module.exports = function($scope, $state, Login)
 { //login controller
   var storage = window.localStorage;
   $scope.post = {};
   //check for stay logged
-  if (storage.getItem("email") !== null && storage.getItem("stayLogged") != 0)
+  alert(JSON.stringify(storage));
+  if (storage.getItem('email') !== null && storage.getItem('stayLogged') !== '0')
     $state.go('home');
+  else //be sure to clear old storage
+    storage.clear();
   $scope.login = function()
   { //login function
-    //PANDA form validation
     Login.login($scope.post, function(data)
     {
-        if (data["success"])
+        if (data['success'] === '1')
         { //successful login
-          alert(data["message"]);
+          alert(data['message']);
           //set storage items
-          storage.setItem("stayLogged", $scope.post.stayLogged);
-          storage.setItem("email", $scope.post.email);
-          storage.setItem("name", "friend");
+          if ($scope.post.stayLogged !== 1)
+            $scope.post.stayLogged = '0';
+          storage.setItem('stayLogged', $scope.post.stayLogged);
+          storage.setItem('email', $scope.post.email);
+          storage.setItem('name', 'friend');
           //PANDA: set name here too
           //$state.go('home');
         }
@@ -1337,37 +1404,43 @@ module.exports = function($scope, $state, Login)
     });
   }; //end login function
 }; //end login controller
-},{}],65:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('session.login', [])
 .controller('LoginController', require('./controller.js'));
-},{"./controller.js":64}],66:[function(require,module,exports){
+},{"./controller.js":66}],68:[function(require,module,exports){
 'use strict'
 module.exports = function($scope, Register, $state)
 { //register controller
   var storage = window.localStorage;
   $scope.post = {};
+  $scope.post.last = ''; //default for optional field
   $scope.register = function()
   { //register function
     Register.register($scope.post, function(data)
     { //start register
-        alert(data["message"]);
-        if (data["success"])
+        alert(data['message']);
+        if (data['success'] === '1')
         {
-          storage.setItem("email", $scope.post.email);
-          storage.setItem("name", $scope.post.first + ' ' + $scope.post.last);
+          storage.setItem('email', $scope.post.email);
+          storage.setItem('stayLogged', '1');
+          storage.setItem('name', $scope.post.first + ' ' + $scope.post.last);
           //launch home
-          $state.go("home");
+          $state.go('home');
         }
     }); //end register
   }; //end register function
+  $scope.showErrors = function()
+  {
+    alert("There are errors in the form, try again!");
+  };
 }; //end register controller
 
-},{}],67:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('session.register', [])
 .controller('RegisterController', require('./controller.js'));
-},{"./controller.js":66}],68:[function(require,module,exports){
+},{"./controller.js":68}],70:[function(require,module,exports){
 /**
  * @license AngularJS v1.4.7
  * (c) 2010-2015 Google, Inc. http://angularjs.org
@@ -30272,11 +30345,11 @@ $provide.value("$locale", {
 })(window, document);
 
 !window.angular.$$csp().noInlineStyle && window.angular.element(document.head).prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>');
-},{}],69:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 require('./angular');
 module.exports = angular;
 
-},{"./angular":68}],70:[function(require,module,exports){
+},{"./angular":70}],72:[function(require,module,exports){
 /**
  * State-based routing for AngularJS
  * @version v0.2.8

@@ -2,15 +2,16 @@
 <div class="modal" id="editprofile-modal" ng-cloak>
     <div>
         <a class="close" ng-click="closeEditProfile()">X</a>
-        <h5 ng-cloak>{{info.first}} {{info.last}}</h5>
-        <form name="userEditForm" novalidate ng-submit="userEditForm.$valid && userEdit.save(info)" ng-cloak>
-            <input type="text" name="name" id="name" placeholder="First Name" required ng-model="info.first" ng-maxlength="20" ng-cloak />
-            <input type="text" name="name" id="name" placeholder="Last Name" ng-model="info.last" ng-maxlength="20" ng-cloak />
-            <input type="text" name="about" id="about" placeholder="About Event" ng-model="info.about" ng-maxlength="400" ng-cloak />
-            <input type="date" min="1850-12-31" max="2010-01-01" name="birthday" id="birthday" placeholder="yyyy-MM-dd" ng-model="info.birthday" ng-cloak/>
-            <input type="text" name="location" id="location" placeholder="Location" ng-model="info.location" ng-maxlength="200" ng-cloak />
-            <input type="text" name="gender" id="gender" placeholder="Gender" ng-model="info.gender" ng-cloak />
-            <input class="btn" type="submit" value="Save" />
+        <form name="userEditForm" novalidate ng-submit="(userEditForm.$valid && userEdit.save(info)) || (!userEditForm.$valid && userEdit.showErrors())" ng-cloak>
+            <input type="text" name="name" id="name" placeholder="First Name" required ng-model="info.first" ng-maxlength="20" />
+            <input type="text" name="name" id="name" placeholder="Last Name" ng-model="info.last" ng-maxlength="20" />
+            <input type="text" name="about" id="about" placeholder="About Event" ng-model="info.about" ng-maxlength="400" />
+            <input type="date" min="1850-12-31" max="2010-01-01" name="birthday" id="birthday" placeholder="yyyy-MM-dd" ng-model="info.birthday" />
+            <input type="text" name="location" id="location" placeholder="Location" ng-model="info.location" ng-maxlength="200" />
+            <select name="gender" id="gender" placeholder="Gender" ng-model="info.gender">
+                <option name='m'>Male</option>
+                <option name='f'>Female</option>
+            <button type="submit">Save</button>
         </form>
     </div>
 </div>

@@ -3,7 +3,7 @@ module.exports = function($state, InviteResponder)
 { //event row directive
   return {
     restrict: 'E',
-    templateUrl: "module/list/event/event-row.html",
+    templateUrl: 'module/list/event/event-row.html',
     controller: function()
     {
       this.profile = function(id)
@@ -12,13 +12,13 @@ module.exports = function($state, InviteResponder)
       };
       this.decision = function(post, decision)
       { //start decision
-        this.type = decision + "_event";
+        this.type = decision + '_event';
         InviteResponder.respond(post, this.type, function(data)
         {                      
-          alert(data["message"]);
+          alert(data['message']);
         });
       }; //end decision
     },
-    controllerAs: "event"
+    controllerAs: 'event'
   };
 }; //end event row directive

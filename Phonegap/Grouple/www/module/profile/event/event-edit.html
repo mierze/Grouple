@@ -3,7 +3,7 @@
     <div>
         <a class="close" ng-click="closeEditProfile()">X</a>
         <h5 ng-cloak>{{info.name}}</h5>
-        <form name="eventEditForm" novalidate ng-submit="eventEditForm.$valid && eventEdit.save(info)" ng-cloak>
+        <form name="eventEditForm" novalidate ng-submit="(eventEditForm.$valid && eventEdit.save(info)) || (!eventEditForm.$valid && alert('Uh oh!');)" ng-cloak>
             <input type="text" name='name' id="name" placeholder="Name" required ng-model="info.name" ng-cloak/>
             <input type="text" name='about' id='about' placeholder="About Event" ng-model="info.about" ng-cloak />
             <input type="text" name='location' id='location' placeholder="Location" ng-model="info.location" ng-cloak />          
@@ -19,9 +19,12 @@
             <input type="text" name="max-part" id="name" placeholder="Max Participants" ng-model="info.maxPart" ng-cloak/>
             <select name="rec-type" id='rec-type' placeholder="Recurring event?" ng-model="info.recType" ng-cloak />
             <label>
-                Public / Private
-                <input type="radio" name="public" id="true" />
-                <input type="radio" name="public" id="false" />
+                Public
+                <input type="radio" name="public" value="1" ng-model="post.pub" />
+            </label>
+            <label>
+                Private
+                <input type="radio" name="public" value="0" checked ng-model="post.pub" />
             </label>
             <input class="btn" type="submit" value="Save" />
         </form>

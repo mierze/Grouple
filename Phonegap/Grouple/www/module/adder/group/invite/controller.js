@@ -5,13 +5,9 @@ module.exports = function($scope,/*$stateParams, ?FriendInviter, GROUPINVITER*/ 
   $scope.post = {};
   $scope.post.id = storage.getItem("email");
   $scope.post.user = storage.getItem("email");
-  //PANDA find out if different api for group invites, need to remove friends that are already in group
-  //in this case of just creating group
-  //no friends will be in it
-  //otherwise should have group members loaded in already, could pass it in state params
   $scope.init = function()
   {
-    alert("IN INIT!");
+    //TODO: should also grab group members and remove those from the friends list and then display that
     ListFetcher.fetch($scope.post, /*type of content to grab*/'friends', function(data)
     { //start fetch list of groups to invite
       if (data["success"])

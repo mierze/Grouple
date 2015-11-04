@@ -3,7 +3,7 @@ module.exports = function($state)
 { //contact row directive
 return {
     restrict: 'E',
-    templateUrl: "module/message/contact/contact-row.html",
+    templateUrl: 'module/message/contact/contact-row.html',
     controller: function()
     {
       this.startMessages = function(contact)
@@ -12,9 +12,9 @@ return {
       };
       this.imgEnc = function(image)
       {
-        return "data:image/png;base64," + image;
+        return 'data:image/png;base64,' + image;
       }
     },
-    controllerAs: "contactCtrl"
+    controllerAs: 'contactCtrl'
   };
 }; //end contact row directive

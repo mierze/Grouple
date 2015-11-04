@@ -4,9 +4,10 @@
     <a class="btn" ng-click="showAddFriend()">Add Friend</a>
     <a class="btn" ui-sref="user-list({content: 'friends', id: null})">Current Friends</a>
     <a class="btn" ui-sref="user-list({content: 'friend_invites', id: null})">Friend Invites</a>
+    <!--TODO: make this a seperate directive? -->
     <div class="modal" id="addfriend-modal">
         <div>
-            <a onclick="closeAddFriend()" class="close">X</a>
+            <a onclick="document.getElementById('addfriend-modal').style.display = 'none'" class="close">X</a>
             <h5>Add a friend!</h5>
             <form novalidate ng-submit="send()" ng-cloak>
                 <input type="email" name="email" id="email" required ng-model="post.to" />

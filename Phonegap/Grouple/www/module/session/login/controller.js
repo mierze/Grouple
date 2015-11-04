@@ -4,20 +4,24 @@ module.exports = function($scope, $state, Login)
   var storage = window.localStorage;
   $scope.post = {};
   //check for stay logged
-  if (storage.getItem("email") !== null && storage.getItem("stayLogged") != 0)
+  alert(JSON.stringify(storage));
+  if (storage.getItem('email') !== null && storage.getItem('stayLogged') !== '0')
     $state.go('home');
+  else //be sure to clear old storage
+    storage.clear();
   $scope.login = function()
   { //login function
-    //PANDA form validation
     Login.login($scope.post, function(data)
     {
-        if (data["success"])
+        if (data['success'] === '1')
         { //successful login
-          alert(data["message"]);
+          alert(data['message']);
           //set storage items
-          storage.setItem("stayLogged", $scope.post.stayLogged);
-          storage.setItem("email", $scope.post.email);
-          storage.setItem("name", "friend");
+          if ($scope.post.stayLogged !== 1)
+            $scope.post.stayLogged = '0';
+          storage.setItem('stayLogged', $scope.post.stayLogged);
+          storage.setItem('email', $scope.post.email);
+          storage.setItem('name', 'friend');
           //PANDA: set name here too
           //$state.go('home');
         }

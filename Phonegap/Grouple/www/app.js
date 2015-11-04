@@ -1,4 +1,4 @@
-/* PANDA list                   * date
+/* TODO list                   * date
  * [ ] Security token in api    *
  *******************************/
 'use strict';
@@ -16,4 +16,5 @@ angular.module('grouple', [
   ])
 .config(require('./app.routes.js'))
 .controller('NavigationController', require('./module/controller.js'))
+//TODO: make this a complete bar directive
 .directive('navBack', require('./module/nav-back.directive.js'));

@@ -6,12 +6,13 @@ module.exports = function($scope, $state)
     $scope.logout = function()
     {
       storage.clear(); //clear storage
-      document.location.href="#login";
-      alert("Later " + storage.getItem("name") + "!");
+      document.location.href='#login';
+      
+      alert('Later ' + storage.getItem('name') + '!');
     };
-    
+    //TODO: work on setting title from outside controllers
     $scope.$on('setTitle', function(args)
     {
-        alert("emit made it to $on");
+        alert('emit made it to $on');
     });
 }; //end navigation controller

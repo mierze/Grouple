@@ -1,9 +1,11 @@
 'use strict';
 module.exports = angular.module('service', [])
-.factory('Creater', require('./create.js'))
+.factory('Creator', require('./create.js'))
 .factory('FriendInviter', require('./friend.invite.js'))
+.factory('GroupInviter', require('./group.invite.js'))
+.factory('EventInviter', require('./event.invite.js'))
 .factory('ImageFetcher', require('./image.fetch.js'))
-.factory('InviteResponder', require('./invite.response.js'))
+.factory('InviteResponder', require('./invite.respond.js'))
 .factory('ListFetcher', require('./list.fetch.js'))
 .factory('Login', require('./login.js'))
 .factory('MessageFetcher', require('./message.fetch.js'))

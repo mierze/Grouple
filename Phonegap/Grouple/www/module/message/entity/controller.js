@@ -9,22 +9,22 @@ module.exports = function($scope, $stateParams, MessageFetcher, MessageSender)
     //PANDA do error checking
     alert('type is' + type);
     $scope.post.id = $stateParams.id;
-    $scope.post.user = storage.getItem("email");
-    $scope.post.from = storage.getItem("email");
+    $scope.post.user = storage.getItem('email');
+    $scope.post.from = storage.getItem('email');
     MessageFetcher.fetch($scope.post, type, function(data)
     {
-      if (data["success"])
-        $scope.messages = data["messages"];
+      if (data['success'])
+        $scope.messages = data['messages'];
       else
         //PANDA, populate sad guy.
-        alert(data["message"]);
+        alert(data['message']);
     });
   }; //end init function
   $scope.send = function()
   { //start send
     MessageSender.send($scope.post, type, function(data)
     {
-      alert(data["message"]);
+      alert(data['message']);
     });
   }; //end send function
 }; //end entity message controller

@@ -4,11 +4,11 @@ module.exports = function($http, ProfileEditer)
   var storage = window.localStorage; //grab local storage
   return {
     restrict: 'E',
-    templateUrl: "module/profile/group/group-edit.html",
+    templateUrl: 'module/profile/group/group-edit.html',
     controller: function()
     {
-      alert("include editer here");
+      alert('include editer here');
     },
-    controllerAs: "groupEdit"
+    controllerAs: 'groupEdit'
   };
 }; //end edit group profile directive
