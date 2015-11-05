@@ -3,7 +3,7 @@ module.exports = function($state)
 { //entity message row directive
   return {
     restrict: 'E',
-    templateUrl: 'module/message/entity/message-row.html',
+    templateUrl: 'module/message/entity/part/message-row.html',
     controller: function()
     {
       //PANDA change to id
@@ -12,6 +12,6 @@ module.exports = function($state)
         $state.go('user-profile', {id: email});
       };
     },
-    controllerAs: 'entityMessageCtrl'
+    controllerAs: 'messageRowCtrl'
   };
 }; //end entity message row directive

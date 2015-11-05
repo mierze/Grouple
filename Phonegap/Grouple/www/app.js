@@ -17,4 +17,4 @@ angular.module('grouple', [
 .config(require('./app.routes.js'))
 .controller('NavigationController', require('./module/controller.js'))
 //TODO: make this a complete bar directive
-.directive('actionBar', require('./module/action-bar.directive.js'));
+.directive('actionBar', require('./part/action-bar.directive.js'));

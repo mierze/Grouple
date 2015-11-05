@@ -3,7 +3,7 @@ module.exports = function()
 { //group invite row directive
     return {
       restrict: 'E',
-      templateUrl: "module/adder/group/invite/group-invite-row.html",
+      templateUrl: "module/adder/group/invite/part/invite-row.html",
       controller: function()
       { //start friend invite list controller
         this.post = {};
@@ -12,6 +12,6 @@ module.exports = function()
             alert("toggleRole");  
         };
       }, //end friend invite list controller
-      controllerAs: "groupInviteRowCtrl"
+      controllerAs: "inviteRowCtrl"
     };
 }; //end group invite row directive

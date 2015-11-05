@@ -4,7 +4,7 @@ module.exports = function($http, $filter)
   var storage = window.localStorage; //grab local storage
   return {
     restrict: 'E',
-    templateUrl: 'module/profile/event/event-edit.html',
+    templateUrl: 'module/profile/event/part/event-edit.html',
     controller: function()
     {
     this.save = function(info)
@@ -43,6 +43,6 @@ module.exports = function($http, $filter)
       });
     };
   },
-  controllerAs: 'eventEdit'
+  controllerAs: 'eventEditCtrl'
   };
 }; //end event edit directive

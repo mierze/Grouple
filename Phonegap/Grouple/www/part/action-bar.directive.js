@@ -7,7 +7,7 @@ module.exports = function($state)
     //On register / logout dont display menu and back button
     return {
         restrict: 'E',
-        templateUrl: 'module/action-bar.html',
+        templateUrl: 'part/action-bar.html',
         controller: function($scope) {
             $('#nav-back').on('click', function()
             {

@@ -3,7 +3,7 @@ module.exports = function($state)
 { //badge item directive
   return {
     restrict: 'E',
-    templateUrl: 'module/list/badge/badge-item.html',
+    templateUrl: 'module/list/badge/part/badge-item.html',
     controller: function()
     {
       this.image = 'unknown';
@@ -25,6 +25,6 @@ module.exports = function($state)
         //$state.go('badge', {id: id});
       }; //end zoom function
     },
-    controllerAs: 'badge'
+    controllerAs: 'badgeItemCtrl'
   };
 }; //end badge item directive

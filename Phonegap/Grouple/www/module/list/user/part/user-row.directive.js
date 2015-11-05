@@ -3,7 +3,7 @@ module.exports = function($state, InviteResponder)
 {
   return {
     restrict: 'E',
-    templateUrl: 'module/list/user/partial/user-row.html',
+    templateUrl: 'module/list/user/part/user-row.html',
     controller: function()
     {
       this.profile = function(id)
@@ -19,6 +19,6 @@ module.exports = function($state, InviteResponder)
         });
       }; //end decision
     },
-    controllerAs: 'user'
+    controllerAs: 'userRowCtrl'
   };
 }; //end user row directive

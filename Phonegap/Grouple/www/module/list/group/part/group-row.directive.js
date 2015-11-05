@@ -1,24 +1,24 @@
 'use strict'
 module.exports = function($state, InviteResponder)
-{ //event row directive
+{
   return {
     restrict: 'E',
-    templateUrl: 'module/list/event/event-row.html',
+    templateUrl: 'module/list/group/part/group-row.html',
     controller: function()
     {
       this.profile = function(id)
       {
-        $state.go('event-profile', {id: id});
+        $state.go('group-profile', {id: id});
       };
       this.decision = function(post, decision)
       { //start decision
-        this.type = decision + '_event';
+        this.type = decision + '_group';
         InviteResponder.respond(post, this.type, function(data)
         {                      
           alert(data['message']);
         });
       }; //end decision
     },
-    controllerAs: 'event'
+    controllerAs: 'groupRowCtrl'
   };
-}; //end event row directive
+}; //end group row directive

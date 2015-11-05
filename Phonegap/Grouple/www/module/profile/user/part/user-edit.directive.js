@@ -4,7 +4,7 @@ module.exports = function($filter, ProfileEditer, $state)
   var storage = window.localStorage; //grab local storage
   return {
     restrict: 'E',
-    templateUrl: 'module/profile/user/user-edit.html',
+    templateUrl: 'module/profile/user/part/user-edit.html',
     controller: function()
     {
       this.save = function(info)
@@ -37,6 +37,6 @@ module.exports = function($filter, ProfileEditer, $state)
         alert('Error in edit form, please try again!');
       };
     },
-    controllerAs: 'userEdit'
+    controllerAs: 'userEditCtrl'
   };
 }; //end edit user profile directive

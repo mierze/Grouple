@@ -1,4 +1,4 @@
 'use strict';
 module.exports = angular.module('profile.user', [])
-.directive('userEdit', require('./directive.js'))
-.controller('UserProfileController', require('./controller'));
+.controller('UserProfileController', require('./controller'))
+.directive('userEdit', require('./part/user-edit.directive.js'));

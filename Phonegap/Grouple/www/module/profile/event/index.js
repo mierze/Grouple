@@ -1,4 +1,4 @@
 'use strict';
 module.exports = angular.module('profile.event', [])
-.directive('eventEdit', require('./directive.js'))
-.controller('EventProfileController', require('./controller'));
+.controller('EventProfileController', require('./controller'))
+.directive('eventEdit', require('./part/event-edit.directive.js'));

@@ -3,7 +3,7 @@
     <div>
         <a class="close" ng-click="closeEditProfile()">X</a>
         <h5 ng-cloak>{{info.name}}</h5>
-        <form name="groupEditForm" novalidate ng-submit="groupEditForm.$valid && groupEdit.save(info)" ng-cloak>
+        <form name="groupEditForm" novalidate ng-submit="groupEditForm.$valid && groupEditCtrl.save(info)" ng-cloak>
             <input type="text" name="name" id="name" placeholder="Name" required ng-model="info.name" ng-cloak/>
             <input type="text" name="about" id="about" placeholder="About Event" ng-model="info.about" ng-cloak />
             <label>
