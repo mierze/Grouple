@@ -6,10 +6,6 @@ return {
     templateUrl: 'module/message/contact/contact-row.html',
     controller: function()
     {
-      this.startMessages = function(contact)
-      {
-        $state.go('user-messages', {id: contact.contact});
-      };
       this.imgEnc = function(image)
       {
         return 'data:image/png;base64,' + image;

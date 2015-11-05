@@ -17,7 +17,7 @@ module.exports = function($scope, $stateParams, $state, ProfileFetcher, ImageFet
     $scope.post.user = storage.getItem('email');
     ProfileFetcher.fetch($scope.post, type, function(data)
     { //start fetch profile
-      if (data['success'] === '1')
+      if (data['success'] === 1)
       { //fetched successfully
         $scope.editable = true; //mod privs for editing
         $scope.info = data['info'];
@@ -29,7 +29,9 @@ module.exports = function($scope, $stateParams, $state, ProfileFetcher, ImageFet
           $scope.birthdayNull = true;
         else
         { //parse age from birthday
+          alert($scope.info.birthday);
           var birthday = new Date($scope.info.birthday);
+          
           $scope.info.birthday = birthday;
           var difference = new Date - birthday;
           $scope.info.age = Math.floor( (difference / 1000/*ms*/ / (60/*s*/ * 60/*m*/ * 24/*hr*/) ) / 365.25/*day*/ );
@@ -46,7 +48,7 @@ module.exports = function($scope, $stateParams, $state, ProfileFetcher, ImageFet
     $scope.post.content = type;
     ImageFetcher.fetch($scope.post, type, function(data)
     { //start fetch image
-      if (data['success'])
+      if (data['success'] === 1)
       {
         if (data['image'].length < 10  || data['image'] == null)
           $scope.imageNull = true;

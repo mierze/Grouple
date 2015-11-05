@@ -28,7 +28,7 @@ module.exports = function($scope, $stateParams, $state, ProfileFetcher, ImageFet
     $scope.post.content = type;
     ImageFetcher.fetch($scope.post, type, function(data)
     { //start fetch image
-      if (data['success'])
+      if (data['success'] === 1)
       {
         var imgUrl = 'data:image/png;base64,' + data['image'];
         $scope.image = imgUrl;

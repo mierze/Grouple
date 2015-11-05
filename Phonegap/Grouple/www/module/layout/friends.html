@@ -10,7 +10,7 @@
             <a onclick="document.getElementById('addfriend-modal').style.display = 'none'" class="close">X</a>
             <h5>Add a friend!</h5>
             <form novalidate ng-submit="send()" ng-cloak>
-                <input type="email" name="email" id="email" required ng-model="post.to" />
+                <input type="email" name="email" id="email" required ng-maxlength="40" ng-model="post.to" />
                 <input class="btn" type="submit" value="Send" />
             </form>
         </div>

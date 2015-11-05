@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <div id="messages" ng-init="init()">
-    <h1><!-- PANDA get this from session and put it in actionbar-->Messages</h1>
+    <h2><!-- PANDA get this from session and put it in actionbar-->Messages</h2>
     <!--PANDA make this a directive-->
     <div class="list-wrap" ng-repeat="message in messages" ng-cloak>
         <user-message-row></user-message-row>
     </div>
-    <form novalidate ng-submit="send()" ng-cloak>
-        <textarea id="message" placeholder="Write your message!" ng-model="post.message" rows="5" cols="40">  
+    <form name="messageForm" novalidate ng-submit="messageForm.$valid && send()" ng-cloak>
+        <textarea id="message" placeholder="Write your message!" ng-minlength="1" ng-maxlength="400" ng-model="post.message" rows="5" cols="40">  
         </textarea>
-        <input class="btn" type="submit" value="Send" />
+        <button type="submit">Send</button>
     </form>
-    <a class="btn" ui-sref="home">Back</a>
 </div>
