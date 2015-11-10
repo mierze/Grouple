@@ -3,16 +3,23 @@ module.exports = function($state)
 {
   return {
     restrict: 'E',
-    templateUrl: "module/message/user/part/message-row.html",
+    templateUrl: 'module/message/user/part/message-row.html',
     controller: function()
     {
-      //PANDA change to id
-      var float = "100%";
+      
+      var storage = window.localStorage;
+      this.isUser = function(from)
+      {
+        if (from === storage.getItem('email')) {
+          return true;
+        }
+        return false;
+      };
       this.profile = function(email)
       {
         $state.go('user-profile', {id: email});
       };
     },
-    controllerAs: "messageRowCtrl"
+    controllerAs: 'userMessageRowCtrl'
   };
 }; //end message row directive

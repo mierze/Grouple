@@ -1,11 +1,13 @@
 'use strict'
 module.exports = function($scope, $stateParams, $state, ProfileFetcher, ImageFetcher)
 { //profile controller
+  //globals for user profile
   var storage = window.localStorage;
-  //PANDA: need to check rank in group / event so that can show or hide editable
+  var type = 'user';
+  
+  //TODO: need to check rank in group / event so that can show or hide editable
   $scope.init = function()
   { //start init function
-    var type = 'user';
     $scope.post = {};
     //case that id is for logged user's email
     if ($stateParams.id === 'user')   
@@ -29,12 +31,9 @@ module.exports = function($scope, $stateParams, $state, ProfileFetcher, ImageFet
           $scope.birthdayNull = true;
         else
         { //parse age from birthday
-          alert($scope.info.birthday);
-          var birthday = new Date($scope.info.birthday);
-          
-          $scope.info.birthday = birthday;
+          var birthday = new Date($scope.info.birthday); //to date
           var difference = new Date - birthday;
-          $scope.info.age = Math.floor( (difference / 1000/*ms*/ / (60/*s*/ * 60/*m*/ * 24/*hr*/) ) / 365.25/*day*/ );
+          $scope.info.age = Math.floor((difference / 1000/*ms*/ / (60/*s*/ * 60/*m*/ * 24/*hr*/) ) / 365.25/*day*/);
         }
         if ($scope.info.about == null)
           $scope.aboutNull = true;
@@ -45,7 +44,6 @@ module.exports = function($scope, $stateParams, $state, ProfileFetcher, ImageFet
       else //generic catch
         alert(data['message']);
     }); //end fetch profile
-    $scope.post.content = type;
     ImageFetcher.fetch($scope.post, type, function(data)
     { //start fetch image
       if (data['success'] === 1)

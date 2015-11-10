@@ -3,11 +3,11 @@ module.exports = function($http)
 { //image fetcher
   var fetch = function(post, type, callback)
   { //start fetch
-    this.url = "http://mierze.gear.host/grouple/api/get_profile_image_hdpi.php";
+    post.content = type; //set type in post
     $http(
     { //http request to fetch list from server PANDA refactor out this
       method  : 'POST',
-      url     : this.url,
+      url     : 'http://mierze.gear.host/grouple/api/get_profile_image_hdpi.php',
       data    : post
     }).then(
     function(result) {

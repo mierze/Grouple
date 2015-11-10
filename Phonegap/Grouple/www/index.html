@@ -6,15 +6,14 @@
         <meta name="msapplication-tap-highlight" content="no" />
         <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
-        <link rel="shortcut icon" href="favicon.ico" /> 
-        <link rel="stylesheet" type="text/css" href="style/index.css" />
-        <script type="text/javascript" src="node_modules/cordova/cordova.js"></script>
-        <script type="text/javascript" src="resource/plugin/jquery.min.js"></script>
+        <link rel="shortcut icon" href="assets/icon/favicon.ico" /> 
+        <link rel="stylesheet" type="text/css" href="assets/style/index.css" />
+        <!-- TODO make all these node requires -->
         <title>Grouple</title>
     </head>
     <body class="app">
         <!--todo, make this div a nav and make nav below a directive entirely -->
-        <div id="nav-menu" ng-controller="NavigationController">
+        <div id="nav-menu">
             <ul>
                 <li><a id="nav-home" ui-sref="home">Home</a></li>
                 <li><a id="nav-friends" ui-sref="friends">Friends</a></li>
@@ -29,7 +28,6 @@
         <action-bar></action-bar>
         <main class="content" ui-view></main>
         <script type="text/javascript" src="bundle.js"></script>
-        <script type="text/javascript" src="resource/plugin/nav.js"></script>
     </body> 
 </html>
 <!--

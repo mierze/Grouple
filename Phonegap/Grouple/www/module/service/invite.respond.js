@@ -3,12 +3,12 @@ module.exports = function($http)
 { //invite responder
   var respond = function(post, type, callback)
   { //start send
-    this.url = "http://mierze.gear.host/grouple/api/" + type + ".php";
+    url = "http://mierze.gear.host/grouple/api/" + type + ".php";
     alert(JSON.stringify(post));
     $http(
     { //http request to fetch list from server PANDA refactor out this
       method  : 'POST',
-      url     : this.url,
+      url     : url,
       data    : post
      }).then(
     function(result) {

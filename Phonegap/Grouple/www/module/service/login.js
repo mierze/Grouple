@@ -6,7 +6,7 @@ module.exports = function($http)
     $http(
     { //http request to fetch list from server PANDA refactor out this
       method  : 'POST',
-      url     : "http://mierze.gear.host/grouple/api/login.php",
+      url     : 'http://mierze.gear.host/grouple/api/login.php',
       data    : post
      }).then(
     function(result) {

@@ -12,6 +12,6 @@ module.exports = function($state)
         $state.go('user-profile', {id: email});
       };
     },
-    controllerAs: 'messageRowCtrl'
+    controllerAs: 'entityMessageRowCtrl'
   };
 }; //end entity message row directive

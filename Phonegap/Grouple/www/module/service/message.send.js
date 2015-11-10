@@ -4,13 +4,13 @@ module.exports = function($http)
   var send = function(post, type, callback)
   { //send function
     if (type === 'user')
-      this.url = 'http://mierze.gear.host/grouple/api/send_message.php';
+      var url = 'http://mierze.gear.host/grouple/api/send_message.php';
     else
-      this.url = 'http://mierze.gear.host/grouple/api/send_' + type + '_message.php';
+      var url = 'http://mierze.gear.host/grouple/api/send_' + type + '_message.php';
     $http(
     { //http request to fetch list from server PANDA refactor out this
       method  : 'POST',
-      url     : this.url,
+      url     : url,
       data    : post
      }).then(
     function(result) {

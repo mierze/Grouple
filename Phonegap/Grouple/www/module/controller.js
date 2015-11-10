@@ -6,8 +6,7 @@ module.exports = function($scope, $state)
     $scope.logout = function()
     {
       storage.clear(); //clear storage
-      document.location.href='#login';
-      
+      $state.go('login');
       alert('Later ' + storage.getItem('name') + '!');
     };
     //TODO: work on setting title from outside controllers
