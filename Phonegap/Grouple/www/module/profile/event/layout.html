@@ -9,7 +9,7 @@
     </section>
     <a class="btn" ui-sref="user-list({content: 'event_participants', id: info.id})" ng-cloak>Participants</a>
     <a class="btn" ui-sref="entity-messages({content: 'event', id: info.id})" ng-cloak>Messages</a>
-    <button ng-click="showEditProfile()" ng-hide="editable">Edit Event</button>
-    <a class="btn" ui-sref="event-invite" ng-hide="">Invite Groups</a>
-    <event-edit></event-edit>
+    <button ng-click="toggleEdit()" ng-show="privs.admin">Edit Event</button>
+    <a class="btn" ui-sref="event-invite" ng-show="privs.mod">Invite Groups</a>
+    <event-edit ng-show="showEdit"></event-edit>
 </div>

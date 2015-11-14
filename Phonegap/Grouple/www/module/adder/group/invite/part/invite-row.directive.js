@@ -7,10 +7,6 @@ module.exports = function()
       controller: function()
       { //start friend invite list controller
         this.post = {};
-        this.toggleRole = function()
-        {
-            alert("toggleRole");  
-        };
       }, //end friend invite list controller
       controllerAs: "inviteRowCtrl"
     };

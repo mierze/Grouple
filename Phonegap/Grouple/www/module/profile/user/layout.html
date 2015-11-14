@@ -11,6 +11,6 @@
     <a class="btn" ui-sref="user-list({content: 'friends', id: info.id})">Friends</a>
     <a class="btn" ui-sref="group-list({content: 'groups', id: info.id})">Groups</a>
     <a class="btn" ui-sref="event-list({content: 'events_upcoming', id: info.id})">Upcoming Events</a>
-    <button ng-click="showEditProfile()" >Edit Profile</button>
-    <user-edit></user-edit>
+    <button ng-click="toggleEdit()" ng-show="privs.admin">Edit Profile</button>
+    <user-edit ng-show="showEdit"></user-edit>
 </div>

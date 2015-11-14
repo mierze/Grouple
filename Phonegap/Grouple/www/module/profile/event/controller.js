@@ -2,7 +2,11 @@
 module.exports = function($scope, $stateParams, $state, ProfileFetcher, ImageFetcher)
 { //profile controller
   var storage = window.localStorage;
-  //PANDA: need to check rank in group / event so that can show or hide editable
+  $scope.privs = {};
+  //TODO: fetch privs
+  $scope.privs.admin = true;
+  $scope.privs.mod = true;
+  $scope.showEdit = false;
   $scope.init = function()
   { //start init function
     var type = 'event'; //type of profile
@@ -38,17 +42,11 @@ module.exports = function($scope, $stateParams, $state, ProfileFetcher, ImageFet
         alert(data['message']);
     }); //end fetch image      
   }; //end init function
-  $scope.start = function(type)
+  $scope.toggleEdit = function()
   {
-    $state.go('user-list', {content: type, id: $scope.post.id});
-  };
-  //modal functionality below, possibly refactor out since shared
-  $scope.showEditProfile = function()
-  {
-    document.getElementById('editprofile-modal').style.display = 'block';
-  };
-  $scope.closeEditProfile = function()
-  {
-    document.getElementById('editprofile-modal').style.display = 'none';
+    if ($scope.showEdit) 
+      $scope.showEdit = false;
+    else
+      $scope.showEdit = true;
   };
 }; //end profile controller

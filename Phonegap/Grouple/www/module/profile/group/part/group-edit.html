@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <div class="modal" id="editprofile-modal" ng-cloak>
     <div>
-        <a class="close" ng-click="closeEditProfile()">X</a>
+        <a class="close" ng-click="toggleEdit()">X</a>
         <h5 ng-cloak>{{info.name}}</h5>
         <form name="groupEditForm" novalidate ng-submit="groupEditForm.$valid && groupEditCtrl.save(info)" ng-cloak>
             <input type="text" name="name" id="name" placeholder="Name" required ng-model="info.name" ng-cloak/>

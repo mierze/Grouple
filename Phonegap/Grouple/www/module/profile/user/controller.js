@@ -9,6 +9,9 @@ module.exports = function($scope, $stateParams, $state, ProfileFetcher, ImageFet
   $scope.init = function()
   { //start init function
     $scope.post = {};
+    $scope.privs = {};
+    $scope.privs.admin = true;
+    $scope.showEdit = false;
     //case that id is for logged user's email
     if ($stateParams.id === 'user')   
       $scope.post.id = storage.getItem('email');  
@@ -21,7 +24,6 @@ module.exports = function($scope, $stateParams, $state, ProfileFetcher, ImageFet
     { //start fetch profile
       if (data['success'] === 1)
       { //fetched successfully
-        $scope.editable = true; //mod privs for editing
         $scope.info = data['info'];
         /*//set title to user's name
         var args = [$scope.info.first, $scope.info.last];
@@ -61,19 +63,13 @@ module.exports = function($scope, $stateParams, $state, ProfileFetcher, ImageFet
         $scope.imageNull = true;
         alert(data['message']);
       }
-    }); //end fetch image      
+    }); //end fetch image
+    $scope.toggleEdit = function()
+    {
+      if ($scope.showEdit)
+        $scope.showEdit = false;
+      else
+        $scope.showEdit = true;
+    };
   }; //end init function
-  $scope.start = function(type)
-  {
-    $state.go('user-list', {content: type, id: $scope.post.id});
-  };
-  //modal functionality below
-  $scope.showEditProfile = function()
-  {
-    document.getElementById('editprofile-modal').style.display = 'block';
-  };
-  $scope.closeEditProfile = function()
-  {
-    document.getElementById('editprofile-modal').style.display = 'none';
-  };
 }; //end profile controller

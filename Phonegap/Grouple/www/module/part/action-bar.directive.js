@@ -1,10 +1,7 @@
 'use strict'
 module.exports = function($state)
-{
-    //TODO:
-    //Make bool for displaying back / menu
+{   //TODO:
     //Disable backing up into crucial areas and to login / register screen
-    //On register / logout dont display menu and back button
     return {
         restrict: 'E',
         templateUrl: 'module/part/action-bar.html',
@@ -13,6 +10,11 @@ module.exports = function($state)
             var storage = window.localStorage;
             $('#nav-back').on('click', function()
             {
+                //TODO:
+                //when back would repopulate a invite or something similar
+                    //go back to something else
+                //possibly: if history.back is same address
+                    //go back again
                 history.back();
             });
             $("#nav-open").click(function()
@@ -30,9 +32,9 @@ module.exports = function($state)
             //function to handling clearing memory and logging out user
             $scope.logout = function()
             {
-              storage.clear(); //clear storage
+              alert('Later ' + storage.getItem('first') + '!');
               $state.go('login');
-              alert('Later ' + storage.getItem('name') + '!');
+              storage.clear(); //clear storage
             };
             //TODO: work on setting title from outside controllers
             $scope.$on('setTitle', function(args)

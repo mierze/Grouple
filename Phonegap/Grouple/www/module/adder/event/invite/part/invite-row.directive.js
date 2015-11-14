@@ -7,9 +7,6 @@ module.exports = function($state)
     controller: function()
     {
       //PANDA change to id
-      this.toggleRole = function()
-      {
-      };
     },
     controllerAs: 'inviteRowCtrl'
   };

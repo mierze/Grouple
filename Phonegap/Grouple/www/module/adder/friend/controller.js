@@ -4,6 +4,7 @@ module.exports = function($scope, FriendInviter)
   var storage = window.localStorage;
   //create module controll 
   $scope.post = {};
+  $scope.showAddFriend = false;
   $scope.post.from = storage.getItem('email');
   $scope.send = function()
   {
@@ -12,13 +13,11 @@ module.exports = function($scope, FriendInviter)
       alert(data['message']);
     });
   };
-  //modal functionality below
-  $scope.showAddFriend = function()
+  $scope.toggleAddFriend = function()
   {
-    document.getElementById('addfriend-modal').style.display = 'block';
-  };
-  $scope.closeAddFriend = function()
-  {
-    document.getElementById('addfriend-modal').style.display = 'none';
+    if ($scope.showAddFriend) 
+      $scope.showAddFriend = false;
+    else
+      $scope.showAddFriend = true;
   };
 }; //end wrap

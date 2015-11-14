@@ -2,7 +2,11 @@
 module.exports = function($scope, $stateParams, $state, ProfileFetcher, ImageFetcher)
 { //profile controller
   var storage = window.localStorage;
-  //PANDA: need to check rank in group / event so that can show or hide editable
+  $scope.showEdit = false;
+  $scope.privs = {};
+  $scope.privs.mod = true;
+  $scope.privs.admin = true;//TODO set this
+  //TODO : return role in get_group_info of 'user' and then show editable stuff depending
   $scope.init = function()
   { //start init function
     var type = 'group';
@@ -16,7 +20,7 @@ module.exports = function($scope, $stateParams, $state, ProfileFetcher, ImageFet
     ProfileFetcher.fetch($scope.post, type, function(data)
     { //start fetch profile
       alert(data['message']);
-      if (data['success'])
+      if (data['success'] === 1)
       {
         //PANDA set for now. next get from api
         $scope.editable = true;
@@ -38,17 +42,13 @@ module.exports = function($scope, $stateParams, $state, ProfileFetcher, ImageFet
         alert(data['message']);
     }); //end fetch image      
   }; //end init function
-  $scope.start = function(type)
-  {
-    $state.go('user-list', {content: type, id: $scope.post.id});
-  };
   //modal functionality below
-  $scope.showEditProfile = function()
+  $scope.toggleEdit = function()
   {
-    document.getElementById('editprofile-modal').style.display = 'block';
+    if ($scope.showEdit)
+      $scope.showEdit = false;
+    else
+      $scope.showEdit = true;
   };
-  $scope.closeEditProfile = function()
-  {
-    document.getElementById('editprofile-modal').style.display = 'none';
-  };
+  //end modal functionality
 }; //end profile controller

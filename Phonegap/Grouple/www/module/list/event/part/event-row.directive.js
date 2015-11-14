@@ -10,12 +10,18 @@ module.exports = function($state, InviteResponder)
       {
         $state.go('event-profile', {id: id});
       };
-      this.decision = function(post, decision)
+      this.decision = function(id, decision)
       { //start decision
-        this.type = decision + '_event';
-        InviteResponder.respond(post, this.type, function(data)
+        var post = {};
+        post.id = id;
+        post.user = storage.getItem('email');
+        InviteResponder.respond(post, decision, /* content of response */'event', function(data)
         {                      
           alert(data['message']);
+          if (data['success'] === 1)
+          {
+            $state.go($state.current, {content: 'event_invites', id: storage.getItem('email')}, {reload: true});
+          }
         });
       }; //end decision
     },

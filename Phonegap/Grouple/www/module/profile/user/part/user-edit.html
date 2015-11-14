@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <div class="modal" id="editprofile-modal" ng-cloak>
     <div>
-        <a class="close" ng-click="closeEditProfile()">X</a>
+        <a class="close" ng-click="toggleEdit()">X</a>
         <form name="userEditForm" novalidate ng-submit="(userEditForm.$valid && userEditCtrl.save(info)) || (!userEditForm.$valid && userEditCtrl.showErrors())" ng-cloak>
             <input type="text" name="name" id="name" placeholder="First Name" required ng-model="info.first" ng-maxlength="20" />
             <input type="text" name="name" id="name" placeholder="Last Name" ng-model="info.last" ng-maxlength="20" />

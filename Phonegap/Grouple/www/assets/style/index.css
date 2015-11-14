@@ -103,6 +103,7 @@ li
     color: rgba(245,241,226,1); 
     width: 100%;
     padding: 5px;
+    height: 100%;
 }
 .list-row h5
 {
@@ -114,7 +115,30 @@ li
 }
 .invite-row
 {
-    max-height: 90px;
+    height: 100%;
+    line-height: inherit;
+    clear: both;
+}
+.invite-row .invite-name
+{
+    float: left;
+    vertical-align:middle;
+    padding: 0;
+    margin: 0;
+}
+.invite-row .role
+{
+    float: left;
+    padding: 0;
+    margin: 0;
+    font-size: 4em;
+    vertical-align:middle;
+    color: black;
+}
+.invite-row input[type="checkbox"]
+{
+    float: left;
+    vertical-align: middle;
 }
 .list-item
 {
@@ -550,7 +574,6 @@ main
 	right: 0;
     bottom: 0;
 	height: inherit;
-    display: none;
 	left: 0;
 	background: rgba(200,200,200,.7);
 	z-index: 100;

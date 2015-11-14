@@ -9,11 +9,12 @@ module.exports = function($scope, Register, $state)
     Register.register($scope.post, function(data)
     { //start register
         alert(data['message']);
-        if (data['success'] === '1')
+        if (data['success'] === 1)
         {
           storage.setItem('email', $scope.post.email);
           storage.setItem('stayLogged', '1');
-          storage.setItem('name', $scope.post.first + ' ' + $scope.post.last);
+          storage.setItem('first', $scope.post.first);
+          storage.setItem('last', $scope.post.last)
           //launch home
           $state.go('home');
         }

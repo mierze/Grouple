@@ -4,9 +4,9 @@ module.exports = function($scope, $stateParams, ListFetcher)
   var storage = window.localStorage;
   if ($stateParams.content != null)
   { //ensure content is set
-    if ($stateParams.content === 'friend_invites')
+    if ($stateParams.content === 'friend_invites' || $stateParams.content === 'group_invites')
     { //editable check
-      $scope.editable = true;
+      $scope.invite = true;
     }
     //prepare post parameters
     $scope.post = {};
@@ -24,7 +24,7 @@ module.exports = function($scope, $stateParams, ListFetcher)
         $scope.items = data['items'];
       }
       else
-        //PANDA, populate sad guy.
+        //TODO, populate sad guy.
         alert(data['message']);
     }); //end fetch list
   }

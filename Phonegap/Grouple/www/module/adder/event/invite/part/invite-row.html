@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<div class="list-row invite-row" id="event-invite-row">
-    <h4 ng-cloak>{{item.name}}</h4>
-    <h3 id="role" ng-click="toggleRole()">a</h3>
-    <input type="checkbox" name="add" id="add" />
+<div class="list-row invite-row" id="event-invite-row" ng-click="toggleRow(item.id)">
+    <h4 ng-click="toggleRow(item.id)" class="invite-name" ng-cloak>{{item.name}} {{item.id}}</h4>
+    <input type="checkbox" name="add" id="add" ng-click="toggleRole(item.id)" />
 </div>
