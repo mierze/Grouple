@@ -1,19 +1,17 @@
 <!DOCTYPE html>
-<div id="group-profile" ng-init="init()">
-    <h2 ng-cloak>{{info.name}}</h2>
-    <img class="profile-img" ng-src="{{image}}" alt="Profile Image" ng-cloak/>
+<div id="group-profile" ng-init="vm.init()">
+    <h2 ng-cloak>{{vm.info.name}}</h2>
+    <img class="profile-img" ng-src="{{vm.image}}" alt="Profile Image" ng-cloak/>
     <section>
-        <em ng-cloak></em>
-        <strong ng-cloak></strong>
-        <p ng-cloak>{{info.about}}</p>
+        <p ng-cloak>{{vm.info.about}}</p>
     </section>
-    <a class="btn" ui-sref="user-list({content: 'group_members', id: info.id})" ng-cloak>Members</a>
-    <a class="btn" ui-sref="entity-messages({content: 'group', id: info.id})">Messages</a>
+    <a class="btn" ui-sref="user-list({content: 'group_members', id: vm.info.id})" ng-cloak>Members</a>
+    <a class="btn" ui-sref="entity-messages({content: 'group', id: vm.info.id})">Messages</a>
        <!-- GROUP EVENTS HERE
        <a class="btn" ui-sref="group-upcoming-events">Upcoming Group Events</a>
        
        also need a better name than editable, maybe privs, mod, admin ?-->
-    <button ng-click="toggleEdit()" ng-show="privs.admin">Edit Profile</button>
-    <a class="btn" ui-sref="group-invite" ng-show="privs.mod">Invite Friends</a>
-    <group-edit ng-show="showEdit"></group-edit>
+    <button ng-click="vm.toggleEdit()" ng-show="vm.privs.admin">Edit Profile</button>
+    <a class="btn" ui-sref="group-invite" ng-show="vm.privs.mod">Invite Friends</a>
+    <group-edit ng-show="vm.showEdit"></group-edit>
 </div>

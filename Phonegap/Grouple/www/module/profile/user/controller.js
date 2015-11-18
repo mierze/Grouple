@@ -1,75 +1,79 @@
 'use strict'
-module.exports = function($scope, $stateParams, $state, ProfileFetcher, ImageFetcher)
+module.exports = function($stateParams, $state, ProfileFetcher, ImageFetcher)
 { //profile controller
   //globals for user profile
+  var vm = this;
   var storage = window.localStorage;
   var type = 'user';
-  
   //TODO: need to check rank in group / event so that can show or hide editable
-  $scope.init = function()
+  vm.init = init;
+  vm.toggleEdit = toggleEdit;
+  
+  //functions
+  function init()
   { //start init function
-    $scope.post = {};
-    $scope.privs = {};
-    $scope.privs.admin = true;
-    $scope.showEdit = false;
+    vm.post = {};
+    vm.privs = {};
+    vm.privs.admin = true;
+    vm.showEdit = false;
     //case that id is for logged user's email
     if ($stateParams.id === 'user')   
-      $scope.post.id = storage.getItem('email');  
+      vm.post.id = storage.getItem('email');  
     else if($stateParams.id !== null)   
-      $scope.post.id = $stateParams.id;
+      vm.post.id = $stateParams.id;
     else
       alert('Error: invalid id specified!');
-    $scope.post.user = storage.getItem('email');
-    ProfileFetcher.fetch($scope.post, type, function(data)
+    vm.post.user = storage.getItem('email');
+    ProfileFetcher.fetch(vm.post, type, function(data)
     { //start fetch profile
       if (data['success'] === 1)
       { //fetched successfully
-        $scope.info = data['info'];
+        vm.info = data['info'];
         /*//set title to user's name
-        var args = [$scope.info.first, $scope.info.last];
-        $scope.$emit('setTitle', args);*/
+        var args = [vm.info.first, vm.info.last];
+        vm.$emit('setTitle', args);*/
         //check for unset data
-        if ($scope.info.birthday == null)
-          $scope.birthdayNull = true;
+        if (vm.info.birthday == null)
+          vm.birthdayNull = true;
         else
         { //parse age from birthday
-          var birthday = new Date($scope.info.birthday); //to date
+          var birthday = new Date(vm.info.birthday); //to date
           var difference = new Date - birthday;
-          $scope.info.age = Math.floor((difference / 1000/*ms*/ / (60/*s*/ * 60/*m*/ * 24/*hr*/) ) / 365.25/*day*/);
+          vm.info.age = Math.floor((difference / 1000/*ms*/ / (60/*s*/ * 60/*m*/ * 24/*hr*/) ) / 365.25/*day*/);
         }
-        if ($scope.info.about == null)
-          $scope.aboutNull = true;
-        if ($scope.info.location == null)
-          $scope.locationNull = true;
+        if (vm.info.about == null)
+          vm.aboutNull = true;
+        if (vm.info.location == null)
+          vm.locationNull = true;
         //end check for unset data
       }
       else //generic catch
         alert(data['message']);
     }); //end fetch profile
-    ImageFetcher.fetch($scope.post, type, function(data)
+    ImageFetcher.fetch(vm.post, type, function(data)
     { //start fetch image
       if (data['success'] === 1)
       {
         if (data['image'].length < 10  || data['image'] == null)
-          $scope.imageNull = true;
+          vm.imageNull = true;
         else
         {
           var imgUrl = 'data:image/png;base64,' + data['image'];
-          $scope.image = imgUrl;
+          vm.image = imgUrl;
         }
       }
       else
       { //generic catch
-        $scope.imageNull = true;
+        vm.imageNull = true;
         alert(data['message']);
       }
     }); //end fetch image
-    $scope.toggleEdit = function()
-    {
-      if ($scope.showEdit)
-        $scope.showEdit = false;
-      else
-        $scope.showEdit = true;
-    };
   }; //end init function
+  function toggleEdit()
+  {
+    if (vm.showEdit)
+      vm.showEdit = false;
+    else
+      vm.showEdit = true;
+  };
 }; //end profile controller

@@ -1,16 +1,15 @@
 <!DOCTYPE html>
-<div id="login">
-    <h1>Register</h1>
-    <form name="registerForm" novalidate ng-submit="(registerForm.$valid && register()) || (!registerForm.$valid && showErrors())">
-        <fieldset>
-            <!-- PANDA later add auto cap -->
-            <input type="text" name="email" placeholder="First Name" required ng-maxlength="20" ng-model="post.first" />
-            <input type="text" placeholder="Last Name" ng-maxlength="20" required ng-model="post.last" />
-            <input type="email" name="email" placeholder="Email" ng-model="post.email" />
-            <input type="password" placeholder="Password" required ng-minlength="6" ng-maxlength="20" ng-model="post.password" />
-            <button type="submit">Register</button>
-        </fieldset>
-    </form>
-    <p>Already registered!?</p>
-    <a class="btn" ui-sref="login">Login</a>
-</div>
+<h1>Register</h1>
+<form name="registerForm" novalidate ng-submit="(registerForm.$valid && vm.register()) || (!registerForm.$valid && vm.showErrors())">
+    <fieldset>
+        <!-- PANDA later add auto cap -->
+        <input type="text" name="email" placeholder="First Name" required ng-maxlength="20" ng-model="vm.post.first" />
+        <input type="text" placeholder="Last Name" ng-maxlength="20" required ng-model="vm.post.last" />
+        <input type="email" name="email" placeholder="Email" ng-model="vm.post.email" />
+        <input type="password" placeholder="Password" required ng-minlength="6" ng-maxlength="20" ng-model="vm.post.password" />
+        <button type="submit">Register</button>
+    </fieldset>
+</form>
+<p>Already registered!?</p>
+<a class="btn" ui-sref="login">Login</a>
+

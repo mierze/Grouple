@@ -1,52 +1,57 @@
 'use strict'
-module.exports = function($scope, $stateParams, $state, ProfileFetcher, ImageFetcher)
+module.exports = function($stateParams, $state, ProfileFetcher, ImageFetcher)
 { //profile controller
+  var vm = this;
   var storage = window.localStorage;
-  $scope.privs = {};
+  vm.privs = {};
   //TODO: fetch privs
-  $scope.privs.admin = true;
-  $scope.privs.mod = true;
-  $scope.showEdit = false;
-  $scope.init = function()
+  vm.privs.admin = true;
+  vm.privs.mod = true;
+  vm.showEdit = false;
+  vm.init = init;
+  vm.toggleEdit = toggleEdit;
+  
+  //functions
+  function init()
   { //start init function
     var type = 'event'; //type of profile
-    $scope.post = {};
+    vm.post = {};
     //case that id is for logged user's email
   
     if($stateParams.id !== null)
-      $scope.post.id = $stateParams.id;
+      vm.post.id = $stateParams.id;
     else
      alert('problem with id passed');
-    $scope.post.user = storage.getItem('email');
-    ProfileFetcher.fetch($scope.post, type, function(data)
+    vm.post.user = storage.getItem('email');
+    ProfileFetcher.fetch(vm.post, type, function(data)
     { //start fetch profile
       if (data['success'])
       {
         //PANDA set for now. next get from api
-        $scope.editable = true;
-        $scope.info = data['info'];
+        vm.editable = true;
+        vm.info = data['info'];
       }
       else //generic catch
         alert(data['message']);
     }); //end fetch profile
-    $scope.post.content = type;
-    ImageFetcher.fetch($scope.post, type, function(data)
+    vm.post.content = type;
+    ImageFetcher.fetch(vm.post, type, function(data)
     { //start fetch image
       if (data['success'] === 1)
       {
         var imgUrl = 'data:image/png;base64,' + data['image'];
-        $scope.image = imgUrl;
+        vm.image = imgUrl;
       }
       else
         //generic catch
         alert(data['message']);
     }); //end fetch image      
   }; //end init function
-  $scope.toggleEdit = function()
+  function toggleEdit()
   {
-    if ($scope.showEdit) 
-      $scope.showEdit = false;
+    if (vm.showEdit) 
+      vm.showEdit = false;
     else
-      $scope.showEdit = true;
+      vm.showEdit = true;
   };
 }; //end profile controller

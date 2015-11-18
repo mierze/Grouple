@@ -1,14 +1,15 @@
 'use strict'
-module.exports = function($scope, MessageFetcher)
+module.exports = function(MessageFetcher)
 { //contact controller
+  var vm = this;
   var storage = window.localStorage;
-  $scope.post = {}; //post params for http request
-  $scope.post.email = storage.getItem('email');
-  $scope.post.user = storage.getItem('email');
-  MessageFetcher.fetch($scope.post, 'contacts', function(data)
+  vm.post = {}; //post params for http request
+  vm.post.email = storage.getItem('email');
+  vm.post.user = storage.getItem('email');
+  MessageFetcher.fetch(vm.post, 'contacts', function(data)
   {
     if (data['success'])
-      $scope.contacts = data['contacts'];
+      vm.contacts = data['contacts'];
     else
       //PANDA, populate sad guy.
       alert(data['message']);

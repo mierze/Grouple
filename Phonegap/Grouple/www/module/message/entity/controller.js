@@ -1,28 +1,33 @@
 'use strict'
-module.exports = function($scope, $stateParams, MessageFetcher, MessageSender)
+module.exports = function($stateParams, MessageFetcher, MessageSender)
 { //entity message controller
+  var vm = this;
   var storage = window.localStorage;
   var type = $stateParams.content;
-  $scope.post = {}; //post params for http request
-  $scope.init = function()
+  vm.post = {}; //post params for http request
+  vm.init = init;
+  vm.send = send;
+  
+  //functions
+  function init()
   { //init function
     //PANDA do error checking
     alert('type is' + type);
-    $scope.post.id = $stateParams.id;
-    $scope.post.user = storage.getItem('email');
-    $scope.post.from = storage.getItem('email');
-    MessageFetcher.fetch($scope.post, type, function(data)
+    vm.post.id = $stateParams.id;
+    vm.post.user = storage.getItem('email');
+    vm.post.from = storage.getItem('email');
+    MessageFetcher.fetch(vm.post, type, function(data)
     {
       if (data['success'])
-        $scope.messages = data['messages'];
+        vm.messages = data['messages'];
       else
         //PANDA, populate sad guy.
         alert(data['message']);
     });
   }; //end init function
-  $scope.send = function()
+  function send()
   { //start send
-    MessageSender.send($scope.post, type, function(data)
+    MessageSender.send(vm.post, type, function(data)
     {
       alert(data['message']);
     });

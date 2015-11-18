@@ -6,7 +6,16 @@ module.exports = function($state)
     templateUrl: 'module/adder/event/invite/part/invite-row.html',
     controller: function()
     {
+      var vm = this;
+      vm.checked = false;
       //PANDA change to id
+      vm.toggleRow = function()
+      {
+        if (vm.checked)
+          vm.checked = false;
+        else
+          vm.checked = true;
+      };
     },
     controllerAs: 'inviteRowCtrl'
   };

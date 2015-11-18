@@ -5,9 +5,12 @@ module.exports = function($state)
     return {
         restrict: 'E',
         templateUrl: 'module/part/action-bar.html',
-        controller: function($scope, $state)
+        controller: function($state)
         {
+            var vm = this;
             var storage = window.localStorage;
+            $("#nav-open").click(openNav);
+            //vm.logout = logout;
             $('#nav-back').on('click', function()
             {
                 //TODO:
@@ -17,7 +20,9 @@ module.exports = function($state)
                     //go back again
                 history.back();
             });
-            $("#nav-open").click(function()
+            
+            //functions
+            function openNav()
             {
                 if ($("div#nav-menu ul").hasClass("expanded")) {
                     $("div#nav-menu ul.expanded").removeClass("expanded").slideUp(250);
@@ -28,19 +33,7 @@ module.exports = function($state)
                     $(this).addClass("open");
                    // $(".top-bar #expand").text("-");
                 }
-            });
-            //function to handling clearing memory and logging out user
-            $scope.logout = function()
-            {
-              alert('Later ' + storage.getItem('first') + '!');
-              $state.go('login');
-              storage.clear(); //clear storage
             };
-            //TODO: work on setting title from outside controllers
-            $scope.$on('setTitle', function(args)
-            {
-                alert('emit made it to $on');
-            });
         }
     };
 };

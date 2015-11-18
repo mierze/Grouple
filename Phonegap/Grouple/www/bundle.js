@@ -40,12 +40,12 @@ module.exports = function($stateProvider, $urlRouterProvider)
       .state('login', {
           url:'/login',
           templateUrl: 'module/session/login/layout.html',
-          controller: 'LoginController'
+          controller: 'LoginController as vm'
       })
       .state('register', {
           url:'/register',
           templateUrl: 'module/session/register/layout.html',
-          controller: 'RegisterController'
+          controller: 'RegisterController as vm'
       })
       .state('settings', {
           url:'/settings',
@@ -68,99 +68,103 @@ module.exports = function($stateProvider, $urlRouterProvider)
       .state('user-profile', {
           url:'/user-profile:id',
           templateUrl: 'module/profile/user/layout.html',
-          controller: 'UserProfileController'
+          controller: 'UserProfileController as profileVm'
       })
       .state('group-profile', {
           url:'/group-profile:id',
           templateUrl: 'module/profile/group/layout.html',
-          controller: 'GroupProfileController'
+          controller: 'GroupProfileController as vm'
       })
       .state('event-profile', {
           url:'/event-profile:id',
           templateUrl: 'module/profile/event/layout.html',
-          controller: 'EventProfileController'
+          controller: 'EventProfileController as vm'
       })
       .state('user-list', {
           url:'/user-list:content?id',
           templateUrl: 'module/list/user/layout.html',
-          controller: 'ListController'
+          controller: 'ListController as vm'
       })
       .state('group-list', {
           url:'/group-list:content?id',
           templateUrl: 'module/list/group/layout.html',
-          controller: 'ListController'
+          controller: 'ListController as vm'
       })
       .state('event-list', {
           url:'/event-list:content?id',
           templateUrl: 'module/list/event/layout.html',
-          controller: 'ListController'
+          controller: 'ListController as vm'
       })
       .state('badge-list', {
           url:'/badge-list:content?id',
           templateUrl: 'module/list/badge/layout.html',
-          controller: 'ListController'
+          controller: 'ListController as vm'
       })
       .state('group-create', {
           url:'/group-create',
           templateUrl: 'module/adder/group/create/layout.html',
-          controller: 'GroupCreateController'
+          controller: 'GroupCreateController as vm'
       })
       .state('event-create', {
           url:'/event-create',
           templateUrl: 'module/adder/event/create/layout.html',
-          controller: 'EventCreateController'
+          controller: 'EventCreateController as vm'
       }) 
       .state('group-invite', {
           url:'/group-invite:id',
           templateUrl: 'module/adder/group/invite/layout.html',
-          controller: 'GroupInviteController'
+          controller: 'GroupInviteController as vm'
       })
       .state('event-invite', {
           url:'/event-invite:id',
           templateUrl: 'module/adder/event/invite/layout.html',
-          controller: 'EventInviteController'
+          controller: 'EventInviteController as vm'
       })
       .state('contacts', {
           url:'/contacts',
           templateUrl: 'module/message/contact/layout.html',
-          controller: 'ContactController'
+          controller: 'ContactController as vm'
       })
       .state('user-messages', {
           url:'/user-messages:id',
           templateUrl: 'module/message/user/layout.html',
-          controller: 'UserMessageController'
+          controller: 'UserMessageController as vm'
       })
       .state('entity-messages', {
           url:'/entity-messages:content?id',
           templateUrl: 'module/message/entity/layout.html',
-          controller: 'EntityMessageController'
+          controller: 'EntityMessageController as vm'
       });
 }; //end routes
 
 },{}],3:[function(require,module,exports){
 'use strict'
-module.exports = function($scope, $filter, $state, Creator)
+module.exports = function($filter, $state, Creator)
 { //event create controller
+  var vm = this;
   var storage = window.localStorage;
-  $scope.post = {};
-  $scope.created = false; //boolean whether event has been created
-  $scope.create = function()
+  vm.post = {};
+  vm.created = false; //boolean whether event has been created
+  vm.create = create;
+
+  //functions
+  function create()
   { //create function
     //form validation
-    alert('Before creator service:\n'+JSON.stringify($scope.post));
-    $scope.post.recurring = 0;
-    $scope.post.creator = storage.getItem('email');
-    if ($scope.info.minPart == null)
-      $scope.info.minPart = 1;
-    if ($scope.info.maxPart == null)
-      $scope.info.maxPart = 0;
-    if ($scope.info.recType) {
+    alert('Before creator service:\n'+JSON.stringify(vm.post));
+    vm.post.recurring = 0;
+    vm.post.creator = storage.getItem('email');
+    if (vm.info.minPart == null)
+      vm.info.minPart = 1;
+    if (vm.info.maxPart == null)
+      vm.info.maxPart = 0;
+    if (vm.info.recType) {
       //code
     }
     //TODO: figure out these dates
-    $scope.info.startDate = $filter('date')($scope.info.startDate, 'yyyy-MM-dd hh:mm:ss');
-    $scope.info.endDate = $filter('date')($scope.info.endDate, 'yyyy-MM-dd hh:mm:ss'); 
-    Creator.create($scope.post, 'event', function(data)
+    vm.info.startDate = $filter('date')(vm.info.startDate, 'yyyy-MM-dd hh:mm:ss');
+    vm.info.endDate = $filter('date')(vm.info.endDate, 'yyyy-MM-dd hh:mm:ss'); 
+    Creator.create(vm.post, 'event', function(data)
     { //creater create
       alert(data['message']);
       if (data['success'] === '1') 
@@ -181,38 +185,50 @@ module.exports = angular.module('adder.event', [
 ]);
 },{"./create":4,"./invite":7}],6:[function(require,module,exports){
 'use strict'
-module.exports = function($scope, $stateParams, EventInviter, ListFetcher)
+module.exports = function($stateParams, EventInviter, ListFetcher)
 { //event invite controller
+  var vm = this;
   var storage = window.localStorage;
-  $scope.post = {};
-  $scope.post.id = storage.getItem('email');
-  $scope.post.user = storage.getItem('email');
-  $scope.invites = {};
-  $scope.init = function()
+  vm.post = {};
+  vm.post.id = storage.getItem('email');
+  vm.post.user = storage.getItem('email');
+  vm.invites = [];
+  vm.init = init;
+  vm.toggleRow = toggleRow;
+  vm.send = send;
+  
+  //functions
+  function init()
   {
-    ListFetcher.fetch($scope.post, /*type of content to grab*/'groups', function(data)
+    ListFetcher.fetch(vm.post, /*type of content to grab*/'groups', function(data)
     { //start fetch list of groups to invite
       if (data['success'] === 1)
-        $scope.items = data['items'];
+        vm.items = data['items'];
       else
         alert(data['message']);
     }); //end fetch list
   };
-  $scope.toggleRow = function(id)
+  function toggleRow(id)
   {
     alert("id is " + id);
-    if ($scope.invites[id] == null)
-      $scope.invites[id] = true;
+    if ((vm.invites).indexOf(id) !== null && (vm.invites).indexOf(id) >= 0)
+    {
+      alert((vm.invites).indexOf(id));
+      (vm.invites).splice(vm.invites.indexOf(id), 1);
+    }
     else
-      $scope.invites[id] = null;
-    alert(JSON.stringify($scope.invites));
+    {
+      alert((vm.invites).indexOf(id));
+      (vm.invites).push(id);
+    }
+    alert(JSON.stringify(vm.invites));
   };
-  $scope.send = function()
+  function send()
   {
     var post = {};
     post.from = storage.getItem("email");
     post.id = $stateParams.id;
-    post.invites = $scope.invites;
+    post.invites = vm.invites;
     alert(JSON.stringify(post));
     EventInviter.send(post, function(data)
     {
@@ -234,7 +250,16 @@ module.exports = function($state)
     templateUrl: 'module/adder/event/invite/part/invite-row.html',
     controller: function()
     {
+      var vm = this;
+      vm.checked = false;
       //PANDA change to id
+      vm.toggleRow = function()
+      {
+        if (vm.checked)
+          vm.checked = false;
+        else
+          vm.checked = true;
+      };
     },
     controllerAs: 'inviteRowCtrl'
   };
@@ -242,26 +267,30 @@ module.exports = function($state)
 
 },{}],9:[function(require,module,exports){
 'use strict'
-module.exports = function($scope, FriendInviter)
+module.exports = function(FriendInviter)
 { //wrap
+  var vm = this;
   var storage = window.localStorage;
-  //create module controll 
-  $scope.post = {};
-  $scope.showAddFriend = false;
-  $scope.post.from = storage.getItem('email');
-  $scope.send = function()
+  vm.post = {};
+  vm.showAddFriend = false;
+  vm.post.from = storage.getItem('email');
+  vm.send = send;
+  vm.toggleAddFriend = toggleAddFriend;
+  
+  //functions
+  function send()
   {
-    FriendInviter.send($scope.post, function(data)
+    FriendInviter.send(vm.post, function(data)
     {
       alert(data['message']);
     });
   };
-  $scope.toggleAddFriend = function()
+  function toggleAddFriend()
   {
-    if ($scope.showAddFriend) 
-      $scope.showAddFriend = false;
+    if (vm.showAddFriend) 
+      vm.showAddFriend = false;
     else
-      $scope.showAddFriend = true;
+      vm.showAddFriend = true;
   };
 }; //end wrap
 },{}],10:[function(require,module,exports){
@@ -270,27 +299,32 @@ module.exports = angular.module('adder.friend', [])
 .controller('FriendInviteController', require('./controller.js'));
 },{"./controller.js":9}],11:[function(require,module,exports){
 'use strict'
-module.exports = function($scope, $state, Creator)
+module.exports = function($state, Creator)
 { //group create controller
+  var vm = this;
   var storage = window.localStorage;
   //init post parameters
-  $scope.post = {};
-  $scope.post.name = '';
-  $scope.post.about = '';
-  $scope.post.pub = '0';
-  $scope.post.location = '';
-  $scope.create = function()
+  vm.post = {};
+  vm.post.name = '';
+  vm.post.about = '';
+  vm.post.pub = '0';
+  vm.post.location = '';
+  vm.create = create;
+  vm.showErrors = showErrors;
+  
+  //functions
+  function create()
   { //create function
     //set creator to the current user
-    $scope.post.creator = storage.getItem('email');
+    vm.post.creator = storage.getItem('email');
     //public validation
-    if (!($scope.post.pub === '0' || $scope.post.pub === '1'))
+    if (!(vm.post.pub === '0' || vm.post.pub === '1'))
     {
       //public is not set, have some fancy red text pop up
       alert('Please ensure public or private is selected!');
     }
-    alert('Before creator call:\n' + JSON.stringify($scope.post));
-    Creator.create($scope.post, 'group', function(data)
+    alert('Before creator call:\n' + JSON.stringify(vm.post));
+    Creator.create(vm.post, 'group', function(data)
     { //creater create
       alert('Group create returns -> ' + JSON.stringify(data));
       if (data['success'] > 0)
@@ -300,7 +334,7 @@ module.exports = function($scope, $state, Creator)
       }
     });
   };
-  $scope.showErrors = function()
+  function showErrors()
   {
     alert('You done darn did it!\nPlease fill out this form correctly.')
   };
@@ -317,12 +351,18 @@ module.exports = angular.module('adder.group', [
 ]);
 },{"./create":12,"./invite":15}],14:[function(require,module,exports){
 'use strict'
-module.exports = function($scope, $stateParams, /*FriendInviter, GROUPINVITER*/ ListFetcher, GroupInviter)
+module.exports = function($stateParams, /*FriendInviter, GROUPINVITER*/ ListFetcher, GroupInviter)
 { //group invite controller
+  var vm = this;
   var storage = window.localStorage;
-  $scope.invites = {};
-  $scope.items = {};
-  $scope.init = function()
+  vm.invites = {};
+  vm.items = {};
+  vm.init = init;
+  vm.toggleRole = toggleRole;
+  vm.send = send;
+  
+  //functions
+  function init()
   {
     //TODO: should also grab group members and remove those from the friends list and then display that
     var post = {};
@@ -330,46 +370,58 @@ module.exports = function($scope, $stateParams, /*FriendInviter, GROUPINVITER*/ 
     post.user = storage.getItem("email");
     ListFetcher.fetch(post, /*type of content to grab*/'friends', function(data)
     { //start fetch list of groups to invite
-      if (data["success"])
+      if (data["success"] === 1)
       {
         alert(JSON.stringify(data));
-        $scope.items = data["items"];
+        vm.items = data["items"];
       }
       else
         alert(data["message"]);
     }); //end fetch list
   };
-  $scope.toggleRole = function(id)
+  function toggleRole(id, role)
   {
-    //TODO gather role and change and submit to post
-    var roleID = id;
-    alert("ID is " + roleID);
-   // $(roleID).text('+');
-   // $(roleID).text('this');
-    if ($scope.invites[id] != null)
-    {
-      var role = '-';
-    }
+    if (role === 'M')
+      role = 'A'
+    else if (role === 'A')
+      role = '-';
     else
-      var role = 'M';
+      role = 'M';
+    
     //add role under invites unless role is '-'
     if (role !== '-')
-      $scope.invites[id] = 'M';
+      vm.invites[id] = role;
     else
-      $scope.invites[id] = null;
-    alert(JSON.stringify($scope.invites));
+     delete vm.invites[id];
+    return role;
   };
-  $scope.send = function()
+  function send()
   {
     var post = {};
+    alert(JSON.stringify(vm.invites));
     post.id = $stateParams.id;
-    post.invites = $scope.invites;
+    post.invites = vm.invites;
     GroupInviter.send(post, function(data)
     {
+      //TODO: allow change invite mod?
       alert(JSON.stringify(data));//data["message"]);
     });
   };
 }; //end group invite controller
+
+
+
+
+/*
+
+
+
+
+
+
+
+
+ */
 },{}],15:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('adder.group.invite', [])
@@ -384,7 +436,24 @@ module.exports = function()
       templateUrl: "module/adder/group/invite/part/invite-row.html",
       controller: function()
       { //start friend invite list controller
-        this.post = {};
+        //TODO code role here
+        var vm = this;
+        vm.role = '-';
+        vm.toggleRole = function()
+        {
+            if (vm.role === 'M')
+            {
+              vm.role = 'A'
+            }
+            else if (vm.role === '-') {
+              vm.role = 'M';
+            }
+            else if (vm.role === 'A')
+            {
+              vm.role = '-';
+            }
+            alert("sub toggle now is " + vm.role);
+        };
       }, //end friend invite list controller
       controllerAs: "inviteRowCtrl"
     };
@@ -409,20 +478,25 @@ module.exports = function($state)
     templateUrl: 'module/list/badge/part/badge-item.html',
     controller: function()
     {
-      this.image = 'unknown';
-      this.init = function(item)
+      var vm = this;
+      vm.image = 'unknown';
+      vm.init = init;
+      vm.zoom = zoom;
+      
+      //functions
+      function init(item)
       { //init function
         if (item.level > 0)
         { //setting image source
-          this.lower = item.name.toLowerCase();
-          this.image = this.lower.replace(' ', '-');
+          vm.lower = item.name.toLowerCase();
+          vm.image = vm.lower.replace(' ', '-');
         }
       }; //end init function
-      this.zoom = function()
+      function zoom()
       { //zoom function
         alert('HERE IN ZOOM FUNCTION!');
         //would be ideal to have generic modal overlay
-        //in this function inject the item info into the modal
+        //in vm function inject the item info into the modal
         
         //alternatively:
         //$state.go('badge', {id: id});
@@ -434,29 +508,30 @@ module.exports = function($state)
 
 },{}],20:[function(require,module,exports){
 'use strict'
-module.exports = function($scope, $stateParams, ListFetcher)
+module.exports = function($stateParams, ListFetcher)
 { //list controller
   var storage = window.localStorage;
+  var vm = this;
   if ($stateParams.content != null)
   { //ensure content is set
     if ($stateParams.content === 'friend_invites' || $stateParams.content === 'group_invites')
     { //editable check
-      $scope.invite = true;
+      vm.invite = true;
     }
     //prepare post parameters
-    $scope.post = {};
+    vm.post = {};
     //TODO switch content to type
     if ($stateParams.id == null || ($stateParams.id.length < 2 && ($stateParams.content === 'user' || $stateParams.content === 'badges')))
-      $scope.post.id = storage.getItem('email');
+      vm.post.id = storage.getItem('email');
     else
-      $scope.post.id = $stateParams.id;
-    $scope.post.user = storage.getItem('email');
-    ListFetcher.fetch($scope.post, $stateParams.content, function(data)
+      vm.post.id = $stateParams.id;
+    vm.post.user = storage.getItem('email');
+    ListFetcher.fetch(vm.post, $stateParams.content, function(data)
     { //start fetch list
       if (data['success'])
       {
        // alert(JSON.stringify(data['items']));
-        $scope.items = data['items'];
+        vm.items = data['items'];
       }
       else
         //TODO, populate sad guy.
@@ -480,11 +555,16 @@ module.exports = function($state, InviteResponder)
     templateUrl: 'module/list/event/part/event-row.html',
     controller: function()
     {
-      this.profile = function(id)
+      var vm = this;
+      vm.profile = profile;
+      vm.decision = decision;
+      
+      //functions
+      function profile(id)
       {
         $state.go('event-profile', {id: id});
       };
-      this.decision = function(id, decision)
+      function decision(id, decision)
       { //start decision
         var post = {};
         post.id = id;
@@ -516,12 +596,17 @@ module.exports = function($state, InviteResponder)
     templateUrl: 'module/list/group/part/group-row.html',
     controller: function()
     {
+      var vm = this;
       var storage = window.localStorage;
-      this.profile = function(id)
+      vm.profile = profile;
+      vm.decision = decision;
+      
+      //functions
+      function profile(id)
       {
         $state.go('group-profile', {id: id});
       };
-      this.decision = function(id, decision)
+      function decision(id, decision)
       { //start decision;
         var post = {};
         post.id = id;
@@ -561,14 +646,19 @@ module.exports = function($state, InviteResponder)
     templateUrl: 'module/list/user/part/user-row.html',
     controller: function()
     {
-      this.profile = function(id)
+      var vm = this;
+      vm.profile = profile;
+      vm.decision = decision;
+      
+      //functions
+      function profile(id)
       {
         $state.go('user-profile', {id: id});
       };
-      this.decision = function(post, decision)
+      function decision(post, decision)
       { //start decision
-        this.type = decision + '_friend';
-        InviteResponder.respond(post, this.type, function(data)
+        vm.type = decision + '_friend';
+        InviteResponder.respond(post, vm.type, function(data)
         {                      
           alert(data['message']);
         });
@@ -579,16 +669,17 @@ module.exports = function($state, InviteResponder)
 }; //end user row directive
 },{}],28:[function(require,module,exports){
 'use strict'
-module.exports = function($scope, MessageFetcher)
+module.exports = function(MessageFetcher)
 { //contact controller
+  var vm = this;
   var storage = window.localStorage;
-  $scope.post = {}; //post params for http request
-  $scope.post.email = storage.getItem('email');
-  $scope.post.user = storage.getItem('email');
-  MessageFetcher.fetch($scope.post, 'contacts', function(data)
+  vm.post = {}; //post params for http request
+  vm.post.email = storage.getItem('email');
+  vm.post.user = storage.getItem('email');
+  MessageFetcher.fetch(vm.post, 'contacts', function(data)
   {
     if (data['success'])
-      $scope.contacts = data['contacts'];
+      vm.contacts = data['contacts'];
     else
       //PANDA, populate sad guy.
       alert(data['message']);
@@ -608,40 +699,49 @@ return {
     templateUrl: 'module/message/contact/part/contact-row.html',
     controller: function()
     {
-      this.imgEnc = function(image)
-      {
-        return 'data:image/png;base64,' + image;
-      }
+        var vm = this;
+        vm.imgEnc = imgEnc;
+        
+        //functions
+        function imgEnc(image)
+        {
+          return 'data:image/png;base64,' + image;
+        }
     },
     controllerAs: 'contactRowCtrl'
   };
 }; //end contact row directive
 },{}],31:[function(require,module,exports){
 'use strict'
-module.exports = function($scope, $stateParams, MessageFetcher, MessageSender)
+module.exports = function($stateParams, MessageFetcher, MessageSender)
 { //entity message controller
+  var vm = this;
   var storage = window.localStorage;
   var type = $stateParams.content;
-  $scope.post = {}; //post params for http request
-  $scope.init = function()
+  vm.post = {}; //post params for http request
+  vm.init = init;
+  vm.send = send;
+  
+  //functions
+  function init()
   { //init function
     //PANDA do error checking
     alert('type is' + type);
-    $scope.post.id = $stateParams.id;
-    $scope.post.user = storage.getItem('email');
-    $scope.post.from = storage.getItem('email');
-    MessageFetcher.fetch($scope.post, type, function(data)
+    vm.post.id = $stateParams.id;
+    vm.post.user = storage.getItem('email');
+    vm.post.from = storage.getItem('email');
+    MessageFetcher.fetch(vm.post, type, function(data)
     {
       if (data['success'])
-        $scope.messages = data['messages'];
+        vm.messages = data['messages'];
       else
         //PANDA, populate sad guy.
         alert(data['message']);
     });
   }; //end init function
-  $scope.send = function()
+  function send()
   { //start send
-    MessageSender.send($scope.post, type, function(data)
+    MessageSender.send(vm.post, type, function(data)
     {
       alert(data['message']);
     });
@@ -662,10 +762,12 @@ module.exports = function($state)
     templateUrl: 'module/message/entity/part/message-row.html',
     controller: function()
     {
-      //PANDA change to id
-      this.profile = function(email)
+      vm.profile = profile;
+      
+      //functions
+      function profile(id)
       {
-        $state.go('user-profile', {id: email});
+        $state.go('user-profile', {id: id});
       };
     },
     controllerAs: 'entityMessageRowCtrl'
@@ -681,30 +783,35 @@ module.exports = angular.module('message', [
 ]);
 },{"./contact":29,"./entity":32,"./user":36}],35:[function(require,module,exports){
 'use strict'
-module.exports = function($scope, $stateParams, $state, $interval, MessageFetcher, MessageSender)
+module.exports = function($stateParams, $state, $interval, MessageFetcher, MessageSender)
 { //user message controller
+  var vm = this;
   var type = 'user';
   var storage = window.localStorage;
-  $scope.post = {}; //post params for http request
-  $scope.init = function()
+  vm.post = {}; //post params for http request
+  vm.init = init;
+  vm.send = send;
+  
+  //functions
+  function init()
   { //init function
-    $scope.post.contact = $stateParams.id;
-    $scope.post.user = storage.getItem('email');
+    vm.post.contact = $stateParams.id;
+    vm.post.user = storage.getItem('email');
     //before we implement the fetch being triggered by new msgs, lets use an interval
-    /*$interval(*/MessageFetcher.fetch($scope.post, type, function(data)
+    /*$interval(*/MessageFetcher.fetch(vm.post, type, function(data)
     {
       if (data['success'] === 1)
-        $scope.messages = data['messages'];
+        vm.messages = data['messages'];
       else
         //TODO, populate sad guy.
         alert(data['message']);
     });/*, 5000);*/
   }; //end init function
-  $scope.send = function()
+  function send()
   { //start send
-    MessageSender.send($scope.post, type, function(data)
+    MessageSender.send(vm.post, type, function(data)
     {
-        $state.go('user-messages', {id: $scope.post.contact}, {reload: true});      
+        $state.go('user-messages', {id: vm.post.contact}, {reload: true});      
     });
   }; //end send function
 }; //end user message controller
@@ -723,18 +830,22 @@ module.exports = function($state)
     templateUrl: 'module/message/user/part/message-row.html',
     controller: function()
     {
-      
+      var vm = this; 
       var storage = window.localStorage;
-      this.isUser = function(from)
+      this.profile = profile;
+      this.isUser = isUser;
+      
+      //functions
+      function profile(email)
+      {
+        $state.go('user-profile', {id: email});
+      };
+      function isUser(from)
       {
         if (from === storage.getItem('email')) {
           return true;
         }
         return false;
-      };
-      this.profile = function(email)
-      {
-        $state.go('user-profile', {id: email});
       };
     },
     controllerAs: 'userMessageRowCtrl'
@@ -749,9 +860,12 @@ module.exports = function($state)
     return {
         restrict: 'E',
         templateUrl: 'module/part/action-bar.html',
-        controller: function($scope, $state)
+        controller: function($state)
         {
+            var vm = this;
             var storage = window.localStorage;
+            $("#nav-open").click(openNav);
+            //vm.logout = logout;
             $('#nav-back').on('click', function()
             {
                 //TODO:
@@ -761,7 +875,9 @@ module.exports = function($state)
                     //go back again
                 history.back();
             });
-            $("#nav-open").click(function()
+            
+            //functions
+            function openNav()
             {
                 if ($("div#nav-menu ul").hasClass("expanded")) {
                     $("div#nav-menu ul.expanded").removeClass("expanded").slideUp(250);
@@ -772,19 +888,7 @@ module.exports = function($state)
                     $(this).addClass("open");
                    // $(".top-bar #expand").text("-");
                 }
-            });
-            //function to handling clearing memory and logging out user
-            $scope.logout = function()
-            {
-              alert('Later ' + storage.getItem('first') + '!');
-              $state.go('login');
-              storage.clear(); //clear storage
             };
-            //TODO: work on setting title from outside controllers
-            $scope.$on('setTitle', function(args)
-            {
-                alert('emit made it to $on');
-            });
         }
     };
 };
@@ -794,6 +898,7 @@ module.exports = function($state)
 //simple jquery to slide down a menu
 $(document).ready(function()
 {
+    var storage = window.localStorage;
     var ids =
     ["#nav-home", "#nav-friends", "#nav-groups",
         "#nav-profile", "#nav-events",
@@ -803,72 +908,86 @@ $(document).ready(function()
     {
       $(id).click(function()
         {
-            if ($("div#nav-menu ul").hasClass("expanded")) {
+            if ($("div#nav-menu ul").hasClass("expanded"))
+            {
                 $("div#nav-menu ul.expanded").removeClass("expanded").slideUp(250);
                 $(this).removeClass("open");
                 //$(".top-bar #expand").text("+");
             }
-            else
-            {
-                $("div#nav-menu ul").addClass("expanded").slideDown(250);
-                $(this).addClass("open");
-               // $(".top-bar #expand").text("-");
-            }
+            if (id === ids[6]) 
+                logout();
         });  
     });
-
+    function logout()
+    { //function to handling clearing memory and logging out user
+      alert('Later ' + storage.getItem('first') + '!');
+      //$state.go('login');
+      location.href = '#login';
+      storage.clear(); //clear storage
+    };
+    //TODO: work on setting title from outside controllers
+    /*vm.$on('setTitle', function(args)
+    {
+        alert('emit made it to $on');
+    });*/
+            
 });
 },{}],40:[function(require,module,exports){
 'use strict'
-module.exports = function($scope, $stateParams, $state, ProfileFetcher, ImageFetcher)
+module.exports = function($stateParams, $state, ProfileFetcher, ImageFetcher)
 { //profile controller
+  var vm = this;
   var storage = window.localStorage;
-  $scope.privs = {};
+  vm.privs = {};
   //TODO: fetch privs
-  $scope.privs.admin = true;
-  $scope.privs.mod = true;
-  $scope.showEdit = false;
-  $scope.init = function()
+  vm.privs.admin = true;
+  vm.privs.mod = true;
+  vm.showEdit = false;
+  vm.init = init;
+  vm.toggleEdit = toggleEdit;
+  
+  //functions
+  function init()
   { //start init function
     var type = 'event'; //type of profile
-    $scope.post = {};
+    vm.post = {};
     //case that id is for logged user's email
   
     if($stateParams.id !== null)
-      $scope.post.id = $stateParams.id;
+      vm.post.id = $stateParams.id;
     else
      alert('problem with id passed');
-    $scope.post.user = storage.getItem('email');
-    ProfileFetcher.fetch($scope.post, type, function(data)
+    vm.post.user = storage.getItem('email');
+    ProfileFetcher.fetch(vm.post, type, function(data)
     { //start fetch profile
       if (data['success'])
       {
         //PANDA set for now. next get from api
-        $scope.editable = true;
-        $scope.info = data['info'];
+        vm.editable = true;
+        vm.info = data['info'];
       }
       else //generic catch
         alert(data['message']);
     }); //end fetch profile
-    $scope.post.content = type;
-    ImageFetcher.fetch($scope.post, type, function(data)
+    vm.post.content = type;
+    ImageFetcher.fetch(vm.post, type, function(data)
     { //start fetch image
       if (data['success'] === 1)
       {
         var imgUrl = 'data:image/png;base64,' + data['image'];
-        $scope.image = imgUrl;
+        vm.image = imgUrl;
       }
       else
         //generic catch
         alert(data['message']);
     }); //end fetch image      
   }; //end init function
-  $scope.toggleEdit = function()
+  function toggleEdit()
   {
-    if ($scope.showEdit) 
-      $scope.showEdit = false;
+    if (vm.showEdit) 
+      vm.showEdit = false;
     else
-      $scope.showEdit = true;
+      vm.showEdit = true;
   };
 }; //end profile controller
 },{}],41:[function(require,module,exports){
@@ -928,56 +1047,60 @@ module.exports = function($http, $filter)
 
 },{}],43:[function(require,module,exports){
 'use strict'
-module.exports = function($scope, $stateParams, $state, ProfileFetcher, ImageFetcher)
+module.exports = function($stateParams, $state, ProfileFetcher, ImageFetcher)
 { //profile controller
+  var vm = this;
   var storage = window.localStorage;
-  $scope.showEdit = false;
-  $scope.privs = {};
-  $scope.privs.mod = true;
-  $scope.privs.admin = true;//TODO set this
+  vm.showEdit = false;
+  vm.privs = {};
+  vm.privs.mod = true;
+  vm.privs.admin = true;//TODO set this
   //TODO : return role in get_group_info of 'user' and then show editable stuff depending
-  $scope.init = function()
+  vm.init = init;
+  vm.toggleEdit = toggleEdit;
+  
+  //functions
+  function init()
   { //start init function
     var type = 'group';
-    $scope.post = {};
+    vm.post = {};
     //case that id is for logged user's email
     if($stateParams.id !== null)
-      $scope.post.id = $stateParams.id;
+      vm.post.id = $stateParams.id;
     else
-     alert('problem with id passed');
-    $scope.post.user = storage.getItem('email');
-    ProfileFetcher.fetch($scope.post, type, function(data)
+     alert('Invalid group ID, please go back and try again.');
+    vm.post.user = storage.getItem('email');
+    ProfileFetcher.fetch(vm.post, type, function(data)
     { //start fetch profile
       alert(data['message']);
       if (data['success'] === 1)
       {
         //PANDA set for now. next get from api
-        $scope.editable = true;
-        $scope.info = data['info'];
+        vm.editable = true;
+        vm.info = data['info'];
       }
       else //generic catch
         alert(data['message']);
     }); //end fetch profile
-    $scope.post.content = type;
-    ImageFetcher.fetch($scope.post, type, function(data)
+    vm.post.content = type; //TODO this is ugly
+    ImageFetcher.fetch(vm.post, type, function(data)
     { //start fetch image
       if (data['success'] === 1)
       {
         var imgUrl = 'data:image/png;base64,' + data['image'];
-        $scope.image = imgUrl;
+        vm.image = imgUrl;
       }
       else
         //generic catch
         alert(data['message']);
     }); //end fetch image      
   }; //end init function
-  //modal functionality below
-  $scope.toggleEdit = function()
+  function toggleEdit()
   {
-    if ($scope.showEdit)
-      $scope.showEdit = false;
+    if (vm.showEdit)
+      vm.showEdit = false;
     else
-      $scope.showEdit = true;
+      vm.showEdit = true;
   };
   //end modal functionality
 }; //end profile controller
@@ -1010,79 +1133,83 @@ module.exports = angular.module('profile', [
 ]);
 },{"./event":41,"./group":44,"./user":48}],47:[function(require,module,exports){
 'use strict'
-module.exports = function($scope, $stateParams, $state, ProfileFetcher, ImageFetcher)
+module.exports = function($stateParams, $state, ProfileFetcher, ImageFetcher)
 { //profile controller
   //globals for user profile
+  var vm = this;
   var storage = window.localStorage;
   var type = 'user';
-  
   //TODO: need to check rank in group / event so that can show or hide editable
-  $scope.init = function()
+  vm.init = init;
+  vm.toggleEdit = toggleEdit;
+  
+  //functions
+  function init()
   { //start init function
-    $scope.post = {};
-    $scope.privs = {};
-    $scope.privs.admin = true;
-    $scope.showEdit = false;
+    vm.post = {};
+    vm.privs = {};
+    vm.privs.admin = true;
+    vm.showEdit = false;
     //case that id is for logged user's email
     if ($stateParams.id === 'user')   
-      $scope.post.id = storage.getItem('email');  
+      vm.post.id = storage.getItem('email');  
     else if($stateParams.id !== null)   
-      $scope.post.id = $stateParams.id;
+      vm.post.id = $stateParams.id;
     else
       alert('Error: invalid id specified!');
-    $scope.post.user = storage.getItem('email');
-    ProfileFetcher.fetch($scope.post, type, function(data)
+    vm.post.user = storage.getItem('email');
+    ProfileFetcher.fetch(vm.post, type, function(data)
     { //start fetch profile
       if (data['success'] === 1)
       { //fetched successfully
-        $scope.info = data['info'];
+        vm.info = data['info'];
         /*//set title to user's name
-        var args = [$scope.info.first, $scope.info.last];
-        $scope.$emit('setTitle', args);*/
+        var args = [vm.info.first, vm.info.last];
+        vm.$emit('setTitle', args);*/
         //check for unset data
-        if ($scope.info.birthday == null)
-          $scope.birthdayNull = true;
+        if (vm.info.birthday == null)
+          vm.birthdayNull = true;
         else
         { //parse age from birthday
-          var birthday = new Date($scope.info.birthday); //to date
+          var birthday = new Date(vm.info.birthday); //to date
           var difference = new Date - birthday;
-          $scope.info.age = Math.floor((difference / 1000/*ms*/ / (60/*s*/ * 60/*m*/ * 24/*hr*/) ) / 365.25/*day*/);
+          vm.info.age = Math.floor((difference / 1000/*ms*/ / (60/*s*/ * 60/*m*/ * 24/*hr*/) ) / 365.25/*day*/);
         }
-        if ($scope.info.about == null)
-          $scope.aboutNull = true;
-        if ($scope.info.location == null)
-          $scope.locationNull = true;
+        if (vm.info.about == null)
+          vm.aboutNull = true;
+        if (vm.info.location == null)
+          vm.locationNull = true;
         //end check for unset data
       }
       else //generic catch
         alert(data['message']);
     }); //end fetch profile
-    ImageFetcher.fetch($scope.post, type, function(data)
+    ImageFetcher.fetch(vm.post, type, function(data)
     { //start fetch image
       if (data['success'] === 1)
       {
         if (data['image'].length < 10  || data['image'] == null)
-          $scope.imageNull = true;
+          vm.imageNull = true;
         else
         {
           var imgUrl = 'data:image/png;base64,' + data['image'];
-          $scope.image = imgUrl;
+          vm.image = imgUrl;
         }
       }
       else
       { //generic catch
-        $scope.imageNull = true;
+        vm.imageNull = true;
         alert(data['message']);
       }
     }); //end fetch image
-    $scope.toggleEdit = function()
-    {
-      if ($scope.showEdit)
-        $scope.showEdit = false;
-      else
-        $scope.showEdit = true;
-    };
   }; //end init function
+  function toggleEdit()
+  {
+    if (vm.showEdit)
+      vm.showEdit = false;
+    else
+      vm.showEdit = true;
+  };
 }; //end profile controller
 },{}],48:[function(require,module,exports){
 'use strict';
@@ -1099,7 +1226,12 @@ module.exports = function($filter, ProfileEditer, $state)
     templateUrl: 'module/profile/user/part/user-edit.html',
     controller: function()
     {
-      this.save = function(info)
+      var vm = this;
+      vm.save = save;
+      vm.showErrors = showErrors;
+      
+      //functions
+      function save(info)
       {
         var type = 'user';
         //formatting date
@@ -1113,7 +1245,7 @@ module.exports = function($filter, ProfileEditer, $state)
         //ensure all info set
         alert('Before editer service.\n' + JSON.stringify(info));
         //info.gender = 'm';
-        //http request to fetch list from server PANDA refactor out this
+        //http request to fetch list from server PANDA refactor out ueVM
         ProfileEditer.edit(info, type, function(data)
         {            
           alert(data['message']);
@@ -1124,7 +1256,7 @@ module.exports = function($filter, ProfileEditer, $state)
           }
         });    
       };
-      this.showErrors = function()
+      function showErrors()
       {
         alert('Error in edit form, please try again!');
       };
@@ -1474,25 +1606,30 @@ module.exports = angular.module('session', [
 ]);
 },{"./login":67,"./register":69}],66:[function(require,module,exports){
 'use strict'
-module.exports = function($scope, $state, Login)
+module.exports = function($state, Login)
 { //login controller
+  var vm = this;
   var storage = window.localStorage;
-  $scope.post = {};
+  vm.post = {};
+  vm.login = login;
   //check for stay logged
   alert(JSON.stringify(storage));
   if (storage.getItem('email') !== null && (storage.getItem('stayLogged') !== 0 && storage.getItem('stayLogged') !== '0'))
-    $state.go('home');
+    //$state.go('home');
+    $state.go('event-invite', {id: '98'});
   else //be sure to clear old storage
     storage.clear();
-  $scope.login = function()
+    
+  //functions
+  function login()
   { //login function
-    Login.login($scope.post, function(data)
+    Login.login(vm.post, function(data)
     {
         if (data['success'] === 1)
         { //successful login
           alert(data['message']);
           //set storage items
-          storage.setItem('stayLogged', $scope.post.stayLogged);
+          storage.setItem('stayLogged', vm.post.stayLogged);
           storage.setItem('email', data['email']);
           storage.setItem('first', data['first']);
           storage.setItem('last', data['last']);
@@ -1509,28 +1646,33 @@ module.exports = angular.module('session.login', [])
 .controller('LoginController', require('./controller.js'));
 },{"./controller.js":66}],68:[function(require,module,exports){
 'use strict'
-module.exports = function($scope, Register, $state)
+module.exports = function(Register, $state)
 { //register controller
+  var vm = this;
   var storage = window.localStorage;
-  $scope.post = {};
-  $scope.post.last = ''; //default for optional field
-  $scope.register = function()
+  vm.post = {};
+  vm.post.last = ''; //default for optional field
+  vm.register = register;
+  vm.showErrors = showErrors;
+  
+  //functions
+  function register()
   { //register function
-    Register.register($scope.post, function(data)
+    Register.register(vm.post, function(data)
     { //start register
         alert(data['message']);
         if (data['success'] === 1)
         {
-          storage.setItem('email', $scope.post.email);
+          storage.setItem('email', vm.post.email);
           storage.setItem('stayLogged', '1');
-          storage.setItem('first', $scope.post.first);
-          storage.setItem('last', $scope.post.last)
+          storage.setItem('first', vm.post.first);
+          storage.setItem('last', vm.post.last)
           //launch home
           $state.go('home');
         }
     }); //end register
   }; //end register function
-  $scope.showErrors = function()
+  function showErrors()
   {
     alert("There are errors in the form, try again!");
   };

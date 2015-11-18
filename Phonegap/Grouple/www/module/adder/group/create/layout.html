@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <h1>Group Create</h1>
-<form name="groupCreateForm" novalidate ng-submit="(groupCreateForm.$valid && create()) || (!groupCreateForm.$valid && showErrors())">
-    <input type="text" name="name" id="name" placeholder="Name" required ng-minlength="1" ng-maxlength="40" ng-model="post.name" />
-    <input type="file" name="image" id="image" placeholder="Profile Image" ng-model="post.image" />
-    <input type="text" name="about" id="about" placeholder="About Event" ng-maxlength="400" ng-model="post.about" />
-    <input type="text" name="location" id="location" placeholder="Location" ng-maxlength="40" ng-model="post.location" />
+<form name="groupCreateForm" novalidate ng-submit="(groupCreateForm.$valid && vm.create()) || (!groupCreateForm.$valid && vm.showErrors())">
+    <input type="text" name="name" id="name" placeholder="Name" required ng-minlength="1" ng-maxlength="40" ng-model="vm.post.name" />
+    <input type="file" name="image" id="image" placeholder="Profile Image" ng-model="vm.post.image" />
+    <input type="text" name="about" id="about" placeholder="About Event" ng-maxlength="400" ng-model="vm.post.about" />
+    <input type="text" name="location" id="location" placeholder="Location" ng-maxlength="40" ng-model="vm.post.location" />
     <label>
         Public
-        <input type="radio" name="public" value="1" required ng-model="post.pub" />
+        <input type="radio" name="public" value="1" required ng-model="vm.post.pub" />
     </label>
     <label>
         Private
-        <input type="radio" name="public" value="0" checked required ng-model="post.pub" />
+        <input type="radio" name="public" value="0" checked required ng-model="vm.post.pub" />
     </label>
     <button type="submit">Create Group</button>
 </form>

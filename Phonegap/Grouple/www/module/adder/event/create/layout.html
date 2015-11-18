@@ -1,21 +1,22 @@
 <!DOCTYPE html>
 <h1>Event Create</h1>
 <form name="eventCreateForm" novalidate ng-submit="eventCreateForm.$valid && create()">
-    <input type="text" name="name" id="name" placeholder="Name" required ng-model="post.name" ng-maxlength="20" />
-    <input type="file" name="image" id="image" placeholder="Profile Image" file-model="post.image" />
-    <input type="text" name="about" id="about" placeholder="About Event" ng-model="post.about" ng-maxlength="400" />
-    <input type="text" name="location" id="location" placeholder="Location" ng-model="post.location" ng-maxlength="200" />
-    <select name="category" id="category" placeholder="Select category..." required ng-model="post.category" />
+    <input type="text" name="name" id="name" placeholder="Name" required ng-model="vm.post.name" ng-maxlength="20" />
+    <input type="file" name="image" id="image" placeholder="Profile Image" file-model="vm.post.image" />
+    <input type="text" name="about" id="about" placeholder="About Event" ng-model="vm.post.about" ng-maxlength="400" />
+    <input type="text" name="location" id="location" placeholder="Location" ng-model="vm.post.location" ng-maxlength="200" />
+    <select name="category" id="category" placeholder="Select category..." required ng-model="vm.post.category" />
         <option>Entertainment</option>
         <option>Social</option>
         <option>Sports and Games</option>
         <option>Fitness</option>
         <option>Nature</option>
-    <input type="date" name="start-date" id="start-date" placeholder="Start Date" required ng-model="post.startDate" />
-    <input type="date" name="end-date" id="end-date" placeholder="End Date" ng-model="post.endDate" />
-    <input type="text" name="min-part" id="location" placeholder="Min Participants" ng-model="post.minPart" />
-    <input type="text" name="max-part" id="name" placeholder="Max Participants" ng-model="post.maxPart" />
-    <select name="recurring" id="recurring" placeholder="Recurring event?" ng-model="post.recurring">
+    <!-- TODO : min - max on dates -->
+    <input type="date" name="start-date" id="start-date" placeholder="Start Date" required ng-model="vm.post.startDate" />
+    <input type="date" name="end-date" id="end-date" placeholder="End Date" ng-model="vm.post.endDate" />
+    <input type="text" name="min-part" id="location" placeholder="Min Participants" ng-model="vm.post.minPart" />
+    <input type="text" name="max-part" id="name" placeholder="Max Participants" ng-model="vm.post.maxPart" />
+    <select name="recurring" id="recurring" placeholder="Recurring event?" ng-model="vm.post.recurring">
         <option value="0">Never</option>
         <option value="7">Weekly</option>
         <option value="14">Biweekly</option>
@@ -23,11 +24,11 @@
     </select>
     <label>
         Public
-        <input type="radio" name="public" value="1" ng-model="post.pub" />
+        <input type="radio" name="public" value="1" ng-model="vm.post.pub" />
     </label>
     <label>
         Private
-        <input type="radio" name="public" value="0" checked ng-model="post.pub" />
+        <input type="radio" name="public" value="0" checked ng-model="vm.post.pub" />
     </label>
     <button type="submit">Create Event</button>
 </form>

@@ -6,10 +6,14 @@ return {
     templateUrl: 'module/message/contact/part/contact-row.html',
     controller: function()
     {
-      this.imgEnc = function(image)
-      {
-        return 'data:image/png;base64,' + image;
-      }
+        var vm = this;
+        vm.imgEnc = imgEnc;
+        
+        //functions
+        function imgEnc(image)
+        {
+          return 'data:image/png;base64,' + image;
+        }
     },
     controllerAs: 'contactRowCtrl'
   };

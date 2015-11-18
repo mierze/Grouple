@@ -1,23 +1,28 @@
 'use strict'
-module.exports = function($scope, $state, Login)
+module.exports = function($state, Login)
 { //login controller
+  var vm = this;
   var storage = window.localStorage;
-  $scope.post = {};
+  vm.post = {};
+  vm.login = login;
   //check for stay logged
   alert(JSON.stringify(storage));
   if (storage.getItem('email') !== null && (storage.getItem('stayLogged') !== 0 && storage.getItem('stayLogged') !== '0'))
-    $state.go('home');
+    //$state.go('home');
+    $state.go('event-invite', {id: '98'});
   else //be sure to clear old storage
     storage.clear();
-  $scope.login = function()
+    
+  //functions
+  function login()
   { //login function
-    Login.login($scope.post, function(data)
+    Login.login(vm.post, function(data)
     {
         if (data['success'] === 1)
         { //successful login
           alert(data['message']);
           //set storage items
-          storage.setItem('stayLogged', $scope.post.stayLogged);
+          storage.setItem('stayLogged', vm.post.stayLogged);
           storage.setItem('email', data['email']);
           storage.setItem('first', data['first']);
           storage.setItem('last', data['last']);

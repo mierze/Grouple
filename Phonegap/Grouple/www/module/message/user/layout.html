@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-<div id="messages" ng-init="init()">
-    <h2><!-- PANDA get this from session and put it in actionbar-->Messages</h2>
-    <!--PANDA make this a directive-->
-    <div class="list-wrap" ng-repeat="message in messages" ng-cloak>
-        <user-message-row></user-message-row>
+<div id="messages" ng-init="vm.init()">
+    <h2><!-- TODO get this from session and put it in actionbar-->Messages</h2>
+    <div class="list-wrap">
+        <user-message-row ng-repeat="message in vm.messages"></user-message-row>
     </div>
     <form name="messageForm" class="message-form pull-down" novalidate ng-submit="messageForm.$valid && send()" ng-cloak>
         <textarea id="message" placeholder="Write your message!" ng-minlength="1" ng-maxlength="400" ng-model="post.message">  

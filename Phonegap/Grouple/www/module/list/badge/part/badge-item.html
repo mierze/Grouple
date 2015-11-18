@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<div class="list-item" ng-style="{'background-image':'url(resource/image/badge/' + badgeItemCtrl.image + '.png)'}" ng-hide ng-init="badgeItemCtrl.init(item)">
+<div class="list-item" ng-style="{'background-image':'url(assets/image/badge/' + badgeItemCtrl.image + '.png)'}" ng-init="badgeItemCtrl.init(item)">
     <h5 ng-click="badgeItemCtrl.zoom()" ng-cloak>{{item.name}}</h5>
-    <em ng-hide>Level {{item.level}}</em>
+    <em ng-cloak>Level {{item.level}}</em>
 </div>

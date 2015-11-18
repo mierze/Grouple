@@ -1,10 +1,16 @@
 'use strict'
-module.exports = function($scope, $stateParams, /*FriendInviter, GROUPINVITER*/ ListFetcher, GroupInviter)
+module.exports = function($stateParams, /*FriendInviter, GROUPINVITER*/ ListFetcher, GroupInviter)
 { //group invite controller
+  var vm = this;
   var storage = window.localStorage;
-  $scope.invites = {};
-  $scope.items = {};
-  $scope.init = function()
+  vm.invites = {};
+  vm.items = {};
+  vm.init = init;
+  vm.toggleRole = toggleRole;
+  vm.send = send;
+  
+  //functions
+  function init()
   {
     //TODO: should also grab group members and remove those from the friends list and then display that
     var post = {};
@@ -12,43 +18,55 @@ module.exports = function($scope, $stateParams, /*FriendInviter, GROUPINVITER*/ 
     post.user = storage.getItem("email");
     ListFetcher.fetch(post, /*type of content to grab*/'friends', function(data)
     { //start fetch list of groups to invite
-      if (data["success"])
+      if (data["success"] === 1)
       {
         alert(JSON.stringify(data));
-        $scope.items = data["items"];
+        vm.items = data["items"];
       }
       else
         alert(data["message"]);
     }); //end fetch list
   };
-  $scope.toggleRole = function(id)
+  function toggleRole(id, role)
   {
-    //TODO gather role and change and submit to post
-    var roleID = id;
-    alert("ID is " + roleID);
-   // $(roleID).text('+');
-   // $(roleID).text('this');
-    if ($scope.invites[id] != null)
-    {
-      var role = '-';
-    }
+    if (role === 'M')
+      role = 'A'
+    else if (role === 'A')
+      role = '-';
     else
-      var role = 'M';
+      role = 'M';
+    
     //add role under invites unless role is '-'
     if (role !== '-')
-      $scope.invites[id] = 'M';
+      vm.invites[id] = role;
     else
-      $scope.invites[id] = null;
-    alert(JSON.stringify($scope.invites));
+     delete vm.invites[id];
+    return role;
   };
-  $scope.send = function()
+  function send()
   {
     var post = {};
+    alert(JSON.stringify(vm.invites));
     post.id = $stateParams.id;
-    post.invites = $scope.invites;
+    post.invites = vm.invites;
     GroupInviter.send(post, function(data)
     {
+      //TODO: allow change invite mod?
       alert(JSON.stringify(data));//data["message"]);
     });
   };
 }; //end group invite controller
+
+
+
+
+/*
+
+
+
+
+
+
+
+
+ */

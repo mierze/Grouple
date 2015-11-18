@@ -1,16 +1,17 @@
 <!DOCTYPE html>
-<div id="user-profile" ng-init="init()">
-    <h2 ng-cloak>{{info.first}} {{info.last}}</h2>
-    <img class="profile-img" ng-src="{{image}}" alt="Profile Image" ng-hide="imageNull" ng-cloak />
+<div id="user-profile" ng-init="profileVm.init()">
+    <h2 ng-cloak>{{profileVm.info.first}} {{profileVm.info.last}}</h2>
+    <!-- TODO better naming for imageNull etc.. -->
+    <img class="profile-img" ng-src="{{profileVm.image}}" alt="Profile Image" ng-hide="profileVm.imageNull" ng-cloak />
     <section>
-        <em ng-hide="birthdayNull" ng-cloak>{{info.age}} yrs young</em>
-        <strong ng-hide="locationNull" ng-cloak>{{info.location}}</strong>
-        <p ng-hide="aboutNull" ng-cloak>{{info.about}}</p>
+        <em ng-hide="profileVm.birthdayNull" ng-cloak>{{profileVm.info.age}} yrs young</em>
+        <strong ng-hide="profileVm.locationNull" ng-cloak>{{profileVm.info.location}}</strong>
+        <p ng-hide="profileVm.aboutNull" ng-cloak>{{profileVm.info.about}}</p>
     </section>
-    <a class="btn" ui-sref="badge-list({content: 'badges', id: info.id})">Badges</a>
-    <a class="btn" ui-sref="user-list({content: 'friends', id: info.id})">Friends</a>
-    <a class="btn" ui-sref="group-list({content: 'groups', id: info.id})">Groups</a>
-    <a class="btn" ui-sref="event-list({content: 'events_upcoming', id: info.id})">Upcoming Events</a>
-    <button ng-click="toggleEdit()" ng-show="privs.admin">Edit Profile</button>
-    <user-edit ng-show="showEdit"></user-edit>
+    <a class="btn" ui-sref="badge-list({content: 'badges', id: profileVm.info.id})">Badges</a>
+    <a class="btn" ui-sref="user-list({content: 'friends', id: profileVm.info.id})">Friends</a>
+    <a class="btn" ui-sref="group-list({content: 'groups', id: profileVm.info.id})">Groups</a>
+    <a class="btn" ui-sref="event-list({content: 'events_upcoming', id: profileVm.info.id})">Upcoming Events</a>
+    <button ng-click="profileVm.toggleEdit()" ng-show="profileVm.privs.admin">Edit Profile</button>
+    <user-edit ng-show="profileVm.showEdit"></user-edit>
 </div>

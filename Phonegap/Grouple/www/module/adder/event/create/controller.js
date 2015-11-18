@@ -1,26 +1,30 @@
 'use strict'
-module.exports = function($scope, $filter, $state, Creator)
+module.exports = function($filter, $state, Creator)
 { //event create controller
+  var vm = this;
   var storage = window.localStorage;
-  $scope.post = {};
-  $scope.created = false; //boolean whether event has been created
-  $scope.create = function()
+  vm.post = {};
+  vm.created = false; //boolean whether event has been created
+  vm.create = create;
+
+  //functions
+  function create()
   { //create function
     //form validation
-    alert('Before creator service:\n'+JSON.stringify($scope.post));
-    $scope.post.recurring = 0;
-    $scope.post.creator = storage.getItem('email');
-    if ($scope.info.minPart == null)
-      $scope.info.minPart = 1;
-    if ($scope.info.maxPart == null)
-      $scope.info.maxPart = 0;
-    if ($scope.info.recType) {
+    alert('Before creator service:\n'+JSON.stringify(vm.post));
+    vm.post.recurring = 0;
+    vm.post.creator = storage.getItem('email');
+    if (vm.info.minPart == null)
+      vm.info.minPart = 1;
+    if (vm.info.maxPart == null)
+      vm.info.maxPart = 0;
+    if (vm.info.recType) {
       //code
     }
     //TODO: figure out these dates
-    $scope.info.startDate = $filter('date')($scope.info.startDate, 'yyyy-MM-dd hh:mm:ss');
-    $scope.info.endDate = $filter('date')($scope.info.endDate, 'yyyy-MM-dd hh:mm:ss'); 
-    Creator.create($scope.post, 'event', function(data)
+    vm.info.startDate = $filter('date')(vm.info.startDate, 'yyyy-MM-dd hh:mm:ss');
+    vm.info.endDate = $filter('date')(vm.info.endDate, 'yyyy-MM-dd hh:mm:ss'); 
+    Creator.create(vm.post, 'event', function(data)
     { //creater create
       alert(data['message']);
       if (data['success'] === '1') 

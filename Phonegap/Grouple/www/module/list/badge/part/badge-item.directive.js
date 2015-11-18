@@ -6,20 +6,25 @@ module.exports = function($state)
     templateUrl: 'module/list/badge/part/badge-item.html',
     controller: function()
     {
-      this.image = 'unknown';
-      this.init = function(item)
+      var vm = this;
+      vm.image = 'unknown';
+      vm.init = init;
+      vm.zoom = zoom;
+      
+      //functions
+      function init(item)
       { //init function
         if (item.level > 0)
         { //setting image source
-          this.lower = item.name.toLowerCase();
-          this.image = this.lower.replace(' ', '-');
+          vm.lower = item.name.toLowerCase();
+          vm.image = vm.lower.replace(' ', '-');
         }
       }; //end init function
-      this.zoom = function()
+      function zoom()
       { //zoom function
         alert('HERE IN ZOOM FUNCTION!');
         //would be ideal to have generic modal overlay
-        //in this function inject the item info into the modal
+        //in vm function inject the item info into the modal
         
         //alternatively:
         //$state.go('badge', {id: id});

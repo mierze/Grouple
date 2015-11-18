@@ -6,10 +6,12 @@ module.exports = function($state)
     templateUrl: 'module/message/entity/part/message-row.html',
     controller: function()
     {
-      //PANDA change to id
-      this.profile = function(email)
+      vm.profile = profile;
+      
+      //functions
+      function profile(id)
       {
-        $state.go('user-profile', {id: email});
+        $state.go('user-profile', {id: id});
       };
     },
     controllerAs: 'entityMessageRowCtrl'

@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <div class="modal" id="editprofile-modal" ng-cloak>
     <div>
-        <a class="close" ng-click="toggleEdit()">X</a>
-        <h5 ng-cloak>{{info.name}}</h5>
-        <form name="groupEditForm" novalidate ng-submit="groupEditForm.$valid && groupEditCtrl.save(info)" ng-cloak>
-            <input type="text" name="name" id="name" placeholder="Name" required ng-model="info.name" ng-cloak/>
-            <input type="text" name="about" id="about" placeholder="About Event" ng-model="info.about" ng-cloak />
+        <a class="close" ng-click="vm.toggleEdit()">X</a>
+        <h5 ng-cloak>{{vm.info.name}}</h5>
+        <form name="groupEditForm" novalidate ng-submit="groupEditForm.$valid && groupEditCtrl.save(vm.info)" ng-cloak>
+            <input type="text" name="name" id="name" placeholder="Name" required ng-model="vm.info.name" ng-cloak/>
+            <input type="text" name="about" id="about" placeholder="About Event" ng-model="vm.info.about" ng-cloak />
             <label>
                 Public
                 <input type="radio" name="public" value="1" ng-model="post.pub" />

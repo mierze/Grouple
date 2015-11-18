@@ -6,12 +6,17 @@ module.exports = function($state, InviteResponder)
     templateUrl: 'module/list/group/part/group-row.html',
     controller: function()
     {
+      var vm = this;
       var storage = window.localStorage;
-      this.profile = function(id)
+      vm.profile = profile;
+      vm.decision = decision;
+      
+      //functions
+      function profile(id)
       {
         $state.go('group-profile', {id: id});
       };
-      this.decision = function(id, decision)
+      function decision(id, decision)
       { //start decision;
         var post = {};
         post.id = id;

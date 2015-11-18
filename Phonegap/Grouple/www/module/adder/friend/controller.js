@@ -1,23 +1,27 @@
 'use strict'
-module.exports = function($scope, FriendInviter)
+module.exports = function(FriendInviter)
 { //wrap
+  var vm = this;
   var storage = window.localStorage;
-  //create module controll 
-  $scope.post = {};
-  $scope.showAddFriend = false;
-  $scope.post.from = storage.getItem('email');
-  $scope.send = function()
+  vm.post = {};
+  vm.showAddFriend = false;
+  vm.post.from = storage.getItem('email');
+  vm.send = send;
+  vm.toggleAddFriend = toggleAddFriend;
+  
+  //functions
+  function send()
   {
-    FriendInviter.send($scope.post, function(data)
+    FriendInviter.send(vm.post, function(data)
     {
       alert(data['message']);
     });
   };
-  $scope.toggleAddFriend = function()
+  function toggleAddFriend()
   {
-    if ($scope.showAddFriend) 
-      $scope.showAddFriend = false;
+    if (vm.showAddFriend) 
+      vm.showAddFriend = false;
     else
-      $scope.showAddFriend = true;
+      vm.showAddFriend = true;
   };
 }; //end wrap

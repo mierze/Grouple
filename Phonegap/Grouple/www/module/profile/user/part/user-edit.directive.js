@@ -7,7 +7,12 @@ module.exports = function($filter, ProfileEditer, $state)
     templateUrl: 'module/profile/user/part/user-edit.html',
     controller: function()
     {
-      this.save = function(info)
+      var vm = this;
+      vm.save = save;
+      vm.showErrors = showErrors;
+      
+      //functions
+      function save(info)
       {
         var type = 'user';
         //formatting date
@@ -21,7 +26,7 @@ module.exports = function($filter, ProfileEditer, $state)
         //ensure all info set
         alert('Before editer service.\n' + JSON.stringify(info));
         //info.gender = 'm';
-        //http request to fetch list from server PANDA refactor out this
+        //http request to fetch list from server PANDA refactor out ueVM
         ProfileEditer.edit(info, type, function(data)
         {            
           alert(data['message']);
@@ -32,7 +37,7 @@ module.exports = function($filter, ProfileEditer, $state)
           }
         });    
       };
-      this.showErrors = function()
+      function showErrors()
       {
         alert('Error in edit form, please try again!');
       };

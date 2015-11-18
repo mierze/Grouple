@@ -6,14 +6,19 @@ module.exports = function($state, InviteResponder)
     templateUrl: 'module/list/user/part/user-row.html',
     controller: function()
     {
-      this.profile = function(id)
+      var vm = this;
+      vm.profile = profile;
+      vm.decision = decision;
+      
+      //functions
+      function profile(id)
       {
         $state.go('user-profile', {id: id});
       };
-      this.decision = function(post, decision)
+      function decision(post, decision)
       { //start decision
-        this.type = decision + '_friend';
-        InviteResponder.respond(post, this.type, function(data)
+        vm.type = decision + '_friend';
+        InviteResponder.respond(post, vm.type, function(data)
         {                      
           alert(data['message']);
         });

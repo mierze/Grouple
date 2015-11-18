@@ -6,18 +6,22 @@ module.exports = function($state)
     templateUrl: 'module/message/user/part/message-row.html',
     controller: function()
     {
-      
+      var vm = this; 
       var storage = window.localStorage;
-      this.isUser = function(from)
+      this.profile = profile;
+      this.isUser = isUser;
+      
+      //functions
+      function profile(email)
+      {
+        $state.go('user-profile', {id: email});
+      };
+      function isUser(from)
       {
         if (from === storage.getItem('email')) {
           return true;
         }
         return false;
-      };
-      this.profile = function(email)
-      {
-        $state.go('user-profile', {id: email});
       };
     },
     controllerAs: 'userMessageRowCtrl'
