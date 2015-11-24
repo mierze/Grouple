@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html ng-app="grouple">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="msapplication-tap-highlight" content="no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="shortcut icon" href="asset/icon/favicon.ico" /> 
+        <link rel="stylesheet" type="text/css" href="asset/style/index.css" />
+        <title>Grouple</title>
+    </head>
+    <body class="app">
+        <!--todo, make this div a nav and make nav below a directive entirely -->
+        <div id="nav-menu">
+            <ul>
+                <li><a id="nav-home" ui-sref="home">Home</a></li>
+                <li><a id="nav-friends" ui-sref="friends">Friends</a></li>
+                <li><a id="nav-groups" ui-sref="groups">Groups</a></li>
+                <li><a id="nav-events" ui-sref="events">Events</a></li>
+                <li><a id="nav-messages" ui-sref="contacts">Messages</a></li>
+                <li><a id="nav-profile" ui-sref="user-profile({id: 'user'})">Profile</a></li>
+                <li><a id="nav-settings" href="#">Settings</a></li>
+                <li><a id="nav-logout" ng-click="logout()">Logout</a></li>
+            </ul>
+        </div>
+        <action-bar></action-bar>
+        <main class="content" ui-view></main>
+        
+        <!--script type="text/javascript" src="node_modules/cordova/cordova.js"></script-->
+        <script type="text/javascript" src="bundle.js"></script>
+    </body> 
+</html>
+<!--
+
+
+-->
