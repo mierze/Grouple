@@ -1,0 +1,7 @@
+<!DOCTYPE html>
+<div class="list-row">
+    <h5 ng-click="eventRowCtrl.profile(item.id)" ng-cloak>{{item.name}}</h5>
+    <em ng-cloak>{{item.id}}</em>
+    <button id="accept" ng-click="eventRowCtrl.decision(item.id, 'accept')" ng-show="editable">Accept</button>
+    <button id="decline" ng-click="eventRowCtrl.decision(item.id, 'decline')" ng-show="editable">Decline</button>
+</div>

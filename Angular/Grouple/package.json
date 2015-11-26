@@ -1,16 +1,23 @@
 {
-  "name": "grouple",
-  "version": "1.0.0",
+  "name": "Grouple",
+  "version": "0.2.9",
   "description": "Application to get together with friends.",
+  "author": "Brett Stetson <mierze@gmail.com>",
+  "license": "ISC",
   "main": "app.js",
-  "dependencies": {
-    "angular": "^1.4.7",
-    "ui-router": "^0.0.1"
+  "repository": {
+    "type": "git",
+    "url": "https://www.github.com/mierze/Grouple.git"
   },
-  "devDependencies": {
+  "dependencies": {
+    "angular": "^1.4.8",
+    "angular-ui-router": "^0.2.15"
+  },
+  "devDepdendencies": {
     "angular-mocks": "^1.4.7",
     "browserify": "^12.0.1",
     "chai": "^3.4.1",
+    "ng-cordova": "^0.1.22",
     "gulp": "^3.9.0",
     "gulp-jasmine": "^2.2.1",
     "gulp-karma": "0.0.5",
@@ -20,16 +27,30 @@
     "karma-jasmine": "^0.3.6",
     "karma-mocha": "^0.2.1",
     "karma-phantomjs-launcher": "^0.2.1",
-    "mocha": "^2.3.4",
     "phantomjs": "^1.9.18"
   },
+  "keywords": [
+    "grouple",
+    "events",
+    "friends",
+    "groups",
+    "angular",
+    "browserify",
+    "cordova",
+    "gulp",
+    "jasmine",
+    "karma",
+    "sass"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "pretest": "npm install",
+    "test": "karma start test/karma.conf.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "http://www.github.com/mierze/grouple"
+  "browser": {
+    "angular": "./node_modules/angular/angular.js"
   },
-  "author": "Brett Stetson",
-  "license": "ISC"
+  "devDependencies": {
+    "gulp-clean": "^0.3.1",
+    "ng-cordova": "^0.1.22-alpha"
+  }
 }

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<div class="modal" id="editprofile-modal">
+    <div>
+        <a class="close" ng-click="profileVm.toggleEdit()">X</a>
+        <form name="userEditForm" novalidate ng-submit="(userEditForm.$valid && userEditCtrl.save(info)) || (!userEditForm.$valid && userEditCtrl.showErrors())" ng-cloak>
+            <input type="text" class="name" placeholder="First Name" required ng-model="profileVm.info.first" ng-maxlength="20" />
+            <input type="text" class="name" placeholder="Last Name" ng-model="profileVm.info.last" ng-maxlength="20" />
+            <input type="text" placeholder="About You" ng-model="profileVm.info.about" ng-maxlength="400" />
+            <input type="date" min="1850-12-31" max="2010-01-01" name="birthday" id="birthday" placeholder="yyyy-MM-dd" ng-model="profileVm.info.birthday" />
+            <input type="text" placeholder="Location" ng-model="profileVm.info.location" ng-maxlength="200" />
+            <select name="gender" id="gender" placeholder="Gender" ng-model="profileVm.info.gender">
+                <option name='m'>Male</option>
+                <option name='f'>Female</option>
+            </select>
+            <button type="submit">Save</button>
+        </form>
+    </div>
+</div>

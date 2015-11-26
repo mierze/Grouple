@@ -5,6 +5,7 @@ module.exports = function($state, Login)
   var storage = window.localStorage;
   vm.post = {};
   vm.login = login;
+  vm.showErrors = showErrors;
   //check for stay logged
   alert(JSON.stringify(storage));
   if (storage.getItem('email') !== null && (storage.getItem('stayLogged') !== 0 && storage.getItem('stayLogged') !== '0'))
@@ -30,4 +31,8 @@ module.exports = function($state, Login)
       }
     });
   }; //end login function
+  function showErrors()
+  {
+    alert("There are errors in the registration form, check input and try again!");
+  };
 }; //end login controller

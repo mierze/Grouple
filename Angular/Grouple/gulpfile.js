@@ -2,12 +2,28 @@ var gulp = require('gulp');
 var browserify = require('browserify');
 var source = require('vinyl-source-stream');
 var karma = require('gulp-karma');
+var clean = require('gulp-clean');
+
+var prodFiles = [
+        './app/bundle.js',
+        './app/**/*.html',
+        './app/**/*.css',
+        './app/**/*.png'
+];
+
+gulp.task('prod',['clean'], function()
+{
+  gulp.src(prodFiles)
+  .pipe(gulp.dest('./www'));
+});
+
+gulp.task('clean', function()
+{
+  return gulp.src(['www'], {read:false})
+  .pipe(clean());
+});
 
 gulp.task('test', function() {
-  // Be sure to return the stream
-  // NOTE: Using the fake './foobar' so as to run the files
-  // listed in karma.conf.js INSTEAD of what was passed to
-  // gulp.src !
   return gulp.src('./foobar')
     .pipe(karma({
       configFile: 'test/karma.conf.js',
@@ -22,17 +38,14 @@ gulp.task('test', function() {
 
 gulp.task('browserify', function()
 {
-    //TODO: future change my production bundle in a new area
-    //Grabs the app.js file
     return browserify('./app/app.js')
-        //bundles it and creates a file called main.js
         .bundle()
         .pipe(source('bundle.js'))
-        // saves it the public/js/ directory
         .pipe(gulp.dest('./app'));
 })
 
-gulp.task('watch', function() {
+gulp.task('watch', function()
+{
     gulp.watch('app/*.js', ['browserify', 'test']);
     gulp.watch('app/module/**/*.js', ['browserify', 'test']);
     gulp.watch('app/module/**/**/*.js', ['browserify', 'test']);

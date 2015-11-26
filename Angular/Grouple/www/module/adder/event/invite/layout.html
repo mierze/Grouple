@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<div class="invite-list" ng-init="vm.init()">
+    <h1><!-- PANDA get this from session and put it in actionbar-->Invite Groups</h1>
+    <div class="list-wrap">
+        <event-invite-row ng-repeat="item in vm.items"></event-invite-row>
+    </div>
+    <button ng-click="vm.send()">Invite</a>
+</div>

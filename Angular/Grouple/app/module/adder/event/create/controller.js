@@ -7,6 +7,7 @@ module.exports = function($filter, $state, Creator)
   vm.created = false; //boolean whether event has been created
   vm.create = create;
 
+  alert("loaded in");
   //functions
   function create()
   { //create function

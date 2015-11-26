@@ -1,0 +1,6 @@
+<!DOCTYPE html>
+<div class="list-row invite-row" id="group-invite-row" ng-click="inviteRowCtrl.role = toggleRole(item.id, inviteRowCtrl.role)">
+    <h4 class="invite-name" ng-cloak>{{item.first}} {{item.last}}</h4>
+    <span ng-attr-id="{{'gir-'+(item.id)}}" class="role" ng-model="inviteRowCtrl.role">{{inviteRowCtrl.role}}</span>
+    <input type="checkbox" name="add" ng-checked="(inviteRowCtrl.role !== '-')" />
+</div>

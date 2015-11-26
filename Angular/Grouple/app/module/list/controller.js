@@ -11,7 +11,7 @@ module.exports = function($stateParams, ListFetcher)
     }
     //prepare post parameters
     vm.post = {};
-    //TODO switch content to type
+    //TODO switch content to type or seperate controllers?
     if ($stateParams.id == null || ($stateParams.id.length < 2 && ($stateParams.content === 'user' || $stateParams.content === 'badges')))
       vm.post.id = storage.getItem('email');
     else

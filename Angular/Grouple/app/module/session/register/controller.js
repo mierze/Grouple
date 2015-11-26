@@ -6,13 +6,10 @@ module.exports = function(Register, $state)
   vm.post = {};
   vm.post.last = ''; //default for optional field
   vm.register = register;
-  vm.cake = 'ake';
- // vm.showErrors = showErrors;
-  alert(JSON.stringify(vm.post));
+  vm.showErrors = showErrors;
   //functions
   function register()
   { //register function
-    alert('in register post is' + JSON.stringify(vm.post));
     Register.register(vm.post, function(data)
     { //start register
         alert(data['message']);
@@ -29,6 +26,6 @@ module.exports = function(Register, $state)
   }; //end register function
   function showErrors()
   {
-    alert("There are errors in the form, try again!");
+    alert("There are errors in the registration form, check input and try again!");
   };
 }; //end register controller
