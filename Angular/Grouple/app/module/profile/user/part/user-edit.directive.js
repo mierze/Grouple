@@ -25,8 +25,6 @@ module.exports = function($filter, ProfileEditer, $state)
        // info.gender === 'Male' ? info.gender = 'm' : info.gender = 'f';
         //ensure all info set
         alert('Before editer service.\n' + JSON.stringify(info));
-        //info.gender = 'm';
-        //http request to fetch list from server PANDA refactor out ueVM
         ProfileEditer.edit(info, type, function(data)
         {            
           alert(data['message']);

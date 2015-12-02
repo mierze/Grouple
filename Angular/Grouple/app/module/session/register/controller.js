@@ -1,8 +1,8 @@
 'use strict'
 module.exports = function(Register, $state)
 { //register controller
-  var vm = this;
-  var storage = window.localStorage;
+  var vm = this,
+  storage = window.localStorage;
   vm.post = {};
   vm.post.last = ''; //default for optional field
   vm.register = register;

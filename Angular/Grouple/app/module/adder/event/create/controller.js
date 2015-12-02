@@ -1,8 +1,8 @@
 'use strict'
 module.exports = function($filter, $state, Creator)
 { //event create controller
-  var vm = this;
-  var storage = window.localStorage;
+  var vm = this,
+  storage = window.localStorage;
   vm.post = {};
   vm.created = false; //boolean whether event has been created
   vm.create = create;

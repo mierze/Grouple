@@ -1,14 +1,14 @@
 'use strict'
 module.exports = function($http)
 { //list fetcher is a service for fetching any type of list in grouple
-  var fetch = function(post, type, callback)
+  var fetch = function(params, type, callback)
   { //start fetch
-    var url = 'http://mierze.gear.host/grouple/api/get_' + type + '.php';
+    var url = 'http://grouple.gear.host/api/get_' + type + '.php';
     $http(
     {
-      method  : 'POST',
+      method  : 'GET',
       url     : url,
-      data    : post
+      params  : params
      }).then(
     function(result) {
       return callback(result.data);

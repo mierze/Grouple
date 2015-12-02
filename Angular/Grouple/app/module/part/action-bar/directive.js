@@ -5,11 +5,23 @@ module.exports = function($state)
     return {
         restrict: 'E',
         templateUrl: 'module/part/action-bar/layout.html',
-        controller: function($state)
+        controller: function($scope, $filter, $state)
         {
             //TODO: remove jquery and just use angular
             var vm = this;
             var storage = window.localStorage;
+            
+            
+            $scope.$on('setTitle', function(event, data)
+            {
+                $('#nav-title').text($filter('limitTo')(data, 16, 0));
+            });
+            
+            $scope.$on('hideActionBar', function(event, data)
+            {
+              vm.hideActionBar = true; 
+            });
+    
             $("#nav-open").click(openNav);
             //vm.logout = logout;
             $('#nav-back').on('click', function()

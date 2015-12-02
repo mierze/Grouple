@@ -1,8 +1,10 @@
 'use strict'
-module.exports = function($stateParams, $state, ProfileFetcher, ImageFetcher)
+module.exports = function($rootScope, $stateParams, $state, ProfileFetcher, ImageFetcher)
 { //profile controller
-  var vm = this;
-  var storage = window.localStorage;
+  var vm = this,
+  type = 'event', //type of profile
+  storage = window.localStorage,
+  params = {};
   vm.privs = {};
   //TODO: fetch privs
   vm.privs.admin = true;
@@ -14,28 +16,35 @@ module.exports = function($stateParams, $state, ProfileFetcher, ImageFetcher)
   //functions
   function init()
   { //start init function
-    var type = 'event'; //type of profile
-    vm.post = {};
-    //case that id is for logged user's email
-  
     if($stateParams.id !== null)
-      vm.post.id = $stateParams.id;
+      params.id = $stateParams.id;
     else
-     alert('problem with id passed');
-    vm.post.user = storage.getItem('email');
-    ProfileFetcher.fetch(vm.post, type, function(data)
+     alert('ID not specified.');
+    params.user = storage.getItem('email');
+    fetchProfile();
+  }; //end init function
+  function toggleEdit()
+  {
+    if (vm.showEdit) 
+      vm.showEdit = false;
+    else
+      vm.showEdit = true;
+  };
+  function fetchProfile()
+  {
+    ProfileFetcher.fetch(params, type, function(data)
     { //start fetch profile
-      if (data['success'])
+      if (data['success'] === 1)
       {
-        //PANDA set for now. next get from api
         vm.editable = true;
         vm.info = data['info'];
+        $rootScope.$broadcast('setTitle', vm.info.name);
       }
       else //generic catch
         alert(data['message']);
     }); //end fetch profile
-    vm.post.content = type;
-    ImageFetcher.fetch(vm.post, type, function(data)
+    params.content = type;
+    ImageFetcher.fetch(params, type, function(data)
     { //start fetch image
       if (data['success'] === 1)
       {
@@ -46,12 +55,5 @@ module.exports = function($stateParams, $state, ProfileFetcher, ImageFetcher)
         //generic catch
         alert(data['message']);
     }); //end fetch image      
-  }; //end init function
-  function toggleEdit()
-  {
-    if (vm.showEdit) 
-      vm.showEdit = false;
-    else
-      vm.showEdit = true;
   };
 }; //end profile controller

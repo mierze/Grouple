@@ -1,5 +1,5 @@
 'use strict'
-module.exports = function($stateParams, MessageFetcher, MessageSender)
+module.exports = function($rootScope, $stateParams, MessageFetcher, MessageSender)
 { //entity message controller
   var vm = this;
   var storage = window.localStorage;
@@ -7,12 +7,10 @@ module.exports = function($stateParams, MessageFetcher, MessageSender)
   vm.post = {}; //post params for http request
   vm.init = init;
   vm.send = send;
-  
+  $rootScope.$broadcast('setTitle', 'Messages');
   //functions
   function init()
   { //init function
-    //PANDA do error checking
-    alert('type is' + type);
     vm.post.id = $stateParams.id;
     vm.post.user = storage.getItem('email');
     vm.post.from = storage.getItem('email');

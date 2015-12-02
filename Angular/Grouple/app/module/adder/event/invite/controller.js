@@ -1,8 +1,8 @@
 'use strict'
 module.exports = function($stateParams, EventInviter, ListFetcher)
 { //event invite controller
-  var vm = this;
-  var storage = window.localStorage;
+  var vm = this,
+  storage = window.localStorage;
   vm.post = {};
   vm.post.id = storage.getItem('email');
   vm.post.user = storage.getItem('email');

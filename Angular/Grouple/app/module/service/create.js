@@ -3,7 +3,7 @@ module.exports = function($http)
 { //creater takes a group/event type, info and creates it in the db
   var create = function(post, type, callback)
   { //start create
-    var url = 'http://mierze.gear.host/grouple/api/create_' + type + '.php';
+    var url = 'http://grouple.gear.host/api/create_' + type + '.php';
     $http(
     { //http request to fetch list from server PANDA refactor out this
       method  : 'POST',

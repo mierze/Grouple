@@ -6,7 +6,7 @@ module.exports = function($http)
     $http(
     { 
       method  : 'POST',
-      url     : 'http://mierze.gear.host/grouple/api/login.php',
+      url     : 'http://grouple.gear.host/api/login.php',
       data    : post
      }).then(
     function(result) {

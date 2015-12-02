@@ -1,8 +1,8 @@
 'use strict'
 module.exports = function($state, Creator)
 { //group create controller
-  var vm = this;
-  var storage = window.localStorage;
+  var vm = this,
+  storage = window.localStorage;
   //init post parameters
   vm.post = {};
   vm.post.name = '';

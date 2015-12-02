@@ -12,7 +12,7 @@ module.exports = function($http)
     $http(
     { //http request to fetch list from server PANDA refactor out this
       method  : 'POST',
-      url     : 'http://mierze.gear.host/grouple/api/invite_to_event.php',
+      url     : 'http://grouple.gear.host/api/invite_to_event.php',
       data    : post
      }).then(
     function(result) {

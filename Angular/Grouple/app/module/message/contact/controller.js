@@ -1,11 +1,12 @@
 'use strict'
-module.exports = function(MessageFetcher)
+module.exports = function($rootScope, MessageFetcher)
 { //contact controller
-  var vm = this;
-  var storage = window.localStorage;
+  var vm = this,
+  storage = window.localStorage;
   vm.post = {}; //post params for http request
   vm.post.email = storage.getItem('email');
   vm.post.user = storage.getItem('email');
+  $rootScope.$broadcast('setTitle', 'Contacts');
   MessageFetcher.fetch(vm.post, 'contacts', function(data)
   {
     if (data['success'])

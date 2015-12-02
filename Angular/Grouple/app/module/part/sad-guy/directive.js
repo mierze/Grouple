@@ -7,7 +7,7 @@ module.exports = function()
         controller: function()
         {
             var vm = this;
-            vm.caption = 'Sorry.';
+            vm.caption = 'Sorry, none to display.';
             vm.setCaption = setCaption;
             
             //functions

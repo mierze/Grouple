@@ -1,8 +1,8 @@
 'use strict'
-module.exports = function($state, Login)
+module.exports = function($rootScope, $state, Login)
 { //login controller
-  var vm = this;
-  var storage = window.localStorage;
+  var vm = this,
+  storage = window.localStorage;
   vm.post = {};
   vm.login = login;
   vm.showErrors = showErrors;
@@ -13,6 +13,8 @@ module.exports = function($state, Login)
     //$state.go('event-invite', {id: '98'});
   else //be sure to clear old storage
     storage.clear();
+    
+  $rootScope.$broadcast('hideActionBar', true);
     
   //functions
   function login()

@@ -5,7 +5,8 @@ module.exports = function($stateProvider, $urlRouterProvider)
   $stateProvider
     .state('home', {
         url:'/',
-        templateUrl: 'module/layout/home.html'
+        templateUrl: 'module/layout/home.html',
+        controller: 'HomeController as vm'
     })
     .state('login', {
         url:'/login',
@@ -25,20 +26,22 @@ module.exports = function($stateProvider, $urlRouterProvider)
     .state('friends', {
         url:'/friends',
         templateUrl: 'module/layout/friends.html',
-        controller: 'FriendInviteController'
+        controller: 'FriendsController as vm'
     })
     .state('groups', {
         url:'/groups',
-        templateUrl: 'module/layout/groups.html'
+        templateUrl: 'module/layout/groups.html',
+        controller: 'GroupsController as vm'
     })
     .state('events', {
         url:'/events',
-        templateUrl: 'module/layout/events.html'
+        templateUrl: 'module/layout/events.html',
+        controller: 'EventsController as vm'
     })
     .state('user-profile', {
         url:'/user-profile/:id',
         templateUrl: 'module/profile/user/layout.html',
-        controller: 'UserProfileController as profileVm'
+        controller: 'UserProfileController as vm'
     })
     .state('group-profile', {
         url:'/group-profile/:id',
@@ -54,22 +57,22 @@ module.exports = function($stateProvider, $urlRouterProvider)
     .state('user-list', {
         url:'/user-list/:content?id',
         templateUrl: 'module/list/user/layout.html',
-        controller: 'ListController as vm'
+        controller: 'UserListController as vm'
     })
     .state('group-list', {
         url:'/group-list/:content?id',
         templateUrl: 'module/list/group/layout.html',
-        controller: 'ListController as vm'
+        controller: 'GroupListController as vm'
     })
     .state('event-list', {
         url:'/event-list/:content?id',
         templateUrl: 'module/list/event/layout.html',
-        controller: 'ListController as vm'
+        controller: 'EventListController as vm'
     })
     .state('badge-list', {
-        url:'/badge-list/:content?id',
+        url:'/badge-list/:id',
         templateUrl: 'module/list/badge/layout.html',
-        controller: 'ListController as vm'
+        controller: 'BadgeListController as vm'
     })
     .state('group-create', {
         url:'/group-create',

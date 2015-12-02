@@ -27,11 +27,5 @@ $(document).ready(function()
       //$state.go('login');
       location.href = '#login';
       storage.clear(); //clear storage
-    };
-    //TODO: work on setting title from outside controllers
-    /*vm.$on('setTitle', function(args)
-    {
-        alert('emit made it to $on');
-    });*/
-            
+    };      
 });

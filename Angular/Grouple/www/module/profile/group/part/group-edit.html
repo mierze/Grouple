@@ -2,7 +2,6 @@
 <div class="modal" id="editprofile-modal" ng-cloak>
     <div>
         <a class="close" ng-click="vm.toggleEdit()">X</a>
-        <h5 ng-cloak>{{vm.info.name}}</h5>
         <form name="groupEditForm" novalidate ng-submit="groupEditForm.$valid && groupEditCtrl.save(vm.info)" ng-cloak>
             <input type="text" class="name" name="name" id="name" placeholder="Name" required ng-model="vm.info.name" ng-cloak/>
             <input type="text" name="about" id="about" placeholder="About Event" ng-model="vm.info.about" ng-cloak />

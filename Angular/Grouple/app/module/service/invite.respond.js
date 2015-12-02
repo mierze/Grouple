@@ -5,12 +5,12 @@ module.exports = function($http)
   { //start send
     if (decision === 'accept')
     {
-       var url = 'http://mierze.gear.host/grouple/api/' + decision + '_' + content + '_invite.php';
+       var url = 'http://grouple.gear.host/api/' + decision + '_' + content + '_invite.php';
     }
     else
     {
       post.type = 'decline'; //for api to return proper message
-      var url = 'http://mierze.gear.host/grouple/api/leave_' + content + '.php';
+      var url = 'http://grouple.gear.host/api/leave_' + content + '.php';
     }
     $http(
     { //http request to fetch list from server PANDA refactor out this

@@ -1,10 +1,11 @@
 'use strict'
-module.exports = function($stateParams, $state, ProfileFetcher, ImageFetcher)
+module.exports = function($rootScope, $stateParams, $state, ProfileFetcher, ImageFetcher)
 { //profile controller
   //globals for user profile
-  var vm = this;
-  var storage = window.localStorage;
-  var type = 'user';
+  var vm = this,
+  storage = window.localStorage,
+  type = 'user',
+  params = {};
   //TODO: need to check rank in group / event so that can show or hide editable
   vm.init = init;
   vm.toggleEdit = toggleEdit;
@@ -18,20 +19,29 @@ module.exports = function($stateParams, $state, ProfileFetcher, ImageFetcher)
     vm.showEdit = false;
     //case that id is for logged user's email
     if ($stateParams.id === 'user')   
-      vm.post.id = storage.getItem('email');  
+      params.id = storage.getItem('email');  
     else if($stateParams.id !== null)   
-      vm.post.id = $stateParams.id;
+      params.id = $stateParams.id;
     else
-      alert('Error: invalid id specified!');
-    vm.post.user = storage.getItem('email');
-    ProfileFetcher.fetch(vm.post, type, function(data)
+      alert('Invalid ID specified!');
+    params.user = storage.getItem('email');
+    fetchProfile();
+  }; //end init function
+  function toggleEdit()
+  {
+    if (vm.showEdit)
+      vm.showEdit = false;
+    else
+      vm.showEdit = true;
+  };
+  function fetchProfile()
+  {
+    ProfileFetcher.fetch(params, type, function(data)
     { //start fetch profile
       if (data['success'] === 1)
       { //fetched successfully
         vm.info = data['info'];
-        /*//set title to user's name
-        var args = [vm.info.first, vm.info.last];
-        vm.$emit('setTitle', args);*/
+        $rootScope.$broadcast('setTitle', (vm.info.first + ' ' + vm.info.last));
         //check for unset data
         if (vm.info.birthday == null)
           vm.birthdayNull = true;
@@ -50,7 +60,7 @@ module.exports = function($stateParams, $state, ProfileFetcher, ImageFetcher)
       else //generic catch
         alert(data['message']);
     }); //end fetch profile
-    ImageFetcher.fetch(vm.post, type, function(data)
+    ImageFetcher.fetch(params, type, function(data)
     { //start fetch image
       if (data['success'] === 1)
       {
@@ -68,12 +78,5 @@ module.exports = function($stateParams, $state, ProfileFetcher, ImageFetcher)
         alert(data['message']);
       }
     }); //end fetch image
-  }; //end init function
-  function toggleEdit()
-  {
-    if (vm.showEdit)
-      vm.showEdit = false;
-    else
-      vm.showEdit = true;
   };
 }; //end profile controller

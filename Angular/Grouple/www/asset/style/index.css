@@ -404,12 +404,6 @@ fieldset input[type=submit], fieldset .btn
     height: inherit;
 }
 
-/*
- *
- *PANDA: make nav-menu for when height < say 600px;
- *
- *Also make a jquery slide to remove the menu
- */
 #nav-menu
 {
     position: fixed;
@@ -618,3 +612,12 @@ main
 }
 .close:hover { background: #00d9ff; }
 /* END MODAL STYLING */
+
+.sad-guy
+{
+    background-color: rgba(65,41,28,1);     
+}
+.sad-guy figcaption
+{
+    color: rgba(245,241,226,1);
+}

@@ -1,5 +1,5 @@
 'use strict'
-module.exports = function($stateParams, $state, $interval, MessageFetcher, MessageSender)
+module.exports = function($rootScope, $stateParams, $state, $interval, MessageFetcher, MessageSender)
 { //user message controller
   var vm = this;
   var type = 'user';
@@ -7,7 +7,7 @@ module.exports = function($stateParams, $state, $interval, MessageFetcher, Messa
   vm.post = {}; //post params for http request
   vm.init = init;
   vm.send = send;
-  
+  $rootScope.$broadcast('setTitle', 'Messages');
   //functions
   function init()
   { //init function

@@ -8,7 +8,8 @@ var prodFiles = [
         './app/bundle.js',
         './app/**/*.html',
         './app/**/*.css',
-        './app/**/*.png'
+        './app/**/*.png',
+        './app/**/*.ico'
 ];
 
 gulp.task('prod',['clean'], function()
@@ -26,7 +27,7 @@ gulp.task('clean', function()
 gulp.task('test', function() {
   return gulp.src('./foobar')
     .pipe(karma({
-      configFile: 'test/karma.conf.js',
+      configFile: 'spec/karma.conf.js',
       action: 'run'
     }))
     .on('error', function(err) {
@@ -50,7 +51,7 @@ gulp.task('watch', function()
     gulp.watch('app/module/**/*.js', ['browserify', 'test']);
     gulp.watch('app/module/**/**/*.js', ['browserify', 'test']);
     gulp.watch('app/module/**/**/**/*.js', ['browserify', 'test']);
-    gulp.watch(['test/*.js', 'test/**/*.js'], ['test']);
+    gulp.watch(['spec/**/*.js'], ['test']);
 })
 
 gulp.task('default', ['watch'])

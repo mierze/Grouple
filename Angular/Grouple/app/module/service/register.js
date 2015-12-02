@@ -7,7 +7,7 @@ module.exports = function($http)
     $http(
     { //http post for registering account
       method  : 'POST',
-      url     : 'http://mierze.gear.host/grouple/api/register.php',
+      url     : 'http://grouple.gear.host/api/register.php',
       data    : post
      }).then(
     function(result) {
