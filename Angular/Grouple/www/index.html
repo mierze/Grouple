@@ -11,27 +11,8 @@
         <title>Grouple</title>
     </head>
     <body class="app">
-        <!--todo, make this div a nav and make nav below a directive entirely -->
-        <div id="nav-menu">
-            <ul>
-                <li><a id="nav-home" ui-sref="home">Home</a></li>
-                <li><a id="nav-friends" ui-sref="friends">Friends</a></li>
-                <li><a id="nav-groups" ui-sref="groups">Groups</a></li>
-                <li><a id="nav-events" ui-sref="events">Events</a></li>
-                <li><a id="nav-messages" ui-sref="contacts">Messages</a></li>
-                <li><a id="nav-profile" ui-sref="user-profile({id: 'user'})">Profile</a></li>
-                <li><a id="nav-settings" href="#">Settings</a></li>
-                <li><a id="nav-logout" ng-click="logout()">Logout</a></li>
-            </ul>
-        </div>
         <action-bar></action-bar>
         <main class="content" ui-view></main>
-        
-        <!--script type="text/javascript" src="../node_modules/cordova/cordova.js"></script-->
         <script type="text/javascript" src="bundle.js"></script>
     </body> 
 </html>
-<!--
-
-
--->

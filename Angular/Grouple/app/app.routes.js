@@ -1,11 +1,11 @@
 'use strict'
-module.exports = function($stateProvider, $urlRouterProvider)
+module.exports = function($stateProvider, $urlRouterProvider, $httpProvider)
 { //routes
   //all possible states
   $stateProvider
     .state('home', {
         url:'/',
-        templateUrl: 'module/layout/home.html',
+        templateUrl: 'module/landing/home/layout.html',
         controller: 'HomeController as vm'
     })
     .state('login', {
@@ -25,17 +25,17 @@ module.exports = function($stateProvider, $urlRouterProvider)
     })
     .state('friends', {
         url:'/friends',
-        templateUrl: 'module/layout/friends.html',
+        templateUrl: 'module/landing/friends/layout.html',
         controller: 'FriendsController as vm'
     })
     .state('groups', {
         url:'/groups',
-        templateUrl: 'module/layout/groups.html',
+        templateUrl: 'module/landing/groups/layout.html',
         controller: 'GroupsController as vm'
     })
     .state('events', {
         url:'/events',
-        templateUrl: 'module/layout/events.html',
+        templateUrl: 'module/landing/events/layout.html',
         controller: 'EventsController as vm'
     })
     .state('user-profile', {
@@ -110,4 +110,5 @@ module.exports = function($stateProvider, $urlRouterProvider)
         controller: 'EntityMessageController as vm'
     });
   $urlRouterProvider.otherwise('/login');
+  $httpProvider.defaults.headers.post['Content-Type'] = 'application/json';
 }; //end routes

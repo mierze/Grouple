@@ -9,12 +9,14 @@ module.exports = function($rootScope, $state, Login)
   //check for stay logged
   alert(JSON.stringify(storage));
   if (storage.getItem('email') !== null && (storage.getItem('stayLogged') !== 0 && storage.getItem('stayLogged') !== '0'))
+  {
     $state.go('home');
+    $rootScope.$broadcast('showActionBar', true);
+  }
     //$state.go('event-invite', {id: '98'});
   else //be sure to clear old storage
     storage.clear();
     
-  $rootScope.$broadcast('hideActionBar', true);
     
   //functions
   function login()
@@ -29,6 +31,7 @@ module.exports = function($rootScope, $state, Login)
         storage.setItem('email', data['email']);
         storage.setItem('first', data['first']);
         storage.setItem('last', data['last']);
+        $rootScope.$broadcast('showActionBar', true);
         $state.go('home');
       }
     });

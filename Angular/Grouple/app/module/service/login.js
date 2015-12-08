@@ -6,7 +6,7 @@ module.exports = function($http)
     $http(
     { 
       method  : 'POST',
-      url     : 'http://grouple.gear.host/api/login.php',
+      url     : 'https://groupleapp.herokuapp.com/api/session/login/',
       data    : post
      }).then(
     function(result) {

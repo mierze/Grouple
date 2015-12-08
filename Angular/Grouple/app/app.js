@@ -2,7 +2,7 @@
 
 require('angular'); //global angular var
 require('ng-cordova'); //provides cordova
-var $ = require('../node_modules/jquery/jquery.min.js'); //provides jquery TODO: don't use jquery
+//require('jquery'); //provides jquery TODO: don't use jquery
 
 //main app module
 angular.module('grouple', [

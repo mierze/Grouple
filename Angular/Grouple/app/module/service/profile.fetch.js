@@ -3,7 +3,7 @@ module.exports = function($http)
 { //profile fetcher takes in an id and type and returns the corresponding user/group/event profile
     var fetch = function(params, type, callback)
     { //start fetch function
-        var url = 'http://grouple.gear.host/api/get_' + type + '_info.php';
+        var url = 'https://groupleapp.herokuapp.com/api/user/profile/';
         $http(
         { //http request to fetch list from server PANDA refactor out this
             method  : 'GET',
