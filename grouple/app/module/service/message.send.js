@@ -3,10 +3,7 @@ module.exports = function($http)
 { //message sender sends user, group and event messages
   var send = function(post, type, callback)
   { //send function
-    if (type === 'user')
-      var url = 'http://grouple.gear.host/api/send_message.php';
-    else
-      var url = 'http://grouple.gear.host/api/send_' + type + '_message.php';
+    var url = 'https://groupleapp.herokuapp.com/' + type + '/messages/send';
     $http(
     { //http request to fetch list from server PANDA refactor out this
       method  : 'POST',

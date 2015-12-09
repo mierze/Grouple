@@ -9,17 +9,20 @@ module.exports = function($state)
             var vm = this;
             var storage = window.localStorage;
             vm.title = 'Grouple';
+            vm.showNav = false;
             vm.logout = logout;
+            vm.toggleNav = toggleNav;
             vm.back = back;
             
             $scope.$on('setTitle', function(event, data)
             {
                 vm.title = $filter('limitTo')(data, 16, 0);
+                $scope.$emit('showActionBar', true); //for now
             });
             
             $scope.$on('showActionBar', function(event, data)
             {
-              vm.showActionBar = true;
+              vm.showActionBar = data;
             });
             
             //functions

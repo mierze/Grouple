@@ -408,9 +408,11 @@ fieldset input[type=submit], fieldset .btn
 {
     position: fixed;
     top: 45px;
+    height: 50%;
+    width: 50%;
     margin: 0;
     right: 0;
-    z-index: 100;
+    z-index: 1;
 }
 #nav-menu ul
 {

@@ -6,7 +6,7 @@ module.exports = function($http)
     $http(
     { //http post for registering account
       method  : 'POST',
-      url     : 'http://groupleapp.herokuapp.com/api/session/register',
+      url     : 'https://groupleapp.herokuapp.com/api/session/register',
       data    : post
      }).then(
     function(result) {

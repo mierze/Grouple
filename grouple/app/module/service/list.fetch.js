@@ -7,34 +7,37 @@ module.exports = function($http)
     switch (type)
     {
       case 'friends':
-        url += '/user/friends';
+        url += '/user/list/friends';
         break;
       case 'friend_invites':
-        url += '/user/friends/invites';
+        url += '/user/list/invites';
         break;
       case 'groups':
-        url += '/user/groups';
+        url += '/group/list';
         break;
       case 'group_invites':
-        url += '/user/groups/invites';
+        url += '/group/list/invites';
         break;
       case 'group_members':
-        url += '/group/members';
+        url += '/user/list/members';
+        break;
+      case 'event_attending':
+        url += '/user/list/attending';
         break;
       case 'event_invites':
-        url += '/user/events/invites';
+        url += '/event/list/invites';
         break;
       case 'events_upcoming':
-        url += '/user/events/upcoming';
+        url += '/event/list/upcoming';
         break;
       case 'events_pending':
-      url += '/user/events/pending';
+      url += '/event/list/pending';
         break;
       case 'events_past':
-        url += '/user/events/past';
+        url += '/event/list/past';
         break;
       case 'events_declined':
-        url += '/user/events/declined';
+        url += '/event/list/declined';
         break;
     }
     //attach get route params

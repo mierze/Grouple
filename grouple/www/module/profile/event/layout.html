@@ -6,7 +6,7 @@
         <strong ng-cloak>{{vm.info.location}}</strong>
         <p ng-cloak>{{vm.info.about}}</p>
     </section>
-    <a class="btn" ui-sref="user-list({content: 'event_participants', id: vm.info.id})" ng-cloak>Participants</a>
+    <a class="btn" ui-sref="user-list({content: 'event_attending', id: vm.info.id})" ng-cloak>Participants</a>
     <a class="btn" ui-sref="entity-messages({content: 'event', id: vm.info.id})" ng-cloak>Messages</a>
     <button ng-click="vm.toggleEdit()" ng-show="vm.privs.admin">Edit Event</button>
     <a class="btn" ui-sref="event-invite" ng-show="vm.privs.mod">Invite Groups</a>

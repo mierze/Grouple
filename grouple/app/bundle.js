@@ -1064,17 +1064,20 @@ module.exports = function($state)
             var vm = this;
             var storage = window.localStorage;
             vm.title = 'Grouple';
+            vm.showNav = false;
             vm.logout = logout;
+            vm.toggleNav = toggleNav;
             vm.back = back;
             
             $scope.$on('setTitle', function(event, data)
             {
                 vm.title = $filter('limitTo')(data, 16, 0);
+                $scope.$emit('showActionBar', true); //for now
             });
             
             $scope.$on('showActionBar', function(event, data)
             {
-              vm.showActionBar = true;
+              vm.showActionBar = data;
             });
             
             //functions
@@ -1518,7 +1521,7 @@ module.exports = function($http)
 { //creater takes a group/event type, info and creates it in the db
   var create = function(post, type, callback)
   { //start create
-    var url = 'http://grouple.gear.host/api/create_' + type + '.php';
+    var url = 'https://groupleapp.herokuapp.com/api/' + type + '/create';
     $http(
     { //http request to fetch list from server PANDA refactor out this
       method  : 'POST',
@@ -1686,34 +1689,37 @@ module.exports = function($http)
     switch (type)
     {
       case 'friends':
-        url += '/user/friends';
+        url += '/user/list/friends';
         break;
       case 'friend_invites':
-        url += '/user/friends/invites';
+        url += '/user/list/invites';
         break;
       case 'groups':
-        url += '/user/groups';
+        url += '/group/list';
         break;
       case 'group_invites':
-        url += '/user/groups/invites';
+        url += '/group/list/invites';
         break;
       case 'group_members':
-        url += '/group/members';
+        url += '/user/list/members';
+        break;
+      case 'event_attending':
+        url += '/user/list/attending';
         break;
       case 'event_invites':
-        url += '/user/events/invites';
+        url += '/event/list/invites';
         break;
       case 'events_upcoming':
-        url += '/user/events/upcoming';
+        url += '/event/list/upcoming';
         break;
       case 'events_pending':
-      url += '/user/events/pending';
+      url += '/event/list/pending';
         break;
       case 'events_past':
-        url += '/user/events/past';
+        url += '/event/list/past';
         break;
       case 'events_declined':
-        url += '/user/events/declined';
+        url += '/event/list/declined';
         break;
     }
     //attach get route params
@@ -1758,17 +1764,16 @@ module.exports = function($http)
 { //message fetcher takes in a type and returns the messages for that entity
     var fetch = function(params, type, callback)
     { //fetch function
-        if (type === 'user') 
-            var url = 'http://grouple.gear.host/api/get_messages.php';
-        else if (type === 'contacts')
-            var url = 'http://grouple.gear.host/api/get_contacts.php';
+        var url = 'https://groupleapp.herokuapp.com/api/';
+        if (type === 'contacts')
+            var url = 'user/messages/contacts/';
         else
-            var url = 'http://grouple.gear.host/api/get_' + type + '_messages.php';
+            url += type + '/messages/';
+        url += params.id;
         $http(
         { //http request to fetch list from server PANDA refactor out this
             method  : 'GET',
-            url     : url,
-            params  : params
+            url     : url
          }).then(
         function(result) {
             return callback(result.data);
@@ -1785,10 +1790,7 @@ module.exports = function($http)
 { //message sender sends user, group and event messages
   var send = function(post, type, callback)
   { //send function
-    if (type === 'user')
-      var url = 'http://grouple.gear.host/api/send_message.php';
-    else
-      var url = 'http://grouple.gear.host/api/send_' + type + '_message.php';
+    var url = 'https://groupleapp.herokuapp.com/' + type + '/messages/send';
     $http(
     { //http request to fetch list from server PANDA refactor out this
       method  : 'POST',
@@ -1810,7 +1812,7 @@ module.exports = function($http)
 { //profile editer takes in updated user / group / event profile info and updates them
   var edit = function(post, type, callback)
   { //edit function
-    var url = 'http://grouple.gear.host/api/edit_' + type + '.php';
+    var url = 'https://groupleapp.herokuapp.com/api/' + type + '/profile/edit';
     //http request to fetch list from server PANDA refactor out this
     $http(
     {
@@ -1855,7 +1857,7 @@ module.exports = function($http)
     $http(
     { //http post for registering account
       method  : 'POST',
-      url     : 'http://groupleapp.herokuapp.com/api/session/register',
+      url     : 'https://groupleapp.herokuapp.com/api/session/register',
       data    : post
      }).then(
     function(result) {

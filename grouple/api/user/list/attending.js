@@ -1,7 +1,6 @@
 var mysql = require('../../db');
 var router = require('express').Router();
 
-//TODO pass user id and check mods?
 router.route('/:id')
 .get(function(request, response)
 {

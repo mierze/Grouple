@@ -1,27 +1,25 @@
 var db = require('../../db');
 var router = require('express').Router();
-router.use(require('body-parser').json());
 
-//TODO pass user id and check mods?
 router.route('/:id')
 .get(function(request, response)
 {
-  db.pool.getConnection(function(error, conn)
+  var data = {};
+  if (!request.params.id)
   {
-    conn.query('SELECT em.message, em.sender, em.send_date, u.first, u.last FROM e_messages em '
+    data.success = -99;
+    data.message = 'Missing id.';
+    response.json(data);
+  }
+  else
+  {
+    mysql.query('SELECT em.message, em.sender, em.send_date, u.first, u.last FROM e_messages em '
                + 'JOIN users u WHERE e_id = ? and em.sender = u.email ORDER BY send_date ASC',
-      request.body.id,
-      function (error, results)
+      request.params.id)
+      .spread(function(results)
       {
-        var data = {};
         data.mod = 0;
-        if (error)
-        {
-          data.success = -10;
-          data.message = 'Error querying database.';
-          console.log(err);
-        }
-        else if (results.length)
+        if (results.length)
         {
           data.success = 1;
           data.messages = results;  
@@ -32,9 +30,11 @@ router.route('/:id')
           data.message = 'No messages to display.';
         }
         response.json(data);
-        conn.release();
+    }).catch(function(error)
+    {
+     console.log(error);
     });
-  });
+  }
 });
 
 module.exports = router;
