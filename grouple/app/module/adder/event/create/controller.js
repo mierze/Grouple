@@ -1,16 +1,15 @@
 'use strict'
-module.exports = function($filter, $state, Creator)
-{ //event create controller
-  var vm = this,
-  storage = window.localStorage;
+function EventCreateController($filter, $state, Creator) {
+  //event create controller
+  var vm = this;
+  var storage = window.localStorage;
   vm.post = {};
   vm.created = false; //boolean whether event has been created
   vm.create = create;
 
-  alert("loaded in");
   //functions
-  function create()
-  { //create function
+  function create() {
+    //create function
     //form validation
     alert('Before creator service:\n'+JSON.stringify(vm.post));
     vm.post.recurring = 0;
@@ -25,12 +24,14 @@ module.exports = function($filter, $state, Creator)
     //TODO: figure out these dates
     vm.info.startDate = $filter('date')(vm.info.startDate, 'yyyy-MM-dd hh:mm:ss');
     vm.info.endDate = $filter('date')(vm.info.endDate, 'yyyy-MM-dd hh:mm:ss'); 
-    Creator.create(vm.post, 'event', function(data)
-    { //creater create
+    Creator.create(vm.post, 'event', function(data) {
+      //creater create
       alert(data['message']);
       if (data['success'] === '1') 
       //TODO: give user option to go to profile or invite groups
-        $state.go('event-invite', {id: data['id']});e
+        $state.go('event-invite', {id: data['id']});
     }); //end creater create
   };
 }; //end event create controller
+
+module.exports = EventCreateController;

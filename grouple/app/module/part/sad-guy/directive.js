@@ -1,18 +1,16 @@
 'use strict'
-module.exports = function()
-{ //sad guy directive
+function SadGuyDirective() {
+    //sad guy directive
     return {
         restrict: 'E',
         templateUrl: 'module/part/sad-guy/layout.html',
-        controller: function()
-        {
+        controller: function() {
             var vm = this;
             vm.caption = 'Sorry, none to display.';
             vm.setCaption = setCaption;
             
             //functions
-            function setCaption(caption)
-            {
+            function setCaption(caption) {
                 vm.caption = caption;
             }
         },
@@ -20,3 +18,4 @@ module.exports = function()
     };
 }; //end sad guy directive
 
+module.exports = SadGuyDirective;

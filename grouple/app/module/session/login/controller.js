@@ -1,31 +1,26 @@
 'use strict'
-module.exports = function($rootScope, $state, Login)
-{ //login controller
-  var vm = this,
-  storage = window.localStorage;
+function LoginController($rootScope, $state, Login) {
+  var vm = this;
+  var storage = window.localStorage;
   vm.post = {};
   vm.login = login;
   vm.showErrors = showErrors;
   //check for stay logged
-  alert(JSON.stringify(storage));
- // if (storage.getItem('email') !== null && (storage.getItem('stayLogged') !== 0 && storage.getItem('stayLogged') !== '0'))
- // {
-   // $state.go('home');
-   // $rootScope.$broadcast('showActionBar', true);
-  //}
-    //$state.go('event-invite', {id: '98'});
-  //else //be sure to clear old storage
+  if (storage.getItem('email') !== null && (storage.getItem('stayLogged') !== 0 && storage.getItem('stayLogged') !== '0'))
+   {
+     $state.go('home');
+     $rootScope.$broadcast('showActionBar', true);
+   }
+  else //be sure to clear old storage
     storage.clear();
-    
-    
+      
   //functions
-  function login()
-  { //login function
-    Login.login(vm.post, function(data)
-    {
+  function login() {
+    //login function
+    Login.login(vm.post, function(data) {
       alert(data['message']);
-      if (data['success'] === 1)
-      { //successful login
+      if (data['success'] === 1) {
+        //successful login
         //set storage items
         storage.setItem('stayLogged', vm.post.stayLogged);
         storage.setItem('email', data['email']);
@@ -36,8 +31,9 @@ module.exports = function($rootScope, $state, Login)
       }
     });
   }; //end login function
-  function showErrors()
-  {
+  function showErrors() {
     alert("There are errors in the registration form, check input and try again!");
   };
 }; //end login controller
+
+module.exports = LoginController;

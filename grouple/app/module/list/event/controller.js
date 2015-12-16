@@ -1,9 +1,9 @@
 'use strict'
-module.exports = function($rootScope, $stateParams, ListFetcher)
-{ //event list controller
-  var vm = this,
-  storage = window.localStorage,
-  params = {};
+function EventListController($rootScope, $stateParams, ListFetcher) {
+  //event list controller
+  var vm = this;
+  var storage = window.localStorage;
+  var params = {};
   
   setTitle($stateParams.content);
   
@@ -17,28 +17,26 @@ module.exports = function($rootScope, $stateParams, ListFetcher)
   fetchList(); //get list
 
   //functions
-  function setTitle(content)
-  {
+  function setTitle(content) {
     var title;
-    if (content === 'event_invites')
+    if (content === 'invites')
       title = 'Event Invites';
-    else if (content === 'events_pending')
+    else if (content === 'pending')
       title = 'Pending Events';
-    else if (content === 'events_upcoming')
+    else if (content === 'upcoming')
       title = 'Upcoming Events';
-    else if (content === 'events_past')
+    else if (content === 'past')
       title = 'Past Events';
     else //catch
       title = 'Events';
     //set title  
     $rootScope.$broadcast('setTitle', title);
   };
-  function fetchList()
-  {
-    ListFetcher.fetch(params, $stateParams.content, function(data)
-    { //start fetch list
+  function fetchList() {
+    ListFetcher.fetch(params, $stateParams.content, function(data) {
+      //start fetch list
       if (data['success'] === 1)
-        vm.items = data['items'];
+        vm.items = data['data'];
       else if (data['success'] === 0)
         vm.sadGuy = true;
       else
@@ -46,3 +44,5 @@ module.exports = function($rootScope, $stateParams, ListFetcher)
     }); //end fetch list
   };
 }; //end event list controller
+
+module.exports = EventListController;

@@ -4,8 +4,8 @@ module.exports = function()
     return {
       restrict: 'E',
       templateUrl: "module/adder/group/invite/part/invite-row.html",
-      controller: function()
-      { //start friend invite list controller
+      controller: function() {
+        //start friend invite list controller
         //TODO code role here
         var vm = this;
         vm.role = '-';

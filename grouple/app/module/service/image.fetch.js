@@ -3,7 +3,7 @@ module.exports = function($http)
 { //image fetcher
   var fetch = function(params, type, callback)
   { //start fetch
-    params.content = type; //set type in post
+    params.content = type;
     $http(
     { //http request to fetch list from server PANDA refactor out this
       method  : 'GET',

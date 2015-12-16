@@ -1,26 +1,25 @@
 // Karma configuration
 // Generated on Thu Nov 19 2015 17:45:17 GMT-0500 (EST)
-
+'use strict'
 module.exports = function(config) {
   config.set({
-
     // base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: '',
     frameworks: ['jasmine'],
     files: [
-      '../node_modules/angular/angular.js',
+      '../app/bundle.js', //includes angular
       '../node_modules/angular-mocks/angular-mocks.js',
-      '../app/bundle.js', //
       '**/*.js'
     ],
 
+    //exclude node tests
     exclude: [
+      'api/**/*.js'
     ],
 
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      "**/*.html": ["ng-html2js"]
     },
     ngHtml2JsPreprocessor: {
       stripPrefix: 'app/'

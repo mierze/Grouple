@@ -1,36 +1,33 @@
 'use strict'
-module.exports = function($state, $http, ProfileEditer)
-{
+function GroupEditDirective($state, $http, ProfileEditer) {
+  //group edit directive
   var storage = window.localStorage; //grab local storage
   return {
     restrict: 'E',
     templateUrl: 'module/profile/group/part/group-edit.html',
-    controller: function()
-    {
-      var vm = this,
-      type = 'group';
+    controller: function() {
+      var vm = this;
+      var type = 'group';
       vm.save = save;
       vm.showErrors = showErrors;
       
       //functions
-      function save(info)
-      {
+      function save(info) {
         alert('Before editer service.\n' + JSON.stringify(info));
-        ProfileEditer.edit(info, type, function(data)
-        {            
+        ProfileEditer.edit(info, type, function(data) {            
           alert(data['message']);
           //if successful update ui and close out
-          if (data["success"] === 1)
-          {
+          if (data["success"] === 1) {
             $state.go($state.current, {id: info.id}, {reload: true})
           }
         });    
       };
-      function showErrors()
-      {
+      function showErrors() {
         alert('Error in edit form, please try again!');
       };
     },
     controllerAs: 'groupEditCtrl'
   };
-}; //end edit group profile directive
+}; //end group edit directive
+
+module.exports = GroupEditDirective;

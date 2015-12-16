@@ -1,31 +1,27 @@
 'use strict'
-module.exports = function($state, InviteResponder)
+function EventRowDirective($state, InviteResponder)
 { //event row directive
   return {
     restrict: 'E',
     templateUrl: 'module/list/event/part/event-row.html',
-    controller: function()
-    {
+    controller: function() {
       var vm = this;
       vm.profile = profile;
       vm.decision = decision;
       
       //functions
-      function profile(id)
-      {
+      function profile(id) {
         $state.go('event-profile', {id: id});
       };
-      function decision(id, decision)
-      { //start decision
+      function decision(id, decision) {
+        //start decision
         var post = {};
         post.id = id;
         post.user = storage.getItem('email');
-        InviteResponder.respond(post, decision, /* content of response */'event', function(data)
-        {                      
+        InviteResponder.respond(post, decision, 'event', function(data) {                      
           alert(data['message']);
-          if (data['success'] === 1)
-          {
-            $state.go($state.current, {content: 'event_invites', id: storage.getItem('email')}, {reload: true});
+          if (data['success'] === 1) {
+            $state.go($state.current, {content: 'invites', id: storage.getItem('email')}, {reload: true});
           }
         });
       }; //end decision
@@ -33,3 +29,5 @@ module.exports = function($state, InviteResponder)
     controllerAs: 'eventRowCtrl'
   };
 }; //end event row directive
+
+module.exports = EventRowDirective;

@@ -1,16 +1,14 @@
 'use strict'
-module.exports = function($state)
-{ //event invite row directive
+function InviteRowDirective($state) {
+  //event invite row directive
   return {
     restrict: 'E',
     templateUrl: 'module/adder/event/invite/part/invite-row.html',
-    controller: function()
-    {
+    controller: function() {
       var vm = this;
       vm.checked = false;
       //PANDA change to id
-      vm.toggleRow = function()
-      {
+      vm.toggleRow = function() {
         if (vm.checked)
           vm.checked = false;
         else
@@ -20,3 +18,5 @@ module.exports = function($state)
     controllerAs: 'inviteRowCtrl'
   };
 }; //end event invite row directive
+
+module.exports = InviteRowDirective;

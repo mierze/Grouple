@@ -1,43 +1,44 @@
 'use strict'
 module.exports = function($http)
 { //list fetcher is a service for fetching any type of list in grouple
-  var fetch = function(params, type, callback)
-  { //start fetch
+  var fetch = function(params, type, callback) { //start fetch
     var url = 'https://groupleapp.herokuapp.com/api';
-    switch (type)
-    {
+    switch(type) {
       case 'friends':
         url += '/user/list/friends';
         break;
-      case 'friend_invites':
+      case 'friend-invites':
         url += '/user/list/invites';
         break;
       case 'groups':
         url += '/group/list';
         break;
-      case 'group_invites':
+      case 'invites':
         url += '/group/list/invites';
         break;
-      case 'group_members':
+      case 'group-members':
         url += '/user/list/members';
         break;
-      case 'event_attending':
+      case 'event-attending':
         url += '/user/list/attending';
         break;
-      case 'event_invites':
+      case 'invites':
         url += '/event/list/invites';
         break;
-      case 'events_upcoming':
+      case 'upcoming':
         url += '/event/list/upcoming';
         break;
-      case 'events_pending':
+      case 'pending':
       url += '/event/list/pending';
         break;
-      case 'events_past':
+      case 'past':
         url += '/event/list/past';
         break;
-      case 'events_declined':
+      case 'declined':
         url += '/event/list/declined';
+        break;
+      case 'badges':
+        url += '/user/profile/badges';
         break;
     }
     //attach get route params

@@ -1,10 +1,12 @@
+'use strict'
 var express = require('express');
 
 //setup express
 var app = express();
 var api = require('./api');
 
-app.set('port', (process.env.PORT || 8000));
+
+app.set('port', (process.env.PORT || 3000));
 app.use(express.static(__dirname + '/www'));
 
 // views is directory for all template files

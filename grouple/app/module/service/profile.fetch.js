@@ -4,8 +4,7 @@ module.exports = function($http)
     var fetch = function(params, type, callback)
     { //start fetch function
         var url = 'https://groupleapp.herokuapp.com/api/' + type + '/profile/' + params.id;
-        $http(
-        { //http request to fetch list from server PANDA refactor out this
+        $http({
             method  : 'GET',
             url     : url
          }).then(

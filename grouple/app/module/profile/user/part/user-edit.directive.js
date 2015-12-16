@@ -1,19 +1,17 @@
 'use strict'
-module.exports = function($filter, ProfileEditer, $state)
-{ //event edit directive
+function UserEditDirective($filter, ProfileEditer, $state) {
+  //user edit directive
   var storage = window.localStorage; //grab local storage
   return {
     restrict: 'E',
     templateUrl: 'module/profile/user/part/user-edit.html',
-    controller: function()
-    {
+    controller: function() {
       var vm = this;
       vm.save = save;
       vm.showErrors = showErrors;
       
       //functions
-      function save(info)
-      {
+      function save(info) {
         var type = 'user';
         //formatting date
         var year = info.birthday.getUTCFullYear();
@@ -25,8 +23,7 @@ module.exports = function($filter, ProfileEditer, $state)
        // info.gender === 'Male' ? info.gender = 'm' : info.gender = 'f';
         //ensure all info set
         alert('Before editer service.\n' + JSON.stringify(info));
-        ProfileEditer.edit(info, type, function(data)
-        {            
+        ProfileEditer.edit(info, type, function(data) {            
           alert(data['message']);
           //if successful update ui and close out
           if (data["success"] === 1)
@@ -35,11 +32,12 @@ module.exports = function($filter, ProfileEditer, $state)
           }
         });    
       };
-      function showErrors()
-      {
+      function showErrors() {
         alert('Error in edit form, please try again!');
       };
     },
     controllerAs: 'userEditCtrl'
   };
-}; //end edit user profile directive
+}; //end user edit directive
+
+module.exports = UserEditDirective;

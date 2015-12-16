@@ -1,11 +1,10 @@
 'use strict'
-module.exports = function($state)
-{
+function ActionBarDirective($state) {
     return {
+        //action bar directive
         restrict: 'E',
         templateUrl: 'module/part/action-bar/layout.html',
-        controller: function($scope, $filter, $state)
-        {
+        controller: function($scope, $filter, $state) {
             var vm = this;
             var storage = window.localStorage;
             vm.title = 'Grouple';
@@ -14,32 +13,24 @@ module.exports = function($state)
             vm.toggleNav = toggleNav;
             vm.back = back;
             
-            $scope.$on('setTitle', function(event, data)
-            {
+            $scope.$on('setTitle', function(event, data) {
                 vm.title = $filter('limitTo')(data, 16, 0);
                 $scope.$emit('showActionBar', true); //for now
             });
             
-            $scope.$on('showActionBar', function(event, data)
-            {
+            $scope.$on('showActionBar', function(event, data) {
               vm.showActionBar = data;
             });
             
             //functions
-            function toggleNav()
-            {
-                alert('calling');
+            function toggleNav() {
               if (vm.showNav)
                 vm.showNav = false;
-              else
-              {
+              else {
                 vm.showNav = true;
-              
-              alert('showing it now');
               }
             }
-            function back()
-            {
+            function back() {
                 //TODO:
                 //when back would repopulate a invite or something similar
                     //go back to something else
@@ -47,15 +38,17 @@ module.exports = function($state)
                     //go back again
                 history.back();
             };
-            function logout()
-            { //function to handling clearing memory and logging out user
-              alert('Later ' + storage.getItem('first') + '!');
-              //$state.go('login');
-              //location.href = '#login';
-              storage.clear(); //clear storage
+            function logout() {
+                //function to handling clearing memory and logging out user
+                alert('Later ' + storage.getItem('first') + '!');
+                //$state.go('login');
+                //location.href = '#login';
+                storage.clear(); //clear storage
             };
         },
         controllerAs: 'vm'
     };
-};
+}; //end action bar directive
+
+module.exports = ActionBarDirective;
 

@@ -1,9 +1,10 @@
 'use strict'
-module.exports = function($rootScope, $stateParams, ListFetcher)
-{ //user list controller
-  var vm = this,
-  storage = window.localStorage,
-  params = {};
+function UserListController($rootScope, $stateParams, ListFetcher) {
+  //user list controller
+  var vm = this;
+  var storage = window.localStorage;
+  var params = {};
+  
   vm.setTitle = setTitle;
   vm.fetchList = fetchList;
   
@@ -18,36 +19,37 @@ module.exports = function($rootScope, $stateParams, ListFetcher)
   fetchList();
   
   //functions
-  function setTitle(content)
-  {
+  function setTitle(content) {
     var title;
-    if ($stateParams.content === 'friend_invites')
-    { //editable check
+    if ($stateParams.content === 'friend-invites') {
+      //editable check
       vm.invite = true;
       title = 'Friend Invites';
     }
     else if ($stateParams.content === 'friends')
       title = 'Friends';
-    else if ($stateParams.content === 'group_members')
+    else if ($stateParams.content === 'group-members')
       title = 'Group Members';
     else
       title = 'Users';
     $rootScope.$broadcast('setTitle', title); 
   };
-  function fetchList()
-  {
-    ListFetcher.fetch(params, $stateParams.content, function(data)
-    { //start fetch list
-      if (data['success'] === 1)
-      {
-        vm.items = data['items'];
-        vm.mod = data['mod'];
+  function fetchList() {
+    ListFetcher.fetch(params, $stateParams.content, function(results) {
+      //start fetch list
+      if (results['success'] === 1) {
+        vm.items = results['data'];
+        vm.mod = results['mod'];
         alert("MOD IS : " + vm.mod);
       }
-      else if (data['success'] === 0)
+      else if (results['success'] === 0)
         vm.sadGuy = true;
       else
-        alert(data['message']);
+        alert(results['message']);
     }); //end fetch list
   };
 }; //end user list controller
+
+module.exports = UserListController;
+
+

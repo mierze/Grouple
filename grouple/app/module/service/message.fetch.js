@@ -1,16 +1,15 @@
 'use strict'
-module.exports = function($http)
-{ //message fetcher takes in a type and returns the messages for that entity
-    var fetch = function(params, type, callback)
-    { //fetch function
+module.exports = function($http) {
+    //message fetcher takes in a type and returns the messages for that entity
+    var fetch = function(params, type, callback) {
         var url = 'https://groupleapp.herokuapp.com/api/';
         if (type === 'contacts')
-            var url = 'user/messages/contacts/';
-        else
-            url += type + '/messages/';
-        url += params.id;
-        $http(
-        { //http request to fetch list from server PANDA refactor out this
+            url += ('user/messages/contacts/' + params.email);
+        else if (type === 'user')
+            url += (type + '/messages/' + params.email + '/' + params.contact);
+        else //group, event
+            url += (type + '/messages/' + params.id);
+        $http({
             method  : 'GET',
             url     : url
          }).then(

@@ -1,10 +1,10 @@
 'use strict'
-module.exports = function($rootScope, $stateParams, $state, ProfileFetcher, ImageFetcher)
-{ //profile controller
-  var vm = this,
-  storage = window.localStorage,
-  type = 'group',
-  params = {};
+function GroupProfileController($rootScope, $stateParams, $state, ProfileFetcher, ImageFetcher) {
+  //group profile controller
+  var vm = this;
+  var storage = window.localStorage;
+  var type = 'group';
+  var params = {};
    
   vm.showEdit = false;
   vm.privs = {};
@@ -15,8 +15,8 @@ module.exports = function($rootScope, $stateParams, $state, ProfileFetcher, Imag
   vm.toggleEdit = toggleEdit;
   
   //functions
-  function init()
-  { //start init function
+  function init() {
+    //start init function
     if($stateParams.id !== null)
       params.id = $stateParams.id;
     else
@@ -24,23 +24,20 @@ module.exports = function($rootScope, $stateParams, $state, ProfileFetcher, Imag
     params.user = storage.getItem('email');
     fetchProfile();
   }; //end init function
-  function toggleEdit()
-  {
+  function toggleEdit() {
     if (vm.showEdit)
       vm.showEdit = false;
     else
       vm.showEdit = true;
   };
-  function fetchProfile()
-  {
-    ProfileFetcher.fetch(params, type, function(data)
-    { //start fetch profile
+  function fetchProfile() {
+    ProfileFetcher.fetch(params, type, function(data) {
+      //start fetch profile
       alert(data['message']);
-      if (data['success'] === 1)
-      {
+      if (data['success'] === 1) {
         //TODO set for now. next get from api
         vm.editable = true;
-        vm.info = data['info'];
+        vm.info = data['data'];
         $rootScope.$broadcast('setTitle', vm.info.name);
       }
       else //generic catch
@@ -60,4 +57,6 @@ module.exports = function($rootScope, $stateParams, $state, ProfileFetcher, Imag
     }); //end fetch image
     */
   };
-}; //end profile controller
+}; //end group profile controller
+
+module.exports = GroupProfileController;

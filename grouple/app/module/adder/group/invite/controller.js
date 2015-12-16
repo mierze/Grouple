@@ -1,6 +1,6 @@
 'use strict'
-module.exports = function($stateParams, /*FriendInviter, GROUPINVITER*/ ListFetcher, GroupInviter)
-{ //group invite controller
+function GroupInviteController($stateParams, /*FriendInviter, GROUPINVITER*/ ListFetcher, GroupInviter) {
+  //group invite controller
   var vm = this;
   var storage = window.localStorage;
   vm.invites = {};
@@ -10,16 +10,14 @@ module.exports = function($stateParams, /*FriendInviter, GROUPINVITER*/ ListFetc
   vm.send = send;
   
   //functions
-  function init()
-  {
+  function init() {
     //TODO: should also grab group members and remove those from the friends list and then display that
     var post = {};
     post.id = storage.getItem("email");
     post.user = storage.getItem("email");
-    ListFetcher.fetch(post, /*type of content to grab*/'friends', function(data)
-    { //start fetch list of groups to invite
-      if (data["success"] === 1)
-      {
+    ListFetcher.fetch(post, /*type of content to grab*/'friends', function(data) {
+      //start fetch list of groups to invite
+      if (data["success"] === 1) {
         alert(JSON.stringify(data));
         vm.items = data["items"];
       }
@@ -27,8 +25,7 @@ module.exports = function($stateParams, /*FriendInviter, GROUPINVITER*/ ListFetc
         alert(data["message"]);
     }); //end fetch list
   };
-  function toggleRole(id, role)
-  {
+  function toggleRole(id, role) {
     if (role === 'M')
       role = 'A'
     else if (role === 'A')
@@ -43,8 +40,7 @@ module.exports = function($stateParams, /*FriendInviter, GROUPINVITER*/ ListFetc
      delete vm.invites[id];
     return role;
   };
-  function send()
-  {
+  function send() {
     var post = {};
     alert(JSON.stringify(vm.invites));
     post.id = $stateParams.id;
@@ -57,16 +53,4 @@ module.exports = function($stateParams, /*FriendInviter, GROUPINVITER*/ ListFetc
   };
 }; //end group invite controller
 
-
-
-
-/*
-
-
-
-
-
-
-
-
- */
+module.exports = GroupInviteController;

@@ -1,6 +1,6 @@
 'use strict'
-module.exports = function($stateProvider, $urlRouterProvider, $httpProvider)
-{ //routes
+function Routes($stateProvider, $urlRouterProvider, $httpProvider) {
+  //routes
   //all possible states
   $stateProvider
     .state('home', {
@@ -112,3 +112,5 @@ module.exports = function($stateProvider, $urlRouterProvider, $httpProvider)
   $urlRouterProvider.otherwise('/login');
   $httpProvider.defaults.headers.post['Content-Type'] = 'application/json';
 }; //end routes
+
+module.exports = Routes;

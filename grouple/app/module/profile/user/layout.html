@@ -10,7 +10,7 @@
     <a class="btn" ui-sref="badge-list({content: 'badges', id: vm.info.id})">Badges</a>
     <a class="btn" ui-sref="user-list({content: 'friends', id: vm.info.id})">Friends</a>
     <a class="btn" ui-sref="group-list({content: 'groups', id: vm.info.id})">Groups</a>
-    <a class="btn" ui-sref="event-list({content: 'events_upcoming', id: vm.info.id})">Upcoming Events</a>
+    <a class="btn" ui-sref="event-list({content: 'upcoming', id: vm.info.id})">Upcoming Events</a>
     <button ng-click="vm.toggleEdit()" ng-show="vm.privs.admin">Edit Profile</button>
     <user-edit ng-show="vm.showEdit"></user-edit>
 </div>

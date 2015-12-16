@@ -1,23 +1,20 @@
 'use strict'
-module.exports = function($state)
-{
+function MessageRowDirective($state) {
   return {
+    //message row directive
     restrict: 'E',
     templateUrl: 'module/message/user/part/message-row.html',
-    controller: function()
-    {
+    controller: function() {
       var vm = this; 
       var storage = window.localStorage;
-      this.profile = profile;
-      this.isUser = isUser;
+      vm.profile = profile;
+      vm.isUser = isUser;
       
       //functions
-      function profile(email)
-      {
+      function profile(email) {
         $state.go('user-profile', {id: email});
       };
-      function isUser(from)
-      {
+      function isUser(from) {
         if (from === storage.getItem('email')) {
           return true;
         }
@@ -27,3 +24,5 @@ module.exports = function($state)
     controllerAs: 'userMessageRowCtrl'
   };
 }; //end message row directive
+
+module.exports = MessageRowDirective;
