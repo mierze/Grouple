@@ -1,6 +1,5 @@
 'use strict'
 function Routes($stateProvider, $urlRouterProvider, $httpProvider) {
-  //routes
   //all possible states
   $stateProvider
     .state('home', {

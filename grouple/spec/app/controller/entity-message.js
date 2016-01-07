@@ -1,27 +1,21 @@
 'use strict'
-describe('Controller: Entity Message', function()
-{
+describe('Controller: Entity Message', function() {
   beforeEach(module('grouple'));
   var $controller, controller, deferred, stateParams = {'content': 'group', 'id': '200'};
-  beforeEach(inject(function(_$controller_, $q)
-  {
+  beforeEach(inject(function(_$controller_, $q) {
 	$controller = _$controller_;
 	deferred = $q.defer;
 	controller = $controller('EntityMessageController', {$stateParams: stateParams});
   }));
 
-  describe('Functions', function()
-  {
-	it('should have init and send set', function()
-	{
+  describe('Functions', function() {
+	it('should have init and send set', function() {
 	  expect(controller.init).toBeDefined();
 	  expect(controller.send).toBeDefined();
 	}); 
   });
-  describe('Variables', function()
-  {
-	it('should init post', function()
-	{
+  describe('Variables', function() {
+	it('should init post', function() {
       expect(controller.post).toBeDefined();
 	  controller.init();
       expect(controller.post.id).toBeDefined();
@@ -39,8 +33,6 @@ describe('Controller: Entity Message', function()
 	  ctrl = $controller('EntityMessageController', {
 		 $stateParams: stateParams
 	   });
-  
 	});
-
   });
 });

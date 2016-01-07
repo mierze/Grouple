@@ -1,6 +1,5 @@
 'use strict'
-function GroupEditDirective($state, $http, ProfileEditer) {
-  //group edit directive
+function GroupEditDirective($state, GroupEditer) {
   var storage = window.localStorage; //grab local storage
   return {
     restrict: 'E',
@@ -14,20 +13,20 @@ function GroupEditDirective($state, $http, ProfileEditer) {
       //functions
       function save(info) {
         alert('Before editer service.\n' + JSON.stringify(info));
-        ProfileEditer.edit(info, type, function(data) {            
+        GroupEditer.edit(info, type, function(data) {            
           alert(data['message']);
           //if successful update ui and close out
           if (data["success"] === 1) {
             $state.go($state.current, {id: info.id}, {reload: true})
           }
         });    
-      };
+      }
       function showErrors() {
         alert('Error in edit form, please try again!');
       };
     },
     controllerAs: 'groupEditCtrl'
-  };
-}; //end group edit directive
+  }
+} //end group edit directive
 
 module.exports = GroupEditDirective;

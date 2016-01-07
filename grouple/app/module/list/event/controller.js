@@ -1,48 +1,47 @@
 'use strict'
-function EventListController($rootScope, $stateParams, ListFetcher) {
-  //event list controller
+function EventListController($rootScope, $stateParams, EventListGetter) {
   var vm = this;
   var storage = window.localStorage;
-  var params = {};
+  vm.content = $stateParams.content;
   
-  setTitle($stateParams.content);
+  setTitle();
   
-  //prepare parameters
+  //todo, prepare for group-events
   if ($stateParams.id != null)
-    params.id = $stateParams.id;
+    vm.email = $stateParams.id;
   else
-    params.id = storage.getItem('email');
-  params.user = storage.getItem('email');
+    vm.email = storage.getItem('email');
   
-  fetchList(); //get list
+  getEvents(); //get list
 
   //functions
-  function setTitle(content) {
+  function setTitle() {
     var title;
-    if (content === 'invites')
+    if (vm.content === 'invites')
       title = 'Event Invites';
-    else if (content === 'pending')
+    else if (vm.content === 'pending')
       title = 'Pending Events';
-    else if (content === 'upcoming')
+    else if (vm.content === 'upcoming')
       title = 'Upcoming Events';
-    else if (content === 'past')
+    else if (vm.content === 'past')
       title = 'Past Events';
+    else if (vm.content === 'declined') 
+      title = 'Declined Events'
     else //catch
       title = 'Events';
     //set title  
     $rootScope.$broadcast('setTitle', title);
-  };
-  function fetchList() {
-    ListFetcher.fetch(params, $stateParams.content, function(data) {
-      //start fetch list
+  }
+  function getEvents() {
+    EventListGetter.get(vm.email, vm.content, function setEvents(data) {
       if (data['success'] === 1)
         vm.items = data['data'];
       else if (data['success'] === 0)
         vm.sadGuy = true;
       else
         alert(data['message']);
-    }); //end fetch list
-  };
-}; //end event list controller
+    });
+  } //end get events
+} //end event list controller
 
 module.exports = EventListController;

@@ -1,33 +1,27 @@
 'use strict'
-function BadgeListController($rootScope, $stateParams, ListFetcher) {
-  //badge list controller
+function BadgeListController($rootScope, $stateParams, BadgeGetter) {
   var vm = this;
   var storage = window.localStorage;
-  var type = 'badges';
-  var title = 'Badges';
-  var params = {};
-  $rootScope.$broadcast('setTitle', title);
+  $rootScope.$broadcast('setTitle', 'Badges');
 
   if ($stateParams.id == null || ($stateParams.id.length < 2))
-    params.id = storage.getItem('email');
+    vm.email = storage.getItem('email');
   else
-    params.id = $stateParams.id;  
-  params.user = storage.getItem('email');
+    vm.email = $stateParams.id;
 
-  fetchList();
+  getBadges();
   
   //functions
-  function fetchList() {
-    ListFetcher.fetch(params, type, function(data) {
-      //start fetch list
+  function getBadges() {
+    BadgeGetter.Get(vm.email, type, function(data) {
       if (data['success'] === 1)
         vm.items = data['data'];
       else if (data['success'] === 0)
         vm.sadGuy = true;
       else
         alert(data['message']);
-    }); //end fetch list
-  };
-}; //end badge list controller
+    });
+  } //end get badges
+} //end badge list controller
 
 module.exports = BadgeListController;

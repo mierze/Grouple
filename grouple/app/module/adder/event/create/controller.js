@@ -1,12 +1,11 @@
 'use strict'
 function EventCreateController($filter, $state, Creator) {
-  //event create controller
   var vm = this;
   var storage = window.localStorage;
   vm.post = {};
   vm.created = false; //boolean whether event has been created
   vm.create = create;
-
+  vn.showErrors = showErrors;
   //functions
   function create() {
     //create function
@@ -32,6 +31,9 @@ function EventCreateController($filter, $state, Creator) {
         $state.go('event-invite', {id: data['id']});
     }); //end creater create
   };
+  function showErrors() {
+    alert('Uh, or. An error occured creating this event. Please try again.');
+  }
 }; //end event create controller
 
 module.exports = EventCreateController;

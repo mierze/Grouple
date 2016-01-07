@@ -1,21 +1,21 @@
 'use strict'
-
-module.exports = function($http) {
-    //getter
-    var get = function(url, callback) {
+function Getter($http) {
+    this.get = get;
+    
+    return {
+      get: this.get
+    };
+    
+    function get(url, callback) {
+        alert('in getter now ' + url);
       $http({
-          method  : 'GET',
-          url     : url
+        method  : 'GET',
+        url     : url
        }).then(
       function(result) {
-          return callback(result.data);
+        return callback(result.data);
       });
-    }; //end fetch function
-    return {
-      get: get
-    };
-  }; //end getter
+    }
+}
 
-
-
-//module.exports = Getter;
+module.exports = Getter;

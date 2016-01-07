@@ -13,16 +13,16 @@ function MessageRowDirective($state) {
       //functions
       function profile(email) {
         $state.go('user-profile', {id: email});
-      };
+      }
       function isUser(from) {
         if (from === storage.getItem('email')) {
           return true;
         }
         return false;
-      };
+      }
     },
     controllerAs: 'userMessageRowCtrl'
   };
-}; //end message row directive
+} //end message row directive
 
 module.exports = MessageRowDirective;

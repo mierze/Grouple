@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <h1>Group Create</h1>
-<form name="groupCreateForm" novalidate ng-submit="(groupCreateForm.$valid && vm.create()) || (!groupCreateForm.$valid && vm.showErrors())">
+<form name="groupCreateForm" novalidate ng-submit="(groupCreateForm.$valid && vm.create()) || vm.showErrors())">
     <input type="text" name="name" id="name" placeholder="Name" required ng-minlength="1" ng-maxlength="40" ng-model="vm.post.name" />
     <input type="file" name="image" id="image" placeholder="Profile Image" ng-model="vm.post.image" />
     <input type="text" name="about" id="about" placeholder="About Event" ng-maxlength="400" ng-model="vm.post.about" />

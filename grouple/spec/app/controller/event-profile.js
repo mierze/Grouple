@@ -1,26 +1,21 @@
 'use strict'
-describe('Controller: Event Profile', function()
-{
+describe('Controller: Event Profile', function() {
   beforeEach(module('grouple'));
   var $controller, controller, deferred, ProfileFetcher;
-  beforeEach(inject(function(_$controller_, _ProfileFetcher_, $q)
-  {
+  beforeEach(inject(function(_$controller_, _ProfileFetcher_, $q) {
     $controller = _$controller_;
     ProfileFetcher = _ProfileFetcher_;
     deferred = $q.defer;
     controller = $controller('EventProfileController', {});
   }));
 
-  describe('Functions', function()
-  {
-    it('should have init, toggleEdit set', function()
-    {
+  describe('Functions', function() {
+    it('should have init, toggleEdit set', function() {
       var post = {
         id: '223',
         user: 'mierze@gmail.com'
       };
-      var fun = function(data)
-      {
+      var fun = function(data) {
         console.log("made it here");
         alert(JSON.stringify(data));
         expect(data.success).toBeDefined();
@@ -32,10 +27,8 @@ describe('Controller: Event Profile', function()
       expect(controller.toggleEdit).toBeDefined();
     }); 
   });
-  describe('Variables', function()
-  {
-    it('should have post and post.last instantiated', function()
-    {
+  describe('Variables', function() {
+    it('should have post and post.last instantiated', function() {
       expect(controller.showEdit).toBeDefined();
       expect(controller.privs).toBeDefined();
       expect(controller.privs.admin).toBeDefined();

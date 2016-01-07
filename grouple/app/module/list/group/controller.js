@@ -1,44 +1,43 @@
 'use strict'
-function GroupListController($rootScope, $stateParams, ListFetcher) {
-  //group list controller
+function GroupListController($rootScope, $stateParams, GroupListGetter) {
   var vm = this;
   var storage = window.localStorage;
-  var params = {};
-
-  setTitle($stateParams.content);
+  vm.setTitle = setTitle;
+  vm.getGroups = getGroups;
+  vm.content = $stateParams.content;
   if ($stateParams.id == null)
-    params.id = storage.getItem('email');
+    vm.email = storage.getItem('email');
   else
-    params.id = $stateParams.id;
-  //params.user = storage.getItem('email');
-  
-  fetchList();
-  
+    vm.email = $stateParams.id;
+    
+  //initialize
+  vm.getGroups();
+  vm.setTitle();
+
   //functions
   function setTitle(content) {
-    var title;
-    if ($stateParams.content === 'invites') {
+    if (vm.content === 'invites') {
       //editable check
       vm.invite = true;
-      title = 'Group Invites';
+      vm.title = 'Group Invites';
     }
-    else if (content === 'groups-attending')
-      title = 'Groups Attending';
+    else if (vm.content === 'groups-attending')
+      vm.title = 'Groups Attending';
     else
-      title = 'Groups';
-    $rootScope.$broadcast('setTitle', title);
-  };
-  function fetchList() {
-    ListFetcher.fetch(params, $stateParams.content, function(data) {
-      //start fetch list
+      vm.title = 'Groups';
+    $rootScope.$broadcast('setTitle', vm.title);
+  }
+  function getGroups() {
+    alert('now in get groups');
+    GroupListGetter.get(vm.email, vm.content, function setGroups(data) {
       if (data['success'] === 1)
         vm.items = data['data'];
       else if (data['success'] === 0)
         vm.sadGuy = true;
       else
         alert(data['message']);
-    }); //end fetch list
-  };
+    }); //end get groups
+  }
 }; //end group list controller
 
 module.exports = GroupListController;

@@ -1,0 +1,26 @@
+'use strict'
+module.exports = function($http)
+{ //invite responder
+  var respond = function(post, decision, content, callback) {
+    if (decision === 'accept')
+       var url = 'http://grouple.gear.host/api/' + decision + '_' + content + '_invite.php';
+    else
+    {
+      post.type = 'decline'; //for api to return proper message
+      var url = 'http://grouple.gear.host/api/leave_' + content + '.php';
+    }
+    //TODO: append params on url, or find out how to toss them in /:1/:2 in params
+    $http({
+      //http request to fetch list from server PANDA refactor out this
+      method  : 'GET',
+      url     : url//,
+      //params : params?
+     }).then(
+    function(result) {
+      return callback(result.data);
+    });
+  }; //end send
+  return {
+    respond: respond
+  };
+}; //end invite responder

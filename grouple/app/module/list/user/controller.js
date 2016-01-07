@@ -1,42 +1,41 @@
 'use strict'
-function UserListController($rootScope, $stateParams, ListFetcher) {
-  //user list controller
+function UserListController($rootScope, $stateParams, UserListGetter) {
   var vm = this;
   var storage = window.localStorage;
-  var params = {};
+  vm.content = $stateParams.content;
   
-  vm.setTitle = setTitle;
-  vm.fetchList = fetchList;
-  
-  setTitle($stateParams.content);
-  
+  //id for generic
   if ($stateParams.id == null || $stateParams.id === 'user')
-    params.id = storage.getItem('email');
+    vm.id = storage.getItem('email');
   else
-    params.id = $stateParams.id;
-  //params.user = storage.getItem('email');
+    vm.id = $stateParams.id;
+    
+  vm.setTitle = setTitle;
+  vm.getUsers = getUsers;
   
-  fetchList();
+  vm.setTitle();
+  vm.getUsers();
   
   //functions
-  function setTitle(content) {
-    var title;
-    if ($stateParams.content === 'friend-invites') {
+  function setTitle() {
+    if (vm.content === 'friend-invites') {
       //editable check
       vm.invite = true;
-      title = 'Friend Invites';
+      vm.title = 'Friend Invites';
     }
-    else if ($stateParams.content === 'friends')
-      title = 'Friends';
-    else if ($stateParams.content === 'group-members')
-      title = 'Group Members';
+    else if (vm.content === 'friends')
+      vm.title = 'Friends';
+    else if (vm.content === 'group-members')
+      vm.title = 'Group Members';
+    else if (vm.content === 'event-participants')
+      vm.title = 'Event Participants';
     else
-      title = 'Users';
-    $rootScope.$broadcast('setTitle', title); 
-  };
-  function fetchList() {
-    ListFetcher.fetch(params, $stateParams.content, function(results) {
-      //start fetch list
+      vm.title = 'Users';
+    $rootScope.$broadcast('setTitle', vm.title); 
+  }
+  function getUsers() {
+    alert('now in get users ' + vm.content + ' ' + vm.id) ;
+    UserListGetter.get(vm.id, vm.content, function setUsers(results) {
       if (results['success'] === 1) {
         vm.items = results['data'];
         vm.mod = results['mod'];
@@ -46,9 +45,9 @@ function UserListController($rootScope, $stateParams, ListFetcher) {
         vm.sadGuy = true;
       else
         alert(results['message']);
-    }); //end fetch list
-  };
-}; //end user list controller
+    });
+  } //end get users
+} //end user list controller
 
 module.exports = UserListController;
 

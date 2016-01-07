@@ -5,12 +5,12 @@ function LoginController($rootScope, $state, Login) {
   vm.post = {};
   vm.login = login;
   vm.showErrors = showErrors;
+  alert(JSON.stringify(storage));
   //check for stay logged
-  if (storage.getItem('email') !== null && (storage.getItem('stayLogged') !== 0 && storage.getItem('stayLogged') !== '0'))
-   {
+  if (storage.getItem('email') !== null && (storage.getItem('stayLogged') !== 0 && storage.getItem('stayLogged') !== '0')) {
      $state.go('home');
      $rootScope.$broadcast('showActionBar', true);
-   }
+  }
   else //be sure to clear old storage
     storage.clear();
       
@@ -30,10 +30,10 @@ function LoginController($rootScope, $state, Login) {
         $state.go('home');
       }
     });
-  }; //end login function
+  } //end login function
   function showErrors() {
     alert("There are errors in the registration form, check input and try again!");
-  };
-}; //end login controller
+  }
+} //end login controller
 
 module.exports = LoginController;

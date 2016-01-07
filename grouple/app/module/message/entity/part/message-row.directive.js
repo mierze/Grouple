@@ -1,6 +1,5 @@
 'use strict'
-function EntityMessageRowDirective($state)
-{ //entity message row directive
+function EntityMessageRowDirective($state) {
   return {
     restrict: 'E',
     templateUrl: 'module/message/entity/part/message-row.html',
@@ -10,10 +9,10 @@ function EntityMessageRowDirective($state)
       //functions
       function profile(id) {
         $state.go('user-profile', {id: id});
-      };
+      }
     },
     controllerAs: 'entityMessageRowCtrl'
   };
-}; //end entity message row directive
+} //end entity message row directive
 
 module.exports = EntityMessageRowDirective;

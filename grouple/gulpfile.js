@@ -6,6 +6,8 @@ var karma = require('gulp-karma');
 var clean = require('gulp-clean');
 var jasmineNode = require('gulp-jasmine-node');
 var server = require('gulp-develop-server');
+var git = require('gulp-git');
+var Q = require('q');
 
 //defaults
 gulp.task('default', ['watch']);
@@ -40,13 +42,13 @@ gulp.task('clean', function() {
   .pipe(clean());
 });
 
-//testing chain
-//start server
-gulp.task('server', function() {
-    server.listen( { path: './index.js' } );
+//testing
+//full stack test
+gulp.task('fs-test', ['ng-test', 'node-test'], function() {
+  console.log('complete.');
 });
 //front-end tests
-gulp.task('test', ['server'], function() {
+gulp.task('ng-test', function() {
   return gulp.src('./foobar')
     .pipe(karma({
       configFile: 'spec/karma.conf.js',
@@ -59,8 +61,47 @@ gulp.task('test', ['server'], function() {
     });
 });
 //back-end tests
-gulp.task('node-test', ['test'], function () {
+gulp.task('node-test', ['server'], function () {
   return gulp.src(['./spec/api/*spec.js']).pipe(jasmineNode({
     timeout: 10000
   }));
+});
+//start server
+gulp.task('server', function() {
+    server.listen( { path: './index.js' } );
+    var deferred = Q.defer();
+    // setTimeout could be any async task
+    setTimeout(function () {
+        deferred.resolve();
+    }, 5000);
+    return deferred.promise;
+});
+
+//deployment
+gulp.task('git-init', function() {
+  git.init(function (err) {
+    if (err) throw err;
+  });
+});
+gulp.task('git-remote', ['git-init'], function() {
+  git.addRemote('origin', 'https://git.heroku.com/groupleapp.git', function (err) {
+    if (err) throw err;
+  });
+});
+gulp.task('git-add'/*,['git-remote']*/, function() {
+  return gulp.src('.')
+    .pipe(git.add());
+});
+gulp.task('git-commit', ['git-add'], function() {
+  return gulp.src('.')
+    .pipe(git.commit('Update'));
+});
+gulp.task('git-push', ['git-commit'], function() {
+  git.push('origin', 'master', function (err) {
+    if (err) throw err;
+    this.emit('end'); //instead of erroring the stream, end it
+  });
+});
+gulp.task('deploy', ['git-push'], function(done) {
+  done();
 });

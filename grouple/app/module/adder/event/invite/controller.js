@@ -1,11 +1,9 @@
 'use strict'
-function EventInviteController($stateParams, EventInviter, ListFetcher) {
-  //event invite controller
+function EventInviteController($stateParams, EventInviter, GroupListGetter) {
   var vm = this;
   var storage = window.localStorage;
-  vm.post = {};
-  vm.post.id = storage.getItem('email');
-  vm.post.user = storage.getItem('email');
+  vm.email = storage.getItem('email');
+  vm.id = $stateParams.id;
   vm.invites = [];
   vm.init = init;
   vm.toggleRow = toggleRow;
@@ -13,14 +11,13 @@ function EventInviteController($stateParams, EventInviter, ListFetcher) {
   
   //functions
   function init() {
-    ListFetcher.fetch(vm.post, /*type of content to grab*/'groups', function(data) {
-      //start fetch list of groups to invite
+    GroupListGetter.get(vm.email, /*type of content to grab*/'groups', function setGroups(data) {
       if (data['success'] === 1)
         vm.items = data['items'];
       else
         alert(data['message']);
-    }); //end fetch list
-  };
+    });
+  } //end init
   function toggleRow(id) {
     alert("id is " + id);
     if ((vm.invites).indexOf(id) !== null && (vm.invites).indexOf(id) >= 0) {
@@ -32,10 +29,10 @@ function EventInviteController($stateParams, EventInviter, ListFetcher) {
       (vm.invites).push(id);
     }
     alert(JSON.stringify(vm.invites));
-  };
+  }
   function send() {
     var post = {};
-    post.from = storage.getItem("email");
+    post.from = vm.email;
     post.id = $stateParams.id;
     post.invites = vm.invites;
     alert(JSON.stringify(post));
@@ -43,7 +40,7 @@ function EventInviteController($stateParams, EventInviter, ListFetcher) {
     {
       alert(JSON.stringify(data));//data["message"]);
     });
-  };
-}; //end event invite controller
+  }
+} //end event invite controller
 
 module.exports = EventInviteController;

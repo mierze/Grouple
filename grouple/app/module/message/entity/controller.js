@@ -1,34 +1,37 @@
 'use strict'
-function EntityMessageController($rootScope, $stateParams, MessageFetcher, MessageSender) {
-  //entity message controller
+function EntityMessageController($rootScope, $stateParams, EnitityMessageGetter, EntityMessageSender) {
   var vm = this;
   var storage = window.localStorage;
-  var type = $stateParams.content;
-  vm.post = {}; //post params for http request
   vm.init = init;
   vm.send = send;
-  $rootScope.$broadcast('setTitle', 'Messages');
+  
   //functions
   function init() {
-    //init function
-    vm.post.id = $stateParams.id;
-    vm.post.user = storage.getItem('email');
-    vm.post.from = storage.getItem('email');
-    MessageFetcher.fetch(vm.post, type, function(data) {
+    vm.type = $stateParams.content;
+    vm.id = $stateParams.id;
+    vm.email = storage.getItem('email');
+    $rootScope.$broadcast('setTitle', 'Messages');
+    getMessages();
+  } //end init function
+  function getMessages() {
+    EntityMessageGetter.get(vm.id, vm.type, function setMessages(data) {
       if (data['success'])
         vm.messages = data['data'];
-      else
-        //PANDA, populate sad guy.
+      else {
         alert(data['message']);
+        vm.sadGuy = true;
+      }
     });
-  }; //end init function
+  } //end get messages
   function send() {
-    //start send
-    MessageSender.send(vm.post, type, function(data) {
+    vm.post = {};
+    vm.post.id = vm.id;
+    vm.post.from = vm.email;
+    EntityMessageSender.send(vm.post, vm.type, function sendMessage(data) {
       alert(data['message']);
     });
-  }; //end send function
-}; //end entity message controller
+  } //end send function
+} //end entity message controller
 
 module.exports = EntityMessageController;
 

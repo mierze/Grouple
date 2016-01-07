@@ -1,6 +1,5 @@
 'use strict'
 function GroupCreateController($state, Creator) {
-  //group create controller
   var vm = this;
   var storage = window.localStorage;
   //init post parameters
@@ -11,7 +10,6 @@ function GroupCreateController($state, Creator) {
   vm.post.location = '';
   vm.create = create;
   vm.showErrors = showErrors;
-  vm.hello = 'true';
   
   //functions
   function create() {
@@ -32,10 +30,10 @@ function GroupCreateController($state, Creator) {
         $state.go('group-invite', {id: data['id']});
       }
     });
-  };
+  }
   function showErrors() {
     alert('You done darn did it!\nPlease fill out this form correctly.')
-  };
-}; //end group create controller
+  }
+} //end group create controller
 
 module.exports = GroupCreateController;

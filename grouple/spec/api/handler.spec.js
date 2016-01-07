@@ -25,9 +25,8 @@ function handlerFns() {
     var data = {
       successMessage: 'SUCCESS'
     };
-    var results = {
-      success: 1,
-      
+    var result = {
+       
     };
   });
 }

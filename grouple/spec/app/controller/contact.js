@@ -1,10 +1,8 @@
 'use strict'
-describe('Controller: Contact', function()
-{
+describe('Controller: Contact', function() {
   beforeEach(module('grouple'));
   var $controller, controller, deferred;
-  beforeEach(inject(function(_$controller_, $q)
-  {// The injector unwraps the underscores (_) from around the parameter names when matching
+  beforeEach(inject(function(_$controller_, $q) {
     $controller = _$controller_;
     deferred = $q.defer;
     controller = $controller('ContactController', {});

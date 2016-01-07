@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <h1>Event Create</h1>
-<form name="eventCreateForm" novalidate ng-submit="eventCreateForm.$valid && create()">
+<form name="eventCreateForm" novalidate ng-submit="((eventCreateForm.$valid && vm.create()) || vm.showErrors())">
     <input type="text" name="name" id="name" placeholder="Name" required ng-model="vm.post.name" ng-maxlength="20" />
     <input type="file" name="image" id="image" placeholder="Profile Image" file-model="vm.post.image" />
     <input type="text" name="about" id="about" placeholder="About Event" ng-model="vm.post.about" ng-maxlength="400" />

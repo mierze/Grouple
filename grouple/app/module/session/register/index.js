@@ -1,3 +1,3 @@
 'use strict';
 module.exports = angular.module('session.register', [])
-.controller('RegisterController', require('./controller.js'));
+  .controller('RegisterController', require('./controller.js'));

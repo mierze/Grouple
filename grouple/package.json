@@ -1,6 +1,6 @@
 {
   "name": "Grouple",
-  "version": "0.3.3",
+  "version": "0.3.5",
   "description": "An application to promote getting together with friends and participating in events in the community.",
   "main": "index.js",
   "scripts": {
@@ -23,6 +23,7 @@
     "gulp": "^3.9.0",
     "gulp-clean": "^0.3.1",
     "gulp-develop-server": "^0.5.0",
+    "gulp-git": "^1.6.0",
     "gulp-jasmine": "^2.2.1",
     "gulp-jasmine-node": "^1.0.3",
     "gulp-karma": "0.0.5",
@@ -32,6 +33,7 @@
     "karma-jasmine": "^0.3.6",
     "karma-phantomjs-launcher": "^0.2.1",
     "phantomjs": "^1.9.18",
+    "q": "^1.4.1",
     "request": "^2.67.0",
     "run-sequence": "^1.1.5",
     "vinyl-source-stream": "^1.1.0"

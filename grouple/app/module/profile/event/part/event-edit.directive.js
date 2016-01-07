@@ -1,46 +1,29 @@
 'use strict'
-function EventEditDirective($http, $filter) {
-  //event edit directive
+function EventEditDirective($state, $filter, EventEditer) {
   var storage = window.localStorage; //grab local storage
   return {
     restrict: 'E',
     templateUrl: 'module/profile/event/part/event-edit.html',
     controller: function() {
       var vm = this;
-      vm.save = function(info)
-      {
-        //TODO: use promsises and external service
+      vm.save = save;
+      
+      //functions
+      function save(info) {
         info.startDate = $filter('date')(info.startDate, 'yyyy-MM-dd hh:mm:ss');
         info.endDate = $filter('date')(info.endDate, 'yyyy-MM-dd hh:mm:ss');
-        var url = 'http://mierze.gear.host/grouple/api/update_event.php';
         alert(JSON.stringify(info));
-        //http request to fetch list from server PANDA refactor out this
-        $http({
-          method : 'POST',
-          url : url,
-          data : info
-        }).success(function(data)
-        {
-          if (data['success'] === 1) {
-            alert(data['message']);
+        EventEditer.edit(info, type, function(data) {            
+          alert(data['message']);
+          //if successful update ui and close out
+          if (data["success"] === 1) {
+            $state.go($state.current, {id: info.id}, {reload: true})
           }
-          else if (data['success'] === 0) {
-            //PANDA, populate sad guy.
-            alert(data['message']);
-          }
-          else {
-            //generic catch
-            alert(data['message']);
-            alert('Error updating event profile.');
-          }
-        })
-        .error(function(data) {
-          alert('Error contacting server.');
-        });
-    };
-  },
-  controllerAs: 'eventEditCtrl'
+        });    
+      }
+    },
+    controllerAs: 'eventEditCtrl'
   };
-}; //end event edit directive
+} //end event edit directive
 
 module.exports = EventEditDirective;

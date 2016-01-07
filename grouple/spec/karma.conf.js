@@ -9,7 +9,7 @@ module.exports = function(config) {
     files: [
       '../app/bundle.js', //includes angular
       '../node_modules/angular-mocks/angular-mocks.js',
-      '**/*.js'
+      'app/**/*spec.js'
     ],
 
     //exclude node tests

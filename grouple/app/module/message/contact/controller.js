@@ -1,19 +1,17 @@
 'use strict'
-function ContactController($rootScope, MessageFetcher) {
+function ContactController($rootScope, ContactGetter) {
   var vm = this;
   var storage = window.localStorage;
-  var params = {}; //params for http request
-  params.email = storage.getItem('email');
+  vm.email = storage.getItem('email');
   $rootScope.$broadcast('setTitle', 'Contacts');
-  MessageFetcher.fetch(params, 'contacts', function MFcb(data) {
+  ContactGetter.get(vm.email, function setContacts(data) {
     if (data['success'] === 1)
       vm.contacts = data['data'];
-    else
-    {
+    else {
       vm.sadGuy = true;
       alert(data['message']);
     }
   });
-}; //end contact controller
+} //end contact controller
 
 module.exports = ContactController;

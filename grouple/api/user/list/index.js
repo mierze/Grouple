@@ -1,10 +1,10 @@
 var router = require('express').Router();
 
 router.use('/friends', require('./friends'));
-router.use('/invites', require('./invites'));
-router.use('/members', require('./members'));
+router.use('/friend-invites', require('./friend-invites'));
+router.use('/group-members', require('./group-members'));
 //router.use('/non-members', require('./non-members'));
-router.use('/participants', require('./participants'));
+router.use('/event-participants', require('./event-participants'));
 
 //router.use('/action', require('./action'));
 
