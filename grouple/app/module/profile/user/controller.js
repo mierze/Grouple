@@ -4,21 +4,23 @@ function UserProfileController($rootScope, $stateParams, $state, UserProfileGett
   var storage = window.localStorage;
   vm.init = init;
   vm.toggleEdit = toggleEdit;
+  vm.info = {};
   
   //functions
   function init() {
     vm.post = {};
     vm.privs = {};
     vm.privs.admin = true;
+    alert('solidd ' + JSON.stringify($stateParams));
     //case that id is for logged user's email
-    if ($stateParams.id === 'user')   
+    if ($stateParams.email === 'user')   
       vm.email = storage.getItem('email');  
-    else if($stateParams.id !== null)   
-      vm.email = $stateParams.id;
+    else if($stateParams.email !== null)   
+      vm.email = $stateParams.email;
     else
       alert('No email specified!');
+    getProfile();
   } //end init function
-  
   function toggleEdit() {
     if (vm.showEdit)
       vm.showEdit = false;
@@ -29,15 +31,16 @@ function UserProfileController($rootScope, $stateParams, $state, UserProfileGett
     UserProfileGetter.get(vm.email, function setProfile(data) {
       if (data['success'] === 1) {
         //fetched successfully
-        vm.info = data['data'];
+        vm.info = data.data;
         $rootScope.$broadcast('setTitle', (vm.info.first + ' ' + vm.info.last));
         //check for unset data
         if (vm.info.birthday == null)
           vm.birthdayNull = true;
         else { //parse age from birthday
+          //TODO seperate date parsing to a factory
           var birthday = new Date(vm.info.birthday); //to date
           var difference = new Date - birthday;
-          vm.info.age = Math.floor((difference / 1000/*ms*/ / (60/*s*/ * 60/*m*/ * 24/*hr*/) ) / 365.25/*day*/);
+          vm.info.age = Math.floor((difference / 1000/*ms*/ / (60/*s*/ * 60/*m*/ * 24/*hr*/)) / 365.25/*day*/);
         }
         if (vm.info.about == null)
           vm.aboutNull = true;
@@ -48,12 +51,13 @@ function UserProfileController($rootScope, $stateParams, $state, UserProfileGett
       else //generic catch
         alert(data['message']);
     }); //end set profile
-    /*UserImageGetter.get(vm.email, function setImage(data) {
+    UserImageGetter.get(vm.email, function setImage(data) {
+      alert(JSON.stringify(data.data[0]['image_hdpi']));
       if (data['success'] === 1) {
-        if (data['image'].length < 10  || data['image'] == null)
+        if (data.image < 10  || data.image == null)
           vm.imageNull = true;
         else {
-          var imgUrl = 'data:image/png;base64,' + data['data'];
+          var imgUrl = 'data:image/png;base64,' + data.image;
           vm.image = imgUrl;
         }
       }
@@ -61,7 +65,7 @@ function UserProfileController($rootScope, $stateParams, $state, UserProfileGett
         vm.imageNull = true;
         alert(data['message']);
       }
-    }); //end set image*/
+    }); //end set image
   } //end get profile
 } //end user profile controller
 

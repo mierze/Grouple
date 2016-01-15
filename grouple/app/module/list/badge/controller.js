@@ -4,16 +4,16 @@ function BadgeListController($rootScope, $stateParams, BadgeGetter) {
   var storage = window.localStorage;
   $rootScope.$broadcast('setTitle', 'Badges');
 
-  if ($stateParams.id == null || ($stateParams.id.length < 2))
+  if ($stateParams.email == null || ($stateParams.email.length < 2))
     vm.email = storage.getItem('email');
   else
-    vm.email = $stateParams.id;
+    vm.email = $stateParams.email;
 
   getBadges();
   
   //functions
   function getBadges() {
-    BadgeGetter.Get(vm.email, type, function(data) {
+    BadgeGetter.get(vm.email, function(data) {
       if (data['success'] === 1)
         vm.items = data['data'];
       else if (data['success'] === 0)

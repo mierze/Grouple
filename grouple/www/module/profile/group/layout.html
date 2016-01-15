@@ -4,8 +4,8 @@
     <section>
         <p ng-cloak>{{vm.info.about}}</p>
     </section>
-    <a class="btn" ui-sref="user-list({content: 'group-members', id: vm.info.id})" ng-cloak>Members</a>
-    <a class="btn" ui-sref="entity-messages({content: 'group', id: vm.info.id})">Messages</a>
+    <a class="btn" ui-sref="user-list({content: 'group-members', id: vm.id})" ng-cloak>Members</a>
+    <a class="btn" ui-sref="entity-messages({content: 'group', id: vm.id})">Messages</a>
        <!-- GROUP EVENTS HERE
        <a class="btn" ui-sref="group-upcoming-events">Upcoming Group Events</a>
        

@@ -1,5 +1,5 @@
 'use strict'
-function MessageSender(Poster) {
+function EntityMessageSender(Poster) {
   this.send = send;
   
   return {
@@ -7,9 +7,9 @@ function MessageSender(Poster) {
   };
   
   var send = function(post, type, callback) {
-    Poster.post('https://groupleapp.herokuapp.com/' + type + '/messages/send', post, callback);
+    Poster.post('https://groupleapp.herokuapp.com/' + type + '/message/send', post, callback);
   }
 }
 
-module.exports = MessageSender;
+module.exports = EntityMessageSender;
 

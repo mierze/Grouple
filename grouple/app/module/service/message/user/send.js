@@ -7,7 +7,7 @@ function MessageSender(Poster) {
   };
   
   var send = function(post, callback) {
-    Poster.post('https://groupleapp.herokuapp.com/user/messages/send', post, callback);
+    Poster.post('https://groupleapp.herokuapp.com/user/message/send', post, callback);
   }
 }
 

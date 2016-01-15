@@ -30,7 +30,7 @@ function EventProfileController($rootScope, $stateParams, $state, EventProfileGe
     EventProfileGetter.get(vm.id, function setProfile(data) {
       if (data['success'] === 1) {
         vm.editable = true;
-        vm.info = data['data'];
+        vm.info = data.data;
         $rootScope.$broadcast('setTitle', vm.info.name);
       }
       else //generic catch

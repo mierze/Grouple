@@ -1,5 +1,6 @@
 'use strict'
-module.exports = function($scope)
-{ //settings controller
+function SettingsController($scope) {
   //CODE HERE
-}; //end settings controller
+} //end settings controller
+
+module.exports = SettingsController;

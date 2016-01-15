@@ -1,8 +1,8 @@
 'use strict'
 var mysql = require('./db');
 
-//export functions
-function handler(_data) {
+//wizard does the db magic
+function wizard(_data) {
   return function(request, response) {
     var params = setParams(request.params, _data.params);
     mysql.query(_data.statement, params)
@@ -35,6 +35,7 @@ function bundler(results, _data) {
   if (results.length) {
     bundle.success = 1;
     //TODO: for 1 row stuff this breaks
+    //check successes down the pipe
     if (results.length)
         bundle.data = results;
     else
@@ -52,4 +53,4 @@ function bundler(results, _data) {
 }
 
 module.exports.setParams = setParams;
-module.exports.wizard = handler;
+module.exports.wizard = wizard;

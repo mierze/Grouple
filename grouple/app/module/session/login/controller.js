@@ -16,7 +16,6 @@ function LoginController($rootScope, $state, Login) {
       
   //functions
   function login() {
-    //login function
     Login.login(vm.post, function(data) {
       alert(data['message']);
       if (data['success'] === 1) {

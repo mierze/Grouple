@@ -4,7 +4,7 @@ module.exports = angular.module('root', [
   require('./adder').name,
   require('./list').name,
   require('./message').name,
-  require('./part').name,
+  require('./component').name,
   require('./profile').name,
   require('./service').name,
   require('./session').name

@@ -11,7 +11,7 @@ angular.module('grouple', [
   .config(require('./app.routes.js'));
 
 
-},{"./app.routes.js":2,"./module":16,"angular":111,"angular-ui-router":109,"ng-cordova":112}],2:[function(require,module,exports){
+},{"./app.routes.js":2,"./module":22,"angular":115,"angular-ui-router":113,"ng-cordova":120}],2:[function(require,module,exports){
 'use strict'
 function Routes($stateProvider, $urlRouterProvider, $httpProvider) {
   //all possible states
@@ -52,7 +52,7 @@ function Routes($stateProvider, $urlRouterProvider, $httpProvider) {
         controller: 'EventsController as vm'
     })
     .state('user-profile', {
-        url:'/user-profile/:id',
+        url:'/user-profile/:email',
         templateUrl: 'module/profile/user/layout.html',
         controller: 'UserProfileController as vm'
     })
@@ -83,7 +83,7 @@ function Routes($stateProvider, $urlRouterProvider, $httpProvider) {
         controller: 'EventListController as vm'
     })
     .state('badge-list', {
-        url:'/badge-list/:id',
+        url:'/badge-list/:email',
         templateUrl: 'module/list/badge/layout.html',
         controller: 'BadgeListController as vm'
     })
@@ -113,7 +113,7 @@ function Routes($stateProvider, $urlRouterProvider, $httpProvider) {
         controller: 'ContactController as vm'
     })
     .state('user-messages', {
-        url:'/user-messages/:id',
+        url:'/user-messages/:contact',
         templateUrl: 'module/message/user/layout.html',
         controller: 'UserMessageController as vm'
     })
@@ -136,9 +136,9 @@ function EventCreateController($filter, $state, Creator) {
   vm.created = false; //boolean whether event has been created
   vm.create = create;
   vn.showErrors = showErrors;
+  
   //functions
   function create() {
-    //create function
     //form validation
     alert('Before creator service:\n'+JSON.stringify(vm.post));
     vm.post.recurring = 0;
@@ -154,17 +154,16 @@ function EventCreateController($filter, $state, Creator) {
     vm.info.startDate = $filter('date')(vm.info.startDate, 'yyyy-MM-dd hh:mm:ss');
     vm.info.endDate = $filter('date')(vm.info.endDate, 'yyyy-MM-dd hh:mm:ss'); 
     Creator.create(vm.post, 'event', function(data) {
-      //creater create
       alert(data['message']);
       if (data['success'] === '1') 
-      //TODO: give user option to go to profile or invite groups
+        //TODO: give user option to go to profile or invite groups
         $state.go('event-invite', {id: data['id']});
-    }); //end creater create
-  };
+    }); //end create
+  }
   function showErrors() {
     alert('Uh, or. An error occured creating this event. Please try again.');
   }
-}; //end event create controller
+} //end event create controller
 
 module.exports = EventCreateController;
 },{}],4:[function(require,module,exports){
@@ -191,7 +190,8 @@ function EventInviteController($stateParams, EventInviter, GroupListGetter) {
   
   //functions
   function init() {
-    GroupListGetter.get(vm.email, /*type of content to grab*/'groups', function setGroups(data) {
+    //get groups
+    GroupListGetter.get(vm.email, 'groups', function setGroups(data) {
       if (data['success'] === 1)
         vm.items = data['items'];
       else
@@ -231,34 +231,33 @@ module.exports = angular.module('adder.event.invite', [])
   .directive('eventInviteRow', require('./part/invite-row.directive.js'));
 },{"./controller.js":6,"./part/invite-row.directive.js":8}],8:[function(require,module,exports){
 'use strict'
-function InviteRowDirective($state) {
-  //event invite row directive
+function EventInviteRowDirective($state) {
   return {
     restrict: 'E',
     templateUrl: 'module/adder/event/invite/part/invite-row.html',
-    controller: function() {
-      var vm = this;
-      vm.checked = false;
-      //PANDA change to id
-      vm.toggleRow = function() {
-        if (vm.checked)
-          vm.checked = false;
-        else
-          vm.checked = true;
-      };
-    },
-    controllerAs: 'inviteRowCtrl'
+    controller: eventInviteRowCtrl,
+    controllerAs: 'eventInviteRowCtrl'
   };
-}; //end event invite row directive
+  
+  function eventInviteRowCtrl() {
+    var vm = this;
+    vm.checked = false;
+    vm.toggleRow = function() {
+      if (vm.checked)
+        vm.checked = false;
+      else
+        vm.checked = true;
+    } //end toggle row
+  } //end event invite row controller
+} //end event invite row directive
 
-module.exports = InviteRowDirective;
+module.exports = EventInviteRowDirective;
 
 },{}],9:[function(require,module,exports){
 'use strict'
 function GroupCreateController($state, Creator) {
   var vm = this;
   var storage = window.localStorage;
-  //init post parameters
   vm.post = {};
   vm.post.name = '';
   vm.post.about = '';
@@ -318,7 +317,10 @@ function GroupInviteController($stateParams, UserListGetter, GroupInviter) {
   function init() {
     vm.email = storage.getItem("email");
     vm.id = $stateParams.id;
-    UserListGetter.get(vm.email, /*type of content to grab*/'friends', function setFriends(data) {
+    getUsers();
+  } //end init
+  function getUsers() {
+    UserListGetter.get(vm.email, 'friends', function setUsers(data) {
       //start fetch list of groups to invite
       if (data["success"] === 1) {
         alert(JSON.stringify(data));
@@ -327,7 +329,7 @@ function GroupInviteController($stateParams, UserListGetter, GroupInviter) {
       else
         alert(data["message"]);
     });
-  } //end init
+  }
   function toggleRole(id, role) {
     if (role === 'M')
       role = 'A'
@@ -363,35 +365,36 @@ module.exports = angular.module('adder.group.invite', [])
 .directive('groupInviteRow', require('./part/invite-row.directive.js'));
 },{"./controller.js":12,"./part/invite-row.directive.js":14}],14:[function(require,module,exports){
 'use strict'
-module.exports = function()
-{ //group invite row directive
+function groupInviteRowDirective() { //group invite row directive
     return {
       restrict: 'E',
       templateUrl: "module/adder/group/invite/part/invite-row.html",
-      controller: function() {
-        //start friend invite list controller
-        //TODO code role here
+      controller: groupInviteRowCtrl, 
+      controllerAs: "groupInviteRowCtrl"
+    };
+    
+    function groupInviteRowCtrl() {
         var vm = this;
         vm.role = '-';
-        vm.toggleRole = function()
-        {
-            if (vm.role === 'M')
-            {
+        vm.toggleRole = toggleRole;
+        
+        //functions
+        function toggleRole() {
+            if (vm.role === 'M') {
               vm.role = 'A'
             }
             else if (vm.role === '-') {
               vm.role = 'M';
             }
-            else if (vm.role === 'A')
-            {
+            else if (vm.role === 'A') {
               vm.role = '-';
             }
             alert("sub toggle now is " + vm.role);
-        };
-      }, //end friend invite list controller
-      controllerAs: "inviteRowCtrl"
-    };
-}; //end group invite row directive
+        } //end toggle role
+    } //end group invite row controller
+} //end group invite row directive
+
+module.exports = groupInviteRowDirective;
 },{}],15:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('adder', [
@@ -399,35 +402,152 @@ module.exports = angular.module('adder', [
   require('./event').name
 ]);
 },{"./event":5,"./group":11}],16:[function(require,module,exports){
+'use strict'
+function ActionBarDirective($state, $rootScope) {
+    return {
+        restrict: 'E',
+        templateUrl: 'module/component/action-bar/layout.html',
+        controller: actionBarCtrl,
+        controllerAs: 'vm' //or actionBarCtrl
+    };
+    
+    function actionBarCtrl($scope, $filter) {
+        var vm = this;
+        var storage = window.localStorage;
+        vm.title = 'Grouple';
+        vm.showNav = false;
+        vm.logout = logout;
+        vm.toggleNav = toggleNav;
+        vm.back = back;
+        
+        $scope.$on('setTitle', function(event, data) {
+            vm.title = $filter('limitTo')(data, 16, 0);
+            $scope.$emit('showActionBar', true); //for now
+        });
+        
+        $scope.$on('showActionBar', function(event, show) {
+          vm.showActionBar = show;
+        });
+        
+        //functions
+        function toggleNav() {
+            //broadcast a message to display the menu from rootScope
+            $rootScope.$broadcast('showNavMenu');    
+        }
+        function back() {
+            //TODO:
+            //when back would repopulate a invite or something similar
+                //go back to something else
+            //possibly: if history.back is same address
+                //go back again
+            history.back();
+        } //end back
+        function logout() {
+            //function to handling clearing memory and logging out user
+            alert('Later ' + storage.getItem('first') + '!');
+            //$state.go('login');
+            //location.href = '#login';
+            storage.clear(); //clear storage
+        } //end logout
+    } //end action bar controller
+} //end action bar directive
+
+module.exports = ActionBarDirective;
+
+
+},{}],17:[function(require,module,exports){
+'use strict'
+module.exports = angular.module('component.action-bar', [])
+  .directive('actionBar', require('./directive'))
+  .directive('navMenu', require('./part/nav-menu.directive'));
+},{"./directive":16,"./part/nav-menu.directive":18}],18:[function(require,module,exports){
+'use strict'
+function NavMenuDirective($state) {
+    return {
+        restrict: 'E',
+        templateUrl: 'module/component/action-bar/part/nav-menu.html',
+        controller: navMenuCtrl,
+        controllerAs: 'navMenuCtrl' //or actionBarCtrl
+    };
+    
+    function navMenuCtrl($scope, $filter, $state) {
+        var vm = this;
+        var storage = window.localStorage;
+        vm.logout = logout;
+        $scope.$on('showNavMenu', function(event, data) {
+            vm.showNavMenu = vm.showNavMenu ? false : true;
+        });
+        function logout() {
+            //function to handling clearing memory and logging out user
+            alert('Later ' + storage.getItem('first') + '!');
+            //$state.go('login');
+            storage.clear(); //clear storage
+        } //end logout
+    } //end action bar controller
+} //end action bar directive
+
+module.exports = NavMenuDirective;
+
+
+},{}],19:[function(require,module,exports){
+'use strict';
+module.exports = angular.module('component', [
+  require('./action-bar').name,
+  require('./sad-guy').name
+]);
+},{"./action-bar":17,"./sad-guy":21}],20:[function(require,module,exports){
+'use strict'
+function SadGuyDirective() {
+    return {
+        restrict: 'E',
+        templateUrl: 'module/component/sad-guy/layout.html',
+        controller: sadGuyCtrl,
+        controllerAs: 'sadGuyCtrl'
+    };
+    function sadGuyCtrl() {
+        var vm = this;
+        vm.caption = 'Sorry, none to display.';
+        vm.setCaption = setCaption;
+        
+        //functions
+        function setCaption(caption) {
+            vm.caption = caption;
+        }
+    } //end sad guy controller
+} //end sad guy directive
+
+module.exports = SadGuyDirective;
+},{}],21:[function(require,module,exports){
+'use strict'
+module.exports = angular.module('component.sad-guy', [])
+  .directive('sadGuy', require('./directive'));
+},{"./directive":20}],22:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('root', [
   require('./landing').name,
   require('./adder').name,
   require('./list').name,
   require('./message').name,
-  require('./part').name,
+  require('./component').name,
   require('./profile').name,
   require('./service').name,
   require('./session').name
   //require('./widget').name
 ]);
-},{"./adder":15,"./landing":25,"./list":35,"./message":45,"./part":50,"./profile":58,"./service":69,"./session":104}],17:[function(require,module,exports){
+},{"./adder":15,"./component":19,"./landing":31,"./list":41,"./message":51,"./profile":61,"./service":72,"./session":108}],23:[function(require,module,exports){
 'use strict'
 function EventsController($rootScope) {
-  //events controller
-  var vm = this;
   $rootScope.$broadcast('setTitle', 'Events');
-}; //end events controller
+}
 
 module.exports = EventsController;
-},{}],18:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('landing.events', [])
   .controller('EventsController', require('./controller.js'))
-},{"./controller.js":17}],19:[function(require,module,exports){
+},{"./controller.js":23}],25:[function(require,module,exports){
 'use strict'
 function FriendsController($rootScope, FriendInviter) {
-  //friends controller
   var vm = this;
   var storage = window.localStorage;
   $rootScope.$broadcast('setTitle', 'Events');
@@ -443,47 +563,43 @@ function FriendsController($rootScope, FriendInviter) {
     {
       alert(data['message']);
     });
-  };
+  }
   function toggleAddFriend() {
     if (vm.showAddFriend) 
       vm.showAddFriend = false;
     else
       vm.showAddFriend = true;
-  };
-}; //end friends controller
+  }
+} //end friends controller
 
 module.exports = FriendsController;
-},{}],20:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('landing.friends', [])
   .controller('FriendsController', require('./controller.js'))
-},{"./controller.js":19}],21:[function(require,module,exports){
+},{"./controller.js":25}],27:[function(require,module,exports){
 'use strict'
 function GroupsController($rootScope) {
-  //groups controller
-  var vm = this;
   $rootScope.$broadcast('setTitle', 'Groups');
-}; //end groups controller
+}
 
 module.exports = GroupsController;
-},{}],22:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('landing.groups', [])
   .controller('GroupsController', require('./controller.js'))
-},{"./controller.js":21}],23:[function(require,module,exports){
+},{"./controller.js":27}],29:[function(require,module,exports){
 'use strict'
 function HomeController($rootScope) {
-  //home controller
-  var vm = this;
   $rootScope.$broadcast('setTitle', 'Grouple');
-}; //end home controller
+}
 
 module.exports = HomeController;
-},{}],24:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('landing.home', [])
   .controller('HomeController', require('./controller.js'))
-},{"./controller.js":23}],25:[function(require,module,exports){
+},{"./controller.js":29}],31:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('landing', [
   require('./home').name,
@@ -491,23 +607,23 @@ module.exports = angular.module('landing', [
   require('./groups').name,
   require('./events').name
 ]);
-},{"./events":18,"./friends":20,"./groups":22,"./home":24}],26:[function(require,module,exports){
+},{"./events":24,"./friends":26,"./groups":28,"./home":30}],32:[function(require,module,exports){
 'use strict'
 function BadgeListController($rootScope, $stateParams, BadgeGetter) {
   var vm = this;
   var storage = window.localStorage;
   $rootScope.$broadcast('setTitle', 'Badges');
 
-  if ($stateParams.id == null || ($stateParams.id.length < 2))
+  if ($stateParams.email == null || ($stateParams.email.length < 2))
     vm.email = storage.getItem('email');
   else
-    vm.email = $stateParams.id;
+    vm.email = $stateParams.email;
 
   getBadges();
   
   //functions
   function getBadges() {
-    BadgeGetter.Get(vm.email, type, function(data) {
+    BadgeGetter.get(vm.email, function(data) {
       if (data['success'] === 1)
         vm.items = data['data'];
       else if (data['success'] === 0)
@@ -519,49 +635,50 @@ function BadgeListController($rootScope, $stateParams, BadgeGetter) {
 } //end badge list controller
 
 module.exports = BadgeListController;
-},{}],27:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('list.badge', [])
   .controller('BadgeListController', require('./controller.js'))
   .directive('badgeItem', require('./part/badge-item.directive.js'));
-},{"./controller.js":26,"./part/badge-item.directive.js":28}],28:[function(require,module,exports){
+},{"./controller.js":32,"./part/badge-item.directive.js":34}],34:[function(require,module,exports){
 'use strict'
 function BadgeItemDirective($state) {
-  //badge item directive
   return {
     restrict: 'E',
     templateUrl: 'module/list/badge/part/badge-item.html',
-    controller: function() {
-      var vm = this;
-      vm.image = 'unknown';
-      vm.init = init;
-      vm.zoom = zoom;
-      
-      //functions
-      function init(item) {
-        //init function
-        if (item.level > 0) {
-          //setting image source
-          vm.lower = item.name.toLowerCase();
-          vm.image = vm.lower.replace(' ', '-');
-        }
-      }; //end init function
-      function zoom() {
-        //zoom function
-        alert('HERE IN ZOOM FUNCTION!');
-        //would be ideal to have generic modal overlay
-        //in vm function inject the item info into the modal
-        
-        //alternatively:
-        //$state.go('badge', {id: id});
-      }; //end zoom function
-    },
+    controller: badgeItemCtrl,
     controllerAs: 'badgeItemCtrl'
   };
-}; //end badge item directive
+  
+  function badgeItemCtrl() {
+    var vm = this;
+    vm.image = 'unknown';
+    vm.init = init;
+    vm.zoom = zoom;
+    
+    //functions
+    function init(item) {
+      //init function
+      if (item.level > 0) {
+        //setting image source
+        vm.lower = item.name.toLowerCase();
+        vm.image = vm.lower.replace(' ', '-');
+      }
+    } //end init function
+    function zoom() {
+      //zoom function
+      alert('HERE IN ZOOM FUNCTION!');
+      //would be ideal to have generic modal overlay
+      //in vm function inject the item info into the modal
+      
+      //alternatively:
+      //$state.go('badge', {id: id});
+    } //end zoom function
+  } //end badge item controller
+} //end badge item directive
 
 module.exports = BadgeItemDirective;
-},{}],29:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 'use strict'
 function EventListController($rootScope, $stateParams, EventListGetter) {
   var vm = this;
@@ -610,46 +727,46 @@ function EventListController($rootScope, $stateParams, EventListGetter) {
 
 module.exports = EventListController;
 
-},{}],30:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('list.event', [])
   .controller('EventListController', require('./controller.js'))
   .directive('eventRow', require('./part/event-row.directive.js'));
-},{"./controller.js":29,"./part/event-row.directive.js":31}],31:[function(require,module,exports){
+},{"./controller.js":35,"./part/event-row.directive.js":37}],37:[function(require,module,exports){
 'use strict'
-function EventRowDirective($state, InviteResponder)
-{ //event row directive
+function EventRowDirective($state, InviteResponder) {
   return {
     restrict: 'E',
     templateUrl: 'module/list/event/part/event-row.html',
-    controller: function() {
-      var vm = this;
-      vm.profile = profile;
-      vm.decision = decision;
-      
-      //functions
-      function profile(id) {
-        $state.go('event-profile', {id: id});
-      };
-      function decision(id, decision) {
-        //start decision
-        var post = {};
-        post.id = id;
-        post.user = storage.getItem('email');
-        InviteResponder.respond(post, decision, 'event', function(data) {                      
-          alert(data['message']);
-          if (data['success'] === 1) {
-            $state.go($state.current, {content: 'invites', id: storage.getItem('email')}, {reload: true});
-          }
-        });
-      }; //end decision
-    },
+    controller: eventRowCtrl,
     controllerAs: 'eventRowCtrl'
   };
-}; //end event row directive
+  
+  function eventRowCtrl() {
+    var vm = this;
+    vm.profile = profile;
+    vm.decision = decision;
+    
+    //functions
+    function profile(id) {
+      $state.go('event-profile', {id: id});
+    }
+    function decision(id, decision) {
+      var post = {};
+      post.id = id;
+      post.user = storage.getItem('email');
+      InviteResponder.respond(post, decision, 'event', function(data) {                      
+        alert(data['message']);
+        if (data['success'] === 1) {
+          $state.go($state.current, {content: 'invites', id: storage.getItem('email')}, {reload: true});
+        }
+      });
+    } //end decision
+  } //end event row controller
+} //end event row directive
 
 module.exports = EventRowDirective;
-},{}],32:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 'use strict'
 function GroupListController($rootScope, $stateParams, GroupListGetter) {
   var vm = this;
@@ -694,48 +811,47 @@ function GroupListController($rootScope, $stateParams, GroupListGetter) {
 
 module.exports = GroupListController;
 
-},{}],33:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('list.group', [])
   .controller('GroupListController', require('./controller.js'))
   .directive('groupRow', require('./part/group-row.directive.js'));
-},{"./controller.js":32,"./part/group-row.directive.js":34}],34:[function(require,module,exports){
+},{"./controller.js":38,"./part/group-row.directive.js":40}],40:[function(require,module,exports){
 'use strict'
-function GroupRowDirective($state, InviteResponder)
-{ //group row directive
+function GroupRowDirective($state, InviteResponder) {
   return {
     restrict: 'E',
     templateUrl: 'module/list/group/part/group-row.html',
-    controller: function() {
-      var vm = this;
-      var storage = window.localStorage;
-      vm.profile = profile;
-      vm.decision = decision;
-      
-      //functions
-      function profile(id) {
-        $state.go('group-profile', {id: id});
-      };
-      function decision(id, decision) {
-        //start decision;
-        var post = {};
-        post.id = id;
-        post.user = storage.getItem('email');
-        InviteResponder.respond(post, decision, 'group', function(data) {                      
-          alert(data['message']);
-          if (data['success'] === 1)
-          {
-            $state.go($state.current, {content: 'group_invites', id: storage.getItem('email')}, {reload: true});
-          }
-        });
-      }; //end decision
-    },
+    controller: groupRowCtrl,
     controllerAs: 'groupRowCtrl'
   };
-}; //end group row directive
+  
+  function groupRowCtrl() {
+    var vm = this;
+    var storage = window.localStorage;
+    vm.profile = profile;
+    vm.decision = decision;
+    
+    //functions
+    function profile(id) {
+      $state.go('group-profile', {id: id});
+    }
+    function decision(id, decision) {
+      var post = {};
+      post.id = id;
+      post.user = storage.getItem('email');
+      InviteResponder.respond(post, decision, 'group', function(data) {                      
+        alert(data['message']);
+        if (data['success'] === 1) {
+          $state.go($state.current, {content: 'group_invites', id: storage.getItem('email')}, {reload: true});
+        }
+      });
+    } //end decision
+  } //end group row ctrl
+} //end group row directive
 
 module.exports = GroupRowDirective;
-},{}],35:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('list', [
   require('./user').name,
@@ -743,7 +859,7 @@ module.exports = angular.module('list', [
   require('./event').name,
   require('./badge').name
 ]);
-},{"./badge":27,"./event":30,"./group":33,"./user":37}],36:[function(require,module,exports){
+},{"./badge":33,"./event":36,"./group":39,"./user":43}],42:[function(require,module,exports){
 'use strict'
 function UserListController($rootScope, $stateParams, UserListGetter) {
   var vm = this;
@@ -799,42 +915,42 @@ module.exports = UserListController;
 
 
 
-},{}],37:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('list.user', [])
   .controller('UserListController', require('./controller.js'))
   .directive('userRow', require('./part/user-row.directive.js'));
-},{"./controller.js":36,"./part/user-row.directive.js":38}],38:[function(require,module,exports){
+},{"./controller.js":42,"./part/user-row.directive.js":44}],44:[function(require,module,exports){
 'use strict'
-module.exports = function($state, InviteResponder)
-{
+function UserRowDirective($state, InviteResponder) {
   return {
     restrict: 'E',
     templateUrl: 'module/list/user/part/user-row.html',
-    controller: function()
-    {
-      var vm = this;
-      vm.profile = profile;
-      vm.decision = decision;
-      
-      //functions
-      function profile(id)
-      {
-        $state.go('user-profile', {id: id});
-      };
-      function decision(post, decision)
-      { //start decision
-        vm.type = decision + '_friend';
-        InviteResponder.respond(post, vm.type, function(data)
-        {                      
-          alert(data['message']);
-        });
-      }; //end decision
-    },
+    controller: userRowCtrl,
     controllerAs: 'userRowCtrl'
   };
-}; //end user row directive
-},{}],39:[function(require,module,exports){
+  
+  function userRowCtrl() {
+    var vm = this;
+    vm.profile = profile;
+    vm.decision = decision;
+    
+    //functions
+    function profile(email)
+    {
+      $state.go('user-profile', {email: email});
+    } //end profile
+    function decision(post, decision) {
+      vm.type = decision + '_friend';
+      InviteResponder.respond(post, vm.type, function(data) {                      
+        alert(data['message']);
+      });
+    } //end decision
+  }
+} //end user row directive
+
+module.exports = UserRowDirective;
+},{}],45:[function(require,module,exports){
 'use strict'
 function ContactController($rootScope, ContactGetter) {
   var vm = this;
@@ -852,35 +968,36 @@ function ContactController($rootScope, ContactGetter) {
 } //end contact controller
 
 module.exports = ContactController;
-},{}],40:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('message.contact', [])
   .controller('ContactController', require('./controller.js'))
   .directive('contactRow', require('./part/contact-row.directive.js'));
-},{"./controller.js":39,"./part/contact-row.directive.js":41}],41:[function(require,module,exports){
+},{"./controller.js":45,"./part/contact-row.directive.js":47}],47:[function(require,module,exports){
 'use strict'
 function ContactRowDirective($state) {
-    //contact row directive
     return {
         restrict: 'E',
         templateUrl: 'module/message/contact/part/contact-row.html',
-        controller: function() {
-            var vm = this;
-            vm.imgEnc = imgEnc;
-            
-            //functions
-            function imgEnc(image) {
-              return 'data:image/png;base64,' + image;
-            }
-        },
+        controller: contactRowCtrl,
         controllerAs: 'contactRowCtrl'
     };
-}; //end contact row directive
+    
+    function contactRowCtrl() {
+        var vm = this;
+        vm.imgEnc = imgEnc;
+        
+        //functions
+        function imgEnc(image) {
+          return 'data:image/png;base64,' + image;
+        }
+    } //end contact row controller
+} //end contact row directive
 
 module.exports = ContactRowDirective;
-},{}],42:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 'use strict'
-function EntityMessageController($rootScope, $stateParams, EnitityMessageGetter, EntityMessageSender) {
+function EntityMessageController($rootScope, $stateParams, EntityMessageGetter, EntityMessageSender) {
   var vm = this;
   var storage = window.localStorage;
   vm.init = init;
@@ -890,6 +1007,7 @@ function EntityMessageController($rootScope, $stateParams, EnitityMessageGetter,
   function init() {
     vm.type = $stateParams.content;
     vm.id = $stateParams.id;
+    alert(JSON.stringify($stateParams));
     vm.email = storage.getItem('email');
     $rootScope.$broadcast('setTitle', 'Messages');
     getMessages();
@@ -917,58 +1035,63 @@ function EntityMessageController($rootScope, $stateParams, EnitityMessageGetter,
 module.exports = EntityMessageController;
 
 
-},{}],43:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('message.entity', [])
   .controller('EntityMessageController', require('./controller.js'))
   .directive('entityMessageRow', require('./part/message-row.directive.js'));
-},{"./controller.js":42,"./part/message-row.directive.js":44}],44:[function(require,module,exports){
+},{"./controller.js":48,"./part/message-row.directive.js":50}],50:[function(require,module,exports){
 'use strict'
 function EntityMessageRowDirective($state) {
   return {
     restrict: 'E',
     templateUrl: 'module/message/entity/part/message-row.html',
-    controller: function() {
-      vm.profile = profile;
-
-      //functions
-      function profile(id) {
-        $state.go('user-profile', {id: id});
-      }
-    },
+    controller: entityMessageRowCtrl,
     controllerAs: 'entityMessageRowCtrl'
   };
+  
+  function entityMessageRowCtrl() {
+    var vm = this;
+    vm.profile = profile;
+
+    //functions
+    function profile(id) {
+      $state.go('user-profile', {id: id});
+    }
+  } //end entity message row controller
 } //end entity message row directive
 
 module.exports = EntityMessageRowDirective;
 
-},{}],45:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('message', [
   require('./contact').name,
   require('./user').name,
   require('./entity').name
 ]);
-},{"./contact":40,"./entity":43,"./user":47}],46:[function(require,module,exports){
+},{"./contact":46,"./entity":49,"./user":53}],52:[function(require,module,exports){
 'use strict'
-function UserMessageController($rootScope, $stateParams, $state, $interval, UserMessageGetter, UserMessageSender) {
+function UserMessageController($rootScope, $stateParams, $state, UserMessageGetter, UserMessageSender) {
   var vm = this;
   var storage = window.localStorage;
   vm.send = send;
-
+  vm.init = init;
+  
   //functions
   function init() {
+    //alert('made it');
     vm.email = storage.getItem('email');
-    vm.contact = $stateParams.id;
+    vm.contact = $stateParams.contact;
+    alert('made ' + JSON.stringify($stateParams));
     $rootScope.$broadcast('setTitle', 'Messages');
-    setMessages();
+    getMessages();
   } //end init function
-  function setMessages() {
+  function getMessages() {
     vm.params = {};
-    vm.params = {}; //post params for http request
-    vm.params.contact = contact;
-    vm.params.id = email;
-    UserMessageGetter.get(params, function setMessages(data) {
+    vm.params.contact = vm.contact;
+    vm.params.email = vm.email;
+    UserMessageGetter.get(vm.params, function setMessages(data) {
       if (data['success'] === 1)
         vm.messages = data['data'];
       else {
@@ -977,136 +1100,54 @@ function UserMessageController($rootScope, $stateParams, $state, $interval, User
       }
     });
   }
-  function send() { //start send
-    var post = {};
-    post.contact = contact;
-    post.email = storage.getItem('email');
+  function send() {
+    vm.post = {};
+    vm.post.contact = contact;
+    vm.post.email = storage.getItem('email');
     UserMessageSender.send(post, function sendMessage(data) {
-        $state.go('user-messages', {id: contact}, {reload: true});      
+        $state.go('user-messages', {id: vm.contact}, {reload: true});      
     });
   } //end send function
 } //end user message controller
 
 module.exports = UserMessageController;
 
-},{}],47:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('message.user', [])
   .controller('UserMessageController', require('./controller.js'))
   .directive('userMessageRow', require('./part/message-row.directive.js'));
-},{"./controller.js":46,"./part/message-row.directive.js":48}],48:[function(require,module,exports){
+},{"./controller.js":52,"./part/message-row.directive.js":54}],54:[function(require,module,exports){
 'use strict'
-function MessageRowDirective($state) {
+function UserMessageRowDirective($state) {
   return {
-    //message row directive
     restrict: 'E',
     templateUrl: 'module/message/user/part/message-row.html',
-    controller: function() {
-      var vm = this; 
-      var storage = window.localStorage;
-      vm.profile = profile;
-      vm.isUser = isUser;
-      
-      //functions
-      function profile(email) {
-        $state.go('user-profile', {id: email});
-      }
-      function isUser(from) {
-        if (from === storage.getItem('email')) {
-          return true;
-        }
-        return false;
-      }
-    },
+    controller: userMessageRowCtrl,
     controllerAs: 'userMessageRowCtrl'
   };
-} //end message row directive
+  
+  function userMessageRowCtrl() {
+    var vm = this; 
+    var storage = window.localStorage;
+    vm.profile = profile;
+    vm.isUser = isUser;
+    
+    //functions
+    function profile(email) {
+      $state.go('user-profile', {id: email});
+    }
+    function isUser(from) {
+      if (from === storage.getItem('email')) {
+        return true;
+      }
+      return false;
+    }
+  } //end user message row controller
+} //end user message row directive
 
-module.exports = MessageRowDirective;
-},{}],49:[function(require,module,exports){
-'use strict'
-function ActionBarDirective($state) {
-    return {
-        //action bar directive
-        restrict: 'E',
-        templateUrl: 'module/part/action-bar/layout.html',
-        controller: function($scope, $filter, $state) {
-            var vm = this;
-            var storage = window.localStorage;
-            vm.title = 'Grouple';
-            vm.showNav = false;
-            vm.logout = logout;
-            vm.toggleNav = toggleNav;
-            vm.back = back;
-            
-            $scope.$on('setTitle', function(event, data) {
-                vm.title = $filter('limitTo')(data, 16, 0);
-                $scope.$emit('showActionBar', true); //for now
-            });
-            
-            $scope.$on('showActionBar', function(event, data) {
-              vm.showActionBar = data;
-            });
-            
-            //functions
-            function toggleNav() {
-              if (vm.showNav)
-                vm.showNav = false;
-              else {
-                vm.showNav = true;
-              }
-            }
-            function back() {
-                //TODO:
-                //when back would repopulate a invite or something similar
-                    //go back to something else
-                //possibly: if history.back is same address
-                    //go back again
-                history.back();
-            };
-            function logout() {
-                //function to handling clearing memory and logging out user
-                alert('Later ' + storage.getItem('first') + '!');
-                //$state.go('login');
-                //location.href = '#login';
-                storage.clear(); //clear storage
-            };
-        },
-        controllerAs: 'vm'
-    };
-}; //end action bar directive
-
-module.exports = ActionBarDirective;
-
-
-},{}],50:[function(require,module,exports){
-'use strict';
-module.exports = angular.module('part', [])
-  .directive('actionBar', require('./action-bar/directive.js'))
-  .directive('sadGuy', require('./sad-guy/directive.js'));
-},{"./action-bar/directive.js":49,"./sad-guy/directive.js":51}],51:[function(require,module,exports){
-'use strict'
-function SadGuyDirective() {
-    //sad guy directive
-    return {
-        restrict: 'E',
-        templateUrl: 'module/part/sad-guy/layout.html',
-        controller: function() {
-            var vm = this;
-            vm.caption = 'Sorry, none to display.';
-            vm.setCaption = setCaption;
-            
-            //functions
-            function setCaption(caption) {
-                vm.caption = caption;
-            }
-        },
-        controllerAs: 'sadGuyCtrl'
-    };
-}; //end sad guy directive
-
-module.exports = SadGuyDirective;
-},{}],52:[function(require,module,exports){
+module.exports = UserMessageRowDirective;
+},{}],55:[function(require,module,exports){
 'use strict'
 function EventProfileController($rootScope, $stateParams, $state, EventProfileGetter, EventImageGetter) {
   var vm = this;
@@ -1139,7 +1180,7 @@ function EventProfileController($rootScope, $stateParams, $state, EventProfileGe
     EventProfileGetter.get(vm.id, function setProfile(data) {
       if (data['success'] === 1) {
         vm.editable = true;
-        vm.info = data['data'];
+        vm.info = data.data;
         $rootScope.$broadcast('setTitle', vm.info.name);
       }
       else //generic catch
@@ -1160,48 +1201,51 @@ function EventProfileController($rootScope, $stateParams, $state, EventProfileGe
 } //end event profile controller
 
 module.exports = EventProfileController;
-},{}],53:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('profile.event', [])
   .controller('EventProfileController', require('./controller'))
   .directive('eventEdit', require('./part/event-edit.directive.js'));
-},{"./controller":52,"./part/event-edit.directive.js":54}],54:[function(require,module,exports){
+},{"./controller":55,"./part/event-edit.directive.js":57}],57:[function(require,module,exports){
 'use strict'
 function EventEditDirective($state, $filter, EventEditer) {
   var storage = window.localStorage; //grab local storage
   return {
     restrict: 'E',
     templateUrl: 'module/profile/event/part/event-edit.html',
-    controller: function() {
-      var vm = this;
-      vm.save = save;
-      
-      //functions
-      function save(info) {
-        info.startDate = $filter('date')(info.startDate, 'yyyy-MM-dd hh:mm:ss');
-        info.endDate = $filter('date')(info.endDate, 'yyyy-MM-dd hh:mm:ss');
-        alert(JSON.stringify(info));
-        EventEditer.edit(info, type, function(data) {            
-          alert(data['message']);
-          //if successful update ui and close out
-          if (data["success"] === 1) {
-            $state.go($state.current, {id: info.id}, {reload: true})
-          }
-        });    
-      }
-    },
+    controller: eventEditCtrl,
     controllerAs: 'eventEditCtrl'
   };
+  
+  function eventEditCtrl() {
+    var vm = this;
+    vm.save = save;
+    
+    //functions
+    function save(info) {
+      info.startDate = $filter('date')(info.startDate, 'yyyy-MM-dd hh:mm:ss');
+      info.endDate = $filter('date')(info.endDate, 'yyyy-MM-dd hh:mm:ss');
+      alert(JSON.stringify(info));
+      EventEditer.edit(info, type, function(data) {            
+        alert(data['message']);
+        //if successful update ui and close out
+        if (data["success"] === 1) {
+          $state.go($state.current, {id: info.id}, {reload: true})
+        }
+      });    
+    }
+  } //end event edit controller
 } //end event edit directive
 
 module.exports = EventEditDirective;
 
-},{}],55:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 'use strict'
 function GroupProfileController($rootScope, $stateParams, $state, GroupProfileGetter, GroupImageGetter) {
   var vm = this;
   var storage = window.localStorage;
   vm.showEdit = false;
+  vm.info = {};
   vm.privs = {};
   vm.privs.mod = true;
   vm.privs.admin = true;//TODO set this
@@ -1225,18 +1269,19 @@ function GroupProfileController($rootScope, $stateParams, $state, GroupProfileGe
   }
   function getProfile() {
     GroupProfileGetter.get(vm.id, function setProfile(data) {
-      //start fetch profile
-      alert(data['message']);
+      alert(JSON.stringify(data));
       if (data['success'] === 1) {
+        alert(JSON.stringify(data.data[0]));
         //TODO set for now. next get from api
         vm.editable = true;
-        vm.info = data['data'];
+        vm.info = data.data;
         $rootScope.$broadcast('setTitle', vm.info.name);
+        alert('cooking');
       }
       else //generic catch
         alert(data['message']);
     }); //end fetch profile
-    /*GroupImageGetter.get(vm.id, function setImage(data) {
+    GroupImageGetter.get(vm.id, function setImage(data) {
       if (data['success'] === 1) {
         var imgUrl = 'data:image/png;base64,' + data['image'];
         vm.image = imgUrl;
@@ -1246,78 +1291,82 @@ function GroupProfileController($rootScope, $stateParams, $state, GroupProfileGe
         vm.imageNull = true;
         alert(data['message']);
       }
-    });*/
+    });
   } //end get profile
 } //end group profile controller
 
 module.exports = GroupProfileController;
-},{}],56:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('profile.group', [])
   .controller('GroupProfileController', require('./controller'))
   .directive('groupEdit', require('./part/group-edit.directive.js'));
-},{"./controller":55,"./part/group-edit.directive.js":57}],57:[function(require,module,exports){
+},{"./controller":58,"./part/group-edit.directive.js":60}],60:[function(require,module,exports){
 'use strict'
 function GroupEditDirective($state, GroupEditer) {
   var storage = window.localStorage; //grab local storage
   return {
     restrict: 'E',
     templateUrl: 'module/profile/group/part/group-edit.html',
-    controller: function() {
-      var vm = this;
-      var type = 'group';
-      vm.save = save;
-      vm.showErrors = showErrors;
-      
-      //functions
-      function save(info) {
-        alert('Before editer service.\n' + JSON.stringify(info));
-        GroupEditer.edit(info, type, function(data) {            
-          alert(data['message']);
-          //if successful update ui and close out
-          if (data["success"] === 1) {
-            $state.go($state.current, {id: info.id}, {reload: true})
-          }
-        });    
-      }
-      function showErrors() {
-        alert('Error in edit form, please try again!');
-      };
-    },
+    controller: groupEditCtrl,
     controllerAs: 'groupEditCtrl'
-  }
+  };
+  
+  function groupEditCtrl() {
+    var vm = this;
+    var type = 'group';
+    vm.save = save;
+    vm.showErrors = showErrors;
+    
+    //functions
+    function save(info) {
+      alert('Before editer service.\n' + JSON.stringify(info));
+      GroupEditer.edit(info, type, function(data) {            
+        alert(data['message']);
+        //if successful update ui and close out
+        if (data["success"] === 1) {
+          $state.go($state.current, {id: info.id}, {reload: true})
+        }
+      });    
+    }
+    function showErrors() {
+      alert('Error in edit form, please try again!');
+    };
+  } //end group edit controller
 } //end group edit directive
 
 module.exports = GroupEditDirective;
-},{}],58:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('profile', [
   require('./user').name,
   require('./group').name,
   require('./event').name
 ]);
-},{"./event":53,"./group":56,"./user":60}],59:[function(require,module,exports){
+},{"./event":56,"./group":59,"./user":63}],62:[function(require,module,exports){
 'use strict'
 function UserProfileController($rootScope, $stateParams, $state, UserProfileGetter, UserImageGetter) {
   var vm = this;
   var storage = window.localStorage;
   vm.init = init;
   vm.toggleEdit = toggleEdit;
+  vm.info = {};
   
   //functions
   function init() {
     vm.post = {};
     vm.privs = {};
     vm.privs.admin = true;
+    alert('solidd ' + JSON.stringify($stateParams));
     //case that id is for logged user's email
-    if ($stateParams.id === 'user')   
+    if ($stateParams.email === 'user')   
       vm.email = storage.getItem('email');  
-    else if($stateParams.id !== null)   
-      vm.email = $stateParams.id;
+    else if($stateParams.email !== null)   
+      vm.email = $stateParams.email;
     else
       alert('No email specified!');
+    getProfile();
   } //end init function
-  
   function toggleEdit() {
     if (vm.showEdit)
       vm.showEdit = false;
@@ -1328,15 +1377,16 @@ function UserProfileController($rootScope, $stateParams, $state, UserProfileGett
     UserProfileGetter.get(vm.email, function setProfile(data) {
       if (data['success'] === 1) {
         //fetched successfully
-        vm.info = data['data'];
+        vm.info = data.data;
         $rootScope.$broadcast('setTitle', (vm.info.first + ' ' + vm.info.last));
         //check for unset data
         if (vm.info.birthday == null)
           vm.birthdayNull = true;
         else { //parse age from birthday
+          //TODO seperate date parsing to a factory
           var birthday = new Date(vm.info.birthday); //to date
           var difference = new Date - birthday;
-          vm.info.age = Math.floor((difference / 1000/*ms*/ / (60/*s*/ * 60/*m*/ * 24/*hr*/) ) / 365.25/*day*/);
+          vm.info.age = Math.floor((difference / 1000/*ms*/ / (60/*s*/ * 60/*m*/ * 24/*hr*/)) / 365.25/*day*/);
         }
         if (vm.info.about == null)
           vm.aboutNull = true;
@@ -1347,12 +1397,13 @@ function UserProfileController($rootScope, $stateParams, $state, UserProfileGett
       else //generic catch
         alert(data['message']);
     }); //end set profile
-    /*UserImageGetter.get(vm.email, function setImage(data) {
+    UserImageGetter.get(vm.email, function setImage(data) {
+      alert(JSON.stringify(data.data[0]['image_hdpi']));
       if (data['success'] === 1) {
-        if (data['image'].length < 10  || data['image'] == null)
+        if (data.image < 10  || data.image == null)
           vm.imageNull = true;
         else {
-          var imgUrl = 'data:image/png;base64,' + data['data'];
+          var imgUrl = 'data:image/png;base64,' + data.image;
           vm.image = imgUrl;
         }
       }
@@ -1360,60 +1411,62 @@ function UserProfileController($rootScope, $stateParams, $state, UserProfileGett
         vm.imageNull = true;
         alert(data['message']);
       }
-    }); //end set image*/
+    }); //end set image
   } //end get profile
 } //end user profile controller
 
 module.exports = UserProfileController;
-},{}],60:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('profile.user', [])
   .controller('UserProfileController', require('./controller'))
   .directive('userEdit', require('./part/user-edit.directive.js'));
-},{"./controller":59,"./part/user-edit.directive.js":61}],61:[function(require,module,exports){
+},{"./controller":62,"./part/user-edit.directive.js":64}],64:[function(require,module,exports){
 'use strict'
 function UserEditDirective($filter, UserEditer, $state) {
-  var storage = window.localStorage; //grab local storage
   return {
     restrict: 'E',
     templateUrl: 'module/profile/user/part/user-edit.html',
-    controller: function() {
-      var vm = this;
-      vm.type = 'user';
-      vm.save = save;
-      vm.showErrors = showErrors;
-      
-      //functions
-      function save(info) {
-        //formatting date
-        var year = info.birthday.getUTCFullYear();
-        var month = info.birthday.getUTCMonth() + 1;
-        var day = info.birthday.getUTCDay() + 1;
-        var birthday =  year + '-' + month + '-' + day;
-        info.birthday = birthday;
-        //TODO: figure gender out!!!
-       // info.gender === 'Male' ? info.gender = 'm' : info.gender = 'f';
-        //ensure all info set
-        alert('Before editer service.\n' + JSON.stringify(info));
-        UserEditer.post(info, function(data) {            
-          alert(data['message']);
-          //if successful update ui and close out
-          if (data["success"] === 1) {
-            $state.go($state.current, {id: type}, {reload: true})
-          }
-        });    
-      } //end save
-      function showErrors() {
-        alert('Error in edit form, please try again!');
-      }
-    },
+    controller: userEditCtrl,
     controllerAs: 'userEditCtrl'
   };
+  
+  function userEditCtrl() {
+    var vm = this;
+    var storage = window.localStorage; //grab local storage
+    vm.type = 'user';
+    vm.save = save;
+    vm.showErrors = showErrors;
+    
+    //functions
+    function save(info) {
+      //formatting date
+      var year = info.birthday.getUTCFullYear();
+      var month = info.birthday.getUTCMonth() + 1;
+      var day = info.birthday.getUTCDay() + 1;
+      var birthday =  year + '-' + month + '-' + day;
+      info.birthday = birthday;
+      //TODO: figure gender out!!!
+     // info.gender === 'Male' ? info.gender = 'm' : info.gender = 'f';
+      //ensure all info set
+      alert('Before editer service.\n' + JSON.stringify(info));
+      UserEditer.post(info, function(data) {            
+        alert(data['message']);
+        //if successful update ui and close out
+        if (data['success'] === 1) {
+          $state.go($state.current, {id: vm.type}, {reload: true})
+        }
+      });    
+    } //end save
+    function showErrors() {
+      alert('Error in edit form, please try again!');
+    }
+  } //end user edit controller
 } //end user edit directive
 
 module.exports = UserEditDirective;
 
-},{}],62:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 'use strict'
 module.exports = function($http) {
   //creater takes a group/event type, info and creates it in the db
@@ -1435,7 +1488,7 @@ module.exports = function($http) {
   };
 }; //end creater
 
-},{}],63:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //event inviter takes in a to and from and sends the invite
@@ -1461,7 +1514,7 @@ module.exports = function($http)
     send: send
   };
 }; //end event inviter
-},{}],64:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //friend inviter takes in a to and from and sends the invite
@@ -1483,7 +1536,7 @@ module.exports = function($http)
   };
 }; //end friend inviter
 
-},{}],65:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //group inviter takes in a to and from and sends the invite
@@ -1508,7 +1561,7 @@ module.exports = function($http)
   };
 }; //end group inviter
 
-},{}],66:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 //TODO
 //[ ] refactor out all extra calls, strip down to just setting bare url and params
 //for list fetcher, one file w/ switch, or seperate files with one liner?
@@ -1521,7 +1574,7 @@ module.exports = angular.module('service.adder', [])
   .factory('EventInviter', require('./event.invite'))
   .factory('InviteResponder', require('./invite.respond'));
 
-},{"./create":62,"./event.invite":63,"./friend.invite":64,"./group.invite":65,"./invite.respond":67}],67:[function(require,module,exports){
+},{"./create":65,"./event.invite":66,"./friend.invite":67,"./group.invite":68,"./invite.respond":70}],70:[function(require,module,exports){
 'use strict'
 module.exports = function($http)
 { //invite responder
@@ -1549,7 +1602,7 @@ module.exports = function($http)
   };
 }; //end invite responder
 
-},{}],68:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 'use strict'
 function Getter($http) {
     this.get = get;
@@ -1560,18 +1613,18 @@ function Getter($http) {
     
     function get(url, callback) {
         alert('in getter now ' + url);
-      $http({
-        method  : 'GET',
-        url     : url
-       }).then(
-      function(result) {
-        return callback(result.data);
-      });
+        $http({
+          method  : 'GET',
+          url     : url
+         }).then(
+        function(result) {
+          return callback(result.data);
+        });
     }
 }
 
 module.exports = Getter;
-},{}],69:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('service', [
     require('./adder').name,
@@ -1583,9 +1636,9 @@ module.exports = angular.module('service', [
   .factory('Getter', require('./get'))
   .factory('Poster', require('./post'));
 
-},{"./adder":66,"./get":68,"./list":76,"./message":82,"./post":87,"./profile":96,"./session":101}],70:[function(require,module,exports){
+},{"./adder":69,"./get":71,"./list":79,"./message":85,"./post":90,"./profile":100,"./session":105}],73:[function(require,module,exports){
 'use strict'
-function Badges(Getter) {
+function BadgeGetter(Getter) {
   this.get = get;
   
   return {
@@ -1597,13 +1650,13 @@ function Badges(Getter) {
   }
 }
 
-module.exports = Badges;
-},{}],71:[function(require,module,exports){
+module.exports = BadgeGetter;
+},{}],74:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('service.list.badge', [])
   .factory('BadgeGetter', require('./badges'));
 
-},{"./badges":70}],72:[function(require,module,exports){
+},{"./badges":73}],75:[function(require,module,exports){
 'use strict'
 function Events(Getter) {
   this.get = get;
@@ -1618,12 +1671,12 @@ function Events(Getter) {
 }
 
 module.exports = Events;
-},{}],73:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('service.list.event', [])
   .factory('EventListGetter', require('./get'));
 
-},{"./get":72}],74:[function(require,module,exports){
+},{"./get":75}],77:[function(require,module,exports){
 'use strict'
 function Groups(Getter) {
   this.get = get;
@@ -1638,12 +1691,12 @@ function Groups(Getter) {
 }
 
 module.exports = Groups;
-},{}],75:[function(require,module,exports){
+},{}],78:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('service.list.group', [])
   .factory('GroupListGetter', require('./get'));
 
-},{"./get":74}],76:[function(require,module,exports){
+},{"./get":77}],79:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('service.list', [
   require('./user').name,
@@ -1652,7 +1705,7 @@ module.exports = angular.module('service.list', [
   require('./badge').name
 ]);
 
-},{"./badge":71,"./event":73,"./group":75,"./user":78}],77:[function(require,module,exports){
+},{"./badge":74,"./event":76,"./group":78,"./user":81}],80:[function(require,module,exports){
 'use strict'
 function Users(Getter) {
   this.get = get;
@@ -1668,14 +1721,14 @@ function Users(Getter) {
 }
 
 module.exports = Users;
-},{}],78:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('service.list.user', [])
   .factory('UserListGetter', require('./get'));
 
-},{"./get":77}],79:[function(require,module,exports){
+},{"./get":80}],82:[function(require,module,exports){
 'use strict'
-function Messages(Getter) {
+function EntityMessageGetter(Getter) {
     this.get = get;
     
     return {
@@ -1683,21 +1736,21 @@ function Messages(Getter) {
     };
     
     function get(id, type, callback) {
-        Getter.get('http://groupleapp.herokuapp.com/api/' + type + '/messages/' + params.id, callback);
+        Getter.get('http://groupleapp.herokuapp.com/api/' + type + '/message/messages/' + id, callback);
     }
 }
 
-module.exports = Messages;
+module.exports = EntityMessageGetter;
 
-},{}],80:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('service.message.entity', [])
   .factory('EntityMessageGetter', require('./get'))
   .factory('EntityMessageSender', require('./send'));
 
-},{"./get":79,"./send":81}],81:[function(require,module,exports){
+},{"./get":82,"./send":84}],84:[function(require,module,exports){
 'use strict'
-function MessageSender(Poster) {
+function EntityMessageSender(Poster) {
   this.send = send;
   
   return {
@@ -1705,39 +1758,58 @@ function MessageSender(Poster) {
   };
   
   var send = function(post, type, callback) {
-    Poster.post('https://groupleapp.herokuapp.com/' + type + '/messages/send', post, callback);
+    Poster.post('https://groupleapp.herokuapp.com/' + type + '/message/send', post, callback);
   }
 }
 
-module.exports = MessageSender;
+module.exports = EntityMessageSender;
 
 
-},{}],82:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('service.message', [
     require('./user').name,
     require('./entity').name
   ]);
 
-},{"./entity":80,"./user":85}],83:[function(require,module,exports){
+},{"./entity":83,"./user":88}],86:[function(require,module,exports){
 'use strict'
 function Contacts(Getter) {
-    this.get = get;
+    var vm = this;
+    vm.get = get;
     
     return {
-        get: this.get
+        get: vm.get
     };
     
-    function get(email, callback) {
-        Getter.get('https://groupleapp.herokuapp.com/api/user/messages/contacts/' + email, callback);
+    function get(email, cb) {
+        vm.cb = cb;
+        vm.email = email;
+        Getter.get('https://groupleapp.herokuapp.com/api/user/message/contacts/' + email, callback);
+    }
+    
+    function callback(data) {
+        //contact callback middleware
+        
+        alert(JSON.stringify(data.data));
+        var parsed = {};
+        (data.data).forEach(function (message) {
+            var contact = message.receiver === vm.email ? message.sender : message.receiver;
+            message.contact = contact;
+            if (parsed[contact] == null)
+                parsed[contact] = message;
+        });
+        data.data = parsed;
+        alert(JSON.stringify(data));
+        return vm.cb(data);
     }
 }
 
 module.exports = Contacts;
 
-},{}],84:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 'use strict'
-function Messages(Getter) {
+function UserMessageGetter(Getter) {
     this.get = get;
     
     return {
@@ -1745,20 +1817,20 @@ function Messages(Getter) {
     };
     
     function get(params, callback) {
-        Getter.get('http://groupleapp.herokuapp.com/api/' + type + '/messages/' + params.id + '/' + params.contact, callback);
+        Getter.get('http://groupleapp.herokuapp.com/api/user/message/messages/' + params.email + '/' + params.contact, callback);
     }
 }
 
-module.exports = Messages;
+module.exports = UserMessageGetter;
 
-},{}],85:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('service.message.user', [])
   .factory('UserMessageGetter', require('./get'))
   .factory('UserMessageSender', require('./send'))
   .factory('ContactGetter', require('./contacts'));
 
-},{"./contacts":83,"./get":84,"./send":86}],86:[function(require,module,exports){
+},{"./contacts":86,"./get":87,"./send":89}],89:[function(require,module,exports){
 'use strict'
 function MessageSender(Poster) {
   this.send = send;
@@ -1768,14 +1840,14 @@ function MessageSender(Poster) {
   };
   
   var send = function(post, callback) {
-    Poster.post('https://groupleapp.herokuapp.com/user/messages/send', post, callback);
+    Poster.post('https://groupleapp.herokuapp.com/user/message/send', post, callback);
   }
 }
 
 module.exports = MessageSender;
 
 
-},{}],87:[function(require,module,exports){
+},{}],90:[function(require,module,exports){
 'use strict'
 function Poster($http) {
   this.post = post;
@@ -1797,7 +1869,7 @@ function Poster($http) {
 }
 
 module.exports = Poster;
-},{}],88:[function(require,module,exports){
+},{}],91:[function(require,module,exports){
 'use strict'
 function Editer(Poster) {
   this.edit = edit;
@@ -1813,44 +1885,66 @@ function Editer(Poster) {
 
 module.exports = Editer;
 
-},{}],89:[function(require,module,exports){
+},{}],92:[function(require,module,exports){
 'use strict'
-function ImageGetter(Getter) {
-  this.get = get;
+function ImageGetter(Getter, ImageDecoder) {
+  var vm = this;
+  vm.get = get;
   
   return {
-    get: this.get
+    get: vm.get
   };
   
-  function get(id, callback) {
+  function get(id, cb) {
+    vm.cb = cb;
     Getter.get('https://groupleapp.herokuapp.com/api/event/profile/image/' + id, callback);
+  }
+  
+  function callback(data) {
+    //middleware for image callback
+    //TODO set success based on stuff
+    alert(JSON.stringify(data));
+    var blob = data.data[0]['image_hdpi'];
+    ImageDecoder.decode(blob, function setImage(image) {
+      data.image = image;
+      //call to main callback
+      return vm.cb(data);
+    });
   }
 }
 
 module.exports = ImageGetter;
-},{}],90:[function(require,module,exports){
+},{}],93:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('service.profile.event', [])
   .factory('EventProfileGetter', require('./profile'))
   .factory('EventImageGetter', require('./image'))
   .factory('EventEditer', require('./edit'));
 
-},{"./edit":88,"./image":89,"./profile":91}],91:[function(require,module,exports){
+},{"./edit":91,"./image":92,"./profile":94}],94:[function(require,module,exports){
 'use strict'
 function Profile(Getter) {
-  this.get = get;
+  var vm = this;
+  vm.get = get;
   
   return {
-    get: this.get
+    get: vm.get
   };
   
-  function get(id, callback) {
+  function get(id, cb) {
+    vm.cb = cb;
     Getter.get('https://groupleapp.herokuapp.com/api/event/profile/' + id, callback);
+  }
+  
+  function callback(data) {
+    //middleware for profile callback
+    data.data = data.data[0];
+    return vm.cb(data);
   }
 }
 
 module.exports = Profile;
-},{}],92:[function(require,module,exports){
+},{}],95:[function(require,module,exports){
 'use strict'
 function Editer(Poster) {
   this.edit = edit;
@@ -1866,52 +1960,94 @@ function Editer(Poster) {
 
 module.exports = Editer;
 
-},{}],93:[function(require,module,exports){
+},{}],96:[function(require,module,exports){
 'use strict'
-function ImageGetter(Getter) {
-  this.get = get;
+function ImageGetter(Getter, ImageDecoder) {
+  var vm = this;
+  vm.get = get;
   
   return {
-    get: this.get
+    get: vm.get
   };
   
-  function get(id, callback) {
+  function get(id, cb) {
+    vm.cb = cb;
     Getter.get('https://groupleapp.herokuapp.com/api/group/profile/image/' + id, callback);
+  }
+  
+  function callback(data) {
+    //middleware for image callback
+    //TODO make sure success is accurate
+    var blob = data.data[0]['image_hdpi'];
+    ImageDecoder.decode(blob, function setImage(image) {
+      //returns decoded image
+      data.image = image;
+      //call to main callback
+      return vm.cb(data);
+    });
   }
 }
 
 module.exports = ImageGetter;
-},{}],94:[function(require,module,exports){
+},{}],97:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('service.profile.group', [])
   .factory('GroupProfileGetter', require('./profile'))
   .factory('GroupImageGetter', require('./image'))
   .factory('GroupEditer', require('./edit'));
 
-},{"./edit":92,"./image":93,"./profile":95}],95:[function(require,module,exports){
+},{"./edit":95,"./image":96,"./profile":98}],98:[function(require,module,exports){
 'use strict'
-function Profile(Getter) {
-  this.get = get;
+function GroupProfile(Getter) {
+  var vm = this;
+  vm.get = get;
   
   return {
-    get: this.get
+    get: vm.get
   };
   
-  function get(id, callback) {
+  function get(id, cb) {
+    vm.cb = cb;
     Getter.get('https://groupleapp.herokuapp.com/api/group/profile/' + id, callback);
+  }
+  
+  function callback(data) {
+    //middlware for data
+    data.data = data.data[0];
+    return vm.cb(data);
   }
 }
 
-module.exports = Profile;
-},{}],96:[function(require,module,exports){
+module.exports = GroupProfile;
+},{}],99:[function(require,module,exports){
+(function (Buffer){
+'use strict'
+function ImageDecoder() {
+  var vm = this;
+  vm.decode = decode;
+  
+  return {
+    decode: vm.decode
+  };
+  
+  function decode(blob, callback) {
+    var buffer = new Buffer(blob, 'binary');
+    return callback(buffer.toString('base64'));
+  }
+}
+
+module.exports = ImageDecoder;
+}).call(this,require("buffer").Buffer)
+},{"buffer":116}],100:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('service.profile', [
   require('./user').name,
   require('./group').name,
   require('./event').name
-]);
+])
+.factory('ImageDecoder', require('./image-decoder'));
 
-},{"./event":90,"./group":94,"./user":99}],97:[function(require,module,exports){
+},{"./event":93,"./group":97,"./image-decoder":99,"./user":103}],101:[function(require,module,exports){
 'use strict'
 function Editer(Poster) {
   this.edit = edit;
@@ -1927,50 +2063,75 @@ function Editer(Poster) {
 
 module.exports = Editer;
 
-},{}],98:[function(require,module,exports){
+},{}],102:[function(require,module,exports){
 'use strict'
-function ImageGetter(Getter) {
-  this.get = get;
+function ImageGetter(Getter, ImageDecoder) {
+  var vm = this;
+  vm.get = get;
   
   return {
-    get: this.get
+    get: vm.get
   };
   
-  function get(email, callback) {
+  function get(email, cb) {
+    vm.cb = cb;
     Getter.get('https://groupleapp.herokuapp.com/api/user/profile/image/' + email, callback);
+  }
+  
+  function callback(data) {
+    //middleware for image callback
+    //TODO make sure success is accurate
+    var blob = data.data[0]['image_hdpi'];
+    ImageDecoder.decode(blob, function setImage(image) {
+      //returns decoded image
+      alert('cool decoded ' + JSON.stringify(image));
+      data.image = image;
+      //call to main callback
+      return vm.cb(data);
+    });
   }
 }
 
 module.exports = ImageGetter;
-},{}],99:[function(require,module,exports){
+},{}],103:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('service.profile.user', [])
   .factory('UserProfileGetter', require('./profile'))
   .factory('UserImageGetter', require('./image'))
   .factory('UserEditer', require('./edit'));
-},{"./edit":97,"./image":98,"./profile":100}],100:[function(require,module,exports){
+},{"./edit":101,"./image":102,"./profile":104}],104:[function(require,module,exports){
 'use strict'
 function Profile(Getter) {
-  this.get = get;
+  var vm = this;
+  vm.get = get;
   
   return {
-    get: this.get
+    get: vm.get
   };
   
-  function get(email, callback) {
+  function get(email, cb) {
+    vm.cb = cb;
     Getter.get('https://groupleapp.herokuapp.com/api/user/profile/' + email, callback);
+  }
+  
+  function callback(data) {
+    //middleware for callback
+    alert(JSON.stringify(data));
+    data.data = data.data[0];
+    //alert(JSON.stringify(data.data[0]));
+    return vm.cb(data);
   }
 }
 
 module.exports = Profile;
-},{}],101:[function(require,module,exports){
+},{}],105:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('service.session', [])
   .factory('Login', require('./login'))
   .factory('Register', require('./register'));
  // .factory('SettingsGetter', require('./settings'));
 
-},{"./login":102,"./register":103}],102:[function(require,module,exports){
+},{"./login":106,"./register":107}],106:[function(require,module,exports){
 'use strict'
 function Login(Poster) {
   this.login = login;
@@ -1986,7 +2147,7 @@ function Login(Poster) {
 
 module.exports = Login;
 
-},{}],103:[function(require,module,exports){
+},{}],107:[function(require,module,exports){
 'use strict'
 function Register(Poster) {
   this.register = register;
@@ -2002,14 +2163,14 @@ function Register(Poster) {
 
 module.exports = Register;
 
-},{}],104:[function(require,module,exports){
+},{}],108:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('session', [
   require('./register').name,
   require('./login').name//,
  // require('./settings')
 ]);
-},{"./login":106,"./register":108}],105:[function(require,module,exports){
+},{"./login":110,"./register":112}],109:[function(require,module,exports){
 'use strict'
 function LoginController($rootScope, $state, Login) {
   var vm = this;
@@ -2028,7 +2189,6 @@ function LoginController($rootScope, $state, Login) {
       
   //functions
   function login() {
-    //login function
     Login.login(vm.post, function(data) {
       alert(data['message']);
       if (data['success'] === 1) {
@@ -2050,14 +2210,13 @@ function LoginController($rootScope, $state, Login) {
 
 module.exports = LoginController;
 
-},{}],106:[function(require,module,exports){
+},{}],110:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('session.login', [])
   .controller('LoginController', require('./controller.js'));
-},{"./controller.js":105}],107:[function(require,module,exports){
+},{"./controller.js":109}],111:[function(require,module,exports){
 'use strict'
 function RegisterController(Register, $state) {
-  //register controller
   var vm = this;
   var storage = window.localStorage;
   vm.post = {};
@@ -2066,9 +2225,7 @@ function RegisterController(Register, $state) {
   vm.showErrors = showErrors;
   //functions
   function register() {
-    //register function
     Register.register(vm.post, function(data) {
-      //start register
         alert(data['message']);
         if (data['success'] === 1) {
           storage.setItem('email', vm.post.email);
@@ -2079,19 +2236,19 @@ function RegisterController(Register, $state) {
           $state.go('home');
         }
     }); //end register
-  }; //end register function
+  } //end register function
   function showErrors() {
     alert("There are errors in the registration form, check input and try again!");
-  };
-}; //end register controller
+  }
+} //end register controller
 
 module.exports = RegisterController;
 
-},{}],108:[function(require,module,exports){
+},{}],112:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('session.register', [])
   .controller('RegisterController', require('./controller.js'));
-},{"./controller.js":107}],109:[function(require,module,exports){
+},{"./controller.js":111}],113:[function(require,module,exports){
 /**
  * State-based routing for AngularJS
  * @version v0.2.15
@@ -6462,7 +6619,7 @@ angular.module('ui.router.state')
   .filter('isState', $IsStateFilter)
   .filter('includedByState', $IncludedByStateFilter);
 })(window, window.angular);
-},{}],110:[function(require,module,exports){
+},{}],114:[function(require,module,exports){
 /**
  * @license AngularJS v1.4.8
  * (c) 2010-2015 Google, Inc. http://angularjs.org
@@ -35481,11 +35638,1806 @@ $provide.value("$locale", {
 })(window, document);
 
 !window.angular.$$csp().noInlineStyle && window.angular.element(document.head).prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>');
-},{}],111:[function(require,module,exports){
+},{}],115:[function(require,module,exports){
 require('./angular');
 module.exports = angular;
 
-},{"./angular":110}],112:[function(require,module,exports){
+},{"./angular":114}],116:[function(require,module,exports){
+(function (global){
+/*!
+ * The buffer module from node.js, for the browser.
+ *
+ * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
+ * @license  MIT
+ */
+/* eslint-disable no-proto */
+
+var base64 = require('base64-js')
+var ieee754 = require('ieee754')
+var isArray = require('is-array')
+
+exports.Buffer = Buffer
+exports.SlowBuffer = SlowBuffer
+exports.INSPECT_MAX_BYTES = 50
+Buffer.poolSize = 8192 // not used by this implementation
+
+var rootParent = {}
+
+/**
+ * If `Buffer.TYPED_ARRAY_SUPPORT`:
+ *   === true    Use Uint8Array implementation (fastest)
+ *   === false   Use Object implementation (most compatible, even IE6)
+ *
+ * Browsers that support typed arrays are IE 10+, Firefox 4+, Chrome 7+, Safari 5.1+,
+ * Opera 11.6+, iOS 4.2+.
+ *
+ * Due to various browser bugs, sometimes the Object implementation will be used even
+ * when the browser supports typed arrays.
+ *
+ * Note:
+ *
+ *   - Firefox 4-29 lacks support for adding new properties to `Uint8Array` instances,
+ *     See: https://bugzilla.mozilla.org/show_bug.cgi?id=695438.
+ *
+ *   - Safari 5-7 lacks support for changing the `Object.prototype.constructor` property
+ *     on objects.
+ *
+ *   - Chrome 9-10 is missing the `TypedArray.prototype.subarray` function.
+ *
+ *   - IE10 has a broken `TypedArray.prototype.subarray` function which returns arrays of
+ *     incorrect length in some situations.
+
+ * We detect these buggy browsers and set `Buffer.TYPED_ARRAY_SUPPORT` to `false` so they
+ * get the Object implementation, which is slower but behaves correctly.
+ */
+Buffer.TYPED_ARRAY_SUPPORT = global.TYPED_ARRAY_SUPPORT !== undefined
+  ? global.TYPED_ARRAY_SUPPORT
+  : typedArraySupport()
+
+function typedArraySupport () {
+  function Bar () {}
+  try {
+    var arr = new Uint8Array(1)
+    arr.foo = function () { return 42 }
+    arr.constructor = Bar
+    return arr.foo() === 42 && // typed array instances can be augmented
+        arr.constructor === Bar && // constructor can be set
+        typeof arr.subarray === 'function' && // chrome 9-10 lack `subarray`
+        arr.subarray(1, 1).byteLength === 0 // ie10 has broken `subarray`
+  } catch (e) {
+    return false
+  }
+}
+
+function kMaxLength () {
+  return Buffer.TYPED_ARRAY_SUPPORT
+    ? 0x7fffffff
+    : 0x3fffffff
+}
+
+/**
+ * Class: Buffer
+ * =============
+ *
+ * The Buffer constructor returns instances of `Uint8Array` that are augmented
+ * with function properties for all the node `Buffer` API functions. We use
+ * `Uint8Array` so that square bracket notation works as expected -- it returns
+ * a single octet.
+ *
+ * By augmenting the instances, we can avoid modifying the `Uint8Array`
+ * prototype.
+ */
+function Buffer (arg) {
+  if (!(this instanceof Buffer)) {
+    // Avoid going through an ArgumentsAdaptorTrampoline in the common case.
+    if (arguments.length > 1) return new Buffer(arg, arguments[1])
+    return new Buffer(arg)
+  }
+
+  this.length = 0
+  this.parent = undefined
+
+  // Common case.
+  if (typeof arg === 'number') {
+    return fromNumber(this, arg)
+  }
+
+  // Slightly less common case.
+  if (typeof arg === 'string') {
+    return fromString(this, arg, arguments.length > 1 ? arguments[1] : 'utf8')
+  }
+
+  // Unusual.
+  return fromObject(this, arg)
+}
+
+function fromNumber (that, length) {
+  that = allocate(that, length < 0 ? 0 : checked(length) | 0)
+  if (!Buffer.TYPED_ARRAY_SUPPORT) {
+    for (var i = 0; i < length; i++) {
+      that[i] = 0
+    }
+  }
+  return that
+}
+
+function fromString (that, string, encoding) {
+  if (typeof encoding !== 'string' || encoding === '') encoding = 'utf8'
+
+  // Assumption: byteLength() return value is always < kMaxLength.
+  var length = byteLength(string, encoding) | 0
+  that = allocate(that, length)
+
+  that.write(string, encoding)
+  return that
+}
+
+function fromObject (that, object) {
+  if (Buffer.isBuffer(object)) return fromBuffer(that, object)
+
+  if (isArray(object)) return fromArray(that, object)
+
+  if (object == null) {
+    throw new TypeError('must start with number, buffer, array or string')
+  }
+
+  if (typeof ArrayBuffer !== 'undefined') {
+    if (object.buffer instanceof ArrayBuffer) {
+      return fromTypedArray(that, object)
+    }
+    if (object instanceof ArrayBuffer) {
+      return fromArrayBuffer(that, object)
+    }
+  }
+
+  if (object.length) return fromArrayLike(that, object)
+
+  return fromJsonObject(that, object)
+}
+
+function fromBuffer (that, buffer) {
+  var length = checked(buffer.length) | 0
+  that = allocate(that, length)
+  buffer.copy(that, 0, 0, length)
+  return that
+}
+
+function fromArray (that, array) {
+  var length = checked(array.length) | 0
+  that = allocate(that, length)
+  for (var i = 0; i < length; i += 1) {
+    that[i] = array[i] & 255
+  }
+  return that
+}
+
+// Duplicate of fromArray() to keep fromArray() monomorphic.
+function fromTypedArray (that, array) {
+  var length = checked(array.length) | 0
+  that = allocate(that, length)
+  // Truncating the elements is probably not what people expect from typed
+  // arrays with BYTES_PER_ELEMENT > 1 but it's compatible with the behavior
+  // of the old Buffer constructor.
+  for (var i = 0; i < length; i += 1) {
+    that[i] = array[i] & 255
+  }
+  return that
+}
+
+function fromArrayBuffer (that, array) {
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    // Return an augmented `Uint8Array` instance, for best performance
+    array.byteLength
+    that = Buffer._augment(new Uint8Array(array))
+  } else {
+    // Fallback: Return an object instance of the Buffer class
+    that = fromTypedArray(that, new Uint8Array(array))
+  }
+  return that
+}
+
+function fromArrayLike (that, array) {
+  var length = checked(array.length) | 0
+  that = allocate(that, length)
+  for (var i = 0; i < length; i += 1) {
+    that[i] = array[i] & 255
+  }
+  return that
+}
+
+// Deserialize { type: 'Buffer', data: [1,2,3,...] } into a Buffer object.
+// Returns a zero-length buffer for inputs that don't conform to the spec.
+function fromJsonObject (that, object) {
+  var array
+  var length = 0
+
+  if (object.type === 'Buffer' && isArray(object.data)) {
+    array = object.data
+    length = checked(array.length) | 0
+  }
+  that = allocate(that, length)
+
+  for (var i = 0; i < length; i += 1) {
+    that[i] = array[i] & 255
+  }
+  return that
+}
+
+if (Buffer.TYPED_ARRAY_SUPPORT) {
+  Buffer.prototype.__proto__ = Uint8Array.prototype
+  Buffer.__proto__ = Uint8Array
+}
+
+function allocate (that, length) {
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    // Return an augmented `Uint8Array` instance, for best performance
+    that = Buffer._augment(new Uint8Array(length))
+    that.__proto__ = Buffer.prototype
+  } else {
+    // Fallback: Return an object instance of the Buffer class
+    that.length = length
+    that._isBuffer = true
+  }
+
+  var fromPool = length !== 0 && length <= Buffer.poolSize >>> 1
+  if (fromPool) that.parent = rootParent
+
+  return that
+}
+
+function checked (length) {
+  // Note: cannot use `length < kMaxLength` here because that fails when
+  // length is NaN (which is otherwise coerced to zero.)
+  if (length >= kMaxLength()) {
+    throw new RangeError('Attempt to allocate Buffer larger than maximum ' +
+                         'size: 0x' + kMaxLength().toString(16) + ' bytes')
+  }
+  return length | 0
+}
+
+function SlowBuffer (subject, encoding) {
+  if (!(this instanceof SlowBuffer)) return new SlowBuffer(subject, encoding)
+
+  var buf = new Buffer(subject, encoding)
+  delete buf.parent
+  return buf
+}
+
+Buffer.isBuffer = function isBuffer (b) {
+  return !!(b != null && b._isBuffer)
+}
+
+Buffer.compare = function compare (a, b) {
+  if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) {
+    throw new TypeError('Arguments must be Buffers')
+  }
+
+  if (a === b) return 0
+
+  var x = a.length
+  var y = b.length
+
+  var i = 0
+  var len = Math.min(x, y)
+  while (i < len) {
+    if (a[i] !== b[i]) break
+
+    ++i
+  }
+
+  if (i !== len) {
+    x = a[i]
+    y = b[i]
+  }
+
+  if (x < y) return -1
+  if (y < x) return 1
+  return 0
+}
+
+Buffer.isEncoding = function isEncoding (encoding) {
+  switch (String(encoding).toLowerCase()) {
+    case 'hex':
+    case 'utf8':
+    case 'utf-8':
+    case 'ascii':
+    case 'binary':
+    case 'base64':
+    case 'raw':
+    case 'ucs2':
+    case 'ucs-2':
+    case 'utf16le':
+    case 'utf-16le':
+      return true
+    default:
+      return false
+  }
+}
+
+Buffer.concat = function concat (list, length) {
+  if (!isArray(list)) throw new TypeError('list argument must be an Array of Buffers.')
+
+  if (list.length === 0) {
+    return new Buffer(0)
+  }
+
+  var i
+  if (length === undefined) {
+    length = 0
+    for (i = 0; i < list.length; i++) {
+      length += list[i].length
+    }
+  }
+
+  var buf = new Buffer(length)
+  var pos = 0
+  for (i = 0; i < list.length; i++) {
+    var item = list[i]
+    item.copy(buf, pos)
+    pos += item.length
+  }
+  return buf
+}
+
+function byteLength (string, encoding) {
+  if (typeof string !== 'string') string = '' + string
+
+  var len = string.length
+  if (len === 0) return 0
+
+  // Use a for loop to avoid recursion
+  var loweredCase = false
+  for (;;) {
+    switch (encoding) {
+      case 'ascii':
+      case 'binary':
+      // Deprecated
+      case 'raw':
+      case 'raws':
+        return len
+      case 'utf8':
+      case 'utf-8':
+        return utf8ToBytes(string).length
+      case 'ucs2':
+      case 'ucs-2':
+      case 'utf16le':
+      case 'utf-16le':
+        return len * 2
+      case 'hex':
+        return len >>> 1
+      case 'base64':
+        return base64ToBytes(string).length
+      default:
+        if (loweredCase) return utf8ToBytes(string).length // assume utf8
+        encoding = ('' + encoding).toLowerCase()
+        loweredCase = true
+    }
+  }
+}
+Buffer.byteLength = byteLength
+
+// pre-set for values that may exist in the future
+Buffer.prototype.length = undefined
+Buffer.prototype.parent = undefined
+
+function slowToString (encoding, start, end) {
+  var loweredCase = false
+
+  start = start | 0
+  end = end === undefined || end === Infinity ? this.length : end | 0
+
+  if (!encoding) encoding = 'utf8'
+  if (start < 0) start = 0
+  if (end > this.length) end = this.length
+  if (end <= start) return ''
+
+  while (true) {
+    switch (encoding) {
+      case 'hex':
+        return hexSlice(this, start, end)
+
+      case 'utf8':
+      case 'utf-8':
+        return utf8Slice(this, start, end)
+
+      case 'ascii':
+        return asciiSlice(this, start, end)
+
+      case 'binary':
+        return binarySlice(this, start, end)
+
+      case 'base64':
+        return base64Slice(this, start, end)
+
+      case 'ucs2':
+      case 'ucs-2':
+      case 'utf16le':
+      case 'utf-16le':
+        return utf16leSlice(this, start, end)
+
+      default:
+        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
+        encoding = (encoding + '').toLowerCase()
+        loweredCase = true
+    }
+  }
+}
+
+Buffer.prototype.toString = function toString () {
+  var length = this.length | 0
+  if (length === 0) return ''
+  if (arguments.length === 0) return utf8Slice(this, 0, length)
+  return slowToString.apply(this, arguments)
+}
+
+Buffer.prototype.equals = function equals (b) {
+  if (!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer')
+  if (this === b) return true
+  return Buffer.compare(this, b) === 0
+}
+
+Buffer.prototype.inspect = function inspect () {
+  var str = ''
+  var max = exports.INSPECT_MAX_BYTES
+  if (this.length > 0) {
+    str = this.toString('hex', 0, max).match(/.{2}/g).join(' ')
+    if (this.length > max) str += ' ... '
+  }
+  return '<Buffer ' + str + '>'
+}
+
+Buffer.prototype.compare = function compare (b) {
+  if (!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer')
+  if (this === b) return 0
+  return Buffer.compare(this, b)
+}
+
+Buffer.prototype.indexOf = function indexOf (val, byteOffset) {
+  if (byteOffset > 0x7fffffff) byteOffset = 0x7fffffff
+  else if (byteOffset < -0x80000000) byteOffset = -0x80000000
+  byteOffset >>= 0
+
+  if (this.length === 0) return -1
+  if (byteOffset >= this.length) return -1
+
+  // Negative offsets start from the end of the buffer
+  if (byteOffset < 0) byteOffset = Math.max(this.length + byteOffset, 0)
+
+  if (typeof val === 'string') {
+    if (val.length === 0) return -1 // special case: looking for empty string always fails
+    return String.prototype.indexOf.call(this, val, byteOffset)
+  }
+  if (Buffer.isBuffer(val)) {
+    return arrayIndexOf(this, val, byteOffset)
+  }
+  if (typeof val === 'number') {
+    if (Buffer.TYPED_ARRAY_SUPPORT && Uint8Array.prototype.indexOf === 'function') {
+      return Uint8Array.prototype.indexOf.call(this, val, byteOffset)
+    }
+    return arrayIndexOf(this, [ val ], byteOffset)
+  }
+
+  function arrayIndexOf (arr, val, byteOffset) {
+    var foundIndex = -1
+    for (var i = 0; byteOffset + i < arr.length; i++) {
+      if (arr[byteOffset + i] === val[foundIndex === -1 ? 0 : i - foundIndex]) {
+        if (foundIndex === -1) foundIndex = i
+        if (i - foundIndex + 1 === val.length) return byteOffset + foundIndex
+      } else {
+        foundIndex = -1
+      }
+    }
+    return -1
+  }
+
+  throw new TypeError('val must be string, number or Buffer')
+}
+
+// `get` is deprecated
+Buffer.prototype.get = function get (offset) {
+  console.log('.get() is deprecated. Access using array indexes instead.')
+  return this.readUInt8(offset)
+}
+
+// `set` is deprecated
+Buffer.prototype.set = function set (v, offset) {
+  console.log('.set() is deprecated. Access using array indexes instead.')
+  return this.writeUInt8(v, offset)
+}
+
+function hexWrite (buf, string, offset, length) {
+  offset = Number(offset) || 0
+  var remaining = buf.length - offset
+  if (!length) {
+    length = remaining
+  } else {
+    length = Number(length)
+    if (length > remaining) {
+      length = remaining
+    }
+  }
+
+  // must be an even number of digits
+  var strLen = string.length
+  if (strLen % 2 !== 0) throw new Error('Invalid hex string')
+
+  if (length > strLen / 2) {
+    length = strLen / 2
+  }
+  for (var i = 0; i < length; i++) {
+    var parsed = parseInt(string.substr(i * 2, 2), 16)
+    if (isNaN(parsed)) throw new Error('Invalid hex string')
+    buf[offset + i] = parsed
+  }
+  return i
+}
+
+function utf8Write (buf, string, offset, length) {
+  return blitBuffer(utf8ToBytes(string, buf.length - offset), buf, offset, length)
+}
+
+function asciiWrite (buf, string, offset, length) {
+  return blitBuffer(asciiToBytes(string), buf, offset, length)
+}
+
+function binaryWrite (buf, string, offset, length) {
+  return asciiWrite(buf, string, offset, length)
+}
+
+function base64Write (buf, string, offset, length) {
+  return blitBuffer(base64ToBytes(string), buf, offset, length)
+}
+
+function ucs2Write (buf, string, offset, length) {
+  return blitBuffer(utf16leToBytes(string, buf.length - offset), buf, offset, length)
+}
+
+Buffer.prototype.write = function write (string, offset, length, encoding) {
+  // Buffer#write(string)
+  if (offset === undefined) {
+    encoding = 'utf8'
+    length = this.length
+    offset = 0
+  // Buffer#write(string, encoding)
+  } else if (length === undefined && typeof offset === 'string') {
+    encoding = offset
+    length = this.length
+    offset = 0
+  // Buffer#write(string, offset[, length][, encoding])
+  } else if (isFinite(offset)) {
+    offset = offset | 0
+    if (isFinite(length)) {
+      length = length | 0
+      if (encoding === undefined) encoding = 'utf8'
+    } else {
+      encoding = length
+      length = undefined
+    }
+  // legacy write(string, encoding, offset, length) - remove in v0.13
+  } else {
+    var swap = encoding
+    encoding = offset
+    offset = length | 0
+    length = swap
+  }
+
+  var remaining = this.length - offset
+  if (length === undefined || length > remaining) length = remaining
+
+  if ((string.length > 0 && (length < 0 || offset < 0)) || offset > this.length) {
+    throw new RangeError('attempt to write outside buffer bounds')
+  }
+
+  if (!encoding) encoding = 'utf8'
+
+  var loweredCase = false
+  for (;;) {
+    switch (encoding) {
+      case 'hex':
+        return hexWrite(this, string, offset, length)
+
+      case 'utf8':
+      case 'utf-8':
+        return utf8Write(this, string, offset, length)
+
+      case 'ascii':
+        return asciiWrite(this, string, offset, length)
+
+      case 'binary':
+        return binaryWrite(this, string, offset, length)
+
+      case 'base64':
+        // Warning: maxLength not taken into account in base64Write
+        return base64Write(this, string, offset, length)
+
+      case 'ucs2':
+      case 'ucs-2':
+      case 'utf16le':
+      case 'utf-16le':
+        return ucs2Write(this, string, offset, length)
+
+      default:
+        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
+        encoding = ('' + encoding).toLowerCase()
+        loweredCase = true
+    }
+  }
+}
+
+Buffer.prototype.toJSON = function toJSON () {
+  return {
+    type: 'Buffer',
+    data: Array.prototype.slice.call(this._arr || this, 0)
+  }
+}
+
+function base64Slice (buf, start, end) {
+  if (start === 0 && end === buf.length) {
+    return base64.fromByteArray(buf)
+  } else {
+    return base64.fromByteArray(buf.slice(start, end))
+  }
+}
+
+function utf8Slice (buf, start, end) {
+  end = Math.min(buf.length, end)
+  var res = []
+
+  var i = start
+  while (i < end) {
+    var firstByte = buf[i]
+    var codePoint = null
+    var bytesPerSequence = (firstByte > 0xEF) ? 4
+      : (firstByte > 0xDF) ? 3
+      : (firstByte > 0xBF) ? 2
+      : 1
+
+    if (i + bytesPerSequence <= end) {
+      var secondByte, thirdByte, fourthByte, tempCodePoint
+
+      switch (bytesPerSequence) {
+        case 1:
+          if (firstByte < 0x80) {
+            codePoint = firstByte
+          }
+          break
+        case 2:
+          secondByte = buf[i + 1]
+          if ((secondByte & 0xC0) === 0x80) {
+            tempCodePoint = (firstByte & 0x1F) << 0x6 | (secondByte & 0x3F)
+            if (tempCodePoint > 0x7F) {
+              codePoint = tempCodePoint
+            }
+          }
+          break
+        case 3:
+          secondByte = buf[i + 1]
+          thirdByte = buf[i + 2]
+          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80) {
+            tempCodePoint = (firstByte & 0xF) << 0xC | (secondByte & 0x3F) << 0x6 | (thirdByte & 0x3F)
+            if (tempCodePoint > 0x7FF && (tempCodePoint < 0xD800 || tempCodePoint > 0xDFFF)) {
+              codePoint = tempCodePoint
+            }
+          }
+          break
+        case 4:
+          secondByte = buf[i + 1]
+          thirdByte = buf[i + 2]
+          fourthByte = buf[i + 3]
+          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80 && (fourthByte & 0xC0) === 0x80) {
+            tempCodePoint = (firstByte & 0xF) << 0x12 | (secondByte & 0x3F) << 0xC | (thirdByte & 0x3F) << 0x6 | (fourthByte & 0x3F)
+            if (tempCodePoint > 0xFFFF && tempCodePoint < 0x110000) {
+              codePoint = tempCodePoint
+            }
+          }
+      }
+    }
+
+    if (codePoint === null) {
+      // we did not generate a valid codePoint so insert a
+      // replacement char (U+FFFD) and advance only 1 byte
+      codePoint = 0xFFFD
+      bytesPerSequence = 1
+    } else if (codePoint > 0xFFFF) {
+      // encode to utf16 (surrogate pair dance)
+      codePoint -= 0x10000
+      res.push(codePoint >>> 10 & 0x3FF | 0xD800)
+      codePoint = 0xDC00 | codePoint & 0x3FF
+    }
+
+    res.push(codePoint)
+    i += bytesPerSequence
+  }
+
+  return decodeCodePointsArray(res)
+}
+
+// Based on http://stackoverflow.com/a/22747272/680742, the browser with
+// the lowest limit is Chrome, with 0x10000 args.
+// We go 1 magnitude less, for safety
+var MAX_ARGUMENTS_LENGTH = 0x1000
+
+function decodeCodePointsArray (codePoints) {
+  var len = codePoints.length
+  if (len <= MAX_ARGUMENTS_LENGTH) {
+    return String.fromCharCode.apply(String, codePoints) // avoid extra slice()
+  }
+
+  // Decode in chunks to avoid "call stack size exceeded".
+  var res = ''
+  var i = 0
+  while (i < len) {
+    res += String.fromCharCode.apply(
+      String,
+      codePoints.slice(i, i += MAX_ARGUMENTS_LENGTH)
+    )
+  }
+  return res
+}
+
+function asciiSlice (buf, start, end) {
+  var ret = ''
+  end = Math.min(buf.length, end)
+
+  for (var i = start; i < end; i++) {
+    ret += String.fromCharCode(buf[i] & 0x7F)
+  }
+  return ret
+}
+
+function binarySlice (buf, start, end) {
+  var ret = ''
+  end = Math.min(buf.length, end)
+
+  for (var i = start; i < end; i++) {
+    ret += String.fromCharCode(buf[i])
+  }
+  return ret
+}
+
+function hexSlice (buf, start, end) {
+  var len = buf.length
+
+  if (!start || start < 0) start = 0
+  if (!end || end < 0 || end > len) end = len
+
+  var out = ''
+  for (var i = start; i < end; i++) {
+    out += toHex(buf[i])
+  }
+  return out
+}
+
+function utf16leSlice (buf, start, end) {
+  var bytes = buf.slice(start, end)
+  var res = ''
+  for (var i = 0; i < bytes.length; i += 2) {
+    res += String.fromCharCode(bytes[i] + bytes[i + 1] * 256)
+  }
+  return res
+}
+
+Buffer.prototype.slice = function slice (start, end) {
+  var len = this.length
+  start = ~~start
+  end = end === undefined ? len : ~~end
+
+  if (start < 0) {
+    start += len
+    if (start < 0) start = 0
+  } else if (start > len) {
+    start = len
+  }
+
+  if (end < 0) {
+    end += len
+    if (end < 0) end = 0
+  } else if (end > len) {
+    end = len
+  }
+
+  if (end < start) end = start
+
+  var newBuf
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    newBuf = Buffer._augment(this.subarray(start, end))
+  } else {
+    var sliceLen = end - start
+    newBuf = new Buffer(sliceLen, undefined)
+    for (var i = 0; i < sliceLen; i++) {
+      newBuf[i] = this[i + start]
+    }
+  }
+
+  if (newBuf.length) newBuf.parent = this.parent || this
+
+  return newBuf
+}
+
+/*
+ * Need to make sure that buffer isn't trying to write out of bounds.
+ */
+function checkOffset (offset, ext, length) {
+  if ((offset % 1) !== 0 || offset < 0) throw new RangeError('offset is not uint')
+  if (offset + ext > length) throw new RangeError('Trying to access beyond buffer length')
+}
+
+Buffer.prototype.readUIntLE = function readUIntLE (offset, byteLength, noAssert) {
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) checkOffset(offset, byteLength, this.length)
+
+  var val = this[offset]
+  var mul = 1
+  var i = 0
+  while (++i < byteLength && (mul *= 0x100)) {
+    val += this[offset + i] * mul
+  }
+
+  return val
+}
+
+Buffer.prototype.readUIntBE = function readUIntBE (offset, byteLength, noAssert) {
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) {
+    checkOffset(offset, byteLength, this.length)
+  }
+
+  var val = this[offset + --byteLength]
+  var mul = 1
+  while (byteLength > 0 && (mul *= 0x100)) {
+    val += this[offset + --byteLength] * mul
+  }
+
+  return val
+}
+
+Buffer.prototype.readUInt8 = function readUInt8 (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 1, this.length)
+  return this[offset]
+}
+
+Buffer.prototype.readUInt16LE = function readUInt16LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length)
+  return this[offset] | (this[offset + 1] << 8)
+}
+
+Buffer.prototype.readUInt16BE = function readUInt16BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length)
+  return (this[offset] << 8) | this[offset + 1]
+}
+
+Buffer.prototype.readUInt32LE = function readUInt32LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+
+  return ((this[offset]) |
+      (this[offset + 1] << 8) |
+      (this[offset + 2] << 16)) +
+      (this[offset + 3] * 0x1000000)
+}
+
+Buffer.prototype.readUInt32BE = function readUInt32BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+
+  return (this[offset] * 0x1000000) +
+    ((this[offset + 1] << 16) |
+    (this[offset + 2] << 8) |
+    this[offset + 3])
+}
+
+Buffer.prototype.readIntLE = function readIntLE (offset, byteLength, noAssert) {
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) checkOffset(offset, byteLength, this.length)
+
+  var val = this[offset]
+  var mul = 1
+  var i = 0
+  while (++i < byteLength && (mul *= 0x100)) {
+    val += this[offset + i] * mul
+  }
+  mul *= 0x80
+
+  if (val >= mul) val -= Math.pow(2, 8 * byteLength)
+
+  return val
+}
+
+Buffer.prototype.readIntBE = function readIntBE (offset, byteLength, noAssert) {
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) checkOffset(offset, byteLength, this.length)
+
+  var i = byteLength
+  var mul = 1
+  var val = this[offset + --i]
+  while (i > 0 && (mul *= 0x100)) {
+    val += this[offset + --i] * mul
+  }
+  mul *= 0x80
+
+  if (val >= mul) val -= Math.pow(2, 8 * byteLength)
+
+  return val
+}
+
+Buffer.prototype.readInt8 = function readInt8 (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 1, this.length)
+  if (!(this[offset] & 0x80)) return (this[offset])
+  return ((0xff - this[offset] + 1) * -1)
+}
+
+Buffer.prototype.readInt16LE = function readInt16LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length)
+  var val = this[offset] | (this[offset + 1] << 8)
+  return (val & 0x8000) ? val | 0xFFFF0000 : val
+}
+
+Buffer.prototype.readInt16BE = function readInt16BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length)
+  var val = this[offset + 1] | (this[offset] << 8)
+  return (val & 0x8000) ? val | 0xFFFF0000 : val
+}
+
+Buffer.prototype.readInt32LE = function readInt32LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+
+  return (this[offset]) |
+    (this[offset + 1] << 8) |
+    (this[offset + 2] << 16) |
+    (this[offset + 3] << 24)
+}
+
+Buffer.prototype.readInt32BE = function readInt32BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+
+  return (this[offset] << 24) |
+    (this[offset + 1] << 16) |
+    (this[offset + 2] << 8) |
+    (this[offset + 3])
+}
+
+Buffer.prototype.readFloatLE = function readFloatLE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+  return ieee754.read(this, offset, true, 23, 4)
+}
+
+Buffer.prototype.readFloatBE = function readFloatBE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+  return ieee754.read(this, offset, false, 23, 4)
+}
+
+Buffer.prototype.readDoubleLE = function readDoubleLE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 8, this.length)
+  return ieee754.read(this, offset, true, 52, 8)
+}
+
+Buffer.prototype.readDoubleBE = function readDoubleBE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 8, this.length)
+  return ieee754.read(this, offset, false, 52, 8)
+}
+
+function checkInt (buf, value, offset, ext, max, min) {
+  if (!Buffer.isBuffer(buf)) throw new TypeError('buffer must be a Buffer instance')
+  if (value > max || value < min) throw new RangeError('value is out of bounds')
+  if (offset + ext > buf.length) throw new RangeError('index out of range')
+}
+
+Buffer.prototype.writeUIntLE = function writeUIntLE (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) checkInt(this, value, offset, byteLength, Math.pow(2, 8 * byteLength), 0)
+
+  var mul = 1
+  var i = 0
+  this[offset] = value & 0xFF
+  while (++i < byteLength && (mul *= 0x100)) {
+    this[offset + i] = (value / mul) & 0xFF
+  }
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeUIntBE = function writeUIntBE (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) checkInt(this, value, offset, byteLength, Math.pow(2, 8 * byteLength), 0)
+
+  var i = byteLength - 1
+  var mul = 1
+  this[offset + i] = value & 0xFF
+  while (--i >= 0 && (mul *= 0x100)) {
+    this[offset + i] = (value / mul) & 0xFF
+  }
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeUInt8 = function writeUInt8 (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 1, 0xff, 0)
+  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)
+  this[offset] = (value & 0xff)
+  return offset + 1
+}
+
+function objectWriteUInt16 (buf, value, offset, littleEndian) {
+  if (value < 0) value = 0xffff + value + 1
+  for (var i = 0, j = Math.min(buf.length - offset, 2); i < j; i++) {
+    buf[offset + i] = (value & (0xff << (8 * (littleEndian ? i : 1 - i)))) >>>
+      (littleEndian ? i : 1 - i) * 8
+  }
+}
+
+Buffer.prototype.writeUInt16LE = function writeUInt16LE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value & 0xff)
+    this[offset + 1] = (value >>> 8)
+  } else {
+    objectWriteUInt16(this, value, offset, true)
+  }
+  return offset + 2
+}
+
+Buffer.prototype.writeUInt16BE = function writeUInt16BE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 8)
+    this[offset + 1] = (value & 0xff)
+  } else {
+    objectWriteUInt16(this, value, offset, false)
+  }
+  return offset + 2
+}
+
+function objectWriteUInt32 (buf, value, offset, littleEndian) {
+  if (value < 0) value = 0xffffffff + value + 1
+  for (var i = 0, j = Math.min(buf.length - offset, 4); i < j; i++) {
+    buf[offset + i] = (value >>> (littleEndian ? i : 3 - i) * 8) & 0xff
+  }
+}
+
+Buffer.prototype.writeUInt32LE = function writeUInt32LE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset + 3] = (value >>> 24)
+    this[offset + 2] = (value >>> 16)
+    this[offset + 1] = (value >>> 8)
+    this[offset] = (value & 0xff)
+  } else {
+    objectWriteUInt32(this, value, offset, true)
+  }
+  return offset + 4
+}
+
+Buffer.prototype.writeUInt32BE = function writeUInt32BE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 24)
+    this[offset + 1] = (value >>> 16)
+    this[offset + 2] = (value >>> 8)
+    this[offset + 3] = (value & 0xff)
+  } else {
+    objectWriteUInt32(this, value, offset, false)
+  }
+  return offset + 4
+}
+
+Buffer.prototype.writeIntLE = function writeIntLE (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) {
+    var limit = Math.pow(2, 8 * byteLength - 1)
+
+    checkInt(this, value, offset, byteLength, limit - 1, -limit)
+  }
+
+  var i = 0
+  var mul = 1
+  var sub = value < 0 ? 1 : 0
+  this[offset] = value & 0xFF
+  while (++i < byteLength && (mul *= 0x100)) {
+    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
+  }
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeIntBE = function writeIntBE (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) {
+    var limit = Math.pow(2, 8 * byteLength - 1)
+
+    checkInt(this, value, offset, byteLength, limit - 1, -limit)
+  }
+
+  var i = byteLength - 1
+  var mul = 1
+  var sub = value < 0 ? 1 : 0
+  this[offset + i] = value & 0xFF
+  while (--i >= 0 && (mul *= 0x100)) {
+    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
+  }
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeInt8 = function writeInt8 (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 1, 0x7f, -0x80)
+  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)
+  if (value < 0) value = 0xff + value + 1
+  this[offset] = (value & 0xff)
+  return offset + 1
+}
+
+Buffer.prototype.writeInt16LE = function writeInt16LE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value & 0xff)
+    this[offset + 1] = (value >>> 8)
+  } else {
+    objectWriteUInt16(this, value, offset, true)
+  }
+  return offset + 2
+}
+
+Buffer.prototype.writeInt16BE = function writeInt16BE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 8)
+    this[offset + 1] = (value & 0xff)
+  } else {
+    objectWriteUInt16(this, value, offset, false)
+  }
+  return offset + 2
+}
+
+Buffer.prototype.writeInt32LE = function writeInt32LE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value & 0xff)
+    this[offset + 1] = (value >>> 8)
+    this[offset + 2] = (value >>> 16)
+    this[offset + 3] = (value >>> 24)
+  } else {
+    objectWriteUInt32(this, value, offset, true)
+  }
+  return offset + 4
+}
+
+Buffer.prototype.writeInt32BE = function writeInt32BE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
+  if (value < 0) value = 0xffffffff + value + 1
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 24)
+    this[offset + 1] = (value >>> 16)
+    this[offset + 2] = (value >>> 8)
+    this[offset + 3] = (value & 0xff)
+  } else {
+    objectWriteUInt32(this, value, offset, false)
+  }
+  return offset + 4
+}
+
+function checkIEEE754 (buf, value, offset, ext, max, min) {
+  if (value > max || value < min) throw new RangeError('value is out of bounds')
+  if (offset + ext > buf.length) throw new RangeError('index out of range')
+  if (offset < 0) throw new RangeError('index out of range')
+}
+
+function writeFloat (buf, value, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    checkIEEE754(buf, value, offset, 4, 3.4028234663852886e+38, -3.4028234663852886e+38)
+  }
+  ieee754.write(buf, value, offset, littleEndian, 23, 4)
+  return offset + 4
+}
+
+Buffer.prototype.writeFloatLE = function writeFloatLE (value, offset, noAssert) {
+  return writeFloat(this, value, offset, true, noAssert)
+}
+
+Buffer.prototype.writeFloatBE = function writeFloatBE (value, offset, noAssert) {
+  return writeFloat(this, value, offset, false, noAssert)
+}
+
+function writeDouble (buf, value, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    checkIEEE754(buf, value, offset, 8, 1.7976931348623157E+308, -1.7976931348623157E+308)
+  }
+  ieee754.write(buf, value, offset, littleEndian, 52, 8)
+  return offset + 8
+}
+
+Buffer.prototype.writeDoubleLE = function writeDoubleLE (value, offset, noAssert) {
+  return writeDouble(this, value, offset, true, noAssert)
+}
+
+Buffer.prototype.writeDoubleBE = function writeDoubleBE (value, offset, noAssert) {
+  return writeDouble(this, value, offset, false, noAssert)
+}
+
+// copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
+Buffer.prototype.copy = function copy (target, targetStart, start, end) {
+  if (!start) start = 0
+  if (!end && end !== 0) end = this.length
+  if (targetStart >= target.length) targetStart = target.length
+  if (!targetStart) targetStart = 0
+  if (end > 0 && end < start) end = start
+
+  // Copy 0 bytes; we're done
+  if (end === start) return 0
+  if (target.length === 0 || this.length === 0) return 0
+
+  // Fatal error conditions
+  if (targetStart < 0) {
+    throw new RangeError('targetStart out of bounds')
+  }
+  if (start < 0 || start >= this.length) throw new RangeError('sourceStart out of bounds')
+  if (end < 0) throw new RangeError('sourceEnd out of bounds')
+
+  // Are we oob?
+  if (end > this.length) end = this.length
+  if (target.length - targetStart < end - start) {
+    end = target.length - targetStart + start
+  }
+
+  var len = end - start
+  var i
+
+  if (this === target && start < targetStart && targetStart < end) {
+    // descending copy from end
+    for (i = len - 1; i >= 0; i--) {
+      target[i + targetStart] = this[i + start]
+    }
+  } else if (len < 1000 || !Buffer.TYPED_ARRAY_SUPPORT) {
+    // ascending copy from start
+    for (i = 0; i < len; i++) {
+      target[i + targetStart] = this[i + start]
+    }
+  } else {
+    target._set(this.subarray(start, start + len), targetStart)
+  }
+
+  return len
+}
+
+// fill(value, start=0, end=buffer.length)
+Buffer.prototype.fill = function fill (value, start, end) {
+  if (!value) value = 0
+  if (!start) start = 0
+  if (!end) end = this.length
+
+  if (end < start) throw new RangeError('end < start')
+
+  // Fill 0 bytes; we're done
+  if (end === start) return
+  if (this.length === 0) return
+
+  if (start < 0 || start >= this.length) throw new RangeError('start out of bounds')
+  if (end < 0 || end > this.length) throw new RangeError('end out of bounds')
+
+  var i
+  if (typeof value === 'number') {
+    for (i = start; i < end; i++) {
+      this[i] = value
+    }
+  } else {
+    var bytes = utf8ToBytes(value.toString())
+    var len = bytes.length
+    for (i = start; i < end; i++) {
+      this[i] = bytes[i % len]
+    }
+  }
+
+  return this
+}
+
+/**
+ * Creates a new `ArrayBuffer` with the *copied* memory of the buffer instance.
+ * Added in Node 0.12. Only available in browsers that support ArrayBuffer.
+ */
+Buffer.prototype.toArrayBuffer = function toArrayBuffer () {
+  if (typeof Uint8Array !== 'undefined') {
+    if (Buffer.TYPED_ARRAY_SUPPORT) {
+      return (new Buffer(this)).buffer
+    } else {
+      var buf = new Uint8Array(this.length)
+      for (var i = 0, len = buf.length; i < len; i += 1) {
+        buf[i] = this[i]
+      }
+      return buf.buffer
+    }
+  } else {
+    throw new TypeError('Buffer.toArrayBuffer not supported in this browser')
+  }
+}
+
+// HELPER FUNCTIONS
+// ================
+
+var BP = Buffer.prototype
+
+/**
+ * Augment a Uint8Array *instance* (not the Uint8Array class!) with Buffer methods
+ */
+Buffer._augment = function _augment (arr) {
+  arr.constructor = Buffer
+  arr._isBuffer = true
+
+  // save reference to original Uint8Array set method before overwriting
+  arr._set = arr.set
+
+  // deprecated
+  arr.get = BP.get
+  arr.set = BP.set
+
+  arr.write = BP.write
+  arr.toString = BP.toString
+  arr.toLocaleString = BP.toString
+  arr.toJSON = BP.toJSON
+  arr.equals = BP.equals
+  arr.compare = BP.compare
+  arr.indexOf = BP.indexOf
+  arr.copy = BP.copy
+  arr.slice = BP.slice
+  arr.readUIntLE = BP.readUIntLE
+  arr.readUIntBE = BP.readUIntBE
+  arr.readUInt8 = BP.readUInt8
+  arr.readUInt16LE = BP.readUInt16LE
+  arr.readUInt16BE = BP.readUInt16BE
+  arr.readUInt32LE = BP.readUInt32LE
+  arr.readUInt32BE = BP.readUInt32BE
+  arr.readIntLE = BP.readIntLE
+  arr.readIntBE = BP.readIntBE
+  arr.readInt8 = BP.readInt8
+  arr.readInt16LE = BP.readInt16LE
+  arr.readInt16BE = BP.readInt16BE
+  arr.readInt32LE = BP.readInt32LE
+  arr.readInt32BE = BP.readInt32BE
+  arr.readFloatLE = BP.readFloatLE
+  arr.readFloatBE = BP.readFloatBE
+  arr.readDoubleLE = BP.readDoubleLE
+  arr.readDoubleBE = BP.readDoubleBE
+  arr.writeUInt8 = BP.writeUInt8
+  arr.writeUIntLE = BP.writeUIntLE
+  arr.writeUIntBE = BP.writeUIntBE
+  arr.writeUInt16LE = BP.writeUInt16LE
+  arr.writeUInt16BE = BP.writeUInt16BE
+  arr.writeUInt32LE = BP.writeUInt32LE
+  arr.writeUInt32BE = BP.writeUInt32BE
+  arr.writeIntLE = BP.writeIntLE
+  arr.writeIntBE = BP.writeIntBE
+  arr.writeInt8 = BP.writeInt8
+  arr.writeInt16LE = BP.writeInt16LE
+  arr.writeInt16BE = BP.writeInt16BE
+  arr.writeInt32LE = BP.writeInt32LE
+  arr.writeInt32BE = BP.writeInt32BE
+  arr.writeFloatLE = BP.writeFloatLE
+  arr.writeFloatBE = BP.writeFloatBE
+  arr.writeDoubleLE = BP.writeDoubleLE
+  arr.writeDoubleBE = BP.writeDoubleBE
+  arr.fill = BP.fill
+  arr.inspect = BP.inspect
+  arr.toArrayBuffer = BP.toArrayBuffer
+
+  return arr
+}
+
+var INVALID_BASE64_RE = /[^+\/0-9A-Za-z-_]/g
+
+function base64clean (str) {
+  // Node strips out invalid characters like \n and \t from the string, base64-js does not
+  str = stringtrim(str).replace(INVALID_BASE64_RE, '')
+  // Node converts strings with length < 2 to ''
+  if (str.length < 2) return ''
+  // Node allows for non-padded base64 strings (missing trailing ===), base64-js does not
+  while (str.length % 4 !== 0) {
+    str = str + '='
+  }
+  return str
+}
+
+function stringtrim (str) {
+  if (str.trim) return str.trim()
+  return str.replace(/^\s+|\s+$/g, '')
+}
+
+function toHex (n) {
+  if (n < 16) return '0' + n.toString(16)
+  return n.toString(16)
+}
+
+function utf8ToBytes (string, units) {
+  units = units || Infinity
+  var codePoint
+  var length = string.length
+  var leadSurrogate = null
+  var bytes = []
+
+  for (var i = 0; i < length; i++) {
+    codePoint = string.charCodeAt(i)
+
+    // is surrogate component
+    if (codePoint > 0xD7FF && codePoint < 0xE000) {
+      // last char was a lead
+      if (!leadSurrogate) {
+        // no lead yet
+        if (codePoint > 0xDBFF) {
+          // unexpected trail
+          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+          continue
+        } else if (i + 1 === length) {
+          // unpaired lead
+          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+          continue
+        }
+
+        // valid lead
+        leadSurrogate = codePoint
+
+        continue
+      }
+
+      // 2 leads in a row
+      if (codePoint < 0xDC00) {
+        if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+        leadSurrogate = codePoint
+        continue
+      }
+
+      // valid surrogate pair
+      codePoint = (leadSurrogate - 0xD800 << 10 | codePoint - 0xDC00) + 0x10000
+    } else if (leadSurrogate) {
+      // valid bmp char, but last char was a lead
+      if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+    }
+
+    leadSurrogate = null
+
+    // encode utf8
+    if (codePoint < 0x80) {
+      if ((units -= 1) < 0) break
+      bytes.push(codePoint)
+    } else if (codePoint < 0x800) {
+      if ((units -= 2) < 0) break
+      bytes.push(
+        codePoint >> 0x6 | 0xC0,
+        codePoint & 0x3F | 0x80
+      )
+    } else if (codePoint < 0x10000) {
+      if ((units -= 3) < 0) break
+      bytes.push(
+        codePoint >> 0xC | 0xE0,
+        codePoint >> 0x6 & 0x3F | 0x80,
+        codePoint & 0x3F | 0x80
+      )
+    } else if (codePoint < 0x110000) {
+      if ((units -= 4) < 0) break
+      bytes.push(
+        codePoint >> 0x12 | 0xF0,
+        codePoint >> 0xC & 0x3F | 0x80,
+        codePoint >> 0x6 & 0x3F | 0x80,
+        codePoint & 0x3F | 0x80
+      )
+    } else {
+      throw new Error('Invalid code point')
+    }
+  }
+
+  return bytes
+}
+
+function asciiToBytes (str) {
+  var byteArray = []
+  for (var i = 0; i < str.length; i++) {
+    // Node's code seems to be doing this and not & 0x7F..
+    byteArray.push(str.charCodeAt(i) & 0xFF)
+  }
+  return byteArray
+}
+
+function utf16leToBytes (str, units) {
+  var c, hi, lo
+  var byteArray = []
+  for (var i = 0; i < str.length; i++) {
+    if ((units -= 2) < 0) break
+
+    c = str.charCodeAt(i)
+    hi = c >> 8
+    lo = c % 256
+    byteArray.push(lo)
+    byteArray.push(hi)
+  }
+
+  return byteArray
+}
+
+function base64ToBytes (str) {
+  return base64.toByteArray(base64clean(str))
+}
+
+function blitBuffer (src, dst, offset, length) {
+  for (var i = 0; i < length; i++) {
+    if ((i + offset >= dst.length) || (i >= src.length)) break
+    dst[i + offset] = src[i]
+  }
+  return i
+}
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"base64-js":117,"ieee754":118,"is-array":119}],117:[function(require,module,exports){
+var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+
+;(function (exports) {
+	'use strict';
+
+  var Arr = (typeof Uint8Array !== 'undefined')
+    ? Uint8Array
+    : Array
+
+	var PLUS   = '+'.charCodeAt(0)
+	var SLASH  = '/'.charCodeAt(0)
+	var NUMBER = '0'.charCodeAt(0)
+	var LOWER  = 'a'.charCodeAt(0)
+	var UPPER  = 'A'.charCodeAt(0)
+	var PLUS_URL_SAFE = '-'.charCodeAt(0)
+	var SLASH_URL_SAFE = '_'.charCodeAt(0)
+
+	function decode (elt) {
+		var code = elt.charCodeAt(0)
+		if (code === PLUS ||
+		    code === PLUS_URL_SAFE)
+			return 62 // '+'
+		if (code === SLASH ||
+		    code === SLASH_URL_SAFE)
+			return 63 // '/'
+		if (code < NUMBER)
+			return -1 //no match
+		if (code < NUMBER + 10)
+			return code - NUMBER + 26 + 26
+		if (code < UPPER + 26)
+			return code - UPPER
+		if (code < LOWER + 26)
+			return code - LOWER + 26
+	}
+
+	function b64ToByteArray (b64) {
+		var i, j, l, tmp, placeHolders, arr
+
+		if (b64.length % 4 > 0) {
+			throw new Error('Invalid string. Length must be a multiple of 4')
+		}
+
+		// the number of equal signs (place holders)
+		// if there are two placeholders, than the two characters before it
+		// represent one byte
+		// if there is only one, then the three characters before it represent 2 bytes
+		// this is just a cheap hack to not do indexOf twice
+		var len = b64.length
+		placeHolders = '=' === b64.charAt(len - 2) ? 2 : '=' === b64.charAt(len - 1) ? 1 : 0
+
+		// base64 is 4/3 + up to two characters of the original data
+		arr = new Arr(b64.length * 3 / 4 - placeHolders)
+
+		// if there are placeholders, only get up to the last complete 4 chars
+		l = placeHolders > 0 ? b64.length - 4 : b64.length
+
+		var L = 0
+
+		function push (v) {
+			arr[L++] = v
+		}
+
+		for (i = 0, j = 0; i < l; i += 4, j += 3) {
+			tmp = (decode(b64.charAt(i)) << 18) | (decode(b64.charAt(i + 1)) << 12) | (decode(b64.charAt(i + 2)) << 6) | decode(b64.charAt(i + 3))
+			push((tmp & 0xFF0000) >> 16)
+			push((tmp & 0xFF00) >> 8)
+			push(tmp & 0xFF)
+		}
+
+		if (placeHolders === 2) {
+			tmp = (decode(b64.charAt(i)) << 2) | (decode(b64.charAt(i + 1)) >> 4)
+			push(tmp & 0xFF)
+		} else if (placeHolders === 1) {
+			tmp = (decode(b64.charAt(i)) << 10) | (decode(b64.charAt(i + 1)) << 4) | (decode(b64.charAt(i + 2)) >> 2)
+			push((tmp >> 8) & 0xFF)
+			push(tmp & 0xFF)
+		}
+
+		return arr
+	}
+
+	function uint8ToBase64 (uint8) {
+		var i,
+			extraBytes = uint8.length % 3, // if we have 1 byte left, pad 2 bytes
+			output = "",
+			temp, length
+
+		function encode (num) {
+			return lookup.charAt(num)
+		}
+
+		function tripletToBase64 (num) {
+			return encode(num >> 18 & 0x3F) + encode(num >> 12 & 0x3F) + encode(num >> 6 & 0x3F) + encode(num & 0x3F)
+		}
+
+		// go through the array every three bytes, we'll deal with trailing stuff later
+		for (i = 0, length = uint8.length - extraBytes; i < length; i += 3) {
+			temp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2])
+			output += tripletToBase64(temp)
+		}
+
+		// pad the end with zeros, but make sure to not forget the extra bytes
+		switch (extraBytes) {
+			case 1:
+				temp = uint8[uint8.length - 1]
+				output += encode(temp >> 2)
+				output += encode((temp << 4) & 0x3F)
+				output += '=='
+				break
+			case 2:
+				temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1])
+				output += encode(temp >> 10)
+				output += encode((temp >> 4) & 0x3F)
+				output += encode((temp << 2) & 0x3F)
+				output += '='
+				break
+		}
+
+		return output
+	}
+
+	exports.toByteArray = b64ToByteArray
+	exports.fromByteArray = uint8ToBase64
+}(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
+
+},{}],118:[function(require,module,exports){
+exports.read = function (buffer, offset, isLE, mLen, nBytes) {
+  var e, m
+  var eLen = nBytes * 8 - mLen - 1
+  var eMax = (1 << eLen) - 1
+  var eBias = eMax >> 1
+  var nBits = -7
+  var i = isLE ? (nBytes - 1) : 0
+  var d = isLE ? -1 : 1
+  var s = buffer[offset + i]
+
+  i += d
+
+  e = s & ((1 << (-nBits)) - 1)
+  s >>= (-nBits)
+  nBits += eLen
+  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+
+  m = e & ((1 << (-nBits)) - 1)
+  e >>= (-nBits)
+  nBits += mLen
+  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+
+  if (e === 0) {
+    e = 1 - eBias
+  } else if (e === eMax) {
+    return m ? NaN : ((s ? -1 : 1) * Infinity)
+  } else {
+    m = m + Math.pow(2, mLen)
+    e = e - eBias
+  }
+  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
+}
+
+exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
+  var e, m, c
+  var eLen = nBytes * 8 - mLen - 1
+  var eMax = (1 << eLen) - 1
+  var eBias = eMax >> 1
+  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
+  var i = isLE ? 0 : (nBytes - 1)
+  var d = isLE ? 1 : -1
+  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
+
+  value = Math.abs(value)
+
+  if (isNaN(value) || value === Infinity) {
+    m = isNaN(value) ? 1 : 0
+    e = eMax
+  } else {
+    e = Math.floor(Math.log(value) / Math.LN2)
+    if (value * (c = Math.pow(2, -e)) < 1) {
+      e--
+      c *= 2
+    }
+    if (e + eBias >= 1) {
+      value += rt / c
+    } else {
+      value += rt * Math.pow(2, 1 - eBias)
+    }
+    if (value * c >= 2) {
+      e++
+      c /= 2
+    }
+
+    if (e + eBias >= eMax) {
+      m = 0
+      e = eMax
+    } else if (e + eBias >= 1) {
+      m = (value * c - 1) * Math.pow(2, mLen)
+      e = e + eBias
+    } else {
+      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)
+      e = 0
+    }
+  }
+
+  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
+
+  e = (e << mLen) | m
+  eLen += mLen
+  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
+
+  buffer[offset + i - d] |= s * 128
+}
+
+},{}],119:[function(require,module,exports){
+
+/**
+ * isArray
+ */
+
+var isArray = Array.isArray;
+
+/**
+ * toString
+ */
+
+var str = Object.prototype.toString;
+
+/**
+ * Whether or not the given `val`
+ * is an array.
+ *
+ * example:
+ *
+ *        isArray([]);
+ *        // > true
+ *        isArray(arguments);
+ *        // > false
+ *        isArray('');
+ *        // > false
+ *
+ * @param {mixed} val
+ * @return {bool}
+ */
+
+module.exports = isArray || function (val) {
+  return !! val && '[object Array]' == str.call(val);
+};
+
+},{}],120:[function(require,module,exports){
 /*!
  * ngCordova
  * v0.1.21-alpha

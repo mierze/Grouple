@@ -1,5 +1,5 @@
 'use strict'
-function Badges(Getter) {
+function BadgeGetter(Getter) {
   this.get = get;
   
   return {
@@ -11,4 +11,4 @@ function Badges(Getter) {
   }
 }
 
-module.exports = Badges;
+module.exports = BadgeGetter;

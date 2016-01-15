@@ -11,7 +11,8 @@ function EventInviteController($stateParams, EventInviter, GroupListGetter) {
   
   //functions
   function init() {
-    GroupListGetter.get(vm.email, /*type of content to grab*/'groups', function setGroups(data) {
+    //get groups
+    GroupListGetter.get(vm.email, 'groups', function setGroups(data) {
       if (data['success'] === 1)
         vm.items = data['items'];
       else

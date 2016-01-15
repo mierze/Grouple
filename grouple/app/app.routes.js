@@ -38,7 +38,7 @@ function Routes($stateProvider, $urlRouterProvider, $httpProvider) {
         controller: 'EventsController as vm'
     })
     .state('user-profile', {
-        url:'/user-profile/:id',
+        url:'/user-profile/:email',
         templateUrl: 'module/profile/user/layout.html',
         controller: 'UserProfileController as vm'
     })
@@ -69,7 +69,7 @@ function Routes($stateProvider, $urlRouterProvider, $httpProvider) {
         controller: 'EventListController as vm'
     })
     .state('badge-list', {
-        url:'/badge-list/:id',
+        url:'/badge-list/:email',
         templateUrl: 'module/list/badge/layout.html',
         controller: 'BadgeListController as vm'
     })
@@ -99,7 +99,7 @@ function Routes($stateProvider, $urlRouterProvider, $httpProvider) {
         controller: 'ContactController as vm'
     })
     .state('user-messages', {
-        url:'/user-messages/:id',
+        url:'/user-messages/:contact',
         templateUrl: 'module/message/user/layout.html',
         controller: 'UserMessageController as vm'
     })

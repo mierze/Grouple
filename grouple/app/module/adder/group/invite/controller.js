@@ -12,7 +12,10 @@ function GroupInviteController($stateParams, UserListGetter, GroupInviter) {
   function init() {
     vm.email = storage.getItem("email");
     vm.id = $stateParams.id;
-    UserListGetter.get(vm.email, /*type of content to grab*/'friends', function setFriends(data) {
+    getUsers();
+  } //end init
+  function getUsers() {
+    UserListGetter.get(vm.email, 'friends', function setUsers(data) {
       //start fetch list of groups to invite
       if (data["success"] === 1) {
         alert(JSON.stringify(data));
@@ -21,7 +24,7 @@ function GroupInviteController($stateParams, UserListGetter, GroupInviter) {
       else
         alert(data["message"]);
     });
-  } //end init
+  }
   function toggleRole(id, role) {
     if (role === 'M')
       role = 'A'

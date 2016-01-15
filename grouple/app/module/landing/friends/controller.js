@@ -1,6 +1,5 @@
 'use strict'
 function FriendsController($rootScope, FriendInviter) {
-  //friends controller
   var vm = this;
   var storage = window.localStorage;
   $rootScope.$broadcast('setTitle', 'Events');
@@ -16,13 +15,13 @@ function FriendsController($rootScope, FriendInviter) {
     {
       alert(data['message']);
     });
-  };
+  }
   function toggleAddFriend() {
     if (vm.showAddFriend) 
       vm.showAddFriend = false;
     else
       vm.showAddFriend = true;
-  };
-}; //end friends controller
+  }
+} //end friends controller
 
 module.exports = FriendsController;

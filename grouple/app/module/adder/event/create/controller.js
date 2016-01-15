@@ -6,9 +6,9 @@ function EventCreateController($filter, $state, Creator) {
   vm.created = false; //boolean whether event has been created
   vm.create = create;
   vn.showErrors = showErrors;
+  
   //functions
   function create() {
-    //create function
     //form validation
     alert('Before creator service:\n'+JSON.stringify(vm.post));
     vm.post.recurring = 0;
@@ -24,16 +24,15 @@ function EventCreateController($filter, $state, Creator) {
     vm.info.startDate = $filter('date')(vm.info.startDate, 'yyyy-MM-dd hh:mm:ss');
     vm.info.endDate = $filter('date')(vm.info.endDate, 'yyyy-MM-dd hh:mm:ss'); 
     Creator.create(vm.post, 'event', function(data) {
-      //creater create
       alert(data['message']);
       if (data['success'] === '1') 
-      //TODO: give user option to go to profile or invite groups
+        //TODO: give user option to go to profile or invite groups
         $state.go('event-invite', {id: data['id']});
-    }); //end creater create
-  };
+    }); //end create
+  }
   function showErrors() {
     alert('Uh, or. An error occured creating this event. Please try again.');
   }
-}; //end event create controller
+} //end event create controller
 
 module.exports = EventCreateController;

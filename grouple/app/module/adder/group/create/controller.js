@@ -2,7 +2,6 @@
 function GroupCreateController($state, Creator) {
   var vm = this;
   var storage = window.localStorage;
-  //init post parameters
   vm.post = {};
   vm.post.name = '';
   vm.post.about = '';

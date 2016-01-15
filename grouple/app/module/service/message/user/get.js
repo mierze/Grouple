@@ -1,5 +1,5 @@
 'use strict'
-function Messages(Getter) {
+function UserMessageGetter(Getter) {
     this.get = get;
     
     return {
@@ -7,8 +7,8 @@ function Messages(Getter) {
     };
     
     function get(params, callback) {
-        Getter.get('http://groupleapp.herokuapp.com/api/' + type + '/messages/' + params.id + '/' + params.contact, callback);
+        Getter.get('http://groupleapp.herokuapp.com/api/user/message/messages/' + params.email + '/' + params.contact, callback);
     }
 }
 
-module.exports = Messages;
+module.exports = UserMessageGetter;

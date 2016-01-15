@@ -1,22 +1,24 @@
 'use strict'
-function UserMessageController($rootScope, $stateParams, $state, $interval, UserMessageGetter, UserMessageSender) {
+function UserMessageController($rootScope, $stateParams, $state, UserMessageGetter, UserMessageSender) {
   var vm = this;
   var storage = window.localStorage;
   vm.send = send;
-
+  vm.init = init;
+  
   //functions
   function init() {
+    //alert('made it');
     vm.email = storage.getItem('email');
-    vm.contact = $stateParams.id;
+    vm.contact = $stateParams.contact;
+    alert('made ' + JSON.stringify($stateParams));
     $rootScope.$broadcast('setTitle', 'Messages');
-    setMessages();
+    getMessages();
   } //end init function
-  function setMessages() {
+  function getMessages() {
     vm.params = {};
-    vm.params = {}; //post params for http request
-    vm.params.contact = contact;
-    vm.params.id = email;
-    UserMessageGetter.get(params, function setMessages(data) {
+    vm.params.contact = vm.contact;
+    vm.params.email = vm.email;
+    UserMessageGetter.get(vm.params, function setMessages(data) {
       if (data['success'] === 1)
         vm.messages = data['data'];
       else {
@@ -25,12 +27,12 @@ function UserMessageController($rootScope, $stateParams, $state, $interval, User
       }
     });
   }
-  function send() { //start send
-    var post = {};
-    post.contact = contact;
-    post.email = storage.getItem('email');
+  function send() {
+    vm.post = {};
+    vm.post.contact = contact;
+    vm.post.email = storage.getItem('email');
     UserMessageSender.send(post, function sendMessage(data) {
-        $state.go('user-messages', {id: contact}, {reload: true});      
+        $state.go('user-messages', {id: vm.contact}, {reload: true});      
     });
   } //end send function
 } //end user message controller

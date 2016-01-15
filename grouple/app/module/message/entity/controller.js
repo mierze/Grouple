@@ -1,5 +1,5 @@
 'use strict'
-function EntityMessageController($rootScope, $stateParams, EnitityMessageGetter, EntityMessageSender) {
+function EntityMessageController($rootScope, $stateParams, EntityMessageGetter, EntityMessageSender) {
   var vm = this;
   var storage = window.localStorage;
   vm.init = init;
@@ -9,6 +9,7 @@ function EntityMessageController($rootScope, $stateParams, EnitityMessageGetter,
   function init() {
     vm.type = $stateParams.content;
     vm.id = $stateParams.id;
+    alert(JSON.stringify($stateParams));
     vm.email = storage.getItem('email');
     $rootScope.$broadcast('setTitle', 'Messages');
     getMessages();
