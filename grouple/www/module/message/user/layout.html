@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<div id="messages" ng-init="vm.init()">
-    <div class="list-wrap">
+<div id="messages" class="container" ng-init="vm.init()">
+    <div class="list">
         <user-message-row ng-repeat="message in vm.messages"></user-message-row>
     </div>
     <form name="messageForm" class="message-form pull-down" novalidate ng-submit="messageForm.$valid && send()" ng-cloak>
         <textarea id="message" placeholder="Write your message!" ng-minlength="1" ng-maxlength="400" ng-model="post.message">  
         </textarea>
-        <button type="submit">Send</button>
+        <button class="btn btn-success" type="submit">Send</button>
     </form>
-    <sad-guy ng-show='vm.sadGuy'></sad-guy>
+    <sad-guy ng-show="vm.sadGuy"></sad-guy>
 </div>

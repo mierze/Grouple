@@ -1,7 +1,6 @@
 'use strict'
-function EventProfileController($rootScope, $stateParams, $state, EventProfileGetter, EventImageGetter) {
+function EventProfileController($rootScope, $stateParams, EventProfileGetter, EventImageGetter) {
   var vm = this;
-  var storage = window.localStorage;
   vm.type = 'event';
   vm.privs = {};
   vm.privs.admin = true;
@@ -38,8 +37,7 @@ function EventProfileController($rootScope, $stateParams, $state, EventProfileGe
     }); //end fetch profile
     EventImageGetter.get(vm.id, function setImage(data) {
       if (data['success'] === 1) {
-        var imgUrl = 'data:image/png;base64,' + data['image'];
-        vm.image = imgUrl;
+        vm.image = 'data:image/png;base64,' + data['image'];
       }
       else {
         //generic catch

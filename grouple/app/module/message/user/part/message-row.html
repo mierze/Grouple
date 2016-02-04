@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<div class="message" ng-class="{'message-right': userMessageRowCtrl.isUser(message.from)}" ng-click="userMessageRowCtrl.profile(message.contact)" >
+<div class="message row" ng-class="{'message-right': userMessageRowCtrl.isUser(message.from)}" ng-click="userMessageRowCtrl.profile(message.contact)" >
     <p ng-cloak>{{message.message}}</p>
-    <em style="width: 100%; text-align:right; font-size: .5em" ng-cloak>{{message.sendDate}}</em>
+    <em class="send-date" ng-cloak>{{message.sendDate}}</em>
 </div>

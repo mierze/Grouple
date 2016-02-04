@@ -1,5 +1,5 @@
 'use strict'
-function UserProfileController($rootScope, $stateParams, $state, UserProfileGetter, UserImageGetter) {
+function UserProfileController($rootScope, $stateParams, UserProfileGetter, UserImageGetter) {
   var vm = this;
   var storage = window.localStorage;
   vm.init = init;
@@ -11,7 +11,6 @@ function UserProfileController($rootScope, $stateParams, $state, UserProfileGett
     vm.post = {};
     vm.privs = {};
     vm.privs.admin = true;
-    alert('solidd ' + JSON.stringify($stateParams));
     //case that id is for logged user's email
     if ($stateParams.email === 'user')   
       vm.email = storage.getItem('email');  

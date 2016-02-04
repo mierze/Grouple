@@ -3,7 +3,7 @@ function Register(Poster) {
   this.register = register;
   
   return {
-    register: register
+    register: this.register
   };
   
   function register(data, callback) {

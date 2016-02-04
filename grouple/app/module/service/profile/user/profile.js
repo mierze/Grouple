@@ -14,9 +14,7 @@ function Profile(Getter) {
   
   function callback(data) {
     //middleware for callback
-    alert(JSON.stringify(data));
     data.data = data.data[0];
-    //alert(JSON.stringify(data.data[0]));
     return vm.cb(data);
   }
 }

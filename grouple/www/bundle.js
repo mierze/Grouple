@@ -9,8 +9,6 @@ angular.module('grouple', [
     require('angular-ui-router')
   ])
   .config(require('./app.routes.js'));
-
-
 },{"./app.routes.js":2,"./module":22,"angular":115,"angular-ui-router":113,"ng-cordova":120}],2:[function(require,module,exports){
 'use strict'
 function Routes($stateProvider, $urlRouterProvider, $httpProvider) {
@@ -169,8 +167,8 @@ module.exports = EventCreateController;
 },{}],4:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('adder.event.create', [])
-  .controller('EventCreateController', require('./controller.js')); 
-},{"./controller.js":3}],5:[function(require,module,exports){
+  .controller('EventCreateController', require('./controller')); 
+},{"./controller":3}],5:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('adder.event', [
   require('./create').name,
@@ -227,9 +225,9 @@ module.exports = EventInviteController;
 },{}],7:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('adder.event.invite', [])
-  .controller('EventInviteController', require('./controller.js'))
-  .directive('eventInviteRow', require('./part/invite-row.directive.js'));
-},{"./controller.js":6,"./part/invite-row.directive.js":8}],8:[function(require,module,exports){
+  .controller('EventInviteController', require('./controller'))
+  .directive('eventInviteRow', require('./part/invite-row.directive'));
+},{"./controller":6,"./part/invite-row.directive":8}],8:[function(require,module,exports){
 'use strict'
 function EventInviteRowDirective($state) {
   return {
@@ -403,35 +401,27 @@ module.exports = angular.module('adder', [
 ]);
 },{"./event":5,"./group":11}],16:[function(require,module,exports){
 'use strict'
-function ActionBarDirective($state, $rootScope) {
+function ActionBarDirective($rootScope, $state) {
     return {
         restrict: 'E',
         templateUrl: 'module/component/action-bar/layout.html',
         controller: actionBarCtrl,
-        controllerAs: 'vm' //or actionBarCtrl
+        controllerAs: 'actionBarCtrl' //or actionBarCtrl
     };
     
     function actionBarCtrl($scope, $filter) {
         var vm = this;
         var storage = window.localStorage;
         vm.title = 'Grouple';
-        vm.showNav = false;
-        vm.logout = logout;
         vm.toggleNav = toggleNav;
         vm.back = back;
         
-        $scope.$on('setTitle', function(event, data) {
+        $scope.$on('setTitle', function setTitle(event, data) {
             vm.title = $filter('limitTo')(data, 16, 0);
-            $scope.$emit('showActionBar', true); //for now
-        });
-        
-        $scope.$on('showActionBar', function(event, show) {
-          vm.showActionBar = show;
         });
         
         //functions
         function toggleNav() {
-            //broadcast a message to display the menu from rootScope
             $rootScope.$broadcast('showNavMenu');    
         }
         function back() {
@@ -442,19 +432,10 @@ function ActionBarDirective($state, $rootScope) {
                 //go back again
             history.back();
         } //end back
-        function logout() {
-            //function to handling clearing memory and logging out user
-            alert('Later ' + storage.getItem('first') + '!');
-            //$state.go('login');
-            //location.href = '#login';
-            storage.clear(); //clear storage
-        } //end logout
     } //end action bar controller
 } //end action bar directive
 
 module.exports = ActionBarDirective;
-
-
 },{}],17:[function(require,module,exports){
 'use strict'
 module.exports = angular.module('component.action-bar', [])
@@ -474,14 +455,29 @@ function NavMenuDirective($state) {
         var vm = this;
         var storage = window.localStorage;
         vm.logout = logout;
-        $scope.$on('showNavMenu', function(event, data) {
+
+        $scope.$on('setLogged', function setLogged(event, data) {
+            //if (data)
+            //vm.logged = storage.getItem('email') ? true : false;
+            vm.logged = data;
+            if (data)
+                storage.setItem('logged', true);
+        });
+
+        $scope.$on('setTitle', function setTitle(event, data) {
+            vm.title = $filter('limitTo')(data, 16, 0);
+        });
+
+
+        $scope.$on('showNavMenu', function(event) {
             vm.showNavMenu = vm.showNavMenu ? false : true;
         });
         function logout() {
             //function to handling clearing memory and logging out user
             alert('Later ' + storage.getItem('first') + '!');
-            //$state.go('login');
             storage.clear(); //clear storage
+            vm.logged = false;
+            $state.go('login');
         } //end logout
     } //end action bar controller
 } //end action bar directive
@@ -544,40 +540,41 @@ module.exports = EventsController;
 },{}],24:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('landing.events', [])
-  .controller('EventsController', require('./controller.js'))
-},{"./controller.js":23}],25:[function(require,module,exports){
+  .controller('EventsController', require('./controller'))
+},{"./controller":23}],25:[function(require,module,exports){
 'use strict'
 function FriendsController($rootScope, FriendInviter) {
-  var vm = this;
-  var storage = window.localStorage;
-  $rootScope.$broadcast('setTitle', 'Events');
-  vm.post = {};
-  vm.showAddFriend = false;
-  vm.post.from = storage.getItem('email');
-  vm.send = send;
-  vm.toggleAddFriend = toggleAddFriend;
-  
-  //functions
-  function send() {
-    FriendInviter.send(vm.post, function(data)
-    {
-      alert(data['message']);
-    });
-  }
-  function toggleAddFriend() {
-    if (vm.showAddFriend) 
-      vm.showAddFriend = false;
-    else
-      vm.showAddFriend = true;
-  }
+    var vm = this;
+    var storage = window.localStorage;
+    $rootScope.$broadcast('setTitle', 'Friends');
+    vm.post = {};
+    vm.showAddFriend = false;
+    vm.post.from = storage.getItem('email');
+    vm.send = send;
+    vm.toggleAddFriend = toggleAddFriend;
+
+    //functions
+    function send() {
+        alert(JSON.stringify(vm.post));
+        FriendInviter.send(vm.post, function callback(data) {
+            alert(JSON.stringify(data));
+        });
+    }
+
+    function toggleAddFriend() {
+        if (vm.showAddFriend)
+            vm.showAddFriend = false;
+        else
+            vm.showAddFriend = true;
+    }
 } //end friends controller
 
 module.exports = FriendsController;
 },{}],26:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('landing.friends', [])
-  .controller('FriendsController', require('./controller.js'))
-},{"./controller.js":25}],27:[function(require,module,exports){
+  .controller('FriendsController', require('./controller'))
+},{"./controller":25}],27:[function(require,module,exports){
 'use strict'
 function GroupsController($rootScope) {
   $rootScope.$broadcast('setTitle', 'Groups');
@@ -587,19 +584,25 @@ module.exports = GroupsController;
 },{}],28:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('landing.groups', [])
-  .controller('GroupsController', require('./controller.js'))
-},{"./controller.js":27}],29:[function(require,module,exports){
+  .controller('GroupsController', require('./controller'))
+},{"./controller":27}],29:[function(require,module,exports){
 'use strict'
-function HomeController($rootScope) {
-  $rootScope.$broadcast('setTitle', 'Grouple');
+function HomeController($state, $rootScope) {
+    var storage = window.localStorage;
+    if (!storage.getItem('logged'))
+        $state.go('login');
+    else {
+        $rootScope.$broadcast('setLogged', true);
+        $rootScope.$broadcast('setTitle', 'Grouple');
+    }
 }
 
 module.exports = HomeController;
 },{}],30:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('landing.home', [])
-  .controller('HomeController', require('./controller.js'))
-},{"./controller.js":29}],31:[function(require,module,exports){
+  .controller('HomeController', require('./controller'))
+},{"./controller":29}],31:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('landing', [
   require('./home').name,
@@ -624,6 +627,7 @@ function BadgeListController($rootScope, $stateParams, BadgeGetter) {
   //functions
   function getBadges() {
     BadgeGetter.get(vm.email, function(data) {
+      alert(JSON.stringify(data));
       if (data['success'] === 1)
         vm.items = data['data'];
       else if (data['success'] === 0)
@@ -638,9 +642,9 @@ module.exports = BadgeListController;
 },{}],33:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('list.badge', [])
-  .controller('BadgeListController', require('./controller.js'))
-  .directive('badgeItem', require('./part/badge-item.directive.js'));
-},{"./controller.js":32,"./part/badge-item.directive.js":34}],34:[function(require,module,exports){
+  .controller('BadgeListController', require('./controller'))
+  .directive('badgeItem', require('./part/badge-item.directive'));
+},{"./controller":32,"./part/badge-item.directive":34}],34:[function(require,module,exports){
 'use strict'
 function BadgeItemDirective($state) {
   return {
@@ -730,9 +734,9 @@ module.exports = EventListController;
 },{}],36:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('list.event', [])
-  .controller('EventListController', require('./controller.js'))
-  .directive('eventRow', require('./part/event-row.directive.js'));
-},{"./controller.js":35,"./part/event-row.directive.js":37}],37:[function(require,module,exports){
+  .controller('EventListController', require('./controller'))
+  .directive('eventRow', require('./part/event-row.directive'));
+},{"./controller":35,"./part/event-row.directive":37}],37:[function(require,module,exports){
 'use strict'
 function EventRowDirective($state, InviteResponder) {
   return {
@@ -814,9 +818,9 @@ module.exports = GroupListController;
 },{}],39:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('list.group', [])
-  .controller('GroupListController', require('./controller.js'))
-  .directive('groupRow', require('./part/group-row.directive.js'));
-},{"./controller.js":38,"./part/group-row.directive.js":40}],40:[function(require,module,exports){
+  .controller('GroupListController', require('./controller'))
+  .directive('groupRow', require('./part/group-row.directive'));
+},{"./controller":38,"./part/group-row.directive":40}],40:[function(require,module,exports){
 'use strict'
 function GroupRowDirective($state, InviteResponder) {
   return {
@@ -918,9 +922,9 @@ module.exports = UserListController;
 },{}],43:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('list.user', [])
-  .controller('UserListController', require('./controller.js'))
-  .directive('userRow', require('./part/user-row.directive.js'));
-},{"./controller.js":42,"./part/user-row.directive.js":44}],44:[function(require,module,exports){
+  .controller('UserListController', require('./controller'))
+  .directive('userRow', require('./part/user-row.directive'));
+},{"./controller":42,"./part/user-row.directive":44}],44:[function(require,module,exports){
 'use strict'
 function UserRowDirective($state, InviteResponder) {
   return {
@@ -971,9 +975,9 @@ module.exports = ContactController;
 },{}],46:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('message.contact', [])
-  .controller('ContactController', require('./controller.js'))
-  .directive('contactRow', require('./part/contact-row.directive.js'));
-},{"./controller.js":45,"./part/contact-row.directive.js":47}],47:[function(require,module,exports){
+  .controller('ContactController', require('./controller'))
+  .directive('contactRow', require('./part/contact-row.directive'));
+},{"./controller":45,"./part/contact-row.directive":47}],47:[function(require,module,exports){
 'use strict'
 function ContactRowDirective($state) {
     return {
@@ -1038,9 +1042,9 @@ module.exports = EntityMessageController;
 },{}],49:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('message.entity', [])
-  .controller('EntityMessageController', require('./controller.js'))
-  .directive('entityMessageRow', require('./part/message-row.directive.js'));
-},{"./controller.js":48,"./part/message-row.directive.js":50}],50:[function(require,module,exports){
+  .controller('EntityMessageController', require('./controller'))
+  .directive('entityMessageRow', require('./part/message-row.directive'));
+},{"./controller":48,"./part/message-row.directive":50}],50:[function(require,module,exports){
 'use strict'
 function EntityMessageRowDirective($state) {
   return {
@@ -1080,10 +1084,8 @@ function UserMessageController($rootScope, $stateParams, $state, UserMessageGett
   
   //functions
   function init() {
-    //alert('made it');
     vm.email = storage.getItem('email');
     vm.contact = $stateParams.contact;
-    alert('made ' + JSON.stringify($stateParams));
     $rootScope.$broadcast('setTitle', 'Messages');
     getMessages();
   } //end init function
@@ -1115,9 +1117,9 @@ module.exports = UserMessageController;
 },{}],53:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('message.user', [])
-  .controller('UserMessageController', require('./controller.js'))
-  .directive('userMessageRow', require('./part/message-row.directive.js'));
-},{"./controller.js":52,"./part/message-row.directive.js":54}],54:[function(require,module,exports){
+  .controller('UserMessageController', require('./controller'))
+  .directive('userMessageRow', require('./part/message-row.directive'));
+},{"./controller":52,"./part/message-row.directive":54}],54:[function(require,module,exports){
 'use strict'
 function UserMessageRowDirective($state) {
   return {
@@ -1149,9 +1151,8 @@ function UserMessageRowDirective($state) {
 module.exports = UserMessageRowDirective;
 },{}],55:[function(require,module,exports){
 'use strict'
-function EventProfileController($rootScope, $stateParams, $state, EventProfileGetter, EventImageGetter) {
+function EventProfileController($rootScope, $stateParams, EventProfileGetter, EventImageGetter) {
   var vm = this;
-  var storage = window.localStorage;
   vm.type = 'event';
   vm.privs = {};
   vm.privs.admin = true;
@@ -1188,8 +1189,7 @@ function EventProfileController($rootScope, $stateParams, $state, EventProfileGe
     }); //end fetch profile
     EventImageGetter.get(vm.id, function setImage(data) {
       if (data['success'] === 1) {
-        var imgUrl = 'data:image/png;base64,' + data['image'];
-        vm.image = imgUrl;
+        vm.image = 'data:image/png;base64,' + data['image'];
       }
       else {
         //generic catch
@@ -1205,8 +1205,8 @@ module.exports = EventProfileController;
 'use strict';
 module.exports = angular.module('profile.event', [])
   .controller('EventProfileController', require('./controller'))
-  .directive('eventEdit', require('./part/event-edit.directive.js'));
-},{"./controller":55,"./part/event-edit.directive.js":57}],57:[function(require,module,exports){
+  .directive('eventEdit', require('./part/event-edit.directive'));
+},{"./controller":55,"./part/event-edit.directive":57}],57:[function(require,module,exports){
 'use strict'
 function EventEditDirective($state, $filter, EventEditer) {
   var storage = window.localStorage; //grab local storage
@@ -1300,8 +1300,8 @@ module.exports = GroupProfileController;
 'use strict';
 module.exports = angular.module('profile.group', [])
   .controller('GroupProfileController', require('./controller'))
-  .directive('groupEdit', require('./part/group-edit.directive.js'));
-},{"./controller":58,"./part/group-edit.directive.js":60}],60:[function(require,module,exports){
+  .directive('groupEdit', require('./part/group-edit.directive'));
+},{"./controller":58,"./part/group-edit.directive":60}],60:[function(require,module,exports){
 'use strict'
 function GroupEditDirective($state, GroupEditer) {
   var storage = window.localStorage; //grab local storage
@@ -1345,7 +1345,7 @@ module.exports = angular.module('profile', [
 ]);
 },{"./event":56,"./group":59,"./user":63}],62:[function(require,module,exports){
 'use strict'
-function UserProfileController($rootScope, $stateParams, $state, UserProfileGetter, UserImageGetter) {
+function UserProfileController($rootScope, $stateParams, UserProfileGetter, UserImageGetter) {
   var vm = this;
   var storage = window.localStorage;
   vm.init = init;
@@ -1357,7 +1357,6 @@ function UserProfileController($rootScope, $stateParams, $state, UserProfileGett
     vm.post = {};
     vm.privs = {};
     vm.privs.admin = true;
-    alert('solidd ' + JSON.stringify($stateParams));
     //case that id is for logged user's email
     if ($stateParams.email === 'user')   
       vm.email = storage.getItem('email');  
@@ -1420,8 +1419,8 @@ module.exports = UserProfileController;
 'use strict';
 module.exports = angular.module('profile.user', [])
   .controller('UserProfileController', require('./controller'))
-  .directive('userEdit', require('./part/user-edit.directive.js'));
-},{"./controller":62,"./part/user-edit.directive.js":64}],64:[function(require,module,exports){
+  .directive('userEdit', require('./part/user-edit.directive'));
+},{"./controller":62,"./part/user-edit.directive":64}],64:[function(require,module,exports){
 'use strict'
 function UserEditDirective($filter, UserEditer, $state) {
   return {
@@ -1516,25 +1515,20 @@ module.exports = function($http)
 }; //end event inviter
 },{}],67:[function(require,module,exports){
 'use strict'
-module.exports = function($http)
-{ //friend inviter takes in a to and from and sends the invite
-  var send = function(post, callback)
-  { //send function
-    alert(JSON.stringify(post));
-    $http(
-    { //http request to fetch list from server PANDA refactor out this
-      method  : 'POST',
-      url     : 'http://grouple.gear.host/api/invite_friend.php',
-      data    : post
-     }).then(
-    function(result) {
-      return callback(result.data);
-    });
-  }; //end send function
-  return {
-    send: send
-  };
-}; //end friend inviter
+function FriendInviter(Poster) {
+    //friend inviter takes in a to and from and sends the invite
+    this.send = send;
+
+
+    function send (data, callback) { //send function
+        Poster.post('https://groupleapp.herokuapp.com/api/user/invite', data, callback);
+    } //end send function
+    return {
+        send: this.send
+    };
+} //end friend inviter
+
+module.exports = FriendInviter;
 
 },{}],68:[function(require,module,exports){
 'use strict'
@@ -1562,17 +1556,13 @@ module.exports = function($http)
 }; //end group inviter
 
 },{}],69:[function(require,module,exports){
-//TODO
-//[ ] refactor out all extra calls, strip down to just setting bare url and params
-//for list fetcher, one file w/ switch, or seperate files with one liner?
-
 'use strict';
 module.exports = angular.module('service.adder', [])
-  .factory('Creator', require('./create'))
-  .factory('FriendInviter', require('./friend.invite'))
-  .factory('GroupInviter', require('./group.invite'))
-  .factory('EventInviter', require('./event.invite'))
-  .factory('InviteResponder', require('./invite.respond'));
+    .factory('Creator', require('./create'))
+    .factory('FriendInviter', require('./friend.invite'))
+    .factory('GroupInviter', require('./group.invite'))
+    .factory('EventInviter', require('./event.invite'))
+    .factory('InviteResponder', require('./invite.respond'));
 
 },{"./create":65,"./event.invite":66,"./friend.invite":67,"./group.invite":68,"./invite.respond":70}],70:[function(require,module,exports){
 'use strict'
@@ -1639,14 +1629,22 @@ module.exports = angular.module('service', [
 },{"./adder":69,"./get":71,"./list":79,"./message":85,"./post":90,"./profile":100,"./session":105}],73:[function(require,module,exports){
 'use strict'
 function BadgeGetter(Getter) {
-  this.get = get;
+  var vm = this;
+  vm.get = get;
   
   return {
-    get: this.get
+    get: vm.get
   };
   
-  function get(email, callback) {
+  function get(email, cb) {
+    vm.cb = cb;
     Getter.get('https://groupleapp.herokuapp.com/api/user/profile/badges/' + email, callback);
+  }
+
+  function callback(data) {
+    //middleware for callback
+    //data.data = data.data[0];
+    return vm.cb(data);
   }
 }
 
@@ -1654,9 +1652,9 @@ module.exports = BadgeGetter;
 },{}],74:[function(require,module,exports){
 'use strict';
 module.exports = angular.module('service.list.badge', [])
-  .factory('BadgeGetter', require('./badges'));
+  .factory('BadgeGetter', require('./get'));
 
-},{"./badges":73}],75:[function(require,module,exports){
+},{"./get":73}],75:[function(require,module,exports){
 'use strict'
 function Events(Getter) {
   this.get = get;
@@ -1715,7 +1713,6 @@ function Users(Getter) {
   };
   
   function get(id, content, callback) {
-    alert('here id is ' + id + ' ' + content);
     Getter.get('https://groupleapp.herokuapp.com/api/user/list/' + content + '/' + id, callback);
   }
 }
@@ -2023,20 +2020,21 @@ module.exports = GroupProfile;
 (function (Buffer){
 'use strict'
 function ImageDecoder() {
-  var vm = this;
-  vm.decode = decode;
-  
-  return {
-    decode: vm.decode
-  };
-  
-  function decode(blob, callback) {
-    var buffer = new Buffer(blob, 'binary');
-    return callback(buffer.toString('base64'));
-  }
+    var vm = this;
+    vm.decode = decode;
+
+    return {
+        decode: vm.decode
+    };
+
+    function decode(blob, callback) {
+        var buffer = new Buffer(blob, 'binary');
+        return callback(buffer.toString('base64'));
+    }
 }
 
 module.exports = ImageDecoder;
+
 }).call(this,require("buffer").Buffer)
 },{"buffer":116}],100:[function(require,module,exports){
 'use strict';
@@ -2116,9 +2114,7 @@ function Profile(Getter) {
   
   function callback(data) {
     //middleware for callback
-    alert(JSON.stringify(data));
     data.data = data.data[0];
-    //alert(JSON.stringify(data.data[0]));
     return vm.cb(data);
   }
 }
@@ -2153,7 +2149,7 @@ function Register(Poster) {
   this.register = register;
   
   return {
-    register: register
+    register: this.register
   };
   
   function register(data, callback) {
@@ -2178,12 +2174,14 @@ function LoginController($rootScope, $state, Login) {
   vm.post = {};
   vm.login = login;
   vm.showErrors = showErrors;
-  alert(JSON.stringify(storage));
+  vm.enter = enter;
+  alert('for developer: '  + JSON.stringify(storage));
+
+  $rootScope.$broadcast('setTitle', 'Login');
   //check for stay logged
-  if (storage.getItem('email') !== null && (storage.getItem('stayLogged') !== 0 && storage.getItem('stayLogged') !== '0')) {
-     $state.go('home');
-     $rootScope.$broadcast('showActionBar', true);
-  }
+  if (storage.getItem('email') !== null && (storage.getItem('stayLogged')
+      !== 0 && storage.getItem('stayLogged') !== '0'))
+    vm.enter();
   else //be sure to clear old storage
     storage.clear();
       
@@ -2191,20 +2189,23 @@ function LoginController($rootScope, $state, Login) {
   function login() {
     Login.login(vm.post, function(data) {
       alert(data['message']);
-      if (data['success'] === 1) {
+      if (data['success'] == 1) {
         //successful login
         //set storage items
         storage.setItem('stayLogged', vm.post.stayLogged);
         storage.setItem('email', data['email']);
         storage.setItem('first', data['first']);
         storage.setItem('last', data['last']);
-        $rootScope.$broadcast('showActionBar', true);
-        $state.go('home');
+        vm.enter();
       }
     });
   } //end login function
   function showErrors() {
     alert("There are errors in the registration form, check input and try again!");
+  }
+  function enter() {
+    $rootScope.$broadcast('setLogged', true);
+    $state.go('home');
   }
 } //end login controller
 
@@ -2216,30 +2217,40 @@ module.exports = angular.module('session.login', [])
   .controller('LoginController', require('./controller.js'));
 },{"./controller.js":109}],111:[function(require,module,exports){
 'use strict'
-function RegisterController(Register, $state) {
-  var vm = this;
-  var storage = window.localStorage;
-  vm.post = {};
-  vm.post.last = ''; //default for optional field
-  vm.register = register;
-  vm.showErrors = showErrors;
-  //functions
-  function register() {
-    Register.register(vm.post, function(data) {
-        alert(data['message']);
-        if (data['success'] === 1) {
-          storage.setItem('email', vm.post.email);
-          storage.setItem('stayLogged', '1');
-          storage.setItem('first', vm.post.first);
-          storage.setItem('last', vm.post.last)
-          //launch home
-          $state.go('home');
-        }
-    }); //end register
-  } //end register function
-  function showErrors() {
-    alert("There are errors in the registration form, check input and try again!");
-  }
+function RegisterController(Register, $state, $rootScope) {
+    var vm = this;
+    var storage = window.localStorage;
+    vm.post = {};
+    vm.post.last = ''; //default for optional field
+    vm.register = register;
+    vm.showErrors = showErrors;
+    vm.enter = enter;
+
+    storage.clear(); //if you want to register, you better not be signed in
+    $rootScope.$broadcast('setTitle', 'Register');
+
+    //functions
+    function register() {
+        Register.register(vm.post, function register(data) {
+            alert(data['message']);
+            if (data['success'] == 1) {
+                storage.setItem('email', vm.post.email);
+                storage.setItem('stayLogged', '1');
+                storage.setItem('first', vm.post.first);
+                storage.setItem('last', vm.post.last);
+                vm.enter();
+            }
+        }); //end register
+    } //end register function
+    function showErrors() {
+        alert("There are errors in the registration form, check input and try again!");
+    }
+
+    function enter() {
+        //launch home
+        $rootScope.$broadcast('setLogged', true);
+        $state.go('home');
+    }
 } //end register controller
 
 module.exports = RegisterController;

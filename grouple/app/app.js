@@ -8,4 +8,3 @@ angular.module('grouple', [
     require('angular-ui-router')
   ])
   .config(require('./app.routes.js'));
-

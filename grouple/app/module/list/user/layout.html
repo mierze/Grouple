@@ -1,7 +1,5 @@
 <!DOCTYPE html>
 <div id="user-list">
-    <div class="list-wrap">
-        <user-row ng-repeat="item in vm.items"></user-row>
-    </div>
-    <sad-guy ng-show='vm.sadGuy'></sad-guy>
+    <user-row ng-repeat="item in vm.items"></user-row>
+    <sad-guy ng-show="vm.sadGuy"></sad-guy>
 </div>

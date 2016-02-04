@@ -7,7 +7,6 @@ function Users(Getter) {
   };
   
   function get(id, content, callback) {
-    alert('here id is ' + id + ' ' + content);
     Getter.get('https://groupleapp.herokuapp.com/api/user/list/' + content + '/' + id, callback);
   }
 }

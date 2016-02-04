@@ -14,6 +14,7 @@ function BadgeListController($rootScope, $stateParams, BadgeGetter) {
   //functions
   function getBadges() {
     BadgeGetter.get(vm.email, function(data) {
+      alert(JSON.stringify(data));
       if (data['success'] === 1)
         vm.items = data['data'];
       else if (data['success'] === 0)

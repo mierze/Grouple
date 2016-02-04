@@ -21,12 +21,12 @@
     "browserify": "^12.0.1",
     "connect": "^3.4.0",
     "gulp": "^3.9.0",
-    "gulp-clean": "^0.3.1",
     "gulp-develop-server": "^0.5.0",
     "gulp-git": "^1.6.0",
     "gulp-jasmine": "^2.2.1",
     "gulp-jasmine-node": "^1.0.3",
     "gulp-karma": "0.0.5",
+    "gulp-sass": "^2.1.1",
     "jasmine-core": "^2.3.4",
     "jasmine-node": "^1.14.5",
     "karma": "^0.13.15",
@@ -35,7 +35,9 @@
     "phantomjs": "^1.9.18",
     "q": "^1.4.1",
     "request": "^2.67.0",
+    "rimraf": "^2.5.0",
     "run-sequence": "^1.1.5",
+    "sass": "^0.5.0",
     "vinyl-source-stream": "^1.1.0"
   },
   "engines": {

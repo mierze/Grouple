@@ -11,14 +11,29 @@ function NavMenuDirective($state) {
         var vm = this;
         var storage = window.localStorage;
         vm.logout = logout;
-        $scope.$on('showNavMenu', function(event, data) {
+
+        $scope.$on('setLogged', function setLogged(event, data) {
+            //if (data)
+            //vm.logged = storage.getItem('email') ? true : false;
+            vm.logged = data;
+            if (data)
+                storage.setItem('logged', true);
+        });
+
+        $scope.$on('setTitle', function setTitle(event, data) {
+            vm.title = $filter('limitTo')(data, 16, 0);
+        });
+
+
+        $scope.$on('showNavMenu', function(event) {
             vm.showNavMenu = vm.showNavMenu ? false : true;
         });
         function logout() {
             //function to handling clearing memory and logging out user
             alert('Later ' + storage.getItem('first') + '!');
-            //$state.go('login');
             storage.clear(); //clear storage
+            vm.logged = false;
+            $state.go('login');
         } //end logout
     } //end action bar controller
 } //end action bar directive

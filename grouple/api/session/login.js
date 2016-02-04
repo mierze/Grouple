@@ -4,8 +4,7 @@ var router = require('express').Router();
 router.use(require('body-parser').json());
 var bcrypt = require('bcrypt');
 
-function loginWizard()
-{
+function loginWizard() {
   return function(request, response) {
     var data = {};
     if (!request.body.email || !request.body.password) {

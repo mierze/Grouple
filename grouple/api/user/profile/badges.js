@@ -3,7 +3,7 @@ var handler = require('../../handler');
 var router = require('express').Router();
 
 var badges = {
-  statement: 'SELECT name, b_level, rec_date FROM badges WHERE email = ?',
+  statement: 'SELECT name, level, rec_date FROM badges WHERE email = ?',
   emptyMessage: 'No badges to display.',
   params: ['email']
 };

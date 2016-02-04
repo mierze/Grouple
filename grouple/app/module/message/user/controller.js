@@ -7,10 +7,8 @@ function UserMessageController($rootScope, $stateParams, $state, UserMessageGett
   
   //functions
   function init() {
-    //alert('made it');
     vm.email = storage.getItem('email');
     vm.contact = $stateParams.contact;
-    alert('made ' + JSON.stringify($stateParams));
     $rootScope.$broadcast('setTitle', 'Messages');
     getMessages();
   } //end init function

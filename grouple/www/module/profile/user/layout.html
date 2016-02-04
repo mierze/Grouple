@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<div id="user-profile" ng-init="vm.init()">
+ <div id="user-profile" ng-init="vm.init()">
     <!-- TODO better naming for imageNull etc.. -->
     <img class="profile-img" ng-src="{{vm.image}}" alt="Profile Image" ng-hide="vm.imageNull" ng-cloak />
     <section>
@@ -7,10 +7,10 @@
         <strong ng-hide="vm.locationNull" ng-cloak>{{vm.info.location}}</strong>
         <p ng-hide="vm.aboutNull" ng-cloak>{{vm.info.about}}</p>
     </section>
-    <a class="btn" ui-sref="badge-list({content: 'badges', email: vm.info.email})">Badges</a>
-    <a class="btn" ui-sref="user-list({content: 'friends', id: vm.info.email})">Friends</a>
-    <a class="btn" ui-sref="group-list({content: 'groups', id: vm.info.email})">Groups</a>
-    <a class="btn" ui-sref="event-list({content: 'upcoming', id: vm.info.email})">Upcoming Events</a>
-    <button ng-click="vm.toggleEdit()" ng-show="vm.privs.admin">Edit Profile</button>
+    <a class="btn btn-default" ui-sref="badge-list({content: 'badges', email: vm.info.email})">Badges</a>
+    <a class="btn btn-default" ui-sref="user-list({content: 'friends', id: vm.info.email})">Friends</a>
+    <a class="btn btn-default" ui-sref="group-list({content: 'groups', id: vm.info.email})">Groups</a>
+    <a class="btn btn-default" ui-sref="event-list({content: 'upcoming', id: vm.info.email})">Upcoming Events</a>
+    <button class="btn btn-danger" ng-click="vm.toggleEdit()" ng-show="vm.privs.admin">Edit Profile</button>
     <user-edit ng-show="vm.showEdit"></user-edit>
 </div>

@@ -3,13 +3,12 @@
     <fieldset>
         <input type="email" placeholder="Email" required ng-maxlength="80" ng-model="vm.post.email" />
         <input type="password" placeholder="Password" required ng-model="vm.post.password" ng-minlength="4" ng-maxlength="20" />
-        <label><!-- TODO check best practice for labels -->
+        <label class="center-block"><!-- TODO check best practice for labels -->
             Stay logged in?
             <input type="checkbox" name="stay-logged" ng-true-value="1" ng-false-value="0" ng-model="vm.post.stayLogged" ng-cloak />
         </label>
-        <button type="submit">Login</button>
+        <button class="btn btn-primary btn-block" type="submit">Login</button>
     </fieldset>
 </form>
-<p>Don't have an account!?</p>
-<a class="btn" ui-sref="register">Register</a>
-
+<p class="center-block">Don't have an account!?</p>
+<a class="btn btn-primary btn-block" ui-sref="register">Register</a>

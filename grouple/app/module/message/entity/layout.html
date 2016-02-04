@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<div id="messages" ng-init="vm.init()">
-    <div class="list-wrap">
+<div id="messages" class="container" ng-init="vm.init()">
+    <div class="list">
         <entity-message-row ng-repeat="message in vm.messages" ></entity-message-row>
     </div>
     <form novalidate ng-submit="send()" ng-cloak>
         <textarea id="message" placeholder="Write your message!" ng-model="post.message" rows="5" cols="40">  
         </textarea>
-        <input class="btn" type="submit" value="Send" />
+        <input class="btn btn-default" type="submit" value="Send" />
     </form>
 </div>

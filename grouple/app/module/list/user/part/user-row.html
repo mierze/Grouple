@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<div class="list-row" >
-    <h5 ng-click="userRowCtrl.profile(item.email)" ng-cloak>{{item.first}} {{item.last}}</h5>
+<div class="row" ng-click="userRowCtrl.profile(item.email)">
+    <h5 ng-cloak>{{item.first}} {{item.last}}</h5>
     <em ng-cloak>{{item.email}}</em>
-    <button id="accept" ng-click="userRowCtrl.decision(item, 'accept')" ng-show="invite">Accept</button>
-    <button id="decline" ng-click="userRowCtrl.decision(item, 'decline')" ng-show="invite">Decline</button>
+    <button class="btn btn-success" id="accept" ng-click="userRowCtrl.decision(item, 'accept')" ng-show="invite">Accept</button>
+    <button class="btn btn-danger" id="decline" ng-click="userRowCtrl.decision(item, 'decline')" ng-show="invite">Decline</button>
 </div>

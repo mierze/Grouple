@@ -3,11 +3,12 @@ var gulp = require('gulp');
 var browserify = require('browserify');
 var source = require('vinyl-source-stream');
 var karma = require('gulp-karma');
-var clean = require('gulp-clean');
+var rimraf = require('rimraf');
 var jasmineNode = require('gulp-jasmine-node');
 var server = require('gulp-develop-server');
 var git = require('gulp-git');
 var Q = require('q');
+var sass = require('gulp-sass');
 
 //defaults
 gulp.task('default', ['watch']);
@@ -18,14 +19,19 @@ gulp.task('watch', function() {
 
 //building
 //create production public folder
-gulp.task('build', ['browserify', 'clean'], function() {
+gulp.task('build', ['browserify', 'sass', 'clean'], function() {
   //files to move over
   var buildFiles = [
     './app/bundle.js',
     './app/**/*.html',
-    './app/**/*.css',
     './app/**/*.png',
-    './app/**/*.ico'
+    './app/**/*.ico',
+    './app/**/*.css',
+    './app/**/*.eot',
+    './app/**/*.svg',
+    './app/**/*.ttf',
+    './app/**/*.woff',
+    './app/**/*.woff2'
   ];
   gulp.src(buildFiles)
   .pipe(gulp.dest('./www'));
@@ -36,10 +42,15 @@ gulp.task('browserify', function() {
     .pipe(source('bundle.js'))
     .pipe(gulp.dest('./app'));
 });
+//configure css from sass, build will throw it in production folder
+gulp.task('sass', function () {
+  gulp.src('./app/asset/style/style.scss')
+    .pipe(sass().on('error', sass.logError))
+    .pipe(gulp.dest('./app/asset/style'));
+});
 //clean out public directory
-gulp.task('clean', function() {
-  return gulp.src(['www'], {read:false})
-  .pipe(clean());
+gulp.task('clean', function(cb) {
+  rimraf('./www', cb);
 });
 
 //testing
