@@ -1,20 +1,15 @@
 'use strict'
-function LoginController($rootScope, $state, Login) {
+function LoginController($rootScope, $state, Login, SessionChecker) {
   var vm = this;
   var storage = window.localStorage;
   vm.post = {};
   vm.login = login;
   vm.showErrors = showErrors;
   vm.enter = enter;
-  alert('for developer: '  + JSON.stringify(storage));
 
-  $rootScope.$broadcast('setTitle', 'Login');
-  //check for stay logged
-  if (storage.getItem('email') !== null && (storage.getItem('stayLogged')
-      !== 0 && storage.getItem('stayLogged') !== '0'))
+  if (SessionChecker.check(0))
     vm.enter();
-  else //be sure to clear old storage
-    storage.clear();
+  else $rootScope.$broadcast('setTitle', 'Login');
 
   //functions
   function login() {
@@ -35,8 +30,8 @@ function LoginController($rootScope, $state, Login) {
     alert("There are errors in the registration form, check input and try again!");
   }
   function enter() {
-    $rootScope.$broadcast('setLogged', true);
-    $state.go('home');
+      $rootScope.$broadcast('setLogged', true);
+      $state.go('home');
   }
 } //end login controller
 

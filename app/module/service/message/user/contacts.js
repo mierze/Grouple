@@ -10,7 +10,7 @@ function Contacts(Getter) {
     function get(email, cb) {
         vm.cb = cb;
         vm.email = email;
-        Getter.get('https://groupleapp.herokuapp.com/api/user/message/contacts/' + email, callback);
+        Getter.get('http://localhost:1337/api/user/message/contacts/' + email, callback);
     }
     
     function callback(data) {

@@ -1,14 +1,14 @@
 'use strict'
-function Editer(Poster) {
+function GroupEditer(Poster) {
   this.edit = edit;
-  
+
   return {
     edit: this.edit
   };
-  
-  function edit(post, callback) {  
-    Poster.post(post, 'https://groupleapp.herokuapp.com/api/group/profile/edit', callback);
+
+  function edit(post, callback) {
+    Poster.post(post, 'http://localhost:1337/api/group/profile/edit', callback);
   }
 }
 
-module.exports = Editer;
+module.exports = GroupEditer;

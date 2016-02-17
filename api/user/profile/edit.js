@@ -1,6 +1,7 @@
 'use strict'
 var handler = require('../../handler');
 var router = require('express').Router();
+router.use(require('body-parser').json());
 
 var editUserProfile = {
   statement: 'UPDATE users SET first = ?, last = ?, birthday = ?, about = ?, location = ?, gender = ? WHERE email = ?',
@@ -8,5 +9,11 @@ var editUserProfile = {
   params: ['first', 'last', 'birthday', 'about', 'location', 'gender', 'email']
 };
 
-router.route('/').put(handler.wizard(editUserProfile));
+router.route('/').post(function(request, response) {
+    console.log(JSON.stringify(request.body));
+    editUserProfile.data = request.body;
+    console.log(JSON.stringify(editUserProfile.data));
+    response.json(handler.postWizard(editUserProfile));
+});
+
 module.exports = router;

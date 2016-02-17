@@ -1,22 +1,16 @@
 'use strict'
-function GroupInviter($http) {
-  var storage = window.localStorage;
-  var send = function(post, callback) {
-    //TODO: need to take in key-vals email->role
-    post.from = storage.getItem('email');
-    alert("Post in group inviter" + JSON.stringify(post));
-    $http({ //http request to fetch list from server PANDA refactor out this
-      method  : 'POST',
-      url     : 'http://grouple.gear.host/api/invite_to_group.php',
-      data    : post
-     }).then(
-    function(result) {
-      return callback(result.data);
-    });
-    }; //end send function
-  return {
-    send: send
-  };
+function GroupInviter(Poster) {
+    var storage = window.localStorage;
+    this.send = send;
+
+    return {
+      send: this.send
+    };
+
+    function send(data, callback) {
+        data.from = storage.getItem('email');
+        Poster.post('http://localhost:1337/group/invite/', data, callback);
+    }
 } //end group inviter
 
 module.exports = GroupInviter;

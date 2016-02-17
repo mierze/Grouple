@@ -9,7 +9,7 @@
         <li><a id="nav-settings" href="#">Settings</a></li>
         <li><a id="nav-logout" ng-click="navMenuCtrl.logout()">Logout</a></li>
     </ul>
-    <ul class="nav navbar-nav navbar-right" ng-hide="navMenuCtrl.logged">
+    <ul class="nav navbar-nav navbar-right" ng-show="!navMenuCtrl.logged">
         <li><a id="nav-login" ui-sref="login">Login</a></li>
         <li><a id="nav-register" ui-sref="register">Register</a></li>
     </ul>

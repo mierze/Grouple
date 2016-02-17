@@ -3,23 +3,22 @@ function UserListController($rootScope, $stateParams, UserListGetter) {
   var vm = this;
   var storage = window.localStorage;
   vm.content = $stateParams.content;
-  
+
   //id for generic
   if ($stateParams.id == null || $stateParams.id === 'user')
     vm.id = storage.getItem('email');
   else
     vm.id = $stateParams.id;
-    
+
   vm.setTitle = setTitle;
   vm.getUsers = getUsers;
-  
+
   vm.setTitle();
   vm.getUsers();
-  
+
   //functions
   function setTitle() {
     if (vm.content === 'friend-invites') {
-      //editable check
       vm.invite = true;
       vm.title = 'Friend Invites';
     }
@@ -31,13 +30,14 @@ function UserListController($rootScope, $stateParams, UserListGetter) {
       vm.title = 'Event Participants';
     else
       vm.title = 'Users';
-    $rootScope.$broadcast('setTitle', vm.title); 
+    $rootScope.$broadcast('setTitle', vm.title);
   }
   function getUsers() {
     alert('now in get users ' + vm.content + ' ' + vm.id) ;
     UserListGetter.get(vm.id, vm.content, function setUsers(results) {
       if (results['success'] === 1) {
         vm.items = results['data'];
+        alert(JSON.stringify(vm.items));
         vm.mod = results['mod'];
         alert("MOD IS : " + vm.mod);
       }
@@ -50,5 +50,3 @@ function UserListController($rootScope, $stateParams, UserListGetter) {
 } //end user list controller
 
 module.exports = UserListController;
-
-

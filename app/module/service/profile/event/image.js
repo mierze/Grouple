@@ -1,17 +1,17 @@
 'use strict'
-function ImageGetter(Getter, ImageDecoder) {
+function EventImageGetter(Getter, ImageDecoder) {
   var vm = this;
   vm.get = get;
-  
+
   return {
     get: vm.get
   };
-  
+
   function get(id, cb) {
     vm.cb = cb;
-    Getter.get('https://groupleapp.herokuapp.com/api/event/profile/image/' + id, callback);
+    Getter.get('http://localhost:1337/api/event/profile/image/' + id, callback);
   }
-  
+
   function callback(data) {
     //middleware for image callback
     //TODO set success based on stuff
@@ -25,4 +25,4 @@ function ImageGetter(Getter, ImageDecoder) {
   }
 }
 
-module.exports = ImageGetter;
+module.exports = EventImageGetter;

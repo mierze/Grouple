@@ -6,28 +6,26 @@ function NavMenuDirective($state) {
         controller: navMenuCtrl,
         controllerAs: 'navMenuCtrl' //or actionBarCtrl
     };
-    
+
     function navMenuCtrl($scope, $filter, $state) {
         var vm = this;
         var storage = window.localStorage;
         vm.logout = logout;
+        vm.logged = true;
 
         $scope.$on('setLogged', function setLogged(event, data) {
-            //if (data)
-            //vm.logged = storage.getItem('email') ? true : false;
             vm.logged = data;
-            if (data)
-                storage.setItem('logged', true);
+            storage.setItem('logged', vm.logged);
         });
 
         $scope.$on('setTitle', function setTitle(event, data) {
             vm.title = $filter('limitTo')(data, 16, 0);
         });
 
-
         $scope.$on('showNavMenu', function(event) {
             vm.showNavMenu = vm.showNavMenu ? false : true;
         });
+
         function logout() {
             //function to handling clearing memory and logging out user
             alert('Later ' + storage.getItem('first') + '!');
@@ -39,4 +37,3 @@ function NavMenuDirective($state) {
 } //end action bar directive
 
 module.exports = NavMenuDirective;
-

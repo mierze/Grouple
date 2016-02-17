@@ -7,4 +7,3 @@ mysql.configure({
     database : 'mierze'
 });
 module.exports = mysql;
-      

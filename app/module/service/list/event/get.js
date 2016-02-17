@@ -1,13 +1,13 @@
 'use strict'
 function Events(Getter) {
   this.get = get;
-  
+
   return {
     get: this.get
   };
-  
+
   function get(id, content, callback) {
-    Getter.get('https://groupleapp.herokuapp.com/api/event/list/' + content + '/' + id, callback);
+    Getter.get('http://localhost:1337/api/event/list/' + content + '/' + id, callback);
   }
 }
 

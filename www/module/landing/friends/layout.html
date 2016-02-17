@@ -1,10 +1,6 @@
 <!DOCTYPE html>
-<!-- TODO move directive declaration for add friend to adders -->
-<<<<<<< HEAD
 <div id="friends">
-=======
 <div id="friends" class="container">
->>>>>>> b93fbae5c07aff0a6df31e79bf07359b2317e91a
     <a class="btn btn-primary btn-block" ng-click="vm.toggleAddFriend()">Add Friend</a>
     <a class="btn btn-primary btn-block" ui-sref="user-list({content: 'friends', id: null})">Current Friends</a>
     <a class="btn btn-primary btn-block" ui-sref="user-list({content: 'friend-invites', id: null})">Friend Invites</a>
@@ -14,15 +10,9 @@
             <a ng-click="vm.toggleAddFriend()" class="close">X</a>
             <h5>Add a friend!</h5>
             <form novalidate ng-submit="vm.send()" ng-cloak>
-<<<<<<< HEAD
                 <input type="email" name="email" id="email" required ng-maxlength="40" ng-model="vm.post.to" />
                 <input class="btn btn-success" type="submit" value="Send" />
-=======
-                <input type="email" name="email" id="email" required ng-maxlength="40" ng-model="post.to" />
-                <input class="btn" type="submit" value="Send" />
->>>>>>> b93fbae5c07aff0a6df31e79bf07359b2317e91a
             </form>
         </div>
     </div>
 </div>
-

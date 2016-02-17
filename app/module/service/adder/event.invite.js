@@ -1,25 +1,16 @@
 'use strict'
-module.exports = function($http)
-{ //event inviter takes in a to and from and sends the invite
-  var storage = window.localStorage;
-  var send = function(post, callback) {
-    //send function
-    //TODO: should take in a list of gids
-      //will need to tweak the php to take in a list
-    //could merge this service as inviter.js
-    alert("Post is\n" + JSON.stringify(post));
-    post.from = storage.getItem('email');
-    $http({
-      //http request to fetch list from server PANDA refactor out this
-      method  : 'POST',
-      url     : 'http://grouple.gear.host/api/invite_to_event.php',
-      data    : post
-     }).then(
-    function(result) {
-      return callback(result.data);
-    });
-  }; //end send function
-  return {
-    send: send
-  };
-}; //end event inviter
+function EventInviter(Poster) {
+    var storage = window.localStorage;
+    this.send = send;
+
+    return {
+        send: this.send
+    };
+
+    function send(data, callback) {
+        data.from = storage.getItem('email');
+        Poster.post('http://localhost:1337/event/invite/', data, callback);
+    }
+} //end event inviter
+
+module.exports = EventInviter;

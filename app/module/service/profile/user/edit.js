@@ -1,5 +1,5 @@
 'use strict'
-function Editer(Poster) {
+function UserEditer(Poster) {
   this.edit = edit;
 
   return {
@@ -7,8 +7,8 @@ function Editer(Poster) {
   };
 
   function edit(post, callback) {
-    Poster.post(post, 'https://groupleapp.herokuapp.com/api/user/profile/edit', callback);
+    Poster.post('http://localhost:1337/api/user/profile/edit/', post, callback);
   }
 }
 
-module.exports = Editer;
+module.exports = UserEditer;

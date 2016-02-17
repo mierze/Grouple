@@ -1,17 +1,17 @@
 'use strict'
-function Profile(Getter) {
+function UserGetter(Getter) {
   var vm = this;
   vm.get = get;
-  
+
   return {
     get: vm.get
   };
-  
+
   function get(email, cb) {
     vm.cb = cb;
-    Getter.get('https://groupleapp.herokuapp.com/api/user/profile/' + email, callback);
+    Getter.get('http://localhost:1337/api/user/profile/' + email, callback);
   }
-  
+
   function callback(data) {
     //middleware for callback
     data.data = data.data[0];
@@ -19,4 +19,4 @@ function Profile(Getter) {
   }
 }
 
-module.exports = Profile;
+module.exports = UserGetter;

@@ -5,16 +5,16 @@ function UserProfileController($rootScope, $stateParams, UserProfileGetter, User
   vm.init = init;
   vm.toggleEdit = toggleEdit;
   vm.info = {};
-  
+
   //functions
   function init() {
     vm.post = {};
     vm.privs = {};
     vm.privs.admin = true;
     //case that id is for logged user's email
-    if ($stateParams.email === 'user')   
-      vm.email = storage.getItem('email');  
-    else if($stateParams.email !== null)   
+    if ($stateParams.email == 'user')
+      vm.email = storage.getItem('email');
+    else if($stateParams.email !== null)
       vm.email = $stateParams.email;
     else
       alert('No email specified!');
@@ -27,6 +27,7 @@ function UserProfileController($rootScope, $stateParams, UserProfileGetter, User
       vm.showEdit = true;
   } //end toggle edit
   function getProfile() {
+    //vessell 40k
     UserProfileGetter.get(vm.email, function setProfile(data) {
       if (data['success'] === 1) {
         //fetched successfully
@@ -38,6 +39,9 @@ function UserProfileController($rootScope, $stateParams, UserProfileGetter, User
         else { //parse age from birthday
           //TODO seperate date parsing to a factory
           var birthday = new Date(vm.info.birthday); //to date
+          vm.info.year = birthday.getFullYear();
+          vm.info.month = birthday.getMonth()+1;
+          vm.info.day = birthday.getDay()+1;
           var difference = new Date - birthday;
           vm.info.age = Math.floor((difference / 1000/*ms*/ / (60/*s*/ * 60/*m*/ * 24/*hr*/)) / 365.25/*day*/);
         }
@@ -51,7 +55,6 @@ function UserProfileController($rootScope, $stateParams, UserProfileGetter, User
         alert(data['message']);
     }); //end set profile
     UserImageGetter.get(vm.email, function setImage(data) {
-      alert(JSON.stringify(data.data[0]['image_hdpi']));
       if (data['success'] === 1) {
         if (data.image < 10  || data.image == null)
           vm.imageNull = true;

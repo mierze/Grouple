@@ -1,6 +1,6 @@
 {
   "name": "Grouple",
-  "version": "0.3.6",
+  "version": "0.3.9",
   "description": "An application to promote getting together with friends and participating in events in the community.",
   "main": "index.js",
   "scripts": {
@@ -11,6 +11,7 @@
     "angular-ui-router": "^0.2.15",
     "bcrypt": "^0.8.5",
     "body-parser": "^1.14.1",
+    "cors": "^2.7.1",
     "express": "4.13.3",
     "mysql": "^2.9.0",
     "mysql-promise": "^1.4.0",
@@ -20,7 +21,7 @@
     "angular-mocks": "^1.4.7",
     "browserify": "^12.0.1",
     "connect": "^3.4.0",
-    "gulp": "^3.9.0",
+    "gulp": "^3.9.1",
     "gulp-develop-server": "^0.5.0",
     "gulp-git": "^1.6.0",
     "gulp-jasmine": "^2.2.1",

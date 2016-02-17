@@ -1,20 +1,14 @@
 'use strict'
-module.exports = function($http)
-{ //friend inviter takes in a to and from and sends the invite
-  var send = function(post, callback)
-  { //send function
-    alert(JSON.stringify(post));
-    $http(
-    { //http request to fetch list from server PANDA refactor out this
-      method  : 'POST',
-      url     : 'http://grouple.gear.host/api/invite_friend.php',
-      data    : post
-     }).then(
-    function(result) {
-      return callback(result.data);
-    });
-  }; //end send function
-  return {
-    send: send
-  };
-}; //end friend inviter
+function FriendInviter(Poster) {
+    this.send = send;
+
+    return {
+      send: this.send
+    };
+
+    function send(data, callback) { //send function
+        Poster.post('http://localhost:1337/api/user/invite', data, callback);
+    }
+} //end friend inviter
+
+module.exports = FriendInviter;

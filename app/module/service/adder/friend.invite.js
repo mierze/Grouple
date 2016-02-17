@@ -1,14 +1,14 @@
 'use strict'
 function FriendInviter(Poster) {
-    //friend inviter takes in a to and from and sends the invite
     this.send = send;
 
-    function send (data, callback) { //send function
-        Poster.post('https://groupleapp.herokuapp.com/api/user/invite', data, callback);
-    } //end send function
     return {
         send: this.send
     };
+
+    function send (data, callback) { //send function
+        Poster.post('http://localhost:1337/api/user/invite/', data, callback);
+    } //end send function
 } //end friend inviter
 
 module.exports = FriendInviter;

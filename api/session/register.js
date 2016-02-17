@@ -8,9 +8,6 @@ function registerWizard() {
     return function (request, response) {
         var data = {};
 
-        // console.log('here it is:\n' + JSON.stringify(request));
-        //return response.json(data);
-
         if (!request.body.email || !request.body.password || !request.body.first) {
             data.success = -99;
             data.message = 'Missing email, password or first.';

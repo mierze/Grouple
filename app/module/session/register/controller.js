@@ -1,5 +1,5 @@
 'use strict'
-function RegisterController(Register, $state, $rootScope) {
+function RegisterController(Register, $state, $rootScope, SessionChecker) {
     var vm = this;
     var storage = window.localStorage;
     vm.post = {};
@@ -8,8 +8,9 @@ function RegisterController(Register, $state, $rootScope) {
     vm.showErrors = showErrors;
     vm.enter = enter;
 
-    storage.clear(); //if you want to register, you better not be signed in
-    $rootScope.$broadcast('setTitle', 'Register');
+    if (SessionChecker.check(0))
+        vm.enter();
+    else $rootScope.$broadcast('setTitle', 'Login');
 
     //functions
     function register() {

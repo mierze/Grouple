@@ -16,21 +16,13 @@ function UserEditDirective($filter, UserEditer, $state) {
     //functions
     function save(info) {
       //formatting date
-      var year = info.birthday.getUTCFullYear();
-      var month = info.birthday.getUTCMonth() + 1;
-      var day = info.birthday.getUTCDay() + 1;
-      var birthday =  year + '-' + month + '-' + day;
+      var birthday =  info.year + '-' + info.month + '-' + info.day;
       info.birthday = birthday;
-      //TODO: figure gender out!!!
-     // info.gender === 'Male' ? info.gender = 'm' : info.gender = 'f';
-      //ensure all info set
-      alert('Before editer service.\n' + JSON.stringify(info));
       UserEditer.edit(info, function(data) {
-        alert(data['message']);
         //if successful update ui and close out
-        if (data['success'] === 1) {
+        //if (data['success'] == 1) {
           $state.go($state.current, {id: vm.type}, {reload: true})
-        }
+        //}
       });
     } //end save
     function showErrors() {

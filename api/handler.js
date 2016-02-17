@@ -5,10 +5,7 @@ var mysql = require('./db');
 function wizard(_data) {
   return function(request, response) {
     var params = setParams(request.params, _data.params);
-<<<<<<< HEAD
-    console.log(JSON.stringify(_data) + '\n\n' + params);
-=======
->>>>>>> b93fbae5c07aff0a6df31e79bf07359b2317e91a
+    console.log(JSON.stringify(params));
     mysql.query(_data.statement, params)
     .spread(function(results) {
         var bundle = bundler(results, _data);
@@ -19,25 +16,47 @@ function wizard(_data) {
   }
 }
 
+function postWizard(_data) {
+    var data = setParams(_data.data, _data.params);
+    console.log(JSON.stringify(data));
+    mysql.query(_data.statement, data)
+      .spread(function(results) {
+          //return results;
+          //var bundle = bundler(results, _data);
+          var bundle = {};
+          bundle.success = 1;
+          bundle.message = _data.successMessage;
+          return bundle.json();
+      }).catch(function(error) {
+        console.log(error);
+      });
+}
+
+function putter(_data) {
+    var data = setParams(_data.data, _data.params);
+    console.log(JSON.stringify(data));
+    mysql.query(_data.statement, data)
+      .spread(function(results) {
+          return JSON.stringify(results);
+          //var bundle = bundler(results, _data);
+          //return bundle.json();
+      }).catch(function(error) {
+        console.log(error);
+      });
+}
+
 //sub functions
 function setParams(_params, _expected) {
     var params = [];
     if (!_expected.length) { //set no params
       return params;
     }
-<<<<<<< HEAD
+    console.log(JSON.stringify(_params));
 
     _expected.forEach(function pushToParams(p) {
       params.push(_params[p]);
     });
 
-=======
-    
-    _expected.forEach(function pushToParams(p) {
-      params.push(_params[p]);
-    });
-    
->>>>>>> b93fbae5c07aff0a6df31e79bf07359b2317e91a
     return params;
 }
 
@@ -65,8 +84,5 @@ function bundler(results, _data) {
 }
 
 module.exports.setParams = setParams;
-<<<<<<< HEAD
 module.exports.wizard = wizard;
-=======
-module.exports.wizard = wizard;
->>>>>>> b93fbae5c07aff0a6df31e79bf07359b2317e91a
+module.exports.postWizard = postWizard;
