@@ -1,0 +1,6 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@drawable/background_blue" android:state_pressed="true"/>
+    <item android:drawable="@drawable/background_yellow"/>
+
+</selector><!-- From: file:/Users/brett/Documents/Mierzelancing/Workspaces/grouple-workspace/Grouple/app/src/main/res/drawable-hdpi/selector_button_yellow.xml -->

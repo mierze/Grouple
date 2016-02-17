@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+     <item>
+<shape android:shape="rectangle" android:padding="10dp" android:layout_margin="5dp">
+    <solid  android:color="@color/yellow" />
+    <stroke android:width="2dip" android:color="@color/black" />
+      
+
+ </shape>
+   </item>
+    <item>
+      <shape 
+        android:shape="rectangle">
+            <stroke android:width="1dp" android:color="@color/border_color" />
+            <solid android:color="#00000000"/>
+
+        </shape>
+   </item>
+    <solid  android:color="@color/light_green" />
+   <item android:top="1dp" android:bottom="1dp" android:left="-2dp" android:right="-2dp"> 
+      <shape 
+        android:shape="rectangle">
+            <stroke android:width="1dp" android:color="@color/border_color" />
+            <solid android:color="#00000000"/>
+        </shape>
+   </item>
+</layer-list><!-- From: file:/Users/brett/Documents/Mierzelancing/Workspaces/grouple-workspace/Grouple/app/src/main/res/drawable-hdpi/top_bottom_border_new.xml -->

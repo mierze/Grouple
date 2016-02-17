@@ -1,0 +1,6 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@drawable/top_bottom_border_selected" android:state_pressed="true"/>
+    <item android:drawable="@drawable/topbottom_border_colored"/>
+
+</selector><!-- From: file:/Users/brett/Documents/Mierzelancing/Workspaces/grouple-workspace/Grouple/app/src/main/res/drawable-hdpi/selector_listrow.xml -->

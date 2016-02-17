@@ -1,0 +1,7 @@
+<!DOCTYPE html>
+<div class="row" ng-click="groupRowCtrl.profile(item.id)">
+    <h5 ng-cloak>{{item.name}}</h5>
+    <em ng-cloak>{{item.id}}</em>
+    <button class="btn btn-success" id="accept" ng-click="groupRowCtrl.decision(item.id, 'accept')" ng-show="invite">Accept</button>
+    <button class="btn btn-danger" id="decline" ng-click="groupRowCtrl.decision(item.id, 'decline')" ng-show="invite">Decline</button>
+</div>

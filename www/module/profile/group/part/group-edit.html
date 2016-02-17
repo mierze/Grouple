@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<div class="modal" id="editprofile-modal" ng-cloak>
+    <div>
+        <a class="close" ng-click="vm.toggleEdit()">X</a>
+        <form name="groupEditForm" novalidate ng-submit="groupEditForm.$valid && groupEditCtrl.save(vm.info)" ng-cloak>
+            <input type="text" class="name" name="name" id="name" placeholder="Name" required ng-model="vm.info.name" ng-cloak/>
+            <input type="text" name="about" id="about" placeholder="About Event" ng-model="vm.info.about" ng-cloak />
+            <label>
+                Public
+                <input type="radio" name="public" value="1" ng-model="post.pub" />
+            </label>
+            <label>
+                Private
+                <input type="radio" name="public" value="0" checked ng-model="post.pub" />
+            </label>
+            <button type="submit">Save</button>
+        </form>
+    </div>
+</div>

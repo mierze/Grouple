@@ -1,0 +1,5 @@
+<!DOCTYPE html>
+<div class="message row" ng-class="{'message-right': userMessageRowCtrl.isUser(message.from)}" ng-click="userMessageRowCtrl.profile(message.contact)" >
+    <p ng-cloak>{{message.message}}</p>
+    <em class="send-date" ng-cloak>{{message.sendDate}}</em>
+</div>

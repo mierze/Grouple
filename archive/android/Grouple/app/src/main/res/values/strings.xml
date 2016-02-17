@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="ip">68.59.162.183</string>
+    <string name="app_name">Grouple</string>
+    <string name="currentUser"></string>
+    <string name="loginTextView">Login</string>
+    <string name="registerTextView">Register</string>
+    <string name="homeTextView">Grouple</string>
+    <string name="inviteMembersMessage">Click on the name or the \'✓\' of friends you want to add. Tap to toggle their role [U]ser, [P]romoter, [A]dmin.</string>
+    <string name="userTextView">User Profile</string>
+    <string name="groupsTextView">Groups</string>
+    <string name="emailEditText">Enter email</string>
+    <string name="title_activity_event_addgroups">Add Groups</string>
+    <string name="passwordEditText">Enter password</string>
+    <string name="rePasswordEditText">Re-Enter Password</string>
+    <string name="fNameEditText">Enter First Name</string>
+    <string name="lNameEditText">Enter Last Name</string>
+    <string name="loginButton">Login</string>
+    <string name="registerButton">Register</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_home">Grouple Home</string>
+    <string name="eventsTextView">Events</string>
+    <string name="eventsButton">Events</string>
+    <string name="groupsButton">Groups</string>
+    <string name="profileButton">Profile</string>
+    <string name="messagesButton">Messages</string>
+    <string name="friendsButton">Friends</string>
+    <string name="settingsButton">Settings</string>
+    <string name="backButton">Back</string>
+    <string name="logoutButton">Logout</string>
+    <string name="createGroupButton">Create Group</string>
+    <string name="yourGroupsButton">My Groups</string>
+    <string name="pendingGroupsButton">Group Invites</string>
+    <string name="createEventButton">Create Event</string>
+    <string name="unconfirmedEventsButton">Unconfirmed Events</string>
+    <string name="upcomingEventsButton">Upcoming Events</string>
+    <string name="pastEventsButton">Past Events</string>
+    <string name="userButton">User</string>
+    <string name="noFriendRequestsTextView">No friend requests to display!</string>
+    <string name="homeButton">Home</string>
+    <string name="title_activity_user">User Profile</string>
+    <string name="title_activity_groups">Groups</string>
+    <string name="title_activity_events">Events</string>
+    <string name="title_activity_register">Register</string>
+    <string name="loginFailString">Incorrect Email or Password!</string>
+    <string name="title_activity_friends">Friends</string>
+    <string name="title_activity_add_friend">Add Friend</string>
+    <string name="title_activity_current_friends">Friends</string>
+    <string name="title_activity_friend_requests">Friend Requests</string>
+    <string name="title_activity_resources">Resources</string>
+    <string name="title_activity_global">Global</string>
+    <string name="editProfilePhotoButton">Edit Photo</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="title_activity_messages">Messages</string>
+    
+    <!-- BADGES -->
+    <string name="gregarious_about">This is a real party animal. User\'s with this badge generally attend a lot of social outings where they can cherish great times with friends.</string>
+     <string name="gregarious_hint">Feeling social?</string>
+    <string name="congregator_about">You attract a crowd, keep doin what you are doing.</string>
+     <string name="congregator_hint">Don\'t just do something, get some friends together and make something happen.</string>
+    <string name="amused_about">Entertainment, that\'s what I\'m talking about!</string>
+     <string name="amused_hint">To unlock this badge, get together with some friends and enjoy some good quality entertainment.</string>
+    <string name="merrymaker_about">When it comes when hosting events, you\'re the cream of the crop.</string>
+     <string name="merrymaker_hint">Amuse others and maybe you will be a merrymaker before long!</string>
+    <string name="diligent_about">What a studious achievement!</string>
+     <string name="diligent_hint">To unlock this badge, bunker down with some friends and get something done!</string>
+    <string name="productive_about">Not only helping yourself be productive but others? That is truly something special.</string>
+     <string name="productive_hint">It\'s in the name \;\)</string>
+    <string name="agile_about">The active user who pushes themselves to achieve more physically.</string>
+     <string name="agile_hint">Get off the couch and do something!</string>
+    <string name="healthnut_about">Bringing others to their athletic goals.</string>
+     <string name="healthnut_hint">Get up get out and get some friends together to do something active.</string>
+    <string name="outdoorsman_about">Not your typical city dweller. This badge is for the user who get\'s out in the environment and lives on the edge!</string>
+     <string name="outdoorsman_hint">To unlock this badge, get out and experience the elements.</string>
+    <string name="environmentalist_about">For the explorer of nature who always brings a gang. You are a real tree hugger, live it up!</string>
+     <string name="environmentalist_hint">To unlock this badge, get together with some friends and enjoy some good quality entertainment.</string>
+    <string name="extrovert_about">Doing everything, because it is just all so fun!</string>
+     <string name="extrovert_hint">Don\'t settle for less, keep on a-doing more!</string>
+    <string name="regular_about">You are in a good rhythm, don\'t let anyone throw off your groove!</string>
+     <string name="regular_hint">To earn this you are going to need to attend some sort of an event, hmm\.\.\.</string>
+    <string name="routinist_about">You want to do what you want to do, so do it.</string>
+     <string name="routinist_hint">To unlock this badge, you are going to need to be in a pretty consistent routine.</string>
+    <string name="active_about">Not yet implemented.</string>
+     <string name="active_hint">This badge is coming soon!</string>
+    <string name="wellrounded_about">Not yet implemented.</string>
+     <string name="wellrounded_hint">Keeping it balanced earns you this badge.</string>
+    <string name="reachingout_about">Not yet implemented.</string>
+     <string name="reachingout_hint">Meet some people, go try something just beyond your horizon.</string>
+    <string name="mingler_about">Not yet fully implemented.</string>
+     <string name="mingler_hint">Get out and mingle with the public!</string>
+    <string name="perseverance_about">Not yet fully implemented.</string>
+     <string name="perseverance_hint">Don\'t take no for an answer!</string>
+    <string name="helpinghand_about">What a nice and helpful person you are!</string>
+     <string name="helpinghand_hint">Don\'t travel alone to an event \:\)</string>
+    
+    <!-- COLORS -->
+    <color name="hint_text_color">#7022252A</color>
+    <color name="text_color">#41291C</color>
+    <color name="button_text_color">#F5F1E2</color>
+    <color name="background_color">#F5F1E2</color>
+    <color name="layout_background_color">#B8F5F1E2</color>
+    <color name="listrow_background_color">#105CC4E4</color>
+    <color name="actionbar_background_color">#89D3DF</color>
+    <color name="button_border_color">#FBDD4B</color>
+    <color name="header_text_color">#94CB6C</color>
+    <color name="border_color">#AD9587</color>
+    <color name="image_background_color">#AD9587</color>
+    <color name="button_background_color">#835F79</color>
+    <color name="message_background_color">#55B1D5</color>
+    <color name="white">#F5F1E2</color>
+    <color name="light_purple">#E1D9DD</color>
+    <color name="purple">#835F79</color>
+    <color name="blue">#89D3DF</color>
+    <color name="light_blue">#E7F6F8</color>
+    <color name="green">#94CB6C</color>
+    <color name="light_green">#DCEECF</color>
+    <color name="red">#F6946F</color>
+    <color name="light_red">#FBD4C5</color>
+    <color name="yellow">#EEE469</color>
+    <color name="light_yellow">#F4F3B9</color>
+    <color name="black">#41291C</color>
+    <color name="light_black">#AD9587</color>
+
+    <string name="title_activity_edit_profile">Edit Profile</string>
+    <string name="title_activity_friend_profile">FriendProfileActivity</string>
+    <string name="AddGroup">Add to Group</string>
+    <string name="Confirm">Create this Group</string>
+    <string name="isAdmin">Give person Admin privileges</string>
+    <string name="groupNameMessage">Give your group a name</string>
+    <string name="bioMessage">About Group</string>
+    <string name="groupBioMessage">Tell people a little about this group</string>
+    <string name="confirm">Confirm Create Group</string>
+    <string name="introMessage2">Current Members</string>
+    <string name="title_activity_event_create">EventCreateActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_group_members">GroupMembersActivity</string>
+    <string name="title_activity_group_edit">GroupEditActivity</string>
+
+    <string-array name="categorySpinner">
+        <item>Food and Entertainment</item>
+        <item>Sports and Games</item>
+        <item>Travel and Leisure</item>
+        <item>Getting Fucked Up</item>
+    </string-array>
+
+    <string name="title_activity_invite">InviteActivity</string>
+    <string name="title_activity_event_add_groups">EventAddGroupsActivity</string>
+    <string name="title_activity_event_edit">EventEditActivity</string>
+    <string name="title_activity_manage_members">ManageMembersActivity</string>
+    <string name="title_activity_manage_attending_event">ManageAttendingEvent</string>
+    <string name="title_activity_contact_list">ContactList</string>
+    <string name="title_activity_group_messages">GroupMessagesActivity</string>
+    <string name="title_activity_event_messaging">EventMessagingActivity</string>
+    <string name="title_activity_base">BaseActivity</string>
+
+</resources>

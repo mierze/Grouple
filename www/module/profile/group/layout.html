@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<div id="group-profile" ng-init="vm.init()">
+    <img class="profile-img" ng-src="{{vm.image}}" alt="Profile Image" ng-cloak/>
+    <section>
+        <p ng-cloak>{{vm.info.about}}</p>
+    </section>
+    <a class="btn btn-default" ui-sref="user-list({content: 'group-members', id: vm.id})" ng-cloak>Members</a>
+    <a class="btn btn-default" ui-sref="entity-messages({content: 'group', id: vm.id})">Messages</a>
+       <!-- GROUP EVENTS HERE
+       <a class="btn" ui-sref="group-upcoming-events">Upcoming Group Events</a>
+       
+       also need a better name than editable, maybe privs, mod, admin ?-->
+    <button class="btn btn-default" ng-click="vm.toggleEdit()" ng-show="vm.privs.admin">Edit Profile</button>
+    <a class="btn btn-default" ui-sref="group-invite" ng-show="vm.privs.mod">Invite Friends</a>
+    <group-edit ng-show="vm.showEdit"></group-edit>
+</div>

@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="cs460.grouple.grouple"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="14"
+        android:targetSdkVersion="19" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <!-- GCM requires a Google account. -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+
+    <!-- Keeps the processor from sleeping when a message is received. -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <!--
+     Creates a custom permission so only this app can receive its messages.
+
+     NOTE: the permission *must* be called PACKAGE.permission.C2D_MESSAGE,
+           where PACKAGE is the application's package name.
+    -->
+    <permission
+        android:name="cs460.grouple.grouple.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="cs460.grouple.grouple.permission.C2D_MESSAGE" />
+
+    <!-- This app has permission to register and receive data message. -->
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+
+    <application
+        android:name="cs460.grouple.grouple.Global"
+        android:allowBackup="true"
+        android:icon="@drawable/icon_grouple"
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:theme="@style/AppBaseTheme" >
+
+        <!-- Required for applications which use Google Play Services. -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <activity
+            android:name="cs460.grouple.grouple.LoginActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="cs460.grouple.grouple.HomeActivity"
+            android:configChanges="orientation"
+            android:label="@string/title_activity_home"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="cs460.grouple.grouple.GroupProfileActivity"
+            android:configChanges="orientation"
+            android:label="@string/title_activity_user"
+            android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.HomeActivity" />
+        </activity>
+        <activity
+            android:name="cs460.grouple.grouple.EventProfileActivity"
+            android:configChanges="orientation"
+            android:label="@string/title_activity_user"
+            android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.HomeActivity" />
+        </activity>
+        <activity
+            android:name="cs460.grouple.grouple.UserProfileActivity"
+            android:configChanges="orientation"
+            android:label="@string/title_activity_user"
+            android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.HomeActivity" />
+        </activity>
+        <activity
+            android:name="cs460.grouple.grouple.GroupsActivity"
+            android:configChanges="orientation"
+            android:label="@string/title_activity_groups"
+            android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.HomeActivity" />
+        </activity>
+        <activity
+            android:name="cs460.grouple.grouple.GroupCreateActivity"
+            android:configChanges="orientation"
+            android:label="@string/title_activity_groups"
+            android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.GroupsActivity" />
+        </activity>
+        <activity
+            android:name="cs460.grouple.grouple.GroupsCurrentActivity"
+            android:configChanges="orientation"
+            android:label="@string/title_activity_groups"
+            android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.GroupsActivity" />
+        </activity>
+        <activity
+            android:name="cs460.grouple.grouple.GroupInvitesActivity"
+            android:configChanges="orientation"
+            android:label="@string/title_activity_groups"
+            android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.GroupsActivity" />
+        </activity>
+        <activity
+            android:name="cs460.grouple.grouple.EventsActivity"
+            android:configChanges="orientation"
+            android:label="@string/title_activity_events"
+            android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.HomeActivity" />
+        </activity>
+        <activity
+            android:name="cs460.grouple.grouple.RegisterActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="cs460.grouple.grouple.FriendsActivity"
+            android:configChanges="orientation"
+            android:label="@string/title_activity_friends"
+            android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.HomeActivity" />
+        </activity>
+        <activity
+            android:name="cs460.grouple.grouple.FriendAddActivity"
+            android:configChanges="orientation"
+            android:label="@string/title_activity_add_friend"
+            android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.FriendsActivity" />
+        </activity>
+        <activity
+            android:name="cs460.grouple.grouple.FriendsCurrentActivity"
+            android:configChanges="orientation"
+            android:label="@string/title_activity_current_friends"
+            android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.FriendsActivity" />
+        </activity>
+        <activity
+            android:name="cs460.grouple.grouple.FriendRequestsActivity"
+            android:configChanges="orientation"
+            android:label="@string/title_activity_friend_requests"
+            android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.FriendsActivity" />
+        </activity>
+        <activity
+            android:name="cs460.grouple.grouple.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.HomeActivity" />
+        </activity>
+        <activity
+            android:name="cs460.grouple.grouple.MessagesActivity"
+            android:label="@string/title_activity_messages"
+            android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.RecentMessagesActivity" />
+        </activity>
+        <activity
+            android:name="cs460.grouple.grouple.UserEditActivity"
+            android:label="@string/title_activity_edit_profile"
+            android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.UserProfileActivity" />
+        </activity>
+        <activity android:name="cs460.grouple.grouple.User" >
+        </activity>
+        <activity android:name="cs460.grouple.grouple.Group" >
+        </activity>
+        <activity
+            android:name="cs460.grouple.grouple.EventCreateActivity"
+            android:label="@string/title_activity_event_create" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.EventsActivity" />
+        </activity>
+        <activity
+            android:name="cs460.grouple.grouple.EventListActivity"
+            android:label="@string/title_activity_group_members" >
+        </activity>
+        <activity
+            android:name="cs460.grouple.grouple.GroupListActivity"
+            android:label="@string/title_activity_group_members" >
+        </activity>
+        <activity
+            android:name="cs460.grouple.grouple.UserListActivity"
+            android:label="@string/title_activity_group_members" >
+        </activity>
+        <activity
+            android:name="cs460.grouple.grouple.GroupEditActivity"
+            android:label="@string/title_activity_group_edit" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.GroupProfileActivity" />
+        </activity>
+        <activity
+            android:name="cs460.grouple.grouple.InviteActivity"
+            android:label="@string/title_activity_invite" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.ListActivity" />
+        </activity>
+        <activity
+            android:name="cs460.grouple.grouple.EventAddGroupsActivity"
+            android:label="@string/title_activity_event_addgroups" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.ListActivity" />
+        </activity>
+        <activity
+            android:name="cs460.grouple.grouple.EventEditActivity"
+            android:label="@string/title_activity_event_edit" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.EventProfileActivity" />
+        </activity>
+        <activity
+            android:name="cs460.grouple.grouple.ManageMembersActivity"
+            android:label="@string/title_activity_manage_members" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.GroupEditActivity" />
+        </activity>
+        <activity
+            android:name="cs460.grouple.grouple.ManageParticipantsActivity"
+            android:label="@string/title_activity_manage_attending_event" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.EventEditActivity" />
+        </activity>
+        <!--
+          WakefulBroadcastReceiver that will receive intents from GCM
+          services and hand them to the custom IntentService.
+
+          The com.google.android.c2dm.permission.SEND permission is necessary
+          so only GCM services can send data messages for the app.
+        -->
+        <receiver
+            android:name="cs460.grouple.grouple.GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+
+                <!-- Receives the actual messages. -->
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+
+                <category android:name="cs460.grouple.grouple" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="cs460.grouple.grouple.receiver" >
+            <intent-filter>
+                <action android:name="user_data" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name="cs460.grouple.grouple.GcmIntentService" />
+        <service android:name="cs460.grouple.grouple.UserDataService" />
+
+        <activity
+            android:name="cs460.grouple.grouple.ContactsActivity"
+            android:label="@string/title_activity_contact_list" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.HomeActivity" />
+        </activity>
+        <activity
+            android:name="cs460.grouple.grouple.EntityMessagesActivity"
+            android:label="@string/title_activity_group_messages" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cs460.grouple.grouple.GroupProfileActivity" />
+        </activity>
+        <activity
+            android:name="cs460.grouple.grouple.BaseActivity"
+            android:label="@string/title_activity_base" >
+        </activity>
+        <!-- Include the AdActivity and InAppPurchaseActivity configChanges and themes. -->
+        <activity
+            android:name="com.google.android.gms.ads.AdActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:theme="@android:style/Theme.Translucent" />
+        <activity
+            android:name="com.google.android.gms.ads.purchase.InAppPurchaseActivity"
+            android:theme="@style/Theme.IAPTheme" />
+
+        <meta-data
+            android:name="com.google.android.gms.wallet.api.enabled"
+            android:value="true" />
+
+        <receiver
+            android:name="com.google.android.gms.wallet.EnableWalletOptimizationReceiver"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.google.android.gms.wallet.ENABLE_WALLET_OPTIMIZATION" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>

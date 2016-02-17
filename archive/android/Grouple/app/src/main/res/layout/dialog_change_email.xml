@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/changeemail_layout" android:orientation="vertical"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:layout_margin="20dp"
+    android:layout_gravity="center"
+    android:background="@color/background_color"
+    android:gravity="center"
+    android:padding="5dp">
+
+    <ScrollView
+        android:id="@+id/scrollViewChangeEmail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:padding="0dp" >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <TextView
+        android:id="@+id/currentEmailCED"
+        android:layout_column="0"
+        android:layout_row="0"
+        android:gravity="center"
+        android:fontFamily="sans-serif-condensed"
+        android:text="Current email: "
+        android:textColor="@color/text_color"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:layout_width="fill_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginRight="10dp" 
+        />
+            
+             <EditText
+        android:id="@+id/passwordOldTextCED"
+                android:background="@drawable/border"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/emailEditTextRA"
+        android:layout_marginBottom="3dp"
+                android:textColorHint="@color/hint_text_color"
+        android:layout_alignRight="@+id/emailEditTextRA"
+        		android:fontFamily="sans-serif"
+        	
+		android:textColor="@color/text_color"
+        android:layout_below="@+id/emailEditTextRA"
+        android:ems="10"
+        android:hint="Confirm current password"
+        android:inputType="textPassword" />
+
+              <EditText
+        android:id="@+id/emailTextCED"
+                android:background="@drawable/border"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/emailEditTextRA"
+        android:layout_marginBottom="3dp"
+                android:textColorHint="@color/hint_text_color"
+        android:layout_alignRight="@+id/emailEditTextRA"
+        		android:fontFamily="sans-serif"
+        	
+		android:textColor="@color/text_color"
+        android:layout_below="@+id/emailEditTextRA"
+        android:ems="10"
+        android:hint="New email address"
+        android:inputType="textEmailAddress" />
+
+                <EditText
+        android:id="@+id/emailConfirmTextCED"
+                android:background="@drawable/border"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/emailEditTextRA"
+        android:layout_marginBottom="3dp"
+                android:textColorHint="@color/hint_text_color"
+        android:layout_alignRight="@+id/emailEditTextRA"
+        		android:fontFamily="sans-serif"
+        	
+		android:textColor="@color/text_color"
+        android:layout_below="@+id/emailEditTextRA"
+        android:ems="10"
+        android:hint="Confirm new email address"
+        android:inputType="textEmailAddress" />
+              
+              <Button
+        android:id="@+id/confirmCED"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/background_purple"
+        android:fontFamily="sans-serif-condensed"
+        android:onClick="ConfirmEmailChangeButton"
+        android:text="Change Email"
+        android:textColor="@color/button_text_color" />
+            
+        </LinearLayout>
+    </ScrollView>
+
+   
+</LinearLayout>

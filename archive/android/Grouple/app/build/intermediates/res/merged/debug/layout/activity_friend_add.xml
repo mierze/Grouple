@@ -1,0 +1,54 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/addFriendContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_color"
+    android:padding="30dp"
+    android:paddingBottom="10dp"
+    android:paddingTop="10dp" >
+
+    <EditText
+        android:id="@+id/emailEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/addFriendButton"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/border_layout"
+        android:ems="10"
+        android:fontFamily="sans-serif-condensed"
+        android:hint="Enter User&apos;s Email"
+        android:inputType="textEmailAddress"
+        android:padding="10dp"
+        android:textColor="@color/text_color"
+        android:textColorHint="@color/hint_text_color" >
+
+        <requestFocus />
+    </EditText>
+
+    <Button
+        android:id="@+id/addFriendButton"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignLeft="@+id/addFriendLayout"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/selector_button"
+        android:fontFamily="sans-serif-condensed"
+        android:onClick="addFriendButton"
+        android:text="Add"
+        android:textColor="@color/button_text_color" />
+
+    <TextView
+        android:id="@+id/addFriendMessageTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/addFriendButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:text="Small Text"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/red"
+        android:visibility="invisible" />
+
+</RelativeLayout><!-- From: file:/Users/brett/Documents/Mierzelancing/Workspaces/grouple-workspace/Grouple/app/src/main/res/layout/activity_friend_add.xml -->

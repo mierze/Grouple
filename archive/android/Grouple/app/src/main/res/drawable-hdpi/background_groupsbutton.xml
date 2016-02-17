@@ -1,0 +1,16 @@
+
+
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+
+  
+        <item>
+<shape android:shape="rectangle" android:padding="10dp">
+    <solid  android:color="@color/green" />
+    <stroke android:width="2dip" android:color="@color/black" />
+      <padding android:bottom="30dip" android:top="5dip" android:right="5dip" android:left="5dip" />
+
+ </shape>
+   </item>
+       <item android:drawable="@drawable/groups_icon"/>
+
+</layer-list>

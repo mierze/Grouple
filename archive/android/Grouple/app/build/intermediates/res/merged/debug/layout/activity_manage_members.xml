@@ -1,0 +1,75 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="0dp"
+    android:background="@color/layout_background_color"
+    tools:context="cs460.grouple.grouple.ManageMembersActivity" >
+
+
+    <LinearLayout
+	    android:id="@+id/scrollViewLayout"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    	            android:layout_gravity="top"
+	   android:layout_marginBottom="10dp" >
+	    <ScrollView
+	        android:id="@+id/scrollViewManageMembers"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="2"
+	        	            android:layout_gravity="top"
+	    	android:background="@color/layout_background_color"
+	        android:padding="0dp" >
+	
+	        <LinearLayout
+	            android:id="@+id/manageMembersLayout"
+	            android:layout_width="match_parent"
+	            android:layout_gravity="top"
+	            android:layout_height="wrap_content"
+	            android:layout_marginBottom="20dp"
+	            android:orientation="vertical" />
+   	 	</ScrollView>
+
+    </LinearLayout>
+    <GridLayout
+	    android:id="@+id/friendGridLayout"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_above="@+id/confirmButton"
+	    android:background="@drawable/top_bottom_border"
+	    android:columnCount="2"
+	    android:rowCount="1" >
+
+  	<TextView
+        android:id="@+id/nameButtonLI"
+        android:layout_column="0"
+        android:layout_row="0"
+        android:gravity="center"
+        android:fontFamily="sans-serif-condensed"
+        android:text="Click to toggle roles. ([A]dmin, [P]romoter, [U]ser)\nCheck the boxes to remove users."
+        android:textColor="@color/text_color"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:layout_width="fill_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginRight="10dp" 
+        android:onClick="startProfileActivity"
+        />
+</GridLayout>
+    <Button
+        android:id="@+id/confirmButton"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_margin="5dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/selector_button"
+        android:onClick="confirmButton"
+        android:text="Confirm Changes"
+        android:textColor="@color/button_text_color"
+        android:textSize="20sp" />
+
+</RelativeLayout>
+<!-- From: file:/Users/brett/Documents/Mierzelancing/Workspaces/grouple-workspace/Grouple/app/src/main/res/layout/activity_manage_members.xml -->

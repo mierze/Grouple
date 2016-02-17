@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<div class="modal" id="editprofile-modal" ng-cloak>
+    <div>
+        <a class="close" ng-click="toggleEdit()">X</a>
+        <form name="eventEditForm" novalidate ng-submit="(eventEditForm.$valid && eventEditCtrl.save(vm.info)) || (!eventEditForm.$valid))" ng-cloak>
+            <input type="text" class="name" placeholder="Name" required ng-model="vm.info.name" ng-cloak/>
+            <input type="text" placeholder="About Event" ng-model="vm.info.about" ng-cloak />
+            <input type="text" placeholder="Location" ng-model="vm.info.location" ng-cloak />          
+            <select placeholder="Select category..." required ng-model="vm.info.category" ng-cloak>
+                <option>Entertainment</option>
+                <option>Social</option>
+                <option>Sports and Games</option>
+                <option>Fitness</option>
+                <option>Nature</option>
+            <input type="date" placeholder="Start Date" required ng-model="vm.info.startDate" ng-cloak/>
+            <input type="date" placeholder="End Date" ng-model="vm.info.endDate" ng-cloak />
+            <input type="text" placeholder="Min Participants" ng-model="vm.info.minPart" ng-cloak />
+            <input type="text" placeholder="Max Participants" ng-model="vm.info.maxPart" ng-cloak/>
+            <select placeholder="Recurring event?" ng-model="vm.info.recType" ng-cloak />
+            <label>
+                Public
+                <input type="radio" name="public" value="1" ng-model="post.pub" />
+            </label>
+            <label>
+                Private
+                <input type="radio" name="public" value="0" checked ng-model="post.pub" />
+            </label>
+            <input class="btn" type="submit" value="Save" />
+        </form>
+    </div>
+</div>

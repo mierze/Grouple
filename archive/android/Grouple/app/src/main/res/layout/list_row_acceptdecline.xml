@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/listRowLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@drawable/topbottom_border_colored"
+     >
+
+    <TextView
+        android:id="@+id/nameTextView"
+        android:layout_height="match_parent"
+        android:onClick="startProfileActivity"
+        android:background="@android:color/transparent"
+        android:textColor="@color/text_color"
+       	android:fontFamily="sans-serif-condensed"
+        android:textStyle="bold"
+        android:gravity="center_vertical"
+        android:layout_width="wrap_content"
+        android:layout_weight="3"
+        android:textSize="18sp"
+        android:paddingLeft="10dp"
+        android:layout_marginTop="0dp"
+        android:paddingRight="10dp"
+        android:text="Sample" />
+
+   	<Button
+        android:id="@+id/acceptButton"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:layout_gravity="right|center_vertical"
+        android:layout_margin="5dp"
+        android:layout_row="0"
+        android:background="@drawable/background_green"
+        android:fontFamily="sans-serif-condensed"
+        android:onClick="onClick"
+        android:padding="10dp"
+    	android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:text="Accept"
+        android:textColor="@color/button_text_color" />
+    
+    <Button
+        android:id="@+id/declineButton"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_gravity="right|center_vertical"
+        android:layout_margin="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_weight="1"
+        android:background="@drawable/background_red"
+        android:fontFamily="sans-serif-condensed"
+        android:onClick="onClick"
+        android:padding="10dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:text="Decline"
+        android:textColor="@color/button_text_color" />
+
+</LinearLayout>

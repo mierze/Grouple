@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/action_home"
+        android:title="@string/homeButton"/>
+    <item
+        android:id="@+id/action_profile"
+        android:title="@string/profileButton"/>
+    <item
+        android:id="@+id/action_messages"
+        android:title="@string/messagesButton"/>
+    <item
+        android:id="@+id/action_friends"
+        android:title="@string/friendsButton"/>
+    <item
+        android:id="@+id/action_groups"
+        android:title="@string/groupsButton"/>
+    <item
+        android:id="@+id/action_events"
+        android:title="@string/eventsButton"/>
+    <item
+        android:id="@+id/action_settings"
+        android:title="@string/settingsButton"/>
+    <item
+        android:id="@+id/action_logout"
+        android:title="@string/logoutButton"/>
+
+</menu><!-- From: file:/Users/brett/Documents/Mierzelancing/Workspaces/grouple-workspace/Grouple/app/src/main/res/menu/navigation_actions.xml -->

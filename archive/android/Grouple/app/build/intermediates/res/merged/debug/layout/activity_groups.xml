@@ -1,0 +1,59 @@
+<LinearLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+   	android:id="@+id/groupsContainer"
+    android:layout_width="match_parent"
+    android:layout_height="fill_parent"
+    android:padding="5dp"
+    android:background="@color/background_color" >
+
+    <LinearLayout
+	    android:id="@+id/groupsLayout"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_gravity="center_vertical"
+	    android:gravity="center"
+	    android:orientation="vertical" >
+	    	
+	   	<Button
+	   	    android:id="@+id/createGroupButton"
+		    android:onClick="startGroupCreateActivity"
+	   	    android:layout_width="match_parent"
+	   	    android:layout_marginTop="5dp"
+	   	    android:layout_marginBottom="5dp"
+	   	    android:layout_height="80dp"
+	   	    android:background="@drawable/selector_button"
+	   	    android:fontFamily="sans-serif-condensed"
+	   	    android:text="@string/createGroupButton"
+	   	    android:textColor="@color/button_text_color"
+	   	    android:textSize="20sp" />
+	   	
+	   	<Button
+	   	    android:id="@+id/groupsCurrentButton"
+		    android:onClick="startGroupsCurrentActivity"
+	   	    android:layout_width="match_parent"
+	   	    android:layout_height="80sp"
+	   	    android:layout_marginTop="5dp"
+	   	    android:layout_marginBottom="5dp"
+	   	    android:background="@drawable/selector_button"
+	   	    android:fontFamily="sans-serif-condensed"
+	   	    android:text="@string/yourGroupsButton"
+	   	    android:textColor="@color/button_text_color"
+	   	    android:textSize="20sp" />
+	
+	   	<Button
+	   	    android:id="@+id/groupInvitesButton"
+		    android:onClick="startGroupInvitesActivity"
+	   	    android:layout_width="match_parent"
+	   	    android:layout_marginTop="5dp"
+	   	    android:layout_marginBottom="5dp"  	    
+	   	    android:layout_height="80sp"
+	   	    android:background="@drawable/selector_button"
+	   	    android:fontFamily="sans-serif-condensed"
+	   	    android:text="@string/pendingGroupsButton"
+	   	    android:textColor="@color/button_text_color"
+	   	    android:textSize="20sp" />
+	   	
+	</LinearLayout>
+
+</LinearLayout><!-- From: file:/Users/brett/Documents/Mierzelancing/Workspaces/grouple-workspace/Grouple/app/src/main/res/layout/activity_groups.xml -->

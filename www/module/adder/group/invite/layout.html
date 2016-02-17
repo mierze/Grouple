@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<div class="invite-list" ng-init="vm.init()">
+    <h1><!-- TODO to action bar -->Invite Friends</h1>
+    <div class="list-wrap">
+        <group-invite-row ng-repeat="item in vm.items" ng-cloak></group-invite-row>
+    </div>
+    <a class="btn" ng-click="vm.send()">Invite</a>
+</div>
