@@ -2214,7 +2214,7 @@ function RegisterController(Register, $state, $rootScope, SessionChecker) {
 
     if (SessionChecker.check(0))
         vm.enter();
-    else $rootScope.$broadcast('setTitle', 'Login');
+    else $rootScope.$broadcast('setTitle', 'Register');
 
     //functions
     function register() {
