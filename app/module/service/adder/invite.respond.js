@@ -7,7 +7,7 @@ function InviteResponder(Poster) {
     };
 
     function respond(data, decision, content, callback) {
-        Poster.post('http://localhost:1337/api/' + content + '/list/action/' + decision + '-invite', data, callback);
+        Poster.post('http://groupleapp.herokuapp.com/api/' + content + '/list/action/' + decision + '-invite', data, callback);
     }
 } //end invite responder
 

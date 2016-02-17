@@ -9,7 +9,7 @@ function GroupProfileGetter(Getter) {
 
   function get(id, cb) {
     vm.cb = cb;
-    Getter.get('http://localhost:1337/api/group/profile/' + id, callback);
+    Getter.get('http://groupleapp.herokuapp.com/api/group/profile/' + id, callback);
   }
 
   function callback(data) {

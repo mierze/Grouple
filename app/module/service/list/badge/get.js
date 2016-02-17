@@ -9,7 +9,7 @@ function BadgeGetter(Getter) {
 
   function get(email, cb) {
     vm.cb = cb;
-    Getter.get('http://localhost:1337/api/user/profile/badges/' + email, callback);
+    Getter.get('http://groupleapp.herokuapp.com/api/user/profile/badges/' + email, callback);
   }
 
   function callback(data) {

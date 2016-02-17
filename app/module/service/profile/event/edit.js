@@ -7,7 +7,7 @@ function EventEditer(Poster) {
   };
 
   function edit(post, callback) {
-    Poster.post(post, 'http://localhost:1337/api/event/profile/edit', callback);
+    Poster.post(post, 'http://groupleapp.herokuapp.com/api/event/profile/edit', callback);
   }
 }
 

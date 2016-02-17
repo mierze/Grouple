@@ -9,7 +9,7 @@ function EventInviter(Poster) {
 
     function send(data, callback) {
         data.from = storage.getItem('email');
-        Poster.post('http://localhost:1337/event/invite/', data, callback);
+        Poster.post('http://groupleapp.herokuapp.com/event/invite/', data, callback);
     }
 } //end event inviter
 

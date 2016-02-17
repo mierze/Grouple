@@ -7,7 +7,7 @@ function UserMessageGetter(Getter) {
     };
 
     function get(params, callback) {
-        Getter.get('http://localhost:1337/api/user/message/messages/' + params.email + '/' + params.contact, callback);
+        Getter.get('http://groupleapp.herokuapp.com/api/user/message/messages/' + params.email + '/' + params.contact, callback);
     }
 }
 

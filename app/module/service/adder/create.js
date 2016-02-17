@@ -8,7 +8,7 @@ function Creator(Poster) {
 
   function create(post, type, callback) {
     //start create
-    var url = 'http://localhost:1337/api/' + type + '/create';
+    var url = 'http://groupleapp.herokuapp.com/api/' + type + '/create';
     Poster.post(url, post, callback);
   } //end create
 } //end creator

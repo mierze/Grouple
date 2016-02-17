@@ -7,7 +7,7 @@ function Login(Poster) {
   };
 
   function login(data, callback) {
-    Poster.post('http://localhost:1337/api/session/login/', data, callback);
+    Poster.post('http://groupleapp.herokuapp.com/api/session/login/', data, callback);
   }
 }
 

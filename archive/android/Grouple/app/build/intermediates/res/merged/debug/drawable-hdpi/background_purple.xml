@@ -1,5 +1,0 @@
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-  	<solid android:color="@color/purple" />
-    <stroke android:width="0dip" android:color="@color/button_border_color" />
-
-</shape><!-- From: file:/Users/brett/Documents/Mierzelancing/Workspaces/grouple-workspace/Grouple/app/src/main/res/drawable-hdpi/background_purple.xml -->

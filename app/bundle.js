@@ -1465,7 +1465,7 @@ function Creator(Poster) {
 
   function create(post, type, callback) {
     //start create
-    var url = 'http://localhost:1337/api/' + type + '/create';
+    var url = 'http://groupleapp.herokuapp.com/api/' + type + '/create';
     Poster.post(url, post, callback);
   } //end create
 } //end creator
@@ -1484,7 +1484,7 @@ function EventInviter(Poster) {
 
     function send(data, callback) {
         data.from = storage.getItem('email');
-        Poster.post('http://localhost:1337/event/invite/', data, callback);
+        Poster.post('http://groupleapp.herokuapp.com/event/invite/', data, callback);
     }
 } //end event inviter
 
@@ -1500,7 +1500,7 @@ function FriendInviter(Poster) {
     };
 
     function send (data, callback) { //send function
-        Poster.post('http://localhost:1337/api/user/invite/', data, callback);
+        Poster.post('http://groupleapp.herokuapp.com/api/user/invite/', data, callback);
     } //end send function
 } //end friend inviter
 
@@ -1518,7 +1518,7 @@ function GroupInviter(Poster) {
 
     function send(data, callback) {
         data.from = storage.getItem('email');
-        Poster.post('http://localhost:1337/group/invite/', data, callback);
+        Poster.post('http://groupleapp.herokuapp.com/group/invite/', data, callback);
     }
 } //end group inviter
 
@@ -1543,7 +1543,7 @@ function InviteResponder(Poster) {
     };
 
     function respond(data, decision, content, callback) {
-        Poster.post('http://localhost:1337/api/' + content + '/list/action/' + decision + '-invite', data, callback);
+        Poster.post('http://groupleapp.herokuapp.com/api/' + content + '/list/action/' + decision + '-invite', data, callback);
     }
 } //end invite responder
 
@@ -1595,7 +1595,7 @@ function BadgeGetter(Getter) {
 
   function get(email, cb) {
     vm.cb = cb;
-    Getter.get('http://localhost:1337/api/user/profile/badges/' + email, callback);
+    Getter.get('http://groupleapp.herokuapp.com/api/user/profile/badges/' + email, callback);
   }
 
   function callback(data) {
@@ -1622,7 +1622,7 @@ function Events(Getter) {
   };
 
   function get(id, content, callback) {
-    Getter.get('http://localhost:1337/api/event/list/' + content + '/' + id, callback);
+    Getter.get('http://groupleapp.herokuapp.com/api/event/list/' + content + '/' + id, callback);
   }
 }
 
@@ -1643,7 +1643,7 @@ function Groups(Getter) {
   };
 
   function get(id, content, callback) {
-    Getter.get('http://localhost:1337/api/group/list/' + content + '/' + id, callback);
+    Getter.get('http://groupleapp.herokuapp.com/api/group/list/' + content + '/' + id, callback);
   }
 }
 
@@ -1673,7 +1673,7 @@ function Users(Getter) {
   };
   
   function get(id, content, callback) {
-    Getter.get('http://localhost:1337/api/user/list/' + content + '/' + id, callback);
+    Getter.get('http://groupleapp.herokuapp.com/api/user/list/' + content + '/' + id, callback);
   }
 }
 
@@ -1693,7 +1693,7 @@ function EntityMessageGetter(Getter) {
     };
 
     function get(id, type, callback) {
-        Getter.get('http://localhost:1337/api/' + type + '/message/messages/' + id, callback);
+        Getter.get('http://groupleapp.herokuapp.com/api/' + type + '/message/messages/' + id, callback);
     }
 }
 
@@ -1715,7 +1715,7 @@ function EntityMessageSender(Poster) {
   };
 
   var send = function(post, type, callback) {
-    Poster.post('http://localhost:1337/api/' + type + '/message/send', post, callback);
+    Poster.post('http://groupleapp.herokuapp.com/api/' + type + '/message/send', post, callback);
   }
 }
 
@@ -1741,7 +1741,7 @@ function Contacts(Getter) {
     function get(email, cb) {
         vm.cb = cb;
         vm.email = email;
-        Getter.get('http://localhost:1337/api/user/message/contacts/' + email, callback);
+        Getter.get('http://groupleapp.herokuapp.com/api/user/message/contacts/' + email, callback);
     }
     
     function callback(data) {
@@ -1773,7 +1773,7 @@ function UserMessageGetter(Getter) {
     };
 
     function get(params, callback) {
-        Getter.get('http://localhost:1337/api/user/message/messages/' + params.email + '/' + params.contact, callback);
+        Getter.get('http://groupleapp.herokuapp.com/api/user/message/messages/' + params.email + '/' + params.contact, callback);
     }
 }
 
@@ -1796,7 +1796,7 @@ function MessageSender(Poster) {
   };
 
   var send = function(post, callback) {
-    Poster.post('http://localhost:1337/api/user/message/send', post, callback);
+    Poster.post('http://groupleapp.herokuapp.com/api/user/message/send', post, callback);
   }
 }
 
@@ -1834,7 +1834,7 @@ function EventEditer(Poster) {
   };
 
   function edit(post, callback) {
-    Poster.post(post, 'http://localhost:1337/api/event/profile/edit', callback);
+    Poster.post(post, 'http://groupleapp.herokuapp.com/api/event/profile/edit', callback);
   }
 }
 
@@ -1852,7 +1852,7 @@ function EventImageGetter(Getter, ImageDecoder) {
 
   function get(id, cb) {
     vm.cb = cb;
-    Getter.get('http://localhost:1337/api/event/profile/image/' + id, callback);
+    Getter.get('http://groupleapp.herokuapp.com/api/event/profile/image/' + id, callback);
   }
 
   function callback(data) {
@@ -1889,7 +1889,7 @@ function EventProfileGetter(Getter) {
 
   function get(id, cb) {
     vm.cb = cb;
-    Getter.get('http://localhost:1337/api/event/profile/' + id, callback);
+    Getter.get('http://groupleapp.herokuapp.com/api/event/profile/' + id, callback);
   }
 
   function callback(data) {
@@ -1911,7 +1911,7 @@ function GroupEditer(Poster) {
   };
 
   function edit(post, callback) {
-    Poster.post(post, 'http://localhost:1337/api/group/profile/edit', callback);
+    Poster.post(post, 'http://groupleapp.herokuapp.com/api/group/profile/edit', callback);
   }
 }
 
@@ -1929,7 +1929,7 @@ function GroupImageGetter(Getter, ImageDecoder) {
 
   function get(id, cb) {
     vm.cb = cb;
-    Getter.get('http://localhost:1337/api/group/profile/image/' + id, callback);
+    Getter.get('http://groupleapp.herokuapp.com/api/group/profile/image/' + id, callback);
   }
 
   function callback(data) {
@@ -1966,7 +1966,7 @@ function GroupProfileGetter(Getter) {
 
   function get(id, cb) {
     vm.cb = cb;
-    Getter.get('http://localhost:1337/api/group/profile/' + id, callback);
+    Getter.get('http://groupleapp.herokuapp.com/api/group/profile/' + id, callback);
   }
 
   function callback(data) {
@@ -2017,7 +2017,7 @@ function UserEditer(Poster) {
   };
 
   function edit(post, callback) {
-    Poster.post('http://localhost:1337/api/user/profile/edit/', post, callback);
+    Poster.post('http://groupleapp.herokuapp.com/api/user/profile/edit/', post, callback);
   }
 }
 
@@ -2035,7 +2035,7 @@ function UserImageGetter(Getter, ImageDecoder) {
 
   function get(email, cb) {
     vm.cb = cb;
-    Getter.get('http://localhost:1337/api/user/profile/image/' + email, callback);
+    Getter.get('http://groupleapp.herokuapp.com/api/user/profile/image/' + email, callback);
   }
 
   function callback(data) {
@@ -2071,7 +2071,7 @@ function UserGetter(Getter) {
 
   function get(email, cb) {
     vm.cb = cb;
-    Getter.get('http://localhost:1337/api/user/profile/' + email, callback);
+    Getter.get('http://groupleapp.herokuapp.com/api/user/profile/' + email, callback);
   }
 
   function callback(data) {
@@ -2128,7 +2128,7 @@ function Login(Poster) {
   };
 
   function login(data, callback) {
-    Poster.post('http://localhost:1337/api/session/login/', data, callback);
+    Poster.post('http://groupleapp.herokuapp.com/api/session/login/', data, callback);
   }
 }
 
@@ -2144,7 +2144,7 @@ function Register(Poster) {
   };
 
   function register(data, callback) {
-    Poster.post('http://localhost:1337/api/session/register/', data, callback);
+    Poster.post('http://groupleapp.herokuapp.com/api/session/register/', data, callback);
   }
 }
 

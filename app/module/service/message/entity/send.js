@@ -7,7 +7,7 @@ function EntityMessageSender(Poster) {
   };
 
   var send = function(post, type, callback) {
-    Poster.post('http://localhost:1337/api/' + type + '/message/send', post, callback);
+    Poster.post('http://groupleapp.herokuapp.com/api/' + type + '/message/send', post, callback);
   }
 }
 

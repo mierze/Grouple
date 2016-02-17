@@ -9,7 +9,7 @@ function GroupInviter(Poster) {
 
     function send(data, callback) {
         data.from = storage.getItem('email');
-        Poster.post('http://localhost:1337/group/invite/', data, callback);
+        Poster.post('http://groupleapp.herokuapp.com/group/invite/', data, callback);
     }
 } //end group inviter
 

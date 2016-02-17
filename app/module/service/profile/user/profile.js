@@ -9,7 +9,7 @@ function UserGetter(Getter) {
 
   function get(email, cb) {
     vm.cb = cb;
-    Getter.get('http://localhost:1337/api/user/profile/' + email, callback);
+    Getter.get('http://groupleapp.herokuapp.com/api/user/profile/' + email, callback);
   }
 
   function callback(data) {

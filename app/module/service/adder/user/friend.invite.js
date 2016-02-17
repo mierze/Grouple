@@ -7,7 +7,7 @@ function FriendInviter(Poster) {
     };
 
     function send(data, callback) { //send function
-        Poster.post('http://localhost:1337/api/user/invite', data, callback);
+        Poster.post('http://groupleapp.herokuapp.com/api/user/invite', data, callback);
     }
 } //end friend inviter
 

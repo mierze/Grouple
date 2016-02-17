@@ -7,7 +7,7 @@ function MessageSender(Poster) {
   };
 
   var send = function(post, callback) {
-    Poster.post('http://localhost:1337/api/user/message/send', post, callback);
+    Poster.post('http://groupleapp.herokuapp.com/api/user/message/send', post, callback);
   }
 }
 

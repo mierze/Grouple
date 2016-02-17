@@ -7,7 +7,7 @@ function Events(Getter) {
   };
 
   function get(id, content, callback) {
-    Getter.get('http://localhost:1337/api/event/list/' + content + '/' + id, callback);
+    Getter.get('http://groupleapp.herokuapp.com/api/event/list/' + content + '/' + id, callback);
   }
 }
 
