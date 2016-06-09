@@ -14,4 +14,4 @@
 	Brett Stetson
 	
 ###built with
-angular, node, browserify, gulp, bootstrap
+angular, node, bootstrap, cordova, gulp, browserify
